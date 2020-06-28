@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Edna.AssignmentLearnContent": {
+      "commandName": "Project",
+      "commandLineArgs": "host start --pause-on-error --port 7074"
+    }
+  }
+}
