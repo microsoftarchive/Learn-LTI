@@ -1,0 +1,11 @@
+import { Level } from './Level.model';
+import { Role } from './Role.model';
+import { LearnContent } from './LearnContent.model';
+import { Product } from './Product.model';
+
+export interface Catalog {
+  contents: Map<string, LearnContent>;
+  levels: Map<string, Level>;
+  roles: Map<string, Role>;
+  products: Map<string, Product>;
+}
