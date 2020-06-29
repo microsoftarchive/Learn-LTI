@@ -1,0 +1,412 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appRegistrationClientId": {
+            "type": "string"
+        },
+        "appRegistrationApiURI": {
+            "type": "string"
+
+        },
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "String",
+            "metadata": {
+                "description": "Specify the location for the function application resources"
+            }
+        },
+        "runtimeStack": {
+            "defaultValue": "dotnet",
+            "allowedValues": [
+                "powershell",
+                "dotnet",
+                "node",
+                "java"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "Pick the language runtime that you want enabled"
+            }
+        },
+        "functionList": {
+            "type": "array",
+            "defaultValue": [
+                "connect",
+                "assignments",
+                "learncontent",
+                "links",
+                "platform",
+                "users"
+            ]
+        },
+        "enabledForDeployment": {
+            "type": "bool",
+            "defaultValue": false,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Specifies whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault."
+            }
+        },
+        "enabledForDiskEncryption": {
+            "type": "bool",
+            "defaultValue": false,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Specifies whether Azure Disk Encryption is permitted to retrieve secrets from the vault and unwrap keys."
+            }
+        },
+        "enabledForTemplateDeployment": {
+            "type": "bool",
+            "defaultValue": false,
+            "allowedValues": [
+                true,
+                false
+            ],
+            "metadata": {
+                "description": "Specifies whether Azure Resource Manager is permitted to retrieve secrets from the key vault."
+            }
+        },
+        "tenantId": {
+            "type": "string",
+            "defaultValue": "[subscription().tenantId]",
+            "metadata": {
+                "description": "Specifies the Azure Active Directory tenant ID that should be used for authenticating requests to the key vault. Get it by using Get-AzSubscription cmdlet."
+            }
+        },
+        "skuName": {
+            "type": "string",
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Standard",
+                "Premium"
+            ],
+            "metadata": {
+                "description": "Specifies whether the key vault is a standard vault or a premium vault."
+            }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "defaultValue": "[toLower( concat('mslearn-', uniqueString(resourceGroup().id)))]",
+            "metadata": {
+                "description": "Specifies the name of the key vault."
+            }
+        },
+        "utcValue": {
+            "type": "string",
+            "defaultValue": "[utcNow()]"
+        },
+        "baseName": {
+            "type": "string",
+            "defaultValue": "mslearn-user"
+        }
+    },
+    "variables": {
+        "resourceGroupName": "[resourceGroup().name]",
+        "insightsLocation": {
+            "AzureCloud": "eastus",
+            "AzureUSGovernment": "usgovvirginia"
+        },
+        "ProjectNamePrefix": "mslearn-lti-",
+        "staticWebsite": "stadevopssite",
+        "StorageAccountPrefix": "sta",
+        "keyName": "EdnaLiteDevKey",
+        "cliResourceName": "DeployingAppRegisteration",
+        "cliArg": "[concat(parameters('keyVaultName'), ' ', variables('staticWebsite'), ' ',parameters('location'), ' ',variables('ProjectNamePrefix'), ' ',variables('keyName'),' ',variables('resourceGroupName'))]",
+        "identityName": "[concat(parameters('baseName'), '-bootstrap')]",
+        "bootstrapRoleAssignmentId": "[guid(concat(resourceGroup().id, 'contributor'))]",
+        "contributorRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2019-08-01",
+            "name": "[concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]",
+                "[resourceId('Microsoft.Web/serverfarms', concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')]))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), parameters('functionList')[copyIndex('FunctionatIndex')]))]",
+                "[resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')]))]"
+            ],
+            "kind": "functionapp",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "[parameters('runtimeStack')]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat(variables('StorageAccountPrefix'), parameters('functionList')[copyIndex('FunctionatIndex')]), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])), '2019-06-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~3"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])), '2018-05-01-preview').InstrumentationKey]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat(variables('StorageAccountPrefix'), parameters('functionList')[copyIndex('FunctionatIndex')]), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])),'2019-06-01').keys[0].value)]"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')]))]"
+                        }
+                    ],
+                    "cors": {
+                        "allowedOrigins": [
+                            "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.blob]"
+                        ]
+                    }
+                },
+                "name": "[concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])]",
+                "clientAffinityEnabled": false,
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/',concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')]))]"
+            },
+            "copy": {
+                "name": "FunctionatIndex",
+                "count": "[length(parameters('functionList'))]"
+            }
+        },
+        {
+            "name": "[concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')],'/authsettings')]",
+            "apiVersion": "2018-11-01",
+            "type": "Microsoft.Web/sites/config",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')]))]",
+                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+            ],
+            "properties": {
+                "enabled": true,
+                "unauthenticatedClientAction": "RedirectToLoginPage",
+                "tokenStoreEnabled": true,
+                "defaultProvider": "AzureActiveDirectory",
+                "clientId": "[parameters('appRegistrationClientId')]",
+                "issuer": "[concat('https://sts.windows.net/', parameters('tenantId'), '/')]",
+                "allowedAudiences": [
+                    "[parameters('appRegistrationApiURI')]"
+                ]
+            },
+            "copy": {
+                "name": "FunctionatIndex",
+                "count": "[length(parameters('functionList'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2019-08-01",
+            "name": "[concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            },
+            "properties": {
+                "name": "[concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])]"
+            },
+            "copy": {
+                "name": "FunctionatIndex",
+                "count": "[length(parameters('functionList'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "name": "[variables('staticWebsite')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2"
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(variables('StorageAccountPrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "copy": {
+                "name": "FunctionatIndex",
+                "count": "[length(parameters('functionList'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Insights/components",
+            "apiVersion": "2018-05-01-preview",
+            "name": "[concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])]",
+            "location": "[variables('insightsLocation')[environment().name]]",
+            "tags": {
+                "[concat('hidden-link:', resourceId('Microsoft.Web/sites/',concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')]) ))]": "Resource"
+            },
+            "properties": {
+                "ApplicationId": "[concat(variables('ProjectNamePrefix'), parameters('functionList')[copyIndex('FunctionatIndex')])]"
+            },
+            "copy": {
+                "name": "FunctionatIndex",
+                "count": "[length(parameters('functionList'))]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[parameters('keyVaultName')]",
+            "apiVersion": "2018-02-14",
+            "location": "[parameters('location')]",
+            "properties": {
+                "enabledForDeployment": "[parameters('enabledForDeployment')]",
+                "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
+                "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+                "tenantId": "[parameters('tenantId')]",
+                "accessPolicies": [
+                    {
+                        "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30').principalId]",
+                        "tenantId": "[parameters('tenantId')]",
+                        "permissions": {
+                            "keys": [
+                                "All"
+                            ],
+                            "secrets": [
+                                "All"
+                            ]
+                        }
+                    }
+                ],
+                "sku": {
+                    "name": "[parameters('skuName')]",
+                    "family": "A"
+                },
+                "networkAcls": {
+                    "defaultAction": "Allow",
+                    "bypass": "AzureServices"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/accessPolicies",
+            "name": "[concat(parameters('keyVaultName'), '/add')]",
+            "apiVersion": "2019-09-01",
+            "properties": {
+                "accessPolicies": [
+                    {
+                        "tenantId": "[parameters('tenantId')]",
+                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat(variables('ProjectNamePrefix'),'connect')), '2019-08-01', 'Full').identity.principalId]",
+                        "permissions": {
+                            "keys": [
+                                "encrypt",
+                                "decrypt",
+                                "wrapKey",
+                                "unwrapKey",
+                                "sign",
+                                "verify",
+                                "get"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "[parameters('tenantId')]",
+                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat(variables('ProjectNamePrefix'),'users')), '2019-08-01', 'Full').identity.principalId]",
+                        "permissions": {
+                            "keys": [
+                                "encrypt",
+                                "decrypt",
+                                "wrapKey",
+                                "unwrapKey",
+                                "sign",
+                                "verify",
+                                "get"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "[parameters('tenantId')]",
+                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat(variables('ProjectNamePrefix'),'platform')), '2019-08-01', 'Full').identity.principalId]",
+                        "permissions": {
+                            "keys": [
+                                "encrypt",
+                                "decrypt",
+                                "wrapKey",
+                                "unwrapKey",
+                                "sign",
+                                "verify",
+                                "get"
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2019-10-01-preview",
+            "name": "[variables('cliResourceName')]",
+            "location": "[resourceGroup().location]",
+            "kind": "AzureCLI",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('staticWebsite'))]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+            ],
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]": {
+                    }
+                }
+            },
+            "properties": {
+                "forceUpdateTag": "[parameters('utcValue')]",
+                "AzCliVersion": "2.0.80",
+                "timeout": "PT30M",
+                "arguments": "[variables('cliArg')]",
+                "scriptContent": "az keyvault key create --vault-name $1 --name $5 --protection software;az storage blob service-properties update --account-name $2 --static-website --404-document index.html --index-document index.html;KeyVaultLink=$(az keyvault key show --vault-name $1 --name EdnaLiteDevKey | jq -r '.key.kid');az functionapp config appsettings set --name $4connect --resource-group $6 --settings='EdnaKeyString='$KeyVaultLink;az functionapp config appsettings set --name $4platform --resource-group $6 --settings='EdnaKeyString='$KeyVaultLink;az functionapp config appsettings set --name $4users --resource-group $6 --settings='EdnaKeyString='$KeyVaultLink;",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+            }
+        },
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "name": "[variables('identityName')]",
+            "apiVersion": "2018-11-30",
+            "location": "[resourceGroup().location]"
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[variables('bootstrapRoleAssignmentId')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('contributorRoleDefinitionId')]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30').principalId]",
+                "scope": "[resourceGroup().id]",
+                "principalType": "ServicePrincipal"
+            }
+        }
+    ],
+    "outputs": {
+
+    }
+
+}
