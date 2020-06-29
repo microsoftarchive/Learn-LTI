@@ -3,13 +3,12 @@ import { SimpleComponentStyles } from '../../Core/Utils/FluentUI/typings.fluent-
 import { styled } from '@fluentui/react';
 import { PageWrapper } from '../../Core/Components/Common/PageWrapper';
 import { StudentViewContent } from '../StudentView/StudentViewContent';
-import { pagesDisplayNames } from '../../Router/Consts';
 
 type PreviewPageStyles = SimpleComponentStyles<'root'>;
 
 const PreviewPageInner = (): JSX.Element => {
   return (
-    <PageWrapper title={pagesDisplayNames.PREVIEW}>
+    <PageWrapper title="Preview">
       <StudentViewContent />
     </PageWrapper>
   );

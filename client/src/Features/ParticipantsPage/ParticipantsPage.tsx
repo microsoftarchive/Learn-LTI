@@ -4,7 +4,6 @@ import { styled } from '@fluentui/react';
 import { PageWrapper } from '../../Core/Components/Common/PageWrapper';
 import { ParticipantsList } from './ParticipantsList';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
-import { pagesDisplayNames } from '../../Router/Consts';
 
 type ParticipantsPageStyles = SimpleComponentStyles<'root'>;
 
@@ -12,7 +11,7 @@ const ParticipantsPageInner = ({ styles }: IStylesOnly<ParticipantsPageStyles>):
   const classes = themedClassNames(styles);
 
   return (
-    <PageWrapper title={pagesDisplayNames.PARTICIPANTS}>
+    <PageWrapper title="Participants">
       <div className={classes.root}>
         <ParticipantsList />
       </div>
