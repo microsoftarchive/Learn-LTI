@@ -37,6 +37,7 @@ const inputGroupWrapperStyles = ({ theme }: IThemeOnlyProps): InputGroupWrapperS
   label: [
     mergeStyles(inputLabelStyle({ theme }), {
       alignSelf: 'flex-start',
+      whiteSpace: 'nowrap',
       selectors: {
         '::after': {
           color: theme.palette.neutralDark
