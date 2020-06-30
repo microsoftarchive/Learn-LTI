@@ -12,6 +12,7 @@ import {
   MicrosoftLearnSelectedItemsListStyles
 } from './MicrosoftLearnSelectedItemsList';
 import { getCommonSpacingStyle } from './MicrosoftLearnStyles';
+import { pagesDisplayNames } from '../../Router/Consts';
 
 type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator'>;
 
@@ -26,7 +27,7 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
   const classes = themedClassNames(styles);
   return useObserver(() => {
     return (
-      <PageWrapper title="Tutorials">
+      <PageWrapper title={pagesDisplayNames.MSLEARN}>
         <div className={classes.root}>
           <MicrosoftLearnSearch styles={themedClassNames(microsoftLearnSearchStyles)} />
           <MicrosoftLearnSelectedItemsList styles={themedClassNames(microsoftLearnSelectedItemsStyles)} />

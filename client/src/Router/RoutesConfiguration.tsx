@@ -1,4 +1,4 @@
-import { routesConstants } from './Consts';
+import { routesConstants, pagesDisplayNames } from './Consts';
 import React from 'react';
 import { GeneralPage } from '../Features/GeneralPage/GeneralPage';
 import { INavLink } from '@fluentui/react';
@@ -12,14 +12,14 @@ export interface RouteProps extends INavLink {
 
 export const configurationRoutes: RouteProps[] = [
   {
-    name: 'General',
+    name: pagesDisplayNames.GENERAL,
     url: routesConstants.ROOT,
     icon: 'Settings',
     component: GeneralPage
   },
   {
-    name: 'Tutorials',
-    url: routesConstants.TUTORIALS,
+    name: pagesDisplayNames.MSLEARN,
+    url: routesConstants.MSLEARN,
     icon: 'LearningTools',
     component: MicrosoftLearnPage
   }
@@ -27,13 +27,13 @@ export const configurationRoutes: RouteProps[] = [
 
 export const viewRoutes: RouteProps[] = [
   {
-    name: 'Preview',
+    name: pagesDisplayNames.PREVIEW,
     url: routesConstants.PREVIEW,
     icon: 'RedEye',
     component: PreviewPage
   },
   {
-    name: 'Participants',
+    name: pagesDisplayNames.PARTICIPANTS,
     url: routesConstants.PARTICIPANTS,
     icon: 'Group',
     component: ParticipantsPage

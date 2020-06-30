@@ -3,8 +3,12 @@ import { ChildStore } from './Core';
 import { PlatformService } from '../Services/Platform.service';
 import { Platform } from '../Models/Platform.model';
 
+export type PlatformSaveResult = 'error' | 'success';
+
 export class PlatformStore extends ChildStore {
   @observable platform: Platform | null = null;
+  @observable saveResult: PlatformSaveResult | null = null;
+  @observable isSaving = false;
   @observable isNotAuthorized = false;
 
   @action
@@ -31,6 +35,10 @@ export class PlatformStore extends ChildStore {
   @action
   async updatePlatform(platform: Platform): Promise<void> {
     this.platform = platform;
-    await PlatformService.updatePlatform(platform);
+    this.saveResult = null;
+    this.isSaving = true;
+    const hasErrors = await PlatformService.updatePlatform(platform);
+    this.isSaving = false;
+    this.saveResult = hasErrors ? 'error' : 'success';
   }
 }

@@ -25,6 +25,7 @@ interface PlatformRegistrationGroupProps {
   registrationSettings: Platform | null;
   setFieldValue: (newValue: string, fieldName: keyof Platform) => void;
   inputGroupStyles: InputGroupWrapperStyles;
+  showErrors: boolean;
 }
 export type PlatformRegistrationGroupStyles = SimpleComponentStyles<
   'title' | 'fieldContent' | 'textField' | 'hidden' | 'infoIcon' | 'copyButton'
@@ -36,6 +37,7 @@ const PlatformRegistrationGroupInner = ({
   registrationSettings,
   setFieldValue,
   inputGroupStyles,
+  showErrors,
   styles
 }: PlatformRegistrationGroupProps & IStylesOnly<PlatformRegistrationGroupStyles>): JSX.Element => {
   const classes = themedClassNames(styles);
@@ -48,6 +50,8 @@ const PlatformRegistrationGroupInner = ({
       </Text>
       {fields.map((field, index) => {
         const id = getId(field.fieldName);
+        const fieldValue = registrationSettings ? registrationSettings[field.fieldName] : '';
+
         return (
           <InputGroupWrapper
             key={index}
@@ -65,14 +69,12 @@ const PlatformRegistrationGroupInner = ({
               </TooltipHost>
               <TextField
                 id={id}
-                value={registrationSettings ? registrationSettings[field.fieldName] : ''}
+                value={fieldValue}
                 resizable={false}
                 onChange={(_e, newValue) => setFieldValue(newValue || '', field.fieldName)}
                 className={combinedStyles.textField}
                 {...field}
-                errorMessage={
-                  registrationSettings && !!registrationSettings[field.fieldName] ? '' : 'This field is required.'
-                }
+                errorMessage={showErrors && field.isRequired && !fieldValue ? 'This field is required.' : ''}
               />
               <IconButton
                 tabIndex={-1}

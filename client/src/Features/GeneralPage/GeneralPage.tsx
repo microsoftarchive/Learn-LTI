@@ -8,6 +8,7 @@ import { DeadlineInput } from './DeadlineInput';
 import { DescriptionInput } from './DescriptionInput';
 import { generalPageAreaStyle } from './GeneralPageStyles';
 import { GeneralPageCreatedLinks } from './GeneralPageCreatedLinks';
+import { pagesDisplayNames } from '../../Router/Consts';
 
 type GeneralPageStyles = SimpleComponentStyles<'mainEditArea' | 'separator'>;
 
@@ -15,7 +16,7 @@ const GeneralPageInner = ({ styles }: IStylesOnly<GeneralPageStyles>): JSX.Eleme
   const classes = themedClassNames(styles);
 
   return (
-    <PageWrapper title="General" styles={pageWrapperStyles}>
+    <PageWrapper title={pagesDisplayNames.GENERAL} styles={pageWrapperStyles}>
       <div className={classes.mainEditArea}>
         <DescriptionInput />
         <DeadlineInput />

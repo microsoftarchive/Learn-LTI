@@ -11,12 +11,14 @@ import { useStore } from '../../Stores/Core';
 
 interface PlatformRegistrationFormProps {
   updatePlatformData: (data: Platform) => void;
+  showErrors: boolean;
 }
 
 type PlatformRegistrationFormStyles = SimpleComponentStyles<'root'>;
 const PlatformRegistrationFormInner = ({
   styles,
-  updatePlatformData
+  updatePlatformData,
+  showErrors
 }: PlatformRegistrationFormProps & IStylesOnly<PlatformRegistrationFormStyles>): JSX.Element | null => {
   const classes = themedClassNames(styles);
   const platformStore = useStore('platformStore');
@@ -42,6 +44,7 @@ const PlatformRegistrationFormInner = ({
               title={group.name}
               fields={group.fields}
               key={group.name}
+              showErrors={showErrors}
               setFieldValue={(newValue, fieldName) =>
                 setPlatformData(prevState => (prevState ? { ...prevState, [fieldName]: newValue } : null))
               }
@@ -84,8 +87,8 @@ const inputGroupWrapperStyleProps = ({ theme }: IThemeOnlyProps): Partial<InputG
   },
   childrenWrapper: {
     gridColumn: '2',
-    marginBottom: `calc(${theme.spacing.l2} + ${theme.spacing.s2})`,
-    minHeight: theme.spacing.l2
+    marginBottom: theme.spacing.m,
+    minHeight: `calc(${theme.spacing.l2} * 2)`
   }
 });
 

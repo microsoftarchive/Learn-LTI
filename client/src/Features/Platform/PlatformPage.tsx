@@ -18,8 +18,9 @@ type PlatformPageStyles = SimpleComponentStyles<'root' | 'spinner' | 'content' |
 
 const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Element => {
   const platformStore = useStore('platformStore');
-  const [saveSettingsDisabled, setSaveSettingsDisabled] = useState<boolean>(true);
+  const [canSaveSettings, setCanSaveSettings] = useState<boolean>(false);
   const [platformData, setPlatformData] = useState<Platform | null>(null);
+  const [showErrorMessages, setShowErrorMessages] = useState<boolean>(false);
 
   useEffect(() => {
     if (!platformData) {
@@ -28,12 +29,25 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
     const hasEmptyRequiredField = !!platformRegistrationFieldGroups.find(group =>
       group.fields.find(field => field.isRequired && !platformData[field.fieldName])
     );
-    setSaveSettingsDisabled(hasEmptyRequiredField);
-  }, [platformData, setSaveSettingsDisabled]);
+    if (showErrorMessages && !hasEmptyRequiredField) {
+      setShowErrorMessages(false);
+    }
+    setCanSaveSettings(!hasEmptyRequiredField);
+  }, [platformData, setCanSaveSettings, showErrorMessages]);
 
   useEffect(() => {
     platformStore.initializePlatform();
   }, [platformStore]);
+
+  const tryToSaveRegistration = (): void => {
+    if (!canSaveSettings && !showErrorMessages) {
+      setShowErrorMessages(true);
+      return;
+    }
+    if (platformData) {
+      platformStore.updatePlatform(platformData);
+    }
+  };
 
   const classes = themedClassNames(styles);
 
@@ -58,15 +72,14 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
         <div className={classes.content}>
           <PlatformControlArea
             styles={themedClassNames(publishControlAreaStyles)}
-            savePlatformSettings={() => {
-              if (platformData) {
-                platformStore.updatePlatform(platformData);
-              }
-            }}
-            canSave={!saveSettingsDisabled}
+            onSaveRegirstrationClicked={tryToSaveRegistration}
+            showErrorMessage={showErrorMessages}
           />
           <PageWrapper title="Platform Registration" styles={themedClassNames(pageWrapperStyles)}>
-            <PlatformRegistrationForm updatePlatformData={data => setPlatformData(data)} />
+            <PlatformRegistrationForm
+              updatePlatformData={data => setPlatformData(data)}
+              showErrors={showErrorMessages}
+            />
           </PageWrapper>
         </div>
       )}
