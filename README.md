@@ -16,9 +16,9 @@ The LMS Learn LTI Application is designed for students, instructors, and institu
 4. Pricing Structure
 5. Contribution
 6. Troubleshooting
-7. Open Source Code of Conduct
-8. Security
-9. License
+7. [Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/) 
+8. [Security](https://github.com/microsoft/Learn-LTI/blob/master/SECURITY.md)
+9. [License](https://github.com/microsoft/Learn-LTI/blob/master/LICENSE)
 
 # Contributing
 
