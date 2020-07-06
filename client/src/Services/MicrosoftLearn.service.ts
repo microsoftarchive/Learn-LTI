@@ -11,7 +11,7 @@ class MicrosoftLearnServiceClass {
 
   public async getAssignmentLearnContent(assignmentId: string): Promise<WithError<AssignmentLearnContentDto[]>> {
     const assignmentLearnContentResponse = await axios.get<AssignmentLearnContentDto[]>(
-      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}assignments/${assignmentId}/learn-content`
+      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}/assignments/${assignmentId}/learn-content`
     );
 
     return safeData(assignmentLearnContentResponse);
@@ -19,18 +19,18 @@ class MicrosoftLearnServiceClass {
 
   public async saveAssignmentLearnContent(assignmentId: string, learnContentUid: string): Promise<void> {
     await axios.post(
-      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}assignments/${assignmentId}/learn-content/${learnContentUid}`
+      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}/assignments/${assignmentId}/learn-content/${learnContentUid}`
     );
   }
 
   public async removeAssignmentLearnContent(assignmentId: string, learnContentUid: string): Promise<void> {
     await axios.delete(
-      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}assignments/${assignmentId}/learn-content/${learnContentUid}`
+      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}/assignments/${assignmentId}/learn-content/${learnContentUid}`
     );
   }
 
   public async clearAssignmentLearnContent(assignmentId: string): Promise<void> {
-    await axios.delete(`${process.env.REACT_APP_EDNA_LEARN_CONTENT}assignments/${assignmentId}/learn-content`);
+    await axios.delete(`${process.env.REACT_APP_EDNA_LEARN_CONTENT}/assignments/${assignmentId}/learn-content`);
   }
 }
 
