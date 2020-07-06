@@ -16,6 +16,9 @@ The LMS Learn LTI Application is designed for students, instructors, and institu
 4. Pricing Structure
 5. Contribution
 6. Troubleshooting
+7. Open Source Code of Conduct
+8. Security
+9. License
 
 # Contributing
 
