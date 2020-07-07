@@ -4,13 +4,13 @@
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="LtiLibrary.AspNetCore" Version="3.2.2" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.DurableTask" Version="2.2.2" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Bindings\Edna.Bindings.Assignment\Edna.Bindings.Assignment.csproj" />
+    <ProjectReference Include="..\..\Bindings\Edna.Bindings.Lti1\Edna.Bindings.Lti1\Edna.Bindings.Lti1.csproj" />
     <ProjectReference Include="..\..\Bindings\Edna.Bindings.LtiAdvantage\Edna.Bindings.LtiAdvantage.csproj" />
     <ProjectReference Include="..\..\Bindings\Edna.Bindings.Platform\Edna.Bindings.Platform\Edna.Bindings.Platform.csproj" />
   </ItemGroup>
