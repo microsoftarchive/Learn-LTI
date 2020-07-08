@@ -14,7 +14,7 @@ The LMS Learn LTI Application is designed for students, instructors, and institu
 2. User Guide
 3. Architecture Overview
 4. Pricing Structure
-5. Contribution
+5. How To Take This Further
 6. Troubleshooting
 7. [Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/) 
 8. [Security](https://github.com/microsoft/Learn-LTI/blob/master/SECURITY.md)
