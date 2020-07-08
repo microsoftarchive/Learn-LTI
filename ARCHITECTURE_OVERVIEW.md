@@ -18,5 +18,5 @@ The LTI call (with OAuth) does **4 things**:
 1. Calls system information to save course and assignment details.
 2. OAuth authenticates a user.
 3. Assignment information gets updated.
-4. User information gets called
-   * Only saves callback URLs to get info about the user from the LMS
+4. User information gets called.
+   * Only saves callback URLs to get info about the user from the LMS.
