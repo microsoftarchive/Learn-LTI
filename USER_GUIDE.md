@@ -2,7 +2,7 @@
 ## Overview
 ### In this guide we cover how to:
 - Create a Lesson Plan
-- Customize Lesson Plan with Modules, we call these tutorials
+- Customize Lesson Plans with modules
 - Review your Lesson Plan for content and students
 - Publish your Lesson Plan so that students can view it and do it
 
