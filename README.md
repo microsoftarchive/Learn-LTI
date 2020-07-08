@@ -15,7 +15,7 @@ The LMS Learn LTI Application is designed for students, instructors, and institu
 3. [Architecture Overview](https://github.com/microsoft/Learn-LTI/blob/master/ARCHITECTURE_OVERVIEW.md)
 4. [Pricing Structure](https://github.com/microsoft/Learn-LTI/blob/master/PRICING_STRUCTURE.md)
 5. [Take it Further](https://github.com/microsoft/Learn-LTI/blob/master/TAKE_IT_FURTHER.md)
-6. Troubleshooting
+6. [Troubleshooting](https://github.com/microsoft/Learn-LTI/blob/master/TROUBLESHOOTING.md)
 7. [Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/) 
 8. [Security](https://github.com/microsoft/Learn-LTI/blob/master/SECURITY.md)
 9. [License](https://github.com/microsoft/Learn-LTI/blob/master/LICENSE)
