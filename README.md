@@ -11,10 +11,10 @@ The LMS Learn LTI Application is designed for students, instructors, and institu
 # Table of Contents
 
 1. Deployment Guide
-2. User Guide
-3. Architecture Overview
-4. Pricing Structure
-5. Take it Further
+2. [User Guide](https://github.com/microsoft/Learn-LTI/blob/master/USER_GUIDE.md)
+3. [Architecture Overview](https://github.com/microsoft/Learn-LTI/blob/master/ARCHITECTURE_OVERVIEW.md)
+4. [Pricing Structure](https://github.com/microsoft/Learn-LTI/blob/master/PRICING_STRUCTURE.md)
+5. [Take it Further](https://github.com/microsoft/Learn-LTI/blob/master/TAKE_IT_FURTHER.md)
 6. Troubleshooting
 7. [Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/) 
 8. [Security](https://github.com/microsoft/Learn-LTI/blob/master/SECURITY.md)
