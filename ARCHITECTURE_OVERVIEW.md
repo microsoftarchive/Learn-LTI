@@ -14,9 +14,21 @@ Here’s a breakdown of the key parts of Microsoft Learn LTI Application.
 
 ![Backend Infrastructure](https://github.com/microsoft/Learn-LTI/blob/DavisTJoseph-patch-1/images/Architecture.Backend.png)
 
-The LTI call (with OAuth) does **4 things**:
+**The LTI call (with OAuth) does 4 things:**
 1. Calls system information to save course and assignment details.
 2. OAuth authenticates a user.
 3. Assignment information gets updated.
 4. User information gets called.
    * Only saves callback URLs to get info about the user from the LMS.
+
+**HTTP Redirect to Microsoft Learn LTI Application web client**
+* Using the assignment information, generated a specific URL for the assignment
+* From that point, the Microsoft Learn LTI Application Connect endpoint no longer participates in the operation.
+* The LMS stops participating in the process in a direct way. Only a few calls are made by the Microsoft Learn LTI Application backend to the LMS to get information.
+
+**Managed Identity**
+
+Consists of different API calls
+*	Using the registered app in the AAD and the Microsoft Authentication Library, the client makes secure calls to the backend.
+*	The authentication happens on the cloud network level.
+*	The login happens using the standard Microsoft SSO login flow.
