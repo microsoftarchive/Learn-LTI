@@ -5,3 +5,10 @@ Extend the app to map MS Learn modules to course syllabus objectives
 
 **Pros:**
 
+### Scenario 2: Include another functionality - **Encourage Learning**
+Set up a Learn competition board within a class to see who has gone through the most Learn content
+
+**Suggested Solution:** Learn tracks a student's progress so it would just be repopulating a ranking board among students in a class
+
+**Pros:**
+
