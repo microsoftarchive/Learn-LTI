@@ -19,8 +19,7 @@ Write-Host '';
 Write-Host 'Runing Az Cli Commands';
 Write-Host '-------------------';
 
-Set-ExecutionPolicy Bypass -Scope Process
-
+az login;
 
 $resourceGroupName = "MSLearnLTI"
 $identityName = "MSLearnLTI-Identity"
