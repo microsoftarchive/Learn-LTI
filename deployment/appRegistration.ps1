@@ -19,8 +19,30 @@ Write-Host '';
 Write-Host 'Runing Az Cli Commands';
 Write-Host '-------------------';
 
-$appinfo=$(az ad app create --display-name MSL-Learn-Lti) | ConvertFrom-Json;
+Set-ExecutionPolicy Bypass -Scope Process
+
+
+$resourceGroupName = "MSLearnLTI"
+$identityName = "MSLearnLTI-Identity"
+$roleName = "Contributor"
+$templateFileName = "azuredeploy.json"
+
+$appinfo=$(az ad app create --display-name MS-Learn-Lti-Tool-App) | ConvertFrom-Json;
+
 az ad app update --id $appinfo.appId --identifier-uris "api://$($appinfo.appId)";
+
+az group create -l westus -n $resourceGroupName
+
+$identityObj = (az identity create -g $resourceGroupName -n $identityName) | ConvertFrom-Json
+
+Write-Host $identityObj.principalId
+
+Start-Sleep -s 30
+
+az role assignment create --assignee-object-id $identityObj.principalId --assignee-principal-type ServicePrincipal --role $roleName
+
+az deployment group create --resource-group $resourceGroupName --name MSLearnLTITooldeployment --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($appinfo.identifierUris)
+
 Write-Host '=========App Registration Info============';
 Write-Host '';
 Write-Host "Your Client Id --> $($appinfo.appId)";
