@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-latest
     
     env:
-      SOURCE_DIR: ${{ github.workspace }}/backend 
+      PROJECTS: ${{ github.workspace }}/backend/Functions/**/*.csproj 
       OUTPUT_DIR: ${{ github.workspace }}/.output
       DOTNET_VERSION: "3.1.101"
     
@@ -22,8 +22,8 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Install dependencies
-      run: dotnet restore ${{ env.SOURCE_DIR }}
+      run: dotnet restore ${{ env.PROJECTS }}
     - name: Build
-      run: dotnet build ${{ env.SOURCE_DIR }} --configuration Release --no-restore
+      run: dotnet build ${{ env.PROJECTS }} --configuration Release --no-restore
     - name: Publish
-      run: dotnet publish ${{ env.SOURCE_DIR }} --configuration Release --no-restore --verbosity normal --output ${{ env.OUTPUT_DIR }}
+      run: dotnet publish ${{ env.PROJECTS }} --configuration Release --no-restore --verbosity normal --output ${{ env.OUTPUT_DIR }}
