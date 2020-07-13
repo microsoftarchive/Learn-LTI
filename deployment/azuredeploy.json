@@ -21,6 +21,8 @@
         }
     },
     "variables": {
+
+        "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId),0,9)]",
         "functionList": [
             "connect",
             "assignments",
@@ -41,10 +43,10 @@
             "AzureCloud": "eastus",
             "AzureUSGovernment": "usgovvirginia"
         },
-        "ProjectNamePrefix": "[concat(replace(variables('resourceGroupName'),'-',''),'-')]",
-        "staticWebsite": "[toLower(concat(replace(variables('resourceGroupName'),'-',''),'learnclient'))]",
-        "keyVaultName": "[toLower(concat('mslearnlti-kv-',substring(uniqueString(resourceGroup().id), 0, 9)))]",
-        "StorageAccountPrefix": "[concat('st', substring(uniqueString(resourceGroup().id), 0, 9))]",
+        "ProjectNamePrefix": "[concat(replace(variables('uniqueIdentifier'),'-',''),'-')]",
+        "staticWebsite": "[toLower(concat(replace(variables('uniqueIdentifier'),'-',''),'learnclient'))]",
+        "keyVaultName": "[toLower(concat('mslearnlti-kv-',variables('uniqueIdentifier')))]",
+        "StorageAccountPrefix": "[concat('st', variables('uniqueIdentifier'))]",
         "keyName": "EdnaLiteDevKey",
         "cliResourceName": "DeployingAppRegisteration",
         "cliArg": "[concat(variables('keyVaultName'), ' ', variables('staticWebsite'), ' ',variables('location'), ' ',variables('ProjectNamePrefix'), ' ',variables('keyName'),' ',variables('resourceGroupName'))]",
@@ -111,7 +113,7 @@
                     ],
                     "cors": {
                         "allowedOrigins": [
-                            "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.blob]"
+                            "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]"
                         ]
                     }
                 },
@@ -163,7 +165,7 @@
                 "AssignmentsServiceUrl": "[concat('https://',variables('ProjectNamePrefix'), 'assignments','.azurewebsites.net/api')]",
                 "Lti1Secret": "secret",
                 "PlatformsServiceUrl": "[concat('https://',variables('ProjectNamePrefix'), 'platform','.azurewebsites.net/api')]",
-                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.blob]",
+                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat(variables('StorageAccountPrefix'),'connect' ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'connect')), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
@@ -189,7 +191,7 @@
                 "AssignmentsServiceUrl": "[concat('https://',variables('ProjectNamePrefix'), 'assignments','.azurewebsites.net/api')]",
                 "Lti1Secret": "secret",
                 "PlatformsServiceUrl": "[concat('https://',variables('ProjectNamePrefix'), 'platform','.azurewebsites.net/api')]",
-                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.blob]",
+                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat(variables('StorageAccountPrefix'),'users' ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'users')), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
@@ -464,7 +466,7 @@
     ],
     "outputs": {
         "WebClientURL": {
-            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.blob]",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
             "type": "string"
         }
     }

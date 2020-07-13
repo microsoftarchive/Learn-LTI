@@ -13,18 +13,44 @@ Write-Host '| |____| |   _| |_       | | | |__| | |__| | |____';
 Write-Host '|______|_|  |_____|      |_|  \____/ \____/|______|';
 Write-Host '';
 Write-Host '=====================';
-Write-Host 'Creating App Registration';
+Write-Host 'Logging into Azure';
 Write-Host '=====================';
 Write-Host '';
-Write-Host 'Runing Az Cli Commands';
-Write-Host '-------------------';
+Write-Host '';
 
-az login;
+
+$loginOutput = (az login);
+
+Write-Host '=====================';
+Write-Host 'Fetching Liist of Subscription';
+Write-Host '=====================';
+Write-Host '';
+Write-Host '';
+
+az account list --output table --all
+
+Write-Host '';
+Write-Host '';
+Write-Host '=====================';
+Write-Host 'Select Subscription';
+Write-Host '=====================';
+Write-Host '';
+Write-Host '';
+
+
+
+$subscriptionName = Read-Host 'Enter Subscription Name from Above List: '
+
+
+#set /p subscriptionName="Fromt he List Above, please enter the name of the Subscription you want to use for the Deployment:  "
+
+az account set --subscription $subscriptionName
 
 $resourceGroupName = "MSLearnLTI"
 $identityName = "MSLearnLTI-Identity"
 $roleName = "Contributor"
 $templateFileName = "azuredeploy.json"
+
 
 $appinfo=$(az ad app create --display-name MS-Learn-Lti-Tool-App) | ConvertFrom-Json;
 
@@ -40,7 +66,12 @@ Start-Sleep -s 30
 
 az role assignment create --assignee-object-id $identityObj.principalId --assignee-principal-type ServicePrincipal --role $roleName
 
-az deployment group create --resource-group $resourceGroupName --name MSLearnLTITooldeployment --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($appinfo.identifierUris)
+$deploymentOutput = (az deployment group create --resource-group $resourceGroupName --name MSLearnLTITooldeployment --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($appinfo.identifierUris)) | ConvertFrom-Json;
+
+Write-Host $deploymentOutput.properties.outputs.webClientURL.value
+
+az ad app update --id $appinfo.appId --reply-urls $deploymentOutput.properties.outputs.webClientURL.value --oauth2-allow-implicit-flow true
+
 
 Write-Host '=========App Registration Info============';
 Write-Host '';
