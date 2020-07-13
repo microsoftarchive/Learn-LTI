@@ -11,18 +11,18 @@ jobs:
     runs-on: windows-latest
     
     env:
-      output_path: ${{ github.workspace }}/.output
-      dotnet_version: "3.1.101"
+      OUTPUT_PATH: ${{ github.workspace }}/.output
+      DOTNET_VERSION: "3.1.101"
     
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ jobs.build.env.dotnet_version }}
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Publish
-      run: dotnet publish --configuration Release --no-restore --verbosity normal --output ${{ jobs.build.env.output_path }}
+      run: dotnet publish --configuration Release --no-restore --verbosity normal --output ${{ env.OUTPUT_PATH }}
