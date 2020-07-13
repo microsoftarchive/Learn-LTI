@@ -1,0 +1,28 @@
+name: backend
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    env:
+      output_path: ${{ github.workspace }}/.output
+      dotnet_version: "3.1.101"
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ jobs.build.env.dotnet_version }}
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Publish
+      run: dotnet publish --configuration Release --no-restore --verbosity normal --output ${{ jobs.build.env.output_path }}
