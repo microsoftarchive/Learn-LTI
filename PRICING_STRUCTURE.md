@@ -1,7 +1,7 @@
 # Overview
 
 The Microsoft Learn LTI Application uses three services:
-* Azure Functions
+* [Azure Functions](https://azure.microsoft.com/en-us/pricing/details/functions/)
 * Azure Storage
 * Azure Key Vault
 
