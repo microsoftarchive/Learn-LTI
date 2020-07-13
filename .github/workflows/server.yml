@@ -22,7 +22,7 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ env.SOURCE_DIR }}
     - name: Build
       run: dotnet build ${{ env.SOURCE_DIR }} --configuration Release --no-restore
     - name: Publish
