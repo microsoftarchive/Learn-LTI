@@ -19,7 +19,7 @@ The LMS Learn LTI Application is designed for students, instructors, and institu
 7. [Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/) 
 8. [Security](https://github.com/microsoft/Learn-LTI/blob/master/SECURITY.md)
 9. [License](https://github.com/microsoft/Learn-LTI/blob/master/LICENSE)
-10.[Student Guide](https://github.com/microsoft/Learn-LTI/blob/master/STUDENT_GUIDE.md)
+10. [Student Guide](https://github.com/microsoft/Learn-LTI/blob/master/STUDENT_GUIDE.md)
 
 # Contributing
 
