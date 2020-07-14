@@ -1,8 +1,6 @@
 name: backend
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -12,7 +10,6 @@ jobs:
 
     env:
       SOURCE_DIR: ${{ github.workspace }}\backend
-      OUTPUT_DIR: ${{ github.workspace }}\.output
       DOTNET_VERSION: "3.1.101"
     
     steps:
