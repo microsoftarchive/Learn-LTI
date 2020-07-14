@@ -6,13 +6,15 @@ on:
   pull_request:
     branches: [ master ]
 
-jobs:
+jobs:     
   build:
     runs-on: windows-latest
-    
+    strategy:
+      matrix:
+        functions: [Edna.AssignmentLearnContent, Edna.AssignmentLinks, Edna.Assignments, Edna.Connect, Edna.Platforms, Edna.Users]
     env:
-      PROJECTS: ${{ github.workspace }}/backend/Functions/**/*.csproj 
-      OUTPUT_DIR: ${{ github.workspace }}/.output
+      PROJECTS: ${{ github.workspace }}\backend\Functions\**\*.csproj
+      OUTPUT_DIR: ${{ github.workspace }}\.output
       DOTNET_VERSION: "3.1.101"
     
     steps:
@@ -25,5 +27,3 @@ jobs:
       run: dotnet restore ${{ env.PROJECTS }}
     - name: Build
       run: dotnet build ${{ env.PROJECTS }} --configuration Release --no-restore
-    - name: Publish
-      run: dotnet publish ${{ env.PROJECTS }} --configuration Release --no-restore --verbosity normal --output ${{ env.OUTPUT_DIR }}
