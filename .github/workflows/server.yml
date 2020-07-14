@@ -9,11 +9,9 @@ on:
 jobs:     
   build:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        functions: [Edna.AssignmentLearnContent, Edna.AssignmentLinks, Edna.Assignments, Edna.Connect, Edna.Platforms, Edna.Users]
+
     env:
-      PROJECTS: ${{ github.workspace }}\backend\Functions\**\*.csproj
+      SOURCE_DIR: ${{ github.workspace }}\backend
       OUTPUT_DIR: ${{ github.workspace }}\.output
       DOTNET_VERSION: "3.1.101"
     
@@ -24,6 +22,6 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Install dependencies
-      run: dotnet restore ${{ env.PROJECTS }}
+      run: dotnet restore ${{ env.SOURCE_DIR }}
     - name: Build
-      run: dotnet build ${{ env.PROJECTS }} --configuration Release --no-restore
+      run: dotnet build ${{ env.SOURCE_DIR }} --configuration Release --no-restore
