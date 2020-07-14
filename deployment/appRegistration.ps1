@@ -31,6 +31,7 @@ function ThrowException {
         [string]$Message
     )
     WriteLog("ERROR", $Message);
+    Write-Host($Message);
     Write-Host 'Encountered an Error while executing the Script. Please reach out to support at support@microsoft.com. Ensure to attach the Logs Folder (Created next to the ps file) with the mail';
     throw $Message;    
 }
@@ -62,13 +63,12 @@ if(!$loginOp)
     ThrowException($message);
 } 
 WriteLog("INFO", "Successfully logged in to Azure.");
-Write-Host 'Successfully logged in to Azure'
 
 Write-Title('STEP #2 - Choose Subscription');
 
 WriteLog("INFO", "Fetching List of Subscriptions in Users Account");
 
-$subscriptionList = ((az account list --all --output json));
+$subscriptionList = ((az account list --all --output json) | ConvertFrom-Json);
 if(!$subscriptionList)
 {
     $message = "Encountered an Error while trying to fetch Subscription List.";
@@ -99,21 +99,46 @@ else {
     WriteLog("INFO", "User Entered Subscription Name: " + $subscriptionName);
 
 }
-#TODO: Check if Subscription Name is one from the List only
+
+$isValidSubscriptionName = $false;
+foreach ($subscription in $subscriptionList) {
+    if($subscription.name -eq $subscriptionName)
+    {
+        $isValidSubscriptionName = $true;
+    }
+}
+
+if(!$isValidSubscriptionName)
+{
+    $message = "Invalid Subscription Name Entered.";
+    ThrowException($message);
+}
 
 $setSubscriptionNameOp = (az account set --subscription $subscriptionName)
 #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
 
 
-
-Write-Title('STEP #3 - Choose Location');
-
 WriteLog("INFO", "Fetching List of Locations");
+$locationList = (az account list-locations) | ConvertFrom-Json;
 az account list-locations --output table --query "[].{Name:name}"
 
 Write-Host '';
 Write-Host '';
 $locationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+
+$isValidLocationName = $false;
+foreach ($location in $locationList) {
+    if($location.name -eq $locationName)
+    {
+        $isValidLocationName = $true;
+    }
+}
+
+if(!$isValidLocationName)
+{
+    $message = "Invalid Location Name Entered.";
+    ThrowException($message);
+}
 
 Write-Title('STEP #4 - Registering Azure Active Directory App');
 
