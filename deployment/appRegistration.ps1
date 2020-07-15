@@ -190,7 +190,7 @@ WriteInfoLog("Creating Resource Group with Name : " + $resourceGroupName + " at 
 $resourceGroupCreationOp = az group create -l $locationName -n $resourceGroupName
 if(!$resourceGroupCreationOp)
 {
-    $message = "Encountered an Error while creating Resource Group with Name : " + $resourceGroupName + " at Location: " + $locationName + ". One Reason could be that the Resource Group with the same name but different location already exists in your Subscription. Delete the othe Resource Group and run this script again.";
+    $message = "Encountered an Error while creating Resource Group with Name : " + $resourceGroupName + " at Location: " + $locationName + ". One Reason could be that the Resource Group with the same name but different location already exists in your Subscription. Delete the other Resource Group and run this script again.";
     ThrowException($message);
 }
 
