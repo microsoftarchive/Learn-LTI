@@ -1,4 +1,4 @@
-# Steps
+# Steps From GitHub
 
 ## Microsoft Learn LTI Tool Deployment Instructions
 To deploy MS Learn LTI tool follow these steps:
@@ -14,11 +14,14 @@ To deploy MS Learn LTI tool follow these steps:
 6. In the cloned repo, inside the deployment directory, execute the file **Publish.ps1**.
 7. You should now see the MS Learn LTI Tool script popup.
 
+
+# Steps from Script
+
 ## Select Subscription
 
 "Image"
 
-Select EduLearnLTI from the dropdown menu.
+Type in EduLearnLTI, hit "Enter"
 
 If you're unsure that your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade)
 
