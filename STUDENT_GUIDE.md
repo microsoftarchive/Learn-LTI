@@ -9,6 +9,7 @@
 
 ### Student view of assignment details
 This is the student view of Edna. A student can see all assignment details, along with associated links, resources, and deadlines.
+
 ![Student View](https://github.com/DavisTJoseph/Learn-LTI-Documentation/blob/master/images/View.Student.png)
 
 ### Complete a module
