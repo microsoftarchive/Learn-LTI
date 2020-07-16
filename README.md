@@ -10,6 +10,12 @@ The Microsoft Learn LTI application enables institutions to seamlessly embed mod
 * **Progress Tracking** - instructors and students can track progression and acquired expertise through Learn content.
 * **LTI v1.1 and v1.3 Compliant** - student data is not gathered and their data cannot be accessed; all user data is protected.
 
+### What do I need to get started? ###
+* LMS System that supports LTI 1.1 or 1.3
+* Azure subscription
+* IT administrator to create Azure resource
+* Enabled Azure Active Directory
+
 # Table of Contents
 
 1. Deployment Guide
