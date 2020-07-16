@@ -2,7 +2,9 @@
 
 ## Login to Azure
 
-Create an Azure account.
+Create an Azure account for your institution if it doesn't have one already.
+
+If it does or once it's created, login to Azure.
 
 ## Select Subscription
 
@@ -26,6 +28,11 @@ Your region determines mainly three things:
 For information regarding your region, check [here](https://azure.microsoft.com/global-infrastructure/geographies/)
 
 ## Register your Azure Active Directory App
+
+Make sure you have an Azure Active Directory subscription.
+
+#### For Canvas
+Check to see if your insitution has a Canvas single sign-on subscription
 
 
 ## Create your Resource Group
