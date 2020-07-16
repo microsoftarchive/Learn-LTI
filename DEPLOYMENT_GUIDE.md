@@ -21,7 +21,7 @@ To deploy MS Learn LTI tool follow these steps:
 
 "Image"
 
-Type in EduLearnLTI, hit "Enter"
+**Type in EduLearnLTI, hit "Enter"**
 
 If you're unsure that your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade)
 
@@ -47,7 +47,7 @@ Here are the regions we support:
 * westus2
 * koreacentral
 
-Locate your region. Then type it into the script and hit "Enter".
+**Locate your region from the list above. Then type it into the script and hit "Enter".**
 
 Your region determines mainly three things:
 * Compliance and Data Residency
