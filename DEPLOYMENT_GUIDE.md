@@ -1,10 +1,18 @@
 # Steps
 
-## Login to Azure
-
-Create an Azure account for your institution if it doesn't have one already.
-
-If it does or once it's created, login to Azure.
+## Microsoft Learn LTI Tool Deployment Instructions
+To deploy MS Learn LTI tool follow these steps:
+1. Clone the Deployment repository to your machine
+2. Make sure that you install:
+* [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+* [DotNet Core SDK](https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.301-windows-x64-installer)
+* [Node.js](https://nodejs.org/en/download/)
+3. [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest)
+4. In the cloned repo, inside the deployment directory, execute the file **appRegistration.ps1** and save the result for later.
+5. Click the button to deploy the needed resources in Azure.
+* [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FLearn-LTI%2Fmaster%2Fdeployment%2Fazuredeploy.json%3Ftoken%3DAQCAEE2JIAOYTYWW5HDSNSS7AODIM)
+6. In the cloned repo, inside the deployment directory, execute the file **Publish.ps1**.
+7. You should now see the MS Learn LTI Tool script popup.
 
 ## Select Subscription
 
@@ -18,7 +26,25 @@ If you're unsure that your account has a subscription, check [here](https://ms.p
 
 "Image"
 
-Click the location dropdown and locate your region.
+Here are the regions we support:
+* eastasia
+* southeastasia
+* centralus
+* eastus2
+* westus
+* southcentralus
+* northeurope
+* westeurope
+* japaneast
+* brazilsouth
+* australiaeast
+* canadacentralus
+* uksouth
+* westcentralus
+* westus2
+* koreacentral
+
+Locate your region. Then type it into the script and hit "Enter".
 
 Your region determines mainly three things:
 * Compliance and Data Residency
@@ -31,8 +57,6 @@ For information regarding your region, check [here](https://azure.microsoft.com/
 
 Make sure you have an Azure Active Directory subscription.
 
-#### For Canvas
-Check to see if your insitution has a Canvas single sign-on subscription
 
 
 ## Create your Resource Group
