@@ -2,7 +2,14 @@ $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition;
 $executionStartTime = $(get-date -f dd-MM-yyyy-HH-mm-ss);
 $LogFile = -join($scriptPath,"\Log\Log-",$executionStartTime,".log");
 $TranscriptFile = -join($scriptPath,"\Log\Transcript-",$executionStartTime,".log");
+$resourceGroupName = "MSLearnLTI";
+$identityName = "MSLearnLTI-Identity"
+$roleName = "Contributor"
+$templateFileName = "azuredeploy.json"
+$appName = "MS-Learn-Lti-Tool-App"
+$deploymentName = "Deployment-" + $executionStartTime;
 Start-Transcript -Path $TranscriptFile;
+
 function WriteLog
 {
    param([string]$Message) 
@@ -46,7 +53,7 @@ function ThrowException {
     )
     WriteErrorLog($Message);
     Write-Host($Message);
-    Write-Host 'Encountered an Error while executing the Script. Please reach out to support at support@microsoft.com. Ensure to attach the Logs Folder (Created next to the ps file) with the mail';
+    Write-Host 'Encountered an Error while executing the Script. Please report the bug on Github (along with Error Message & Logs)';
     Stop-Transcript;
     throw $Message;    
 }
@@ -120,7 +127,7 @@ else {
 
 $isValidSubscriptionName = $false;
 foreach ($subscription in $subscriptionList) {
-    if($subscription.name -eq $subscriptionName)
+    if($subscription.name -ceq $subscriptionName)
     {
         $isValidSubscriptionName = $true;
     }
@@ -149,7 +156,7 @@ $locationName = Read-Host 'Enter Location From Above List for Resource Provision
 WriteInfoLog('User Entered Location Name: ' + $locationName);
 $isValidLocationName = $false;
 foreach ($location in $locationList) {
-    if($location.name -eq $locationName)
+    if($location.name -ceq $locationName)
     {
         $isValidLocationName = $true;
     }
@@ -161,14 +168,8 @@ if(!$isValidLocationName)
     ThrowException($message);
 }
 
-Write-Title('STEP #4 - Registering Azure Active Directory App');
 
-$resourceGroupName = "MSLearnLTI";
-$identityName = "MSLearnLTI-Identity"
-$roleName = "Contributor"
-$templateFileName = "azuredeploy.json"
-$appName = "MS-Learn-Lti-Tool-App"
-$deploymentName = "Deployment-" + $executionStartTime;
+Write-Title('STEP #4 - Registering Azure Active Directory App');
 
 WriteInfoLog("Creating AAD App with Name: " + $appName);
 $appinfo=$(az ad app create --display-name $appName) | ConvertFrom-Json;
@@ -177,9 +178,9 @@ if(!$appinfo)
     $message = "Encountered an Error while creating AAD App";
     ThrowException($message);
 }
-
+$identifierURI = "api://$($appinfo.appId)";
 WriteInfoLog("Updating Identifier URI's in AAD App to: "+  "api://$($appinfo.appId)");
-$appUpdateOp = az ad app update --id $appinfo.appId --identifier-uris "api://$($appinfo.appId)";
+$appUpdateOp = az ad app update --id $appinfo.appId --identifier-uris $identifierURI;
 #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
 
 Write-Host 'App Created Successfully';
@@ -226,7 +227,7 @@ Write-Host 'Role Assignment Created Successfully';
 Write-Title('STEP #8 - Deploying Resources to Azure');
 
 WriteInfoLog("Deploying ARM Template to Azure inside ResourceGroup: " + $resourceGroupName + " with DeploymentName: " + $deploymentName +  " TemplateFile: " + $templateFileName + " AppClientId: " + $appinfo.appId + " IdentifiedURI: " + $appinfo.identifierUris);
-$deploymentOutput = (az deployment group create --resource-group $resourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($appinfo.identifierUris)) | ConvertFrom-Json;
+$deploymentOutput = (az deployment group create --resource-group $resourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) identityName=$($identityName)) | ConvertFrom-Json;
 if(!$deploymentOutput)
 {
     $message = "Encountered an Error while deploying to Azure";
