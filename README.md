@@ -1,6 +1,8 @@
 # About
 
-The LMS Learn LTI Application is designed for students, instructors, and institutions with the aim to bring Microsoft Learn content to the classroom. 
+Microsoft Learn is a free, online training platform that provides interactive learning resources for Microsoft products and more. Our goal is to empower students and educators to learn about Microsoft technology through fun, guided, hands-on content aimed at specific roles and learning goals. 
+
+The Microsoft Learn LTI application enables institutions to seamlessly embed modules and pathways from the Microsoft Learn Catalog within a Learning Management System (LMS). Educators can leverage the LTI application to integrate Microsoft Learn units and learning paths into their existing curricula while providing hands-on experiences with Azure and other Microsoft technology. Learners will be routed from their LMS to Microsoft Learn, where they can accrue points and achievements and track progress on learning activities. 
 
 ### Key Features: ###
 * **SSO** - users only have to sign into their institution to get access to Learn content 
