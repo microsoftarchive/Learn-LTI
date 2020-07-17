@@ -19,15 +19,15 @@ The Microsoft Learn LTI application enables institutions to seamlessly embed mod
 # Table of Contents
 
 1. Deployment Guide
-2. [User Guide](https://github.com/microsoft/Learn-LTI/blob/master/USER_GUIDE.md)
-3. [Architecture Overview](https://github.com/microsoft/Learn-LTI/blob/master/ARCHITECTURE_OVERVIEW.md)
-4. [Pricing Structure](https://github.com/microsoft/Learn-LTI/blob/master/PRICING_STRUCTURE.md)
-5. [Take it Further](https://github.com/microsoft/Learn-LTI/blob/master/TAKE_IT_FURTHER.md)
-6. [Troubleshooting](https://github.com/microsoft/Learn-LTI/blob/master/TROUBLESHOOTING.md)
+2. [User Guide](./USER_GUIDE.md)
+3. [Architecture Overview](./ARCHITECTURE_OVERVIEW.md)
+4. [Pricing Structure](./PRICING_STRUCTURE.md)
+5. [Take it Further](./TAKE_IT_FURTHER.md)
+6. [Troubleshooting](./TROUBLESHOOTING.md)
 7. [Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/) 
-8. [Security](https://github.com/microsoft/Learn-LTI/blob/master/SECURITY.md)
-9. [License](https://github.com/microsoft/Learn-LTI/blob/master/LICENSE)
-10. [Student Guide](https://github.com/microsoft/Learn-LTI/blob/master/STUDENT_GUIDE.md)
+8. [Security](./SECURITY.md)
+9. [License](./LICENSE)
+10. [Student Guide](./STUDENT_GUIDE.md)
 
 # Contributing
 
