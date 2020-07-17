@@ -18,7 +18,7 @@ The Microsoft Learn LTI application enables institutions to seamlessly embed mod
 
 # Table of Contents
 
-1. Deployment Guide
+1. [Deployment Guide](./DEPLOYMENT_GUIDE.md)
 2. [User Guide](./USER_GUIDE.md)
 3. [Architecture Overview](./ARCHITECTURE_OVERVIEW.md)
 4. [Pricing Structure](./PRICING_STRUCTURE.md)
