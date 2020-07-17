@@ -19,15 +19,11 @@ To deploy MS Learn LTI tool follow these steps:
 
 ## Select Subscription
 
-"Image"
-
 **Type in EduLearnLTI, hit "Enter"**
 
 If you're unsure that your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade)
 
 ## Choose Location
-
-"Image"
 
 Here are the regions we support:
 * eastasia
@@ -56,11 +52,29 @@ Your region determines mainly three things:
 
 For information regarding your region, check [here](https://azure.microsoft.com/global-infrastructure/geographies/)
 
-## Register your Azure Active Directory App
+## Registering Azure Active Directory App
 
-Make sure you have an Azure Active Directory subscription.
+Done automatically.
 
+## Creating your Resource Group
 
+Done automatically.
 
-## Create your Resource Group
+## Creating Managed Identity
+
+Done automatically.
+
+## Creating Role Assignment
+
+Done automatically.
+
+## Deploying Resources to Azure
+
+Done automatically.
+
+## Updating Azure Active Directory App
+
+Done automatically.
+
+**Congratualations! Your instance of the tool should now be deployed on Azure!** 
 
