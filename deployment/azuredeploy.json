@@ -13,14 +13,21 @@
         },
         "baseName": {
             "type": "string",
-            "defaultValue": "mslearn-user"
+            "defaultValue": "MSLearnLTI"
         },
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
+        },
+        "identityName": {
+            "type": "string",
+            "defaultValue": "MSLearnLTI-Identity"
         }
+        
     },
     "variables": {
+
+        "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id),0,9)]",
         "functionList": [
             "connect",
             "assignments",
@@ -41,14 +48,13 @@
             "AzureCloud": "eastus",
             "AzureUSGovernment": "usgovvirginia"
         },
-        "ProjectNamePrefix": "[concat(replace(variables('resourceGroupName'),'-',''),'-')]",
-        "staticWebsite": "[toLower(concat(replace(variables('resourceGroupName'),'-',''),'learnclient'))]",
-        "keyVaultName": "[toLower(concat(replace(variables('resourceGroupName'),'-',''),'mslearnlti-keyvault'))]",
-        "StorageAccountPrefix": "sta",
+        "ProjectNameSuffix": "[concat('-', replace(variables('uniqueIdentifier'),'-',''))]",
+        "staticWebsite": "[toLower(concat('learnclient', replace(variables('uniqueIdentifier'),'-','')))]",
+        "keyVaultName": "[toLower(concat('kv-', variables('uniqueIdentifier')))]",
+        "StorageAccountSuffix": "[toLower(concat(variables('uniqueIdentifier')))]",
         "keyName": "EdnaLiteDevKey",
         "cliResourceName": "DeployingAppRegisteration",
-        "cliArg": "[concat(variables('keyVaultName'), ' ', variables('staticWebsite'), ' ',variables('location'), ' ',variables('ProjectNamePrefix'), ' ',variables('keyName'),' ',variables('resourceGroupName'))]",
-        "identityName": "[concat(parameters('baseName'), '-bootstrap')]",
+        "cliArg": "[concat(variables('keyVaultName'), ' ', variables('staticWebsite'), ' ',variables('location'), ' ',variables('ProjectNameSuffix'), ' ',variables('keyName'),' ',variables('resourceGroupName'))]",
         "contributorRoleAssignmentId": "[guid(concat(resourceGroup().id, 'contributor'))]",
         "contributorRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
         "readerRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]"
@@ -57,12 +63,12 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2019-08-01",
-            "name": "[concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')])]",
+            "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix'))]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')]))]",
-                "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), variables('functionList')[copyIndex('FunctionatIndex')]))]",
-                "[resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')]))]"
+                "[resourceId('Microsoft.Web/serverfarms', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('StorageAccountSuffix')))]",
+                "[resourceId('microsoft.insights/components', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')))]"
             ],
             "kind": "functionapp",
             "identity": {
@@ -77,7 +83,7 @@
                         },
                         {
                             "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat(variables('StorageAccountPrefix'), variables('functionList')[copyIndex('FunctionatIndex')]), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), variables('functionList')[copyIndex('FunctionatIndex')])), '2019-06-01').keys[0].value)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -85,20 +91,20 @@
                         },
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value": "[reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')])), '2018-05-01-preview').InstrumentationKey]"
+                            "value": "[reference(resourceId('microsoft.insights/components', concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]"
                         },
                         {
                             "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat(variables('StorageAccountPrefix'), variables('functionList')[copyIndex('FunctionatIndex')]), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), variables('functionList')[copyIndex('FunctionatIndex')])),'2019-06-01').keys[0].value)]"
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]"
                         },
                         {
                             "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[toLower(concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')]))]"
+                            "value": "[toLower(concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')))]"
                         },
 
                         {
                             "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-                            "value": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')])), '2018-05-01-preview').InstrumentationKey)]"
+                            "value": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]"
                         },
                         {
                             "name": "WEBSITE_ENABLE_SYNC_UPDATE_SITE",
@@ -111,13 +117,13 @@
                     ],
                     "cors": {
                         "allowedOrigins": [
-                            "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.blob]"
+                            "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]"
                         ]
                     }
                 },
-                "name": "[concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')])]",
+                "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix'))]",
                 "clientAffinityEnabled": false,
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/',concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')]))]"
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/',concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')))]"
             },
             "copy": {
                 "name": "FunctionatIndex",
@@ -125,16 +131,16 @@
             }
         },
         {
-            "name": "[concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')],'/authsettings')]",
+            "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix'),'/authsettings')]",
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')]))]",
+                "[resourceId('Microsoft.Web/sites', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')))]",
                 "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
             ],
             "properties": {
-                "enabled": "[if(equals(concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')]),concat(variables('ProjectNamePrefix'), 'connect')), 'false', 'true')]",
+                "enabled": "[if(equals(concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')),concat('connect', variables('ProjectNameSuffix'))), 'false', 'true')]",
                 "unauthenticatedClientAction": "RedirectToLoginPage",
                 "tokenStoreEnabled": true,
                 "defaultProvider": "AzureActiveDirectory",
@@ -150,99 +156,99 @@
             }
         },
         {
-            "name": "[concat(variables('ProjectNamePrefix'), 'connect','/appsettings')]",
+            "name": "[concat('connect', variables('ProjectNameSuffix'), '/appsettings')]",
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat(variables('ProjectNamePrefix'), 'connect'))]",
+                "[resourceId('Microsoft.Web/sites', concat('connect' , variables('ProjectNameSuffix')))]",
                 "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "AssignmentsServiceUrl": "[concat('https://',variables('ProjectNamePrefix'), 'assignments','.azurewebsites.net/api')]",
+                "AssignmentsServiceUrl": "[concat('https://', 'assignments' , variables('ProjectNameSuffix'), '.azurewebsites.net/api')]",
                 "Lti1Secret": "secret",
-                "PlatformsServiceUrl": "[concat('https://',variables('ProjectNamePrefix'), 'platform','.azurewebsites.net/api')]",
-                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.blob]",
+                "PlatformsServiceUrl": "[concat('https://', 'platform', variables('ProjectNameSuffix'), '.azurewebsites.net/api')]",
+                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat(variables('StorageAccountPrefix'),'connect' ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'connect')), '2019-06-01').keys[0].value)]",
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('connect' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('connect' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), 'connect')), '2018-05-01-preview').InstrumentationKey]",
-                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat(variables('StorageAccountPrefix'), 'connect'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'connect')),'2019-06-01').keys[0].value)]",
-                "WEBSITE_CONTENTSHARE": "[toLower(concat(variables('ProjectNamePrefix'), 'connect'))]",
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), 'connect')), '2018-05-01-preview').InstrumentationKey)]",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('connect' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('connect' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('connect' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(concat('connect' , variables('ProjectNameSuffix')))]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('connect' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1"
             }
         },
         {
-            "name": "[concat(variables('ProjectNamePrefix'), 'users','/appsettings')]",
+            "name": "[concat('users', variables('ProjectNameSuffix'), '/appsettings')]",
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat(variables('ProjectNamePrefix'), 'connect'))]",
+                "[resourceId('Microsoft.Web/sites', concat('connect', variables('ProjectNameSuffix')))]",
                 "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "AssignmentsServiceUrl": "[concat('https://',variables('ProjectNamePrefix'), 'assignments','.azurewebsites.net/api')]",
+                "AssignmentsServiceUrl": "[concat('https://', 'assignments', variables('ProjectNameSuffix'), '.azurewebsites.net/api')]",
                 "Lti1Secret": "secret",
-                "PlatformsServiceUrl": "[concat('https://',variables('ProjectNamePrefix'), 'platform','.azurewebsites.net/api')]",
-                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.blob]",
+                "PlatformsServiceUrl": "[concat('https://', 'platform', variables('ProjectNameSuffix'), '.azurewebsites.net/api')]",
+                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat(variables('StorageAccountPrefix'),'users' ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'users')), '2019-06-01').keys[0].value)]",
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('users' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('users' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), 'users')), '2018-05-01-preview').InstrumentationKey]",
-                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat(variables('StorageAccountPrefix'), 'users'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'users')),'2019-06-01').keys[0].value)]",
-                "WEBSITE_CONTENTSHARE": "[toLower(concat(variables('ProjectNamePrefix'), 'users'))]",
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), 'users')), '2018-05-01-preview').InstrumentationKey)]",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('users' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('users' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(concat('users' , variables('ProjectNameSuffix')))]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1"
             }
         },
         {
-            "name": "[concat(variables('ProjectNamePrefix'), 'assignments','/appsettings')]",
+            "name": "[concat('assignments' , variables('ProjectNameSuffix'), '/appsettings')]",
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat(variables('ProjectNamePrefix'), 'assignments'))]",
+                "[resourceId('Microsoft.Web/sites', concat('assignments' , variables('ProjectNameSuffix')))]",
                 "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "PlatformsServiceUrl": "[concat('https://',variables('ProjectNamePrefix'), 'platform','.azurewebsites.net/api')]",
+                "PlatformsServiceUrl": "[concat('https://','platform' , variables('ProjectNameSuffix'),'.azurewebsites.net/api')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat(variables('StorageAccountPrefix'),'assignments' ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'assignments')), '2019-06-01').keys[0].value)]",
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('assignments' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('assignments' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), 'assignments')), '2018-05-01-preview').InstrumentationKey]",
-                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat(variables('StorageAccountPrefix'), 'assignments'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'assignments')),'2019-06-01').keys[0].value)]",
-                "WEBSITE_CONTENTSHARE": "[toLower(concat(variables('ProjectNamePrefix'), 'assignments'))]",
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), 'assignments')), '2018-05-01-preview').InstrumentationKey)]",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('assignments' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('assignments' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(concat('assignments' , variables('ProjectNameSuffix')))]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1"
             }
         },
         {
-            "name": "[concat(variables('ProjectNamePrefix'), 'platform','/appsettings')]",
+            "name": "[concat('platform' , variables('ProjectNameSuffix'),'/appsettings')]",
             "apiVersion": "2018-11-01",
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat(variables('ProjectNamePrefix'), 'platform'))]",
+                "[resourceId('Microsoft.Web/sites', concat('platform' , variables('ProjectNameSuffix')))]",
                 "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "ConnectApiBaseUrl": "[concat('https://',variables('ProjectNamePrefix'), 'connect','.azurewebsites.net/api')]",
+                "ConnectApiBaseUrl": "[concat('https://','connect' , variables('ProjectNameSuffix'),'.azurewebsites.net/api')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat(variables('StorageAccountPrefix'),'platform' ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'platform')), '2019-06-01').keys[0].value)]",
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('platform' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('platform' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), 'platform')), '2018-05-01-preview').InstrumentationKey]",
-                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat(variables('StorageAccountPrefix'), 'platform'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountPrefix'), 'platform')),'2019-06-01').keys[0].value)]",
-                "WEBSITE_CONTENTSHARE": "[toLower(concat(variables('ProjectNamePrefix'), 'platform'))]",
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat(variables('ProjectNamePrefix'), 'platform')), '2018-05-01-preview').InstrumentationKey)]",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('platform' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('platform' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('platform' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(concat('platform' , variables('ProjectNameSuffix')))]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('platform' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1"
             }
@@ -250,7 +256,7 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2019-08-01",
-            "name": "[concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')])]",
+            "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))]",
             "location": "[variables('location')]",
             "sku": {
                 "name": "Y1",
@@ -260,7 +266,7 @@
                 "capacity": 0
             },
             "properties": {
-                "name": "[concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')])]"
+                "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))]"
             },
             "copy": {
                 "name": "FunctionatIndex",
@@ -281,7 +287,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
-            "name": "[concat(variables('StorageAccountPrefix'), variables('functionList')[copyIndex('FunctionatIndex')])]",
+            "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('StorageAccountSuffix'))]",
             "location": "[variables('location')]",
             "sku": {
                 "name": "Standard_LRS"
@@ -294,13 +300,13 @@
         {
             "type": "Microsoft.Insights/components",
             "apiVersion": "2018-05-01-preview",
-            "name": "[concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')])]",
+            "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))]",
             "location": "[variables('insightsLocation')[environment().name]]",
             "tags": {
-                "[concat('hidden-link:', resourceId('Microsoft.Web/sites/',concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')]) ))]": "Resource"
+                "[concat('hidden-link:', resourceId('Microsoft.Web/sites/',concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix')) ))]": "Resource"
             },
             "properties": {
-                "ApplicationId": "[concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')])]"
+                "ApplicationId": "[concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))]"
             },
             "copy": {
                 "name": "FunctionatIndex",
@@ -319,7 +325,7 @@
                 "tenantId": "[variables('tenantId')]",
                 "accessPolicies": [
                     {
-                        "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30').principalId]",
+                        "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
                         "tenantId": "[variables('tenantId')]",
                         "permissions": {
                             "keys": [
@@ -349,7 +355,7 @@
                 "accessPolicies": [
                     {
                         "tenantId": "[variables('tenantId')]",
-                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat(variables('ProjectNamePrefix'),'connect')), '2019-08-01', 'Full').identity.principalId]",
+                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('connect' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
                             "keys": [
                                 "encrypt",
@@ -364,7 +370,7 @@
                     },
                     {
                         "tenantId": "[variables('tenantId')]",
-                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat(variables('ProjectNamePrefix'),'users')), '2019-08-01', 'Full').identity.principalId]",
+                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('users' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
                             "keys": [
                                 "encrypt",
@@ -379,7 +385,7 @@
                     },
                     {
                         "tenantId": "[variables('tenantId')]",
-                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat(variables('ProjectNamePrefix'),'platform')), '2019-08-01', 'Full').identity.principalId]",
+                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('platform' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
                             "keys": [
                                 "encrypt",
@@ -404,12 +410,12 @@
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', variables('staticWebsite'))]",
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',parameters('identityName'))]"
             ],
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]": {
+                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',parameters('identityName'))]": {
                     }
                 }
             },
@@ -418,14 +424,14 @@
                 "AzCliVersion": "2.0.80",
                 "timeout": "PT30M",
                 "arguments": "[variables('cliArg')]",
-                "scriptContent": "az keyvault key create --vault-name $1 --name $5 --protection software;az storage blob service-properties update --account-name $2 --static-website --404-document index.html --index-document index.html;KeyVaultLink=$(az keyvault key show --vault-name $1 --name EdnaLiteDevKey | jq -r '.key.kid');az functionapp config appsettings set --name $4connect --resource-group $6 --settings='EdnaKeyString='$KeyVaultLink;az functionapp config appsettings set --name $4platform --resource-group $6 --settings='EdnaKeyString='$KeyVaultLink;az functionapp config appsettings set --name $4users --resource-group $6 --settings='EdnaKeyString='$KeyVaultLink;",
+                "scriptContent": "az keyvault key create --vault-name $1 --name $5 --protection software;az storage blob service-properties update --account-name $2 --static-website --404-document index.html --index-document index.html;KeyVaultLink=$(az keyvault key show --vault-name $1 --name EdnaLiteDevKey | jq -r '.key.kid');az functionapp config appsettings set --name connect$4 --resource-group $6 --settings='EdnaKeyString='$KeyVaultLink;az functionapp config appsettings set --name platform$4 --resource-group $6 --settings='EdnaKeyString='$KeyVaultLink;az functionapp config appsettings set --name users$4 --resource-group $6 --settings='EdnaKeyString='$KeyVaultLink;",
                 "cleanupPreference": "OnSuccess",
                 "retentionInterval": "P1D"
             }
         },
         {
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-            "name": "[variables('identityName')]",
+            "name": "[parameters('identityName')]",
             "apiVersion": "2018-11-30",
             "location": "[resourceGroup().location]"
         },
@@ -434,11 +440,11 @@
             "apiVersion": "2018-09-01-preview",
             "name": "[variables('contributorRoleAssignmentId')]",
             "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]"
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',parameters('identityName'))]"
             ],
             "properties": {
                 "roleDefinitionId": "[variables('contributorRoleDefinitionId')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName')), '2018-11-30').principalId]",
+                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
                 "scope": "[resourceGroup().id]",
                 "principalType": "ServicePrincipal"
             }
@@ -446,13 +452,13 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[guid(concat(resourceGroup().id, variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')]))]",
+            "name": "[guid(concat(resourceGroup().id, variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix')))]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites',concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')]))]"
+                "[resourceId('Microsoft.Web/sites',concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix')))]"
             ],
             "properties": {
                 "roleDefinitionId": "[variables('readerRoleDefinitionId')]",
-                "principalId": "[reference(resourceId('Microsoft.Web/sites', concat(variables('ProjectNamePrefix'), variables('functionList')[copyIndex('FunctionatIndex')])), '2019-08-01', 'full').identity.principalId]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))), '2019-08-01', 'full').identity.principalId]",
                 "scope": "[resourceGroup().id]",
                 "principalType": "ServicePrincipal"
             },
@@ -464,7 +470,7 @@
     ],
     "outputs": {
         "WebClientURL": {
-            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.blob]",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
             "type": "string"
         }
     }
