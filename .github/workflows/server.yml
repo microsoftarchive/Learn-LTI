@@ -1,0 +1,26 @@
+name: backend
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:     
+  build:
+    runs-on: windows-latest
+
+    env:
+      SOURCE_DIR: ${{ github.workspace }}\backend
+      DOTNET_VERSION: "3.1.101"
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    - name: Install dependencies
+      run: dotnet restore ${{ env.SOURCE_DIR }}
+    - name: Build
+      run: dotnet build ${{ env.SOURCE_DIR }} --configuration Release --no-restore
