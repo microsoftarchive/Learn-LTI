@@ -1,3 +1,21 @@
+# GLOBALS
+# TODO: Update to parameterize
+class Deployment {
+    static [hashtable] $ResourceGroup = @{ "name"="MSLearnLTI" }
+    static [hashtable] $FunctionApps = @{
+        "Edna.AssignmentLearnContent"="learncontent-bblzecsor";
+        "Edna.AssignmentLinks"="links-bblzecsor";
+        "Edna.Assignments"="assignments-bblzecsor";
+        "Edna.Connect"="connect-bblzecsor";
+        "Edna.Platforms"="platform-bblzecsor";
+        "Edna.Users"="users-bblzecsor"
+    }
+    static [hashtable] $StaticWebsite = @{ 
+        "name"="learnclientbblzecsor";
+        "webUrl"="https://learnclientbblzecsor.z6.web.core.windows.net/"
+    }
+}
+
 function Write-Log {
     param(
         [Parameter(Mandatory)]
@@ -21,10 +39,6 @@ function Write-Title {
     Write-Host ''    
 }
 
-
-# Will be used for accessing specific resources based on the naming convension used in the ARM template deployment
-$resourceGroupName = Read-Host -Prompt 'Please provide the Resource Group name.'
-
 Push-Location "../backend"
 
 Write-Title "Installing the backend"
@@ -37,19 +51,14 @@ Write-Title "Installing the backend"
 # 5. Deploy to the cloud
 # 
 # Best way would be to create a separate script for a single function deployment that receives parameters
-
-$AZ_FUNCTIONS = @{
-    "Edna.AssignmentLearnContent"="edna-lti-ab-learn";
-    "Edna.AssignmentLinks"="edna-lti-ab-links";
-    "Edna.Assignments"="edna-lti-ab-assignment";
-    "Edna.Connect"="edna-lti-ab-connect";
-    "Edna.Platforms"="edna-lti-ab-platfomrs";
-    "Edna.Users"="edna-lti-ab-users"
+$publishRoot = 'Artifacts'
+if(Test-Path $publishRoot) {
+    Write-Log "Deleting old Artifacts"
+    Remove-Item -LiteralPath $publishRoot -Recurse -Force
 }
 
 $fnRegex = "Functions/**/*.csproj"
 $functions = Get-ChildItem -Path $fnRegex -Recurse
-$publishRoot = 'Artifacts'
 foreach ($function in $functions) {
     $fnName = $function.Directory.Name
     $projectDir = $function.Directory
@@ -62,9 +71,10 @@ foreach ($function in $functions) {
     Write-Log "Zipping Artifacts -- $zipPath"
     Compress-Archive -Path "$publishDir/*" -DestinationPath $zipPath
 
-    $azFunction = $AZ_FUNCTIONS[$fnName]
-    Write-Log "Deploying to Azure -- $azFunction"
-    az functionapp deployment config-zip -g $resourceGroupName -n $azFunction --src $zipPath
+    $azFunctionName = [Deployment]::FunctionApps[$fnName]
+    $resourceGroupName = [Deployment]::ResourceGroup["name"]
+    Write-Log "Deploying to Azure -- $azFunctionName"
+    az functionapp deployment source config-zip -g $resourceGroupName -n $azFunctionName --src $zipPath
 }
 
 Write-Log 'Deleting Artifacts'
@@ -77,31 +87,30 @@ Write-Title 'Installing the client'
 Push-Location "../client"
 
 Write-Log 'Running npm install';
-npm i
+npm ci
 
 # TODO
 # Fetch the needed values from different Azure resources and rewrite the [.env.production] file.
 
 Write-Log 'Building React'
-# npm run build
+npm run build
 
 Write-Log 'Deploying as a static WebApp';
 
+$web = '$web'
+$clientStorageAccount = [Deployment]::StaticWebsite["name"]
 Write-Log 'Delete existing website content (Just in case of a redeploy)';
-# az storage blob delete-batch --account-name psednaclienttests --source '$web'
+az storage blob delete-batch --account-name $clientStorageAccount --source $web
 
-Write-Host 'Uploading build content to the static website storage container';
-# az storage blob upload-batch -s 'build' -d '$web' --account-name psednaclienttests
+Write-Log 'Uploading build content to the static website storage container';
+az storage blob upload-batch -s 'build' -d $web --account-name $clientStorageAccount 
 
 Write-Title 'Client Installation Completed'
 
 # Check if running Powershell ISE
-if ($psISE)
-{
+if ($psISE) {
     Write-Host -NoNewLine 'Script is done';
-}
-else
-{
+} else {
     Write-Host -NoNewLine 'Press any key to continue...';
     $host.ui.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 }
