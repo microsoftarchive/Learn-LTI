@@ -61,23 +61,6 @@ function ThrowException {
 }
 
 
-
-
-Write-Host ' __  __  _____     _      ______          _____  _   _';
-Write-Host '|  \/  |/ ____|   | |    |  ____|   /\   |  __ \| \ | |';
-Write-Host '| \  / | (___     | |    | |__     /  \  | |__) |  \| |';
-Write-Host '| |\/| |\___ \    | |    |  __|   / /\ \ |  _  /| . ` |';
-Write-Host '| |  | |____) |   | |____| |____ / ____ \| | \ \| |\  |';
-Write-Host '|_|  |_|_____/____|______|______/_/   _\_\_|_ \_\_| \_|';
-Write-Host '';
-Write-Host ' _   _______ _____     _______ ____   ____  _';
-Write-Host '| | |__   __|_   _|   |__   __/ __ \ / __ \| |';
-Write-Host '| |    | |    | |        | | | |  | | |  | | |';
-Write-Host '| |    | |    | |        | | | |  | | |  | | |';
-Write-Host '| |____| |   _| |_       | | | |__| | |__| | |____';
-Write-Host '|______|_|  |_____|      |_|  \____/ \____/|______|';
-Write-Host '';
-
 Write-Title('STEP #1 - Logging into Azure');
 
 WriteInfoLog("Logging in to Azure");
