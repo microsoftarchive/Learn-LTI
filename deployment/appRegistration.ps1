@@ -238,4 +238,10 @@ Write-Title('=========Successfully Deployed Resources to Azure============');
 WriteInfoLog("Deployment Complete");
 Stop-Transcript;
 
-$exit = Read-Host 'Press any Key to Exit'
+# Check if running Powershell ISE
+if ($psISE) {
+    Write-Host -NoNewLine 'Script is done';
+} else {
+    Write-Host -NoNewLine 'Press any key to exit...';
+    $host.ui.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+}
