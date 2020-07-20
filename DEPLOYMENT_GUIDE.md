@@ -78,3 +78,9 @@ Done automatically.
 
 **Congratualations! Your instance of the tool should now be deployed on Azure!** 
 
+Now we have to configure the tool on your institution's LMS.
+
+# Configuring the tool on your LMS
+
+
+
