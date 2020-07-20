@@ -22,7 +22,12 @@
         "identityName": {
             "type": "string",
             "defaultValue": "MSLearnLTI-Identity"
+        },
+        "userEmailAddress": {
+            "type": "string",
+            "defaultValue": "user@microsoft.com"
         }
+        
         
     },
     "variables": {
@@ -117,7 +122,7 @@
                     ],
                     "cors": {
                         "allowedOrigins": [
-                            "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]"
+                            "[substring(reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web,0,sub(length(reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web),1))]"
                         ]
                     }
                 },
@@ -240,6 +245,7 @@
                 "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
             ],
             "properties": {
+                "AllowedUsers": "[parameters('userEmailAddress')]",
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
                 "ConnectApiBaseUrl": "[concat('https://','connect' , variables('ProjectNameSuffix'),'.azurewebsites.net/api')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
