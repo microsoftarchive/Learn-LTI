@@ -7,6 +7,7 @@ To deploy MS Learn LTI tool follow these steps:
 * [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
 * [DotNet Core SDK](https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.301-windows-x64-installer)
 * [Node.js](https://nodejs.org/en/download/)
+* [npm](https://www.npmjs.com/get-npm)
 3. [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest)
 4. In the cloned repo, inside the deployment directory, execute the file **appRegistration.ps1** and save the result for later.
 5. Click the button to deploy the needed resources in Azure.
