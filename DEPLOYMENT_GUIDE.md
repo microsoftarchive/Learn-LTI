@@ -21,7 +21,7 @@ To deploy MS Learn LTI tool follow these steps:
 
 **Type in EduLearnLTI, hit "Enter"**
 
-If you're unsure that your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade)
+If you're unsure that your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade?WT.mc_id=edna.github.jabenn)
 
 ## Choose Location
 
