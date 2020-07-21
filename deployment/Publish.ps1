@@ -27,25 +27,20 @@ function Write-Title {
 }
 
 function Get-FunctionApps ([string]$ResourceGroupName) {
-    $functionApps = az functionapp list -g $ResourceGroupName | ConvertFrom-Json
-    if (!$functionApps) {
+    $PotentialFunctionApps = az functionapp list -g $ResourceGroupName | ConvertFrom-Json
+    if (!$PotentialFunctionApps) {
         throw "Could not find any Function Apps in $ResourceGroupName"
     }
     
-    $isValidFunctionApp = {
-        $isValid = $false
-        foreach ($functionLabel in $VALID_FUNCTIONS) {
-            if ($_ -like "$functionLabel-*") {
-                $isValid = $true
-                break
-            }
+    $FunctionApps = @{}
+    $FunctionAppNames = $PotentialFunctionApps | Select-Object -ExpandProperty "name";
+    foreach ($FunctionLabel in $VALID_FUNCTIONS) {
+        $FunctionAppName = $FunctionAppNames | Where-Object { $_ -like "$FunctionLabel-*" }
+        if($FunctionAppName) {
+            $FunctionApps["$($FunctionLabel)FunctionAppName"] = $FunctionAppName;
         }
-        $isValid
     }
-    # Write-Log $functionApps | 
-    #     Select-Object "name", @{n="Url"; e={"https://$($_.defaultHostName)"}}, @{n="Label"; e={& $functionLabel}}
-
-    return $functionApps | Select-Object -ExpandProperty "name" | Where-Object { & $isValidFunctionApp }
+    return $FunctionApps
 }
 
 function Get-StaticWebsite ([string]$ResourceGroupName) {
@@ -105,20 +100,25 @@ function Get-DeployedResourceInfo {
 
 $resources = Get-DeployedResourceInfo "MSLearnLTI-07202020" "MS-Learn-Lti-Tool-App-MSLearnLTI-07202020"
 
-. .\Install-Backend.ps1
+Import-Module ".\Install-Backend.ps1"
 
 Write-Title "Installing the backend"
-Install-Backend "../backend" $resources['resource-group'] $resources['function-apps']
+$BackendParams = @{
+    SourceRoot="../backend";
+    ResourceGroupName="$($resources['resource-group'])";
+}
+$BackendParams = $BackendParams + $resources['function-apps']
+Install-Backend @BackendParams
 Write-Title 'Backend Installation Completed'
 
-. .\Install-Client.ps1
+Import-Module ".\Install-Client.ps1"
 
 Write-Title "Updating the Client Config"
-Update-ClientConfig "../client/.env.production" $resources['resource-group'] $resources['function-apps'] $resources['app-id'] $resources['static-website']
+#Update-ClientConfig "../client/.env.production" $resources['resource-group'] $resources['function-apps'] $resources['app-id'] $resources['static-website']
 Write-Title "Client Config updated"
 
 Write-Title 'Installing the client'
-Install-Client "../client" $resources['static-website']
+#Install-Client "../client" $resources['static-website']
 Write-Title 'Client Installation Completed'
 
 # Check if running Powershell ISE
