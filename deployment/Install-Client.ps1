@@ -1,3 +1,15 @@
+enum DotEnv {
+    REACT_APP_EDNA_AAD_CLIENT_ID;
+    REACT_APP_EDNA_MAIN_URL;
+    REACT_APP_EDNA_DEFAULT_SCOPE;
+    REACT_APP_EDNA_TENANT_ID;
+    REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL;
+    REACT_APP_EDNA_LINKS_SERVICE_URL;
+    REACT_APP_EDNA_LEARN_CONTENT;
+    REACT_APP_EDNA_USERS_SERVICE_URL;
+    REACT_APP_EDNA_PLATFORM_SERVICE_URL
+}
+
 function Export-DotEnv ([hashtable]$config, [string]$fileName) {
     # TODO: Test the config for completeness of values inside fileName
     Write-Log "Updating $fileName with new config"
@@ -15,39 +27,28 @@ function Export-DotEnv ([hashtable]$config, [string]$fileName) {
 }
 
 function Update-ClientConfig {
+
+    [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory)]
-        [string]$dotEnvFile,
-        [Parameter(Mandatory)]
-        [string[]]$ResourceGroupName,
-        [Parameter(Mandatory)]
-        [string[]]$FunctionAppNames,
-        [Parameter(Mandatory)]
+        #[Parameter(Mandatory)]
+        [string]$ConfigFilePath,
+        #[Parameter(Mandatory)]
+        [string]$ResourceGroupName,
+        #[Parameter(Mandatory)]
         [string]$AppId,
-        [Parameter(Mandatory)]
-        [string]$StaticWebsiteName
+        #[Parameter(Mandatory)]
+        [string]$LearnContentFunctionAppName,
+        #[Parameter(Mandatory)]
+        [string]$LinksFunctionAppName,
+        #[Parameter(Mandatory)]
+        [string]$AssignmentsFunctionAppName,
+        #[Parameter(Mandatory)]
+        [string]$PlatformsFunctionAppName,
+        #[Parameter(Mandatory)]
+        [string]$UsersFunctionAppName,
+        #[Parameter(Mandatory)]
+        [string]$StaticWebsiteUrl
     )
-
-    enum DotEnv {
-        REACT_APP_EDNA_AAD_CLIENT_ID;
-        REACT_APP_EDNA_MAIN_URL;
-        REACT_APP_EDNA_DEFAULT_SCOPE;
-        REACT_APP_EDNA_TENANT_ID;
-        REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL;
-        REACT_APP_EDNA_LINKS_SERVICE_URL;
-        REACT_APP_EDNA_LEARN_CONTENT;
-        REACT_APP_EDNA_USERS_SERVICE_URL;
-        REACT_APP_EDNA_PLATFORM_SERVICE_URL
-    }
-
-    function Get-StaticWebsiteUrl {
-        Write-Log "Getting Static Website Url -- $StaticWebsiteName"
-        $account = az storage account show -n $StaticWebsiteName -g $ResourceGroupName | ConvertFrom-Json
-        if (!$account) {
-            throw 'Unable to get Static Website Account: $StaticWebsiteName for Resource Group: $ResourceGroupName'
-        }
-        return $account.primaryEndpoints.web;
-    }
 
     function Get-ADAppScope  {
         Write-Log "Getting Default scope for App -- $AppId"
@@ -66,24 +67,23 @@ function Update-ClientConfig {
         #return $app.appOwnerTenantId
     }
 
-    function Get-ServiceUrl ([string]$fnName)  {
-        Write-Log "Getting Service Url for Function -- $fnName"
-        $serviceName = $FunctionAppNames | Where-Object { $_ -like "$fnName-*" }
-        return "https://$serviceName.azurewebsites.net/api"
+    function Get-ServiceUrl ([string]$ServiceName)  {
+        Write-Log "Getting Service Url for Function App -- $ServiceName"
+        return "https://$ServiceName.azurewebsites.net/api"
     }
 
-    $dotEnv = @{
+    $Config = @{
         [DotEnv]::REACT_APP_EDNA_AAD_CLIENT_ID="$AppId";
-        [DotEnv]::REACT_APP_EDNA_MAIN_URL="$(Get-StaticWebsiteUrl)";
+        [DotEnv]::REACT_APP_EDNA_MAIN_URL="$StaticWebsiteUrl";
         [DotEnv]::REACT_APP_EDNA_DEFAULT_SCOPE="$(Get-ADAppScope)";
         [DotEnv]::REACT_APP_EDNA_TENANT_ID="$(Get-TenantId)";
-        [DotEnv]::REACT_APP_EDNA_LEARN_CONTENT="$(Get-ServiceUrl "LearnContent")";
-        [DotEnv]::REACT_APP_EDNA_LINKS_SERVICE_URL="$(Get-ServiceUrl "Links")";
-        [DotEnv]::REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL="$(Get-ServiceUrl "Assignments")";
-        [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL="$(Get-ServiceUrl "Platforms")";
-        [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$(Get-ServiceUrl "Users")"
+        [DotEnv]::REACT_APP_EDNA_LEARN_CONTENT="$(Get-ServiceUrl $LearnContentFunctionAppName)";
+        [DotEnv]::REACT_APP_EDNA_LINKS_SERVICE_URL="$(Get-ServiceUrl $LinksFunctionAppName)";
+        [DotEnv]::REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL="$(Get-ServiceUrl $AssignmentsFunctionAppName)";
+        [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL="$(Get-ServiceUrl $PlatformsFunctionAppName)";
+        [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$(Get-ServiceUrl $UsersFunctionAppName)"
     }
-    Export-DotEnv $dotEnv $dotEnvFile
+    Export-DotEnv $Config $ConfigFilePath
 }
 
 function Install-Client {

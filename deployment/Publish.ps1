@@ -48,7 +48,9 @@ function Get-StaticWebsite ([string]$ResourceGroupName) {
     if (!$storageAccounts -or ($storageAccounts.Count -le $VALID_FUNCTIONS.Count)) {
         throw "Could not find any Storage Accounts in $ResourceGroupName"
     }
-    return $storageAccounts | Where-Object { $_.name -like "$VALID_CLIENT*" } | Select-Object -ExpandProperty "name"
+    return $storageAccounts | 
+        Where-Object { $_.name -like "$VALID_CLIENT*" } | 
+        Select-Object -Property "name", @{label="WebUrl"; expression={ $_.primaryEndpoints.web }} 
 }
 
 function Get-DeployedResourceInfo {
@@ -114,7 +116,15 @@ Write-Title 'Backend Installation Completed'
 Import-Module ".\Install-Client.ps1"
 
 Write-Title "Updating the Client Config"
-#Update-ClientConfig "../client/.env.production" $resources['resource-group'] $resources['function-apps'] $resources['app-id'] $resources['static-website']
+$ClientUpdateConfigParams = @{
+    ConfigFilePath="../client/.env.production";
+    ResourceGroupName="$($resources['resource-group'])";
+    AppId="$($resources['app-id'])";
+    StaticWebsiteUrl="$($($resources['static-website']).WebUrl)";
+}
+$ClientUpdateConfigParams = $ClientUpdateConfigParams + $resources['function-apps']
+$ClientUpdateConfigParams.Remove("ConnectFunctionAppName")
+Update-ClientConfig @ClientUpdateConfigParams
 Write-Title "Client Config updated"
 
 Write-Title 'Installing the client'
