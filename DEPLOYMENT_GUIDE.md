@@ -3,7 +3,7 @@ To deploy MS Learn LTI tool follow these steps:
 1. Clone the Deployment repository to your machine
 2. Make sure that you install:
 * [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
-* [DotNet Core SDK](https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.301-windows-x64-installer)
+* [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
 * [Node.js](https://nodejs.org/en/download/)
 * [npm](https://www.npmjs.com/get-npm)
 * [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
