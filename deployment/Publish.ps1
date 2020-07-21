@@ -1,25 +1,8 @@
 # GLOBALS
-# TODO: Update to parameterize
-class Deployment {
-    static [hashtable] $ResourceGroup = @{ "name"="MSLearnLTI" }
-    static [hashtable] $AppRegistration = @{
-        "ClientId"="29ef9874-9b8d-44bf-a237-2fe4672b1359";
-        "Uri"="api://29ef9874-9b8d-44bf-a237-2fe4672b1359"
-    }
-    static [hashtable] $FunctionApps = @{
-        "Edna.AssignmentLearnContent"="learncontent-bblzecsor";
-        "Edna.AssignmentLinks"="links-bblzecsor";
-        "Edna.Assignments"="assignments-bblzecsor";
-        "Edna.Connect"="connect-bblzecsor";
-        "Edna.Platforms"="platform-bblzecsor";
-        "Edna.Users"="users-bblzecsor"
-    }
-    static [hashtable] $StaticWebsite = @{ 
-        "name"="learnclientbblzecsor";
-        "webUrl"="https://learnclientbblzecsor.z6.web.core.windows.net/"
-    }
-}
+$VALID_FUNCTIONS =  @("LearnContent", "Links", "Assignments", "Connect", "Platforms", "Users")
+$VALID_CLIENT = "learnclient"
 
+# TODO: Move helpers to common file
 function Write-Log {
     param(
         [Parameter(Mandatory)]
@@ -43,156 +26,91 @@ function Write-Title {
     Write-Host ''    
 }
 
-function Install-Backend {
-    # Go over all the [.csproj] files under the [Functions] folder and for each of them do the following:
-    # 1. Restore
-    # 2. Build
-    # 3. Publish
-    # 4. Zip the publish result
-    # 5. Deploy to the cloud
-    # 
-    # Best way would be to create a separate script for a single function deployment that receives parameters
+function Get-FunctionApps ([string]$ResourceGroupName) {
+    $functionApps = az functionapp list -g $ResourceGroupName | ConvertFrom-Json
+    if (!$functionApps) {
+        throw "Could not find any Function Apps in $ResourceGroupName"
+    }
     
+    $isValidFunctionApp = {
+        $isValid = $false
+        foreach ($functionLabel in $VALID_FUNCTIONS) {
+            if ($_ -like "$functionLabel-*") {
+                $isValid = $true
+                break
+            }
+        }
+        $isValid
+    }
+    # Write-Log $functionApps | 
+    #     Select-Object "name", @{n="Url"; e={"https://$($_.defaultHostName)"}}, @{n="Label"; e={& $functionLabel}}
+
+    return $functionApps | Select-Object -ExpandProperty "name" | Where-Object { & $isValidFunctionApp }
+}
+
+function Get-StaticWebsite ([string]$ResourceGroupName) {
+    $storageAccounts = az storage account list -g $ResourceGroupName | ConvertFrom-Json
+    if (!$storageAccounts -or ($storageAccounts.Count -le $VALID_FUNCTIONS.Count)) {
+        throw "Could not find any Storage Accounts in $ResourceGroupName"
+    }
+    return $storageAccounts | Where-Object { $_.name -like "$VALID_CLIENT*" } | Select-Object -ExpandProperty "name"
+}
+
+function Get-DeployedResourceInfo {
+    # Creates the Deployment object based on One Click Deployment strategy
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
-        [string]$BackendRoot
-    )
-
-    Push-Location $BackendRoot
-    Write-Title "Installing the backend"
-    
-    $publishRoot = 'Artifacts'
-    if(Test-Path $publishRoot) {
-        Write-Log "Deleting old Artifacts"
-        Remove-Item -LiteralPath $publishRoot -Recurse -Force
-    }
-    
-    $fnRegex = "Functions/**/*.csproj"
-    $functions = Get-ChildItem -Path $fnRegex -Recurse
-    foreach ($function in $functions) {
-        $fnName = $function.Directory.Name
-        $projectDir = $function.Directory
-    
-        $publishDir = Join-Path $publishRoot $fnName
-        Write-Log "Building -- $publishDir"
-        dotnet publish $projectDir --configuration RELEASE --output $publishDir --nologo --verbosity quiet
-    
-        $zipPath = Join-Path $publishRoot "$fnName.zip"
-        Write-Log "Zipping Artifacts -- $zipPath"
-        Compress-Archive -Path "$publishDir/*" -DestinationPath $zipPath
-    
-        $azFunctionName = [Deployment]::FunctionApps[$fnName]
-        $resourceGroupName = [Deployment]::ResourceGroup["name"]
-        Write-Log "Deploying to Azure -- $azFunctionName"
-        az functionapp deployment source config-zip -g $resourceGroupName -n $azFunctionName --src $zipPath
-    }
-    
-    Write-Log 'Deleting Artifacts'
-    Remove-Item -LiteralPath $publishRoot -Recurse -Force
-    
-    Write-Title 'Backend Installation Completed'
-    Pop-Location
-}
-
-function Install-Client {
-
-    [CmdletBinding()]
-    param (
+        [string]$ResourceGroupName,
         [Parameter(Mandatory)]
-        [string]$ClientRoot
+        [string]$AppName
     )
-    
-    Push-Location $ClientRoot
-    Write-Title 'Installing the client'
-        
-    Write-Log 'Running npm install';
-    npm ci
+    # PREREQ: user is logged into azure-cli and is on correct subscription
+    Write-Title 'Gathering Deployment Info'
 
-    function Update-ClientConfig {
-        param (
-            [Parameter(Mandatory)]
-            [string]$dotEnvFile
-        )
-
-        enum DotEnv {
-            AAD_CLIENT_ID;
-            MAIN_URL;
-            DEFAULT_SCOPE;
-            TENANT_ID;
-            ASSIGNMENT_SERVICE_URL;
-            LINKS_SERVICE_URL;
-            LEARN_CONTENT;
-            USERS_SERVICE_URL;
-            PLATFORM_SERVICE_URL
-        }
-    
-        function Get-ServiceUrl ([string]$azFunc)  {
-            $serviceName = [Deployment]::FunctionApps[$azFunc]
-            return "https://$serviceName.azurewebsites.net/api"
-        }
-
-        function Get-ADAppScope {
-            $adAppUri = [Deployment]::AppRegistration["Uri"] 
-            return "$adAppUri/user_impersonation"
-        }
-        
-        function Get-TenantId {
-            # Assumes that the user is currently signed into correct subscription
-            $account = az account show | ConvertFrom-Json
-            if (!$account) {
-                throw 'Unable to get tenantId details for the user'
-            }
-            return $account.tenantId
-        }
-    
-        function Export-DotEnv ([hashtable]$config, [string]$fileName) {
-            # TODO: Test the config for completeness of values inside fileName
-            $tmpFile = "$fileName.tmp"
-            if (Test-Path $tmpFile) {
-                Remove-Item $tmpFile
-            }
-            foreach ($key in $config.keys) {
-                Add-Content $tmpFile "REACT_APP_EDNA_$key='$($config[$key])'"
-            }
-            Move-Item -LiteralPath $tmpFile -Destination $fileName -Force
-        }
-        
-        $dotEnv = @{        
-            [DotEnv]::AAD_CLIENT_ID="$([Deployment]::AppRegistration["ClientId"])";
-            [DotEnv]::MAIN_URL="$([Deployment]::StaticWebsite["WebUrl"])";
-            [DotEnv]::DEFAULT_SCOPE="$(Get-ADAppScope)";
-            [DotEnv]::TENANT_ID="$(Get-TenantId)";
-            [DotEnv]::LEARN_CONTENT="$(Get-ServiceUrl "Edna.AssignmentLearnContent")";
-            [DotEnv]::LINKS_SERVICE_URL="$(Get-ServiceUrl "Edna.AssignmentLinks")";
-            [DotEnv]::ASSIGNMENT_SERVICE_URL="$(Get-ServiceUrl "Edna.Assignments")";
-            [DotEnv]::PLATFORM_SERVICE_URL="$(Get-ServiceUrl "Edna.Platforms")";
-            [DotEnv]::USERS_SERVICE_URL="$(Get-ServiceUrl "Edna.Users")"
-        }
-        Export-DotEnv $dotEnv $dotEnvFile
+    Write-Log 'Validating App Registration'
+    #$app = az ad sp list --display-name $AppName | ConvertFrom-Json
+    $app = az ad app list --display-name $AppName | ConvertFrom-Json
+    if (!$app) {
+        throw "Application $AppName could not be found"
     }
 
-    Write-Log 'Updating Config'
-    Update-ClientConfig '.env.production'
+    Write-Log 'Validating Resource Group'
+    $resourceGroup = az group show -n $ResourceGroupName | ConvertFrom-Json
+    if (!$resourceGroup) {
+        throw "Resource Group $ResourceGroupName could not be found"
+    }
 
-    Write-Log 'Building React'
-    npm run build
-    
-    Write-Log 'Deploying as a static WebApp';
-    
-    $web = '$web'
-    $clientStorageAccount = [Deployment]::StaticWebsite["name"]
-    Write-Log 'Delete existing website content (Just in case of a redeploy)';
-    az storage blob delete-batch --account-name $clientStorageAccount --source $web
-    
-    Write-Log 'Uploading build content to the static website storage container';
-    az storage blob upload-batch -s 'build' -d $web --account-name $clientStorageAccount 
-    
-    Write-Title 'Client Installation Completed'
+    Write-Log 'Getting Function Apps Info'
+    $functionApps = Get-FunctionApps $ResourceGroupName
+    if (!$functionApps) {
+        throw "Couldn't get required Function Apps from $ResourceGroupName"
+    }
+
+    Write-Log 'Getting Static Website Info'
+    $staticWebsite = Get-StaticWebsite $ResourceGroupName
+    if (!$staticWebsite) {
+        throw "Couldn't get Static Website Resource from $ResourceGroupName"
+    }
+
+    Write-Title 'Deployment Info Gathered'
+    return @{
+        "resource-group"=$resourceGroupName;
+        "function-apps"=$functionApps;
+        "static-website"=$staticWebsite;
+        "app-id"=$app.appId
+    }
 }
 
-Install-Backend "../backend"
-Install-Client "../client"
+
+$resources = Get-DeployedResourceInfo "MSLearnLTI-07202020" "MS-Learn-Lti-Tool-App-MSLearnLTI-07202020"
+
+. .\Install-Backend.ps1
+Install-Backend "../backend" $resources['resource-group'] $resources['function-apps']
+
+. .\Install-Client.ps1
+Update-ClientConfig "../client/.env.production" $resources['resource-group'] $resources['function-apps'] $resources['app-id'] $resources['static-website']
+Install-Client "../client" $resources['static-website']
 
 # Check if running Powershell ISE
 if ($psISE) {
