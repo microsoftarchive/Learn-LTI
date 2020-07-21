@@ -8,7 +8,7 @@
 ### Create a student account 
 
 ### Student view of assignment details
-This is the student view of Edna. A student can see all assignment details, along with associated links, resources, and deadlines.
+This is the student view of the MS Learn LTI application. A student can see all assignment details, along with associated links, resources, and deadlines.
 
 ![Student View](./images/View.Student.png)
 
