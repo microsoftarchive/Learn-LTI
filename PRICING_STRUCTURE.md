@@ -1,6 +1,6 @@
 # Overview
 
-The Microsoft Learn LTI Application uses three services:
+The Microsoft Learn LTI Application uses three services, here are links to their pricing:
 * [Azure Functions](https://azure.microsoft.com/pricing/details/functions/?WT.mc_id=edna.github.jabenn)
 * [Azure Storage](https://azure.microsoft.com/pricing/details/storage/files/?WT.mc_id=edna.github.jabenn)
 * [Azure Key Vault](https://azure.microsoft.com/pricing/details/key-vault/?WT.mc_id=edna.github.jabenn)
