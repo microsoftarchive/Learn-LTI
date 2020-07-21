@@ -29,6 +29,7 @@ Here are the regions we support:
 * eastasia
 * southeastasia
 * centralus
+* eastus
 * eastus2
 * westus
 * southcentralus
@@ -37,7 +38,7 @@ Here are the regions we support:
 * japaneast
 * brazilsouth
 * australiaeast
-* canadacentralus
+* canadacentral
 * uksouth
 * westcentralus
 * westus2
