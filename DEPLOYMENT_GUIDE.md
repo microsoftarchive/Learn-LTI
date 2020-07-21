@@ -51,7 +51,7 @@ Your region determines mainly three things:
 * Service Availability
 * Pricing
 
-For information regarding your region, check [here](https://azure.microsoft.com/global-infrastructure/geographies/)
+For information regarding your region, check [here](https://azure.microsoft.com/global-infrastructure/geographies/?WT.mc_id=learnlti-github-cxa)
 
 ## Registering Azure Active Directory App
 
@@ -77,7 +77,9 @@ Done automatically.
 
 Done automatically.
 
-**Congratulations! Your instance of the tool should now be deployed on Azure!** 
+**Congratulations!** Your instance of the tool should now be deployed on Azure! 
+
+If your **deployment failed** click [here](./TROUBLESHOOTING.md) for help.
 
 Now we have to configure the tool on your institution's LMS.
 
