@@ -1,6 +1,4 @@
-# Steps From GitHub
-
-## Microsoft Learn LTI Tool Deployment Instructions
+# Microsoft Learn LTI Tool Deployment Instructions
 To deploy MS Learn LTI tool follow these steps:
 1. Clone the Deployment repository to your machine
 2. Make sure that you install:
@@ -8,6 +6,7 @@ To deploy MS Learn LTI tool follow these steps:
 * [DotNet Core SDK](https://dotnet.microsoft.com/download/dotnet-core/thank-you/sdk-3.1.301-windows-x64-installer)
 * [Node.js](https://nodejs.org/en/download/)
 * [npm](https://www.npmjs.com/get-npm)
+* [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7)
 3. [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest)
 4. In the cloned repo, inside the deployment directory, execute the file **appRegistration.ps1** and save the result for later.
 5. Click the button to deploy the needed resources in Azure.
@@ -77,7 +76,7 @@ Done automatically.
 
 Done automatically.
 
-**Congratualations! Your instance of the tool should now be deployed on Azure!** 
+**Congratulations! Your instance of the tool should now be deployed on Azure!** 
 
 Now we have to configure the tool on your institution's LMS.
 
