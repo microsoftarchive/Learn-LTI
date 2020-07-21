@@ -4,7 +4,7 @@ For any and all issues, please raise a [GitHub issue](https://github.com/microso
 
 ## General Deployment Issues
 
-If your deployment fails and the resource group has been created; an IT admin needs to delete the resource group in their subscription and re-run the script again.
+If your **deployment fails and the resource group has been created**; an IT admin needs to delete the resource group in their subscription and re-run the script again.
 
 If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=learnlti-github-cxa) for common errors.
 
