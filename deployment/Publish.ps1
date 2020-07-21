@@ -128,7 +128,7 @@ Update-ClientConfig @ClientUpdateConfigParams
 Write-Title "Client Config updated"
 
 Write-Title 'Installing the client'
-#Install-Client "../client" $resources['static-website']
+Install-Client -SourceRoot "../client" -StaticWebsiteStorageAccount $($resources['static-website']).name
 Write-Title 'Client Installation Completed'
 
 # Check if running Powershell ISE
