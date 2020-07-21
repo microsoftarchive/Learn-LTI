@@ -14,7 +14,7 @@ The Microsoft Learn LTI application enables institutions to seamlessly embed mod
 
 ### What do I need to get started? ###
 * LMS System that supports LTI v1.1 or v1.3
-* Azure subscription
+* You need to be the **owner** of an Azure subscription
 * IT administrator privileges to create an Azure resource
 
 # Table of Contents
