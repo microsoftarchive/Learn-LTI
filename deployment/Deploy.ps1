@@ -1,1 +1,1 @@
-PowerShell.exe -ExecutionPolicy Bypass -File .\appRegistration.ps1
+PowerShell.exe -ExecutionPolicy Bypass -File .\InfrastructureDeploy.ps1

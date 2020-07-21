@@ -8,6 +8,8 @@ $roleName = "Contributor"
 $templateFileName = "azuredeploy.json"
 $appName = "MS-Learn-Lti-Tool-App"
 $deploymentName = "Deployment-" + $executionStartTime;
+$graphAPIId = '00000003-0000-0000-c000-000000000000';
+$graphAPIPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope';
 Start-Transcript -Path $TranscriptFile;
 
 function WriteLog
@@ -130,6 +132,7 @@ foreach ($subscription in $subscriptionList) {
     if($subscription.name -ceq $subscriptionName)
     {
         $isValidSubscriptionName = $true;
+        $userEmailAddress = $subscription.user.name;
     }
 }
 
@@ -183,6 +186,10 @@ WriteInfoLog("Updating Identifier URI's in AAD App to: "+  "api://$($appinfo.app
 $appUpdateOp = az ad app update --id $appinfo.appId --identifier-uris $identifierURI;
 #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
 
+WriteInfoLog("Updating App so as to add MS Graph -> User Profile -> Read Permissions to the AAD App");
+$appPermissionAddOp = az ad app permission add --id $appinfo.appId --api $graphAPIId --api-permissions $graphAPIPermissionId;
+#Intentionally not catching an exception here
+
 Write-Host 'App Created Successfully';
 
 Write-Title('STEP #5 - Creating Resource Group');
@@ -227,7 +234,7 @@ Write-Host 'Role Assignment Created Successfully';
 Write-Title('STEP #8 - Deploying Resources to Azure');
 
 WriteInfoLog("Deploying ARM Template to Azure inside ResourceGroup: " + $resourceGroupName + " with DeploymentName: " + $deploymentName +  " TemplateFile: " + $templateFileName + " AppClientId: " + $appinfo.appId + " IdentifiedURI: " + $appinfo.identifierUris);
-$deploymentOutput = (az deployment group create --resource-group $resourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) identityName=$($identityName)) | ConvertFrom-Json;
+$deploymentOutput = (az deployment group create --resource-group $resourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) identityName=$($identityName) userEmailAddress=$($userEmailAddress)) | ConvertFrom-Json;
 if(!$deploymentOutput)
 {
     $message = "Encountered an Error while deploying to Azure";
