@@ -28,7 +28,6 @@ function Update-ClientConfig {
         [string]$StaticWebsiteName
     )
 
-    Write-Title "Updating the Client Config"
     enum DotEnv {
         REACT_APP_EDNA_AAD_CLIENT_ID;
         REACT_APP_EDNA_MAIN_URL;
@@ -58,7 +57,7 @@ function Update-ClientConfig {
     function Get-TenantId {
         # Assumes that the user is currently signed into correct subscription
         Write-Log "Getting Tenant Id for App -- $AppId"
-        $app = az ad sp show --id "$AppId" | ConvertFrom-Json
+        #$app = az ad sp show --id "$AppId" | ConvertFrom-Json
         $account = az account show | ConvertFrom-Json
         # if (!$app) {
         #     throw 'Unable to get App details for AD App Id: $AppId'
@@ -85,8 +84,6 @@ function Update-ClientConfig {
         [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$(Get-ServiceUrl "Users")"
     }
     Export-DotEnv $dotEnv $dotEnvFile
-
-    Write-Title "Client Config updated"
 }
 
 function Install-Client {
@@ -100,7 +97,6 @@ function Install-Client {
     )
     
     Push-Location $ClientRoot
-    Write-Title 'Installing the client'
         
     Write-Log 'Running npm install';
     npm ci
@@ -118,6 +114,5 @@ function Install-Client {
     Write-Log 'Uploading build content to the static website storage container';
     az storage blob upload-batch -s 'build' -d $web --account-name $clientStorageAccount 
 
-    Write-Title 'Client Installation Completed'
     Pop-Location
 }

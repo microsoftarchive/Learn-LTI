@@ -40,7 +40,6 @@ function Install-Backend {
     )
 
     Push-Location $BackendRoot
-    Write-Title "Installing the backend"
     
     $publishRoot = 'Artifacts'
     if(Test-Path $publishRoot) {
@@ -60,6 +59,5 @@ function Install-Backend {
     Write-Log 'Deleting Artifacts'
     Remove-Item -LiteralPath $publishRoot -Recurse -Force
     
-    Write-Title 'Backend Installation Completed'
     Pop-Location
 }
