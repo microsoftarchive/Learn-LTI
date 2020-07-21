@@ -106,11 +106,20 @@ function Get-DeployedResourceInfo {
 $resources = Get-DeployedResourceInfo "MSLearnLTI-07202020" "MS-Learn-Lti-Tool-App-MSLearnLTI-07202020"
 
 . .\Install-Backend.ps1
+
+Write-Title "Installing the backend"
 Install-Backend "../backend" $resources['resource-group'] $resources['function-apps']
+Write-Title 'Backend Installation Completed'
 
 . .\Install-Client.ps1
+
+Write-Title "Updating the Client Config"
 Update-ClientConfig "../client/.env.production" $resources['resource-group'] $resources['function-apps'] $resources['app-id'] $resources['static-website']
+Write-Title "Client Config updated"
+
+Write-Title 'Installing the client'
 Install-Client "../client" $resources['static-website']
+Write-Title 'Client Installation Completed'
 
 # Check if running Powershell ISE
 if ($psISE) {
