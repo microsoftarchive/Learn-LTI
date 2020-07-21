@@ -1,6 +1,6 @@
 # About
 
-[Microsoft Learn](https://learn.microsoft.com/#/?WT.mc_id=edna.github.jabenn) is a free, online training platform that provides interactive learning resources for Microsoft products and cutting edge technologies. Our goal is to empower students and educators to learn about technology through fun, guided, hands-on content aimed at specific learning goals. 
+[Microsoft Learn](https://learn.microsoft.com/#/?WT.mc_id=learnlti-github-cxa) is a free, online training platform that provides interactive learning resources for Microsoft products and cutting edge technologies. Our goal is to empower students and educators to learn about technology through fun, guided, hands-on content aimed at specific learning goals. 
 
 To bring Microsoft's content to students, we've made an LTI application. LTI stands for Learning Tools Inoperability. Think of an LTI as a set of rules to follow when a third party communicates with an education system. To keep student data private and secure we've adhered to LTIs v1.1 and v1.3. For more specifics on the application itself, check out the Architecture Overview in the table of contents below.
 
@@ -37,6 +37,6 @@ When you submit a pull request, a CLA bot will automatically determine whether y
 a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
 provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/?WT.mc_id=edna.github.jabenn).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/?WT.mc_id=edna.github.jabenn) or
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/?WT.mc_id=learnlti-github-cxa).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/?WT.mc_id=learnlti-github-cxa) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
