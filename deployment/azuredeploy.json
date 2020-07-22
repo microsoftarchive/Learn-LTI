@@ -522,13 +522,6 @@
         "StaticWebSiteName": {
             "value": "[variables('staticWebsite')]",
             "type": "string"
-        },
-        "StaticWebSiteUrl": {
-            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
-            "type": "string"
         }
-        
-
-
     }
 }

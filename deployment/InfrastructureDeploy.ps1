@@ -242,14 +242,50 @@ $appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $dep
 
 Write-Host 'App Update Completed Successfully';
 
-Write-Title('=========Publishing to Azure============');
 
-#Outputs - $resourceGroupName $appinfo.appId $identifierURI $deploymentOutput.properties.outputs.LearnContentFunctionName $deploymentOutput.properties.outputs.LinksFunctionName $deploymentOutput.properties.outputs.AssignmentsFunctionName $deploymentOutput.properties.outputs.ConnectFunctionName $deploymentOutput.properties.outputs.PlatformsFunctionName $deploymentOutput.properties.outputs.UsersFunctionName $deploymentOutput.properties.outputs.StaticWebSiteName $deploymentOutput.properties.outputs.StaticWebSiteUrl
+. .\Install-Backend.ps1
+Write-Title "STEP #10 - Installing the backend"
 
-Write-Host 'Publish to Azure Completed Successfully';
+$BackendParams = @{
+    SourceRoot="../backend";
+    ResourceGroupName=$resourceGroupName;
+    LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
+    LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
+    AssignmentsFunctionAppName=$deploymentOutput.properties.outputs.AssignmentsFunctionName.value;
+    ConnectFunctionAppName=$deploymentOutput.properties.outputs.ConnectFunctionName.value;
+    PlatformsFunctionAppName=$deploymentOutput.properties.outputs.PlatformsFunctionName.value;
+    UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
+}
+Install-Backend @BackendParams
+Write-Host "Backend Installation Completed Successfully"
 
+. .\Install-Client.ps1
+Write-Title "STEP #11 - Updating client's .env.production file"
+
+$ClientUpdateConfigParams = @{
+    ConfigFilePath="../client/.env.production";
+    ResourceGroupName=$resourceGroupName;
+    AppId=$appinfo.appId;
+    LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
+    LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
+    AssignmentsFunctionAppName=$deploymentOutput.properties.outputs.AssignmentsFunctionName.value;
+    PlatformsFunctionAppName=$deploymentOutput.properties.outputs.PlatformsFunctionName.value;
+    UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
+    StaticWebsiteUrl=$deploymentOutput.properties.outputs.webClientURL.value;
+}
+Update-ClientConfig @ClientUpdateConfigParams
+Write-Host "Client's .env.production Updated Successfully"
+
+Write-Title 'STEP #12 - Installing the client'
+$ClientInstallParams = @{
+    SourceRoot="../client";
+    StaticWebsiteStorageAccount=$deploymentOutput.properties.outputs.StaticWebSiteName.value
+}
+Install-Client @ClientInstallParams
+Write-Host 'Client Installation Completed Successfully'
 
 Write-Title('=========Successfully Deployed Resources to Azure============');
+
 WriteInfoLog("Deployment Complete");
 Stop-Transcript;
 
