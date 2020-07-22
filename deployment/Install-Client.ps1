@@ -11,13 +11,13 @@ enum DotEnv {
 }
 
 function Get-ADAppScope ([string]$AppId) {
-    Write-Log "Getting Default scope for App -- $AppId"
+    Write-Host "Getting Default scope for App -- $AppId"
     return "api://$AppId/user_impersonation"
 }
 
 function Get-TenantId ([string] $AppId) {
     # Assumes that the user is currently signed into correct subscription
-    Write-Log "Getting Tenant Id for App -- $AppId"
+    Write-Host "Getting Tenant Id for App -- $AppId"
     #$app = az ad sp show --id "$AppId" | ConvertFrom-Json
     $account = az account show | ConvertFrom-Json
     # if (!$app) {
@@ -28,13 +28,13 @@ function Get-TenantId ([string] $AppId) {
 }
 
 function Get-ServiceUrl ([string]$ServiceName)  {
-    Write-Log "Getting Service Url for Function App -- $ServiceName"
+    Write-Host "Getting Service Url for Function App -- $ServiceName"
     return "https://$ServiceName.azurewebsites.net/api"
 }
 
 function Export-DotEnv ([hashtable]$config, [string]$fileName) {
     # TODO: Test the config for completeness of values inside fileName
-    Write-Log "Updating $fileName with new config"
+    Write-Host "Updating $fileName with new config"
     if (!(Test-Path $fileName)) {
         throw "Cannot export config, $fileName does not exist"
     }
@@ -100,18 +100,18 @@ function Install-Client {
     Push-Location $SourceRoot
 
     try {        
-        Write-Log 'Running npm install'
+        Write-Host 'Running npm install'
         npm ci
     
-        Write-Log 'Building Client App'
+        Write-Host 'Building Client App'
         npm run build
         
-        Write-Log "Deploying as a static WebApp -- $StaticWebsiteStorageAccount"
+        Write-Host "Deploying as a static WebApp -- $StaticWebsiteStorageAccount"
         
-        Write-Log 'Delete existing website content (Just in case of a redeploy)'
+        Write-Host 'Delete existing website content (Just in case of a redeploy)'
         az storage blob delete-batch --account-name $StaticWebsiteStorageAccount --source '$web'
         
-        Write-Log 'Uploading build content to the static website storage container'
+        Write-Host 'Uploading build content to the static website storage container'
         az storage blob upload-batch -s 'build' -d '$web' --account-name $StaticWebsiteStorageAccount 
     }
     finally {

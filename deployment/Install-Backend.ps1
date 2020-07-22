@@ -31,14 +31,14 @@ function Publish-FunctionApp {
     )
 
     $PublishDir = Join-Path $OutputDir $FunctionName
-    Write-Log "Building -- $PublishDir"
+    Write-Host "Building -- $PublishDir"
     dotnet publish $ProjectDir --configuration RELEASE --output $PublishDir --nologo --verbosity quiet
 
     $ArchivePath = Join-Path $OutputDir "$FunctionName.zip"
-    Write-Log "Zipping Artifacts -- $ArchivePath"
+    Write-Host "Zipping Artifacts -- $ArchivePath"
     Compress-Archive -Path "$PublishDir/*" -DestinationPath $ArchivePath
 
-    Write-Log "Deploying to Azure -- $ResourceGroupName/$FunctionAppName"
+    Write-Host "Deploying to Azure -- $ResourceGroupName/$FunctionAppName"
     $result = az functionapp deployment source config-zip -g $ResourceGroupName -n $FunctionAppName --src $ArchivePath | ConvertFrom-Json
     if(!$result) {
         throw "Failed to deploy $FunctionName to $FunctionAppName"
@@ -66,7 +66,7 @@ function Install-Backend {
     try {
         $PublishRoot = 'Artifacts'
         if(Test-Path $PublishRoot) {
-            Write-Log "Deleting old Artifacts"
+            Write-Host "Deleting old Artifacts"
             Remove-Item -LiteralPath $PublishRoot -Recurse -Force
         }
         
@@ -74,7 +74,7 @@ function Install-Backend {
             $Functions = [System.Enum]::GetNames([VALID_FUNCTIONS])
             foreach ($Function in $Functions) {
 
-                Write-Log "Installing Function -- $Function"
+                Write-Host "Installing Function -- $Function"
                 $Project = Get-Project $Function
 
                 $PublishParams = @{
@@ -102,7 +102,7 @@ function Install-Backend {
             }
         }
         finally {            
-            Write-Log 'Deleting Artifacts'
+            Write-Host 'Deleting Artifacts'
             Remove-Item -LiteralPath $publishRoot -Recurse -Force
         }
     }
