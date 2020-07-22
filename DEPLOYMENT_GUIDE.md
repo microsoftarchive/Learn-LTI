@@ -85,5 +85,48 @@ Now we have to configure the tool on your institution's LMS.
 
 # Configuring the tool on your LMS
 
+## From your LMS administration settings, configure a tool manually. 
 
+Here's what this process looks like on Moodle
 
+![Config.1](./images/Config.1.png)
+![Config.2](./images/Config.2.png)
+![Config.3](./images/Config.3.png)
+![Config.4](./images/Config.4.png)
+
+## From those tool settings, you'll need to make a few changes.
+
+1. Change public key type to a RSA key
+![Config.5](./images/Config.5.png)
+
+2. Change the LTI version to 1.3
+![Config.6](./images/Config.6.png)
+
+3. Change the Default launch container to New Window
+![Config.9](./images/Config.9.png)
+
+4. From Microsoft's Learn LTI tool's registration page, locate the Tool Settings section. 
+![Config.8](./images/Config.8.png)
+   * Use the Launch URL from Microsoft's Learn LTI tool's registration page to update your LMS tool's Tool URL and Redirection URL
+   * Use the Login URL from Microsoft's Learn LTI tool's registration page to update your LMS tool's Tool Initiate login URL
+   * Use the Public Key rom Microsoft's Learn LTI tool's registration page to update your LMS tool's Tool Public Key
+
+## From your LMS tool services settings
+
+Change your IMS LTI Names and Role Provisioning setting to "Use this service to retrieve members' information as per privacy settings"
+![Config.11](./images/Config.11.png)
+
+## From your LMS tool privacy settings
+![Config.12](./images/Config.12.png)
+Update all permissions to Always
+
+## Access your tool configuration details and make the following changes to the Microsoft Learn LTI Tool Registration page under Platform settings
+![Config.14](./images/Config.14.png)
+1. Make Issuer your Platform ID
+2. Make Client ID your Client ID **under Tool Settings**
+3. Make JWK Set URL your Public keyset URL
+4. Make Access token URL your Access token URL 
+5. Make Authoritization URL your Authentication request URL
+6. On the bottom right of the Microsoft LTI Tool Registration page, Hit Save Registration.
+
+That's it!! Whew. You are good to go :)
