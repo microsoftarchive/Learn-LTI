@@ -11,7 +11,11 @@ enum VALID_FUNCTIONS {
 
 function Get-Project([VALID_FUNCTIONS]$FunctionName) {
     $PathRegex = "Functions/**/Edna.$FunctionName.csproj"
-    Get-ChildItem -Path $PathRegex -Recurse
+    $Project = Get-ChildItem -Path $PathRegex -Recurse
+    if(!$Project) {
+        throw "Could not find a Project File that matches [ $PathRegex ] path"
+    }
+    Write-Output $Project
 }
 
 function Publish-FunctionApp {
@@ -31,15 +35,16 @@ function Publish-FunctionApp {
     )
 
     $PublishDir = Join-Path $OutputDir $FunctionName
-    Write-Host "Building -- $PublishDir"
+    Write-Log -Message "Building [ $ProjectDir ] --> [ $PublishDir ]"
     dotnet publish $ProjectDir --configuration RELEASE --output $PublishDir --nologo --verbosity quiet
 
     $ArchivePath = Join-Path $OutputDir "$FunctionName.zip"
-    Write-Host "Zipping Artifacts -- $ArchivePath"
+    Write-Log -Message "Zipping Artifacts [ $PublishDir ]/* --> [ $ArchivePath ]"
     Compress-Archive -Path "$PublishDir/*" -DestinationPath $ArchivePath
 
-    Write-Host "Deploying to Azure -- $ResourceGroupName/$FunctionAppName"
-    $result = az functionapp deployment source config-zip -g $ResourceGroupName -n $FunctionAppName --src $ArchivePath | ConvertFrom-Json
+    Write-Log -Message "Deploying to Azure FunctionApp [ $ResourceGroupName/$FunctionAppName ]"
+    # Turning Error only mode to reduce clutter on the terminal
+    $result = az functionapp deployment source config-zip -g $ResourceGroupName -n $FunctionAppName --src $ArchivePath --only-show-errors | ConvertFrom-Json
     if(!$result) {
         throw "Failed to deploy $FunctionName to $FunctionAppName"
     }
@@ -61,49 +66,52 @@ function Install-Backend {
         [string]$UsersFunctionAppName
     )
 
+    Write-Log -Message "Switching to [$SourceRoot] as working directory"
     Push-Location $SourceRoot
 
-    try {
-        $PublishRoot = 'Artifacts'
-        if(Test-Path $PublishRoot) {
-            Write-Host "Deleting old Artifacts"
-            Remove-Item -LiteralPath $PublishRoot -Recurse -Force
-        }
-        
-        try {            
-            $Functions = [System.Enum]::GetNames([VALID_FUNCTIONS])
-            foreach ($Function in $Functions) {
+    $PublishRoot = 'Artifacts'
+    if(Test-Path $PublishRoot) {
+        Write-Log -Message "Deleting existing Artifacts"
+        Remove-Item -LiteralPath $PublishRoot -Recurse -Force
+    }
+    
+    try {            
+        $Functions = [System.Enum]::GetNames([VALID_FUNCTIONS])
+        foreach ($Function in $Functions) {
 
-                Write-Host "Installing Function -- $Function"
-                $Project = Get-Project $Function
+            Write-Log -Message "Installing FunctionApp -- $Function"
 
-                $PublishParams = @{
-                    FunctionName = $Function;
-                    ProjectDir = $($Project.Directory);
-                    OutputDir = $PublishRoot;
-                    ResourceGroupName = $ResourceGroupName
-                }
+            $Project = Get-Project $Function
 
-                $FunctionAppName = & {
-                    switch ($Function) {
-                        "AssignmentLearnContent"    { return $LearnContentFunctionAppName }
-                        "AssignmentLinks"           { return $LinksFunctionAppName }
-                        "Assignments"               { return $AssignmentsFunctionAppName }
-                        "Connect"                   { return $ConnectFunctionAppName }
-                        "Platforms"                 { return $PlatformsFunctionAppName }
-                        "Users"                     { return $UsersFunctionAppName }
-                    }
-                }
-                if ($FunctionAppName) { 
-                    $PublishParams.FunctionAppName = $FunctionAppName
-                }
+            Write-Log -Message "Publishing Project [ $($Project.Name) ] as FunctionApp"
 
-                Publish-FunctionApp @PublishParams
+            $PublishParams = @{
+                FunctionName = $Function;
+                ProjectDir = $($Project.Directory);
+                OutputDir = $PublishRoot;
+                ResourceGroupName = $ResourceGroupName
             }
-        }
-        finally {            
-            Write-Host 'Deleting Artifacts'
-            Remove-Item -LiteralPath $publishRoot -Recurse -Force
+
+            $FunctionAppName = & {
+                switch ($Function) {
+                    "AssignmentLearnContent"    { return $LearnContentFunctionAppName }
+                    "AssignmentLinks"           { return $LinksFunctionAppName }
+                    "Assignments"               { return $AssignmentsFunctionAppName }
+                    "Connect"                   { return $ConnectFunctionAppName }
+                    "Platforms"                 { return $PlatformsFunctionAppName }
+                    "Users"                     { return $UsersFunctionAppName }
+                }
+            }
+            if ($FunctionAppName) { 
+                $PublishParams.FunctionAppName = $FunctionAppName
+            } else {
+                $MissingFunctionAppName = "Unable to map [ $Function ] to any Azure FunctionAppName"
+                Write-Log -Message $MissingFunctionAppName
+                Write-Warning $MissingFunctionAppName
+            }
+
+            Publish-FunctionApp @PublishParams
+            Write-Host "Project [ $($Project.Name) ] Published Successfully"
         }
     }
     finally {

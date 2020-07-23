@@ -11,30 +11,32 @@ enum DotEnv {
 }
 
 function Get-ADAppScope ([string]$AppId) {
-    Write-Host "Getting Default scope for App -- $AppId"
+    Write-Log -Message "Getting Default scope for AppID -- [ $AppId ]"
     return "api://$AppId/user_impersonation"
 }
 
 function Get-TenantId ([string] $AppId) {
     # Assumes that the user is currently signed into correct subscription
-    Write-Host "Getting Tenant Id for App -- $AppId"
-    #$app = az ad sp show --id "$AppId" | ConvertFrom-Json
-    $account = az account show | ConvertFrom-Json
+    Write-Log -Message "Getting TenantID for AppID -- [ $AppId ]"
+    # $app = az ad sp show --id "$AppId" | ConvertFrom-Json
     # if (!$app) {
     #     throw 'Unable to get App details for AD App Id: $AppId'
     # }
+    # return $app.appOwnerTenantId
+    $account = az account show | ConvertFrom-Json
+    if (!$account) {
+        throw 'Unable to get TenantID, no Active user in Azure Cli'
+    }
     return $account.tenantId
-    #return $app.appOwnerTenantId
 }
 
 function Get-ServiceUrl ([string]$ServiceName)  {
-    Write-Host "Getting Service Url for Function App -- $ServiceName"
+    Write-Log -Message "Getting Service Url for FunctionApp -- [ $ServiceName ]"
     return "https://$ServiceName.azurewebsites.net/api"
 }
 
 function Export-DotEnv ([hashtable]$config, [string]$fileName) {
     # TODO: Test the config for completeness of values inside fileName
-    Write-Host "Updating $fileName with new config"
     if (!(Test-Path $fileName)) {
         throw "Cannot export config, $fileName does not exist"
     }
@@ -71,6 +73,7 @@ function Update-ClientConfig {
     )
 
 
+    Write-Log -Message "Creating new configuration"
     $Config = @{
         [DotEnv]::REACT_APP_EDNA_AAD_CLIENT_ID="$AppId";
         [DotEnv]::REACT_APP_EDNA_MAIN_URL="$StaticWebsiteUrl";
@@ -82,6 +85,9 @@ function Update-ClientConfig {
         [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL="$(Get-ServiceUrl $PlatformsFunctionAppName)";
         [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$(Get-ServiceUrl $UsersFunctionAppName)"
     }
+    Write-Log -Message "Updated Configuration:-`n`t$($Config | Out-String)"
+
+    Write-Log -Message "Updating [ $fileName ] with new config variables"
     Export-DotEnv $Config $ConfigFilePath
 }
 
@@ -95,22 +101,30 @@ function Install-Client {
         [string]$StaticWebsiteStorageAccount
     )
     
+    Write-Log -Message "Switching to [$SourceRoot] as working directory"
     Push-Location $SourceRoot
 
     try {        
-        Write-Host 'Running npm install'
+        Write-Log -Message 'Running npm install'
         npm ci
-    
-        Write-Host 'Building Client App'
+
+        Write-Log -Message 'Building Client App'
         npm run build
-        
-        Write-Host "Deploying as a static WebApp -- $StaticWebsiteStorageAccount"
-        
-        Write-Host 'Delete existing website content (Just in case of a redeploy)'
-        az storage blob delete-batch --account-name $StaticWebsiteStorageAccount --source '$web'
-        
-        Write-Host 'Uploading build content to the static website storage container'
-        az storage blob upload-batch -s 'build' -d '$web' --account-name $StaticWebsiteStorageAccount 
+
+        Write-Log -Message "Deploying as a Static Web App -- $StaticWebsiteStorageAccount"
+
+        Write-Log -Message 'Delete existing content in `$web storage container (Just in case of a redeploy)'
+        # Running in Error only mode since this cmd shows a warning causing misconception that user requires azure cli login
+        # The command does not output anything, hence, there's no need to capture the result and check for existence
+        az storage blob delete-batch --account-name $StaticWebsiteStorageAccount --source '$web' --only-show-errors
+
+        Write-Log -Message 'Uploading build content to the `$web storage container'
+        # Turning Error only mode as this cmd shows a warning which causes misconception that user needs to sign in to azure cli
+        $result = az storage blob upload-batch -s 'build' -d '$web' --account-name $StaticWebsiteStorageAccount --only-show-errors | ConvertFrom-Json
+        if(!$result) {
+            throw "Failed to deploy Client App to $StaticWebsiteStorageAccount/`$web"
+        }
+    
     }
     finally {
         Pop-Location
