@@ -25,7 +25,7 @@ Follow these steps to deploy the MS Learn LTI tool:
 
 ## Choose Subscription
 
-**Type in EduLearnLTI, hit "Enter"**
+**Enter 'EduLearnLTI'**
 
 If you're unsure about whether your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade??WT.mc_id=learnlti-github-cxa)
 
@@ -106,13 +106,13 @@ The following details the configuration process for Moodle.
 
 ## From the tool settings page, identify the following fields and make the corresponding changes.
 
-1. Change public key type to a RSA key
+1. **Public key type**: Select 'RSA key'
 ![Config.5](./images/Config.5.png)
 
-2. Change the LTI version to 1.3
+2. **LTI version**: Select 'LTI 1.3'
 ![Config.6](./images/Config.6.png)
 
-3. Change the Default launch container to New Window
+3. **Default launch container**: Select 'New Window'
 ![Config.9](./images/Config.9.png)
 
 4. From Microsoft's Learn LTI tool's registration page, locate the Tool Settings section. 
