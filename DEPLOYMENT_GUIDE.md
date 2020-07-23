@@ -1,7 +1,17 @@
 # Microsoft Learn LTI Tool Deployment Instructions
-To deploy MS Learn LTI tool follow these steps:
+## Prerequisites
+To begin, you will need:
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
+- [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
+- [Node.js](https://nodejs.org/en/download/)
+- [npm](https://www.npmjs.com/get-npm)
+- [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
+
+Follow these steps to deploy the MS Learn LTI tool:
+
+# Part 1: Steps from repository 
 1. Clone the Deployment repository to your machine
-2. Make sure that you install:
+2. Make sure that you have the following installed:
 * [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
 * [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
 * [Node.js](https://nodejs.org/en/download/)
@@ -15,13 +25,13 @@ To deploy MS Learn LTI tool follow these steps:
 7. You should now see the MS Learn LTI Tool script popup.
 
 
-# Steps from Script
+# Part 2: Steps from Script
 
 ## Select Subscription
 
 **Type in EduLearnLTI, hit "Enter"**
 
-If you're unsure that your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade??WT.mc_id=learnlti-github-cxa)
+If you're unsure about whether your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade??WT.mc_id=learnlti-github-cxa)
 
 ## Choose Location
 
@@ -87,18 +97,18 @@ If your **deployment failed** click [here](./TROUBLESHOOTING.md) for help.
 
 Once the tool has been successfully deployed, the next step is to configure the tool on your institution's LMS.
 
-# Configuring the tool on your LMS
+# Part 3: Configuring the tool in your LMS
 
 ## From your LMS administration settings, configure a tool manually. 
 
-Here's what this process looks like on Moodle
+The following details the configuration process for Moodle. 
 
 ![Config.1](./images/Config.1.png)
 ![Config.2](./images/Config.2.png)
 ![Config.3](./images/Config.3.png)
 ![Config.4](./images/Config.4.png)
 
-## From those tool settings, you'll need to make a few changes.
+## From the tool settings page, identify the following fields and make the corresponding changes.
 
 1. Change public key type to a RSA key
 ![Config.5](./images/Config.5.png)
@@ -117,7 +127,7 @@ Here's what this process looks like on Moodle
 
 ## From your LMS tool services settings
 
-Change your IMS LTI Names and Role Provisioning setting to "Use this service to retrieve members' information as per privacy settings"
+Change your LMS LTI Names and Role Provisioning setting to "Use this service to retrieve members' information as per privacy settings"
 ![Config.11](./images/Config.11.png)
 
 ## From your LMS tool privacy settings
