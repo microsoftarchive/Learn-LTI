@@ -12,18 +12,45 @@ $graphAPIId = '00000003-0000-0000-c000-000000000000';
 $graphAPIPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope';
 Start-Transcript -Path $TranscriptFile;
 
-function WriteLog([string]$Message) {
+function Write-LogInternal {
+    param (
+        [Parameter(Mandatory)]
+        [String]$Message
+    )
+    
     $now = (Get-Date).ToString()
     $logMsg = "[ $now ] - $Message"
     $logMsg >> $LogFile
+
+    # Print the output on the screen, if running verbose
+    Write-Verbose -Message $logMsg
+}
+
+function Write-Log {
+    param (
+        [Parameter(Mandatory)]
+        [string]$Message,
+        $ErrorRecord
+    )
+
+    # credits: Tim Curwick for providing this insight
+    if( $ErrorRecord -is [System.Management.Automation.ErrorRecord] ) {
+        Write-LogInternal "[ERROR] - Exception.Message [ $($ErrorRecord.Exception.Message) ]"
+        Write-LogInternal "[ERROR] - Exception.Type    [ $($ErrorRecord.Exception.GetType()) ]"
+        Write-LogInternal "[ERROR] - $Message"
+    }
+    else {
+        Write-LogInternal "[INFO] - $Message"
+    }
 }
 
 function WriteInfoLog([string]$Message) {
-    WriteLog "[INFO] - $Message"
+    Write-Log -Message $Message
 }
 
-function WriteErrorLog([string]$Message) {
-    WriteLog "[ERROR] - $Message"
+function WriteErrorLog([System.Management.Automation.ErrorRecord]$ErrorRecord) {
+    $Message = 'Error occurred while executing the Script. Please report the bug on Github (along with Error Message & Logs)'
+    Write-Log -Message $Message -ErrorRecord $ErrorRecord
 }
 
 function Write-Title([string]$Title) {
@@ -255,9 +282,7 @@ try {
     WriteInfoLog("Deployment Complete");
 }
 catch {
-    WriteErrorLog $_.Exception.Message
-    Write-Host $_.Exception.Message
-    Write-Host 'Error occurred while executing the Script. Please report the bug on Github (along with Error Message & Logs)'
+    WriteErrorLog -ErrorRecord $_
     throw $_
 }
 finally {
