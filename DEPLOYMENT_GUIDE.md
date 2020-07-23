@@ -6,23 +6,19 @@ To begin, you will need:
 - [Node.js](https://nodejs.org/en/download/)
 - [npm](https://www.npmjs.com/get-npm)
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
+- An Azure subscription
 
 Follow these steps to deploy the MS Learn LTI tool:
 
 # Part 1: Steps from repository 
 1. Clone the Deployment repository to your machine
-2. Make sure that you have the following installed:
-* [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
-* [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
-* [Node.js](https://nodejs.org/en/download/)
-* [npm](https://www.npmjs.com/get-npm)
-* [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
-3. [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
-4. In the cloned repo, inside the deployment directory, execute the file **appRegistration.ps1** and save the result for later.
-5. Click the button to deploy the needed resources in Azure.
+2. [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
+3. In the cloned repo, inside the deployment directory, execute the file **appRegistration.ps1** and save the result for later.
+4. Click the button to deploy the needed resources in Azure.
 * [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FLearn-LTI%2Fmaster%2Fdeployment%2Fazuredeploy.json%3Ftoken%3DAQCAEE2JIAOYTYWW5HDSNSS7AODIM)
-6. In the cloned repo, inside the deployment directory, execute the file **Publish.ps1**.
-7. You should now see the MS Learn LTI Tool script popup.
+5. In the cloned repo, inside the deployment directory, execute the file **Publish.ps1**.
+6. You should now see the MS Learn LTI Tool script popup.
+![Deployment.3](./images/Deployment.3.jpg)
 
 
 # Part 2: Steps from Script
