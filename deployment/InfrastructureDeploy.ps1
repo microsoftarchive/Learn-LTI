@@ -248,7 +248,6 @@ try {
 
     $ClientUpdateConfigParams = @{
         ConfigFilePath="../client/.env.production";
-        ResourceGroupName=$resourceGroupName;
         AppId=$appinfo.appId;
         LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
         LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
