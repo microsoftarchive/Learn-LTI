@@ -52,23 +52,21 @@ function Update-ClientConfig {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        #[Parameter(Mandatory)]
+        [Parameter(Mandatory)]
         [string]$ConfigFilePath,
-        #[Parameter(Mandatory)]
-        [string]$ResourceGroupName,
-        #[Parameter(Mandatory)]
+        [Parameter(Mandatory)]
         [string]$AppId,
-        #[Parameter(Mandatory)]
+        [Parameter(Mandatory)]
         [string]$LearnContentFunctionAppName,
-        #[Parameter(Mandatory)]
+        [Parameter(Mandatory)]
         [string]$LinksFunctionAppName,
-        #[Parameter(Mandatory)]
+        [Parameter(Mandatory)]
         [string]$AssignmentsFunctionAppName,
-        #[Parameter(Mandatory)]
+        [Parameter(Mandatory)]
         [string]$PlatformsFunctionAppName,
-        #[Parameter(Mandatory)]
+        [Parameter(Mandatory)]
         [string]$UsersFunctionAppName,
-        #[Parameter(Mandatory)]
+        [Parameter(Mandatory)]
         [string]$StaticWebsiteUrl
     )
 
