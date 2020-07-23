@@ -12,52 +12,36 @@ $graphAPIId = '00000003-0000-0000-c000-000000000000';
 $graphAPIPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope';
 Start-Transcript -Path $TranscriptFile;
 
-function WriteLog
-{
-   param([string]$Message) 
-
-   $logMsg = ("[" + (Get-Date).ToString() + "]" + " - " + $Message);
-   $logMsg >> $LogFile;
+function WriteLog([string]$Message) {
+    $now = (Get-Date).ToString()
+    $logMsg = "[ $now ] - $Message"
+    $logMsg >> $LogFile
 }
 
-function WriteInfoLog{
-    param(
-        [Parameter(Mandatory)]
-        [string]$Message
-    )
-    WriteLog("[INFO] - " + $Message)
+function WriteInfoLog([string]$Message) {
+    WriteLog "[INFO] - $Message"
 }
 
-function WriteErrorLog{
-    param([string]$Message)
-    WriteLog("[ERROR] - " + $Message)
+function WriteErrorLog([string]$Message) {
+    WriteLog "[ERROR] - $Message"
 }
 
-function Write-Title {
-    param(
-        [Parameter(Mandatory)]
-        [string]$Title
-    )
-    Write-Host '';
-    Write-Host '';
-    Write-Host '=============================================================';
-    Write-Host $Title;
-    Write-Host '=============================================================';
-    Write-Host '';
-    Write-Host '';
-    
+function Write-Title([string]$Title) {
+    Write-Host ''
+    Write-Host ''
+    Write-Host '============================================================='
+    Write-Host $Title
+    Write-Host '============================================================='
+    Write-Host ''
+    Write-Host ''
 }
 
-function ThrowException {
-    param(
-        [Parameter(Mandatory)]
-        [string]$Message
-    )
-    WriteErrorLog($Message);
-    Write-Host($Message);
-    Write-Host 'Encountered an Error while executing the Script. Please report the bug on Github (along with Error Message & Logs)';
-    Stop-Transcript;
-    throw $Message;    
+function ThrowException([string]$Message) {
+    WriteErrorLog $Message
+    Write-Host $Message
+    Write-Host 'Encountered an Error while executing the Script. Please report the bug on Github (along with Error Message & Logs)'
+    Stop-Transcript
+    throw $Message
 }
   
 Write-Title('STEP #1 - Logging into Azure');
@@ -227,10 +211,19 @@ if(!$deploymentOutput)
 }
 
 #Updating the Config Entry EdnaLiteDevKey in the Function Config
+function Update-LtiFunctionAppSettings([string]$ResourceGroupName, [string]$FunctionAppName, [hashtable]$AppSettings) {
+    WriteInfoLog("Updating App Settings for Function App [ $FunctionAppName ]: -")
+    foreach ($it in $AppSettings.GetEnumerator()) {
+        WriteInfoLog("    [ $($it.Name) ] = [ $($it.Value) ]")
+        az functionapp config appsettings set --resource-group $ResourceGroupName --name $FunctionAppName --settings "$($it.Name)=$($it.Value)"
+    }
+}
+
 $KeyVaultLink=$(az keyvault key show --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --query 'key.kid' -o json);
-$connectFnUpdateOp = az functionapp config appsettings set --name $deploymentOutput.properties.outputs.ConnectFunctionName.value --resource-group $resourceGroupName --settings='EdnaKeyString='$KeyVaultLink;
-$platformsFnUpdateOp = az functionapp config appsettings set --name $deploymentOutput.properties.outputs.PlatformsFunctionName.value --resource-group $resourceGroupName --settings='EdnaKeyString='$KeyVaultLink;
-$usersFnUpdateOp = az functionapp config appsettings set --name $deploymentOutput.properties.outputs.UsersFunctionName.value --resource-group $resourceGroupName --settings='EdnaKeyString='$KeyVaultLink;
+$EdnaKeyString = @{ "EdnaKeyString"="$KeyVaultLink" }
+$ConnectUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.ConnectFunctionName.value $EdnaKeyString
+$PlatformsUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.PlatformsFunctionName.value $EdnaKeyString
+$UsersUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.UsersFunctionName.value $EdnaKeyString
 
 Write-Host 'Resource Creation in Azure Completed Successfully';
 
