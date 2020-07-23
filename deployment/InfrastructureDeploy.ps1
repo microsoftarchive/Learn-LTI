@@ -204,7 +204,7 @@ try {
     function Update-LtiFunctionAppSettings([string]$ResourceGroupName, [string]$FunctionAppName, [hashtable]$AppSettings) {
         Write-Log -Message "Updating App Settings for Function App [ $FunctionAppName ]: -"
         foreach ($it in $AppSettings.GetEnumerator()) {
-            Write-Log -Message "    [ $($it.Name) ] = [ $($it.Value) ]"
+            Write-Log -Message "`t[ $($it.Name) ] = [ $($it.Value) ]"
             az functionapp config appsettings set --resource-group $ResourceGroupName --name $FunctionAppName --settings "$($it.Name)=$($it.Value)"
         }
     }
@@ -273,7 +273,7 @@ try {
 }
 catch {
     $Message = 'Error occurred while executing the Script. Please report the bug on Github (along with Error Message & Logs)'
-    Write-Log -Message $Message -ErrorRecord $ErrorRecord
+    Write-Log -Message $Message -ErrorRecord $_
     throw $_
 }
 finally {
