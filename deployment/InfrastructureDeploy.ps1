@@ -36,24 +36,14 @@ function Write-Title([string]$Title) {
     Write-Host ''
 }
 
-function ThrowException([string]$Message) {
-    WriteErrorLog $Message
-    Write-Host $Message
-    Write-Host 'Encountered an Error while executing the Script. Please report the bug on Github (along with Error Message & Logs)'
-    Stop-Transcript
-    throw $Message
-}
-  
 try {    
     Write-Title('STEP #1 - Logging into Azure');
 
     WriteInfoLog("Logging in to Azure");
     $loginOp = az login | ConvertFrom-Json
-    if(!$loginOp)
-    {
-        $message = "Encountered an Error while trying to Login.";
-        ThrowException($message);
-    } 
+    if(!$loginOp) {
+        throw "Encountered an Error while trying to Login."
+    }
     WriteInfoLog("Successfully logged in to Azure.");
 
     Write-Title('STEP #2 - Choose Subscription');
@@ -61,10 +51,8 @@ try {
     WriteInfoLog("Fetching List of Subscriptions in Users Account");
 
     $subscriptionList = ((az account list --all --output json) | ConvertFrom-Json);
-    if(!$subscriptionList)
-    {
-        $message = "Encountered an Error while trying to fetch Subscription List.";
-        ThrowException($message);
+    if(!$subscriptionList) {
+        throw "Encountered an Error while trying to fetch Subscription List."
     }
 
     WriteInfoLog($($subscriptionList | ConvertTo-Json -Compress));
@@ -78,7 +66,7 @@ try {
 
 
     if ($subscriptionCount -eq 0) {
-        ThrowException("Please create atlease ONE Subscription in your Azure Account");
+        throw "Please create atlease ONE Subscription in your Azure Account"
     }
     if ($subscriptionCount -eq 1) {
         $subscriptionName = $subscriptionList[0].name;
@@ -96,17 +84,14 @@ try {
 
     $isValidSubscriptionName = $false;
     foreach ($subscription in $subscriptionList) {
-        if($subscription.name -ceq $subscriptionName)
-        {
+        if($subscription.name -ceq $subscriptionName) {
             $isValidSubscriptionName = $true;
             $userEmailAddress = $subscription.user.name;
         }
     }
 
-    if(!$isValidSubscriptionName)
-    {
-        $message = "Invalid Subscription Name Entered.";
-        ThrowException($message);
+    if(!$isValidSubscriptionName) {
+        throw "Invalid Subscription Name Entered."
     }
 
     $setSubscriptionNameOp = (az account set --subscription $subscriptionName)
@@ -126,16 +111,13 @@ try {
     WriteInfoLog('User Entered Location Name: ' + $locationName);
     $isValidLocationName = $false;
     foreach ($location in $locationList) {
-        if($location.name -ceq $locationName)
-        {
+        if($location.name -ceq $locationName) {
             $isValidLocationName = $true;
         }
     }
 
-    if(!$isValidLocationName)
-    {
-        $message = "Invalid Location Name Entered.";
-        ThrowException($message);
+    if(!$isValidLocationName) {
+        throw "Invalid Location Name Entered."
     }
 
 
@@ -143,10 +125,8 @@ try {
 
     WriteInfoLog("Creating AAD App with Name: " + $appName);
     $appinfo=$(az ad app create --display-name $appName) | ConvertFrom-Json;
-    if(!$appinfo)
-    {
-        $message = "Encountered an Error while creating AAD App";
-        ThrowException($message);
+    if(!$appinfo) {
+        throw "Encountered an Error while creating AAD App"
     }
     $identifierURI = "api://$($appinfo.appId)";
     WriteInfoLog("Updating Identifier URI's in AAD App to: "+  "api://$($appinfo.appId)");
@@ -163,10 +143,8 @@ try {
 
     WriteInfoLog("Creating Resource Group with Name : " + $resourceGroupName + " at Location: " + $locationName);
     $resourceGroupCreationOp = az group create -l $locationName -n $resourceGroupName
-    if(!$resourceGroupCreationOp)
-    {
-        $message = "Encountered an Error while creating Resource Group with Name : " + $resourceGroupName + " at Location: " + $locationName + ". One Reason could be that the Resource Group with the same name but different location already exists in your Subscription. Delete the other Resource Group and run this script again.";
-        ThrowException($message);
+    if(!$resourceGroupCreationOp) {
+        throw "Encountered an Error while creating Resource Group with Name : " + $resourceGroupName + " at Location: " + $locationName + ". One Reason could be that the Resource Group with the same name but different location already exists in your Subscription. Delete the other Resource Group and run this script again."
     }
 
     Write-Host 'Resource Group Created Successfully';
@@ -175,10 +153,8 @@ try {
 
     WriteInfoLog("Creating Managed identity inside ResourceGroup: " + $resourceGroupName + " and Identity Name: " + $identityName);
     $identityObj = (az identity create -g $resourceGroupName -n $identityName) | ConvertFrom-Json
-    if(!$identityObj)
-    {
-        $message = "Encountered an Error while creating managed identity inside ResourceGroup: " + $resourceGroupName + " and Identity Name: " + $identityName;
-        ThrowException($message);
+    if(!$identityObj) {
+        throw "Encountered an Error while creating managed identity inside ResourceGroup: " + $resourceGroupName + " and Identity Name: " + $identityName
     }
 
     #It takes a few seconds for the Managed Identity to spin up and be available for further processing
@@ -190,10 +166,8 @@ try {
 
     WriteInfoLog("Assigning Role: " + $roleName + " to PrincipalID: " + $identityObj.principalId);
     $roleAssignmentOp = az role assignment create --assignee-object-id $identityObj.principalId --assignee-principal-type ServicePrincipal --role $roleName
-    if(!$roleAssignmentOp)
-    {
-        $message = "Encountered an Error while creating Role Assignment";
-        ThrowException($message);
+    if(!$roleAssignmentOp) {
+        throw "Encountered an Error while creating Role Assignment"
     }
 
     Write-Host 'Role Assignment Created Successfully';
@@ -205,10 +179,8 @@ try {
 
     WriteInfoLog("Deploying ARM Template to Azure inside ResourceGroup: " + $resourceGroupName + " with DeploymentName: " + $deploymentName +  " TemplateFile: " + $templateFileName + " AppClientId: " + $appinfo.appId + " IdentifiedURI: " + $appinfo.identifierUris);
     $deploymentOutput = (az deployment group create --resource-group $resourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) identityName=$($identityName) userEmailAddress=$($userEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
-    if(!$deploymentOutput)
-    {
-        $message = "Encountered an Error while deploying to Azure";
-        ThrowException($message);
+    if(!$deploymentOutput) {
+        throw "Encountered an Error while deploying to Azure"
     }
 
     #Updating the Config Entry EdnaLiteDevKey in the Function Config
@@ -283,9 +255,9 @@ try {
     WriteInfoLog("Deployment Complete");
 }
 catch {
-    # WriteErrorLog $_.Exception.Message
-    # Write-Host $_.Exception.Message
-    # Write-Error 'Error occurred while executing the Script. Please report the bug on Github (along with Error Message & Logs)'
+    WriteErrorLog $_.Exception.Message
+    Write-Host $_.Exception.Message
+    Write-Host 'Error occurred while executing the Script. Please report the bug on Github (along with Error Message & Logs)'
     throw $_
 }
 finally {
