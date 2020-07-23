@@ -46,7 +46,7 @@ Here are the regions we support:
 
 **Locate your region from the list above. Then type it into the script and hit "Enter".**
 
-Your region determines mainly three things:
+Your region determines three things:
 * Compliance and Data Residency
 * Service Availability
 * Pricing
@@ -55,33 +55,33 @@ For information regarding your region, check [here](https://azure.microsoft.com/
 
 ## Registering Azure Active Directory App
 
-Done automatically.
+The **Publish.ps1** script will automatically configure this step. 
 
 ## Creating your Resource Group
 
-Done automatically.
+The **Publish.ps1** script will automatically configure this step.
 
 ## Creating Managed Identity
 
-Done automatically.
+The **Publish.ps1** script will automatically configure this step.
 
 ## Creating Role Assignment
 
-Done automatically.
+The **Publish.ps1** script will automatically configure this step.
 
 ## Deploying Resources to Azure
 
-Done automatically.
+The **Publish.ps1** script will automatically configure this step.
 
 ## Updating Azure Active Directory App
 
-Done automatically.
+The **Publish.ps1** script will automatically configure this step.
 
 **Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
 If your **deployment failed** click [here](./TROUBLESHOOTING.md) for help.
 
-Now we have to configure the tool on your institution's LMS.
+Once the tool has been successfully deployed, the next step is to configure the tool on your institution's LMS.
 
 # Configuring the tool on your LMS
 
