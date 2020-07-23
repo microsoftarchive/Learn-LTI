@@ -46,6 +46,8 @@ Here are the regions we support:
 
 **Locate your region from the list above. Then type it into the script and hit "Enter".**
 
+![Deployment.1](./images/Deployment.1.png)
+
 Your region determines three things:
 * Compliance and Data Residency
 * Service Availability
