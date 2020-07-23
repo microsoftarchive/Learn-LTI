@@ -81,6 +81,8 @@ The **Publish.ps1** script will automatically configure this step.
 
 **Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
+![Deployment.2](./images/Deployment.2.jpg)
+
 If your **deployment failed** click [here](./TROUBLESHOOTING.md) for help.
 
 Once the tool has been successfully deployed, the next step is to configure the tool on your institution's LMS.
