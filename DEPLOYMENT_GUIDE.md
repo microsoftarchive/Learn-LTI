@@ -1,4 +1,10 @@
 # Microsoft Learn LTI Tool Deployment Instructions
+
+## Table of Contents
+1. Steps from repository: [link](#steps-from-repository)
+2. Steps from Script: [link](#steps-from-script)
+3. Configuring the tool in your LMS and in Azure: [link](#configuring-the-tool-in-your-lms-and-in-azure)
+
 ## Prerequisites
 To begin, you will need:
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
@@ -10,13 +16,13 @@ To begin, you will need:
 
 Follow these steps to deploy the MS Learn LTI tool:
 
-# Part 1: Steps from repository 
+# Steps from repository
 * In the cloned repo, inside the deployment directory, execute the file **Deploy.ps1**.
 * You should now see the MS Learn LTI Tool script popup.
 
 **"IMAGE HERE OF SCRIPT -- VIPUL WILL SEND"**
 
-# Part 2: Steps from Script
+# Steps from Script
 
 ## Choose Subscription
 
@@ -88,7 +94,7 @@ If your **deployment failed**, click [here](./TROUBLESHOOTING.md) for help.
 
 Once the tool has been successfully deployed, the next step is to configure the tool on your institution's LMS.
 
-# Part 3: Configuring the tool in your LMS
+# Configuring the tool in your LMS and in Azure
 
 ## From your LMS administration settings, configure a tool manually. 
 
