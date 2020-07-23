@@ -11,21 +11,16 @@ To begin, you will need:
 Follow these steps to deploy the MS Learn LTI tool:
 
 # Part 1: Steps from repository 
-1. Clone the Deployment repository to your machine
-2. [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
-3. In the cloned repo, inside the deployment directory, execute the file **appRegistration.ps1** and save the result for later.
-4. Click the "Deploy to Azure" button below to deploy the needed resources in Azure.
-- [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmicrosoft%2FLearn-LTI%2Fmaster%2Fdeployment%2Fazuredeploy.json%3Ftoken%3DAQCAEE2JIAOYTYWW5HDSNSS7AODIM)
-5. In the cloned repo, inside the deployment directory, execute the file **Publish.ps1**.
-6. You should now see the MS Learn LTI Tool script popup.
-![Deployment.3](./images/Deployment.3.jpg)
+* In the cloned repo, inside the deployment directory, execute the file **Deploy.ps1**.
+* You should now see the MS Learn LTI Tool script popup.
 
+**"IMAGE HERE OF SCRIPT -- VIPUL WILL SEND"**
 
 # Part 2: Steps from Script
 
 ## Choose Subscription
 
-**Enter 'EduLearnLTI'**
+Type in the name of the Azure subscription that you hold (it's a prerequisite necessary for deployment).
 
 If you're unsure about whether your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade??WT.mc_id=learnlti-github-cxa)
 
@@ -63,27 +58,27 @@ For information regarding your region, check [here](https://azure.microsoft.com/
 
 ## Registering Azure Active Directory App
 
-The **Publish.ps1** script will automatically configure this step. 
+The **Deploy.ps1** script will automatically configure this step. 
 
 ## Creating your Resource Group
 
-The **Publish.ps1** script will automatically configure this step.
+The **Deploy.ps1** script will automatically configure this step.
 
 ## Creating Managed Identity
 
-The **Publish.ps1** script will automatically configure this step.
+The **Deploy.ps1** script will automatically configure this step.
 
 ## Creating Role Assignment
 
-The **Publish.ps1** script will automatically configure this step.
+The **Deploy.ps1** script will automatically configure this step.
 
 ## Deploying Resources to Azure
 
-The **Publish.ps1** script will automatically configure this step.
+The **Deploy.ps1** script will automatically configure this step.
 
 ## Updating Azure Active Directory App
 
-The **Publish.ps1** script will automatically configure this step.
+The **Deploy.ps1** script will automatically configure this step.
 
 **Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
