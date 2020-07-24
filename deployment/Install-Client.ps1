@@ -87,7 +87,7 @@ function Update-ClientConfig {
     }
     Write-Log -Message "Updated Configuration:-`n`t$($Config | Out-String)"
 
-    Write-Log -Message "Updating [ $fileName ] with new config variables"
+    Write-Log -Message "Updating [ $ConfigFilePath ] with new config variables"
     Export-DotEnv $Config $ConfigFilePath
 }
 
@@ -111,7 +111,7 @@ function Install-Client {
         Write-Log -Message 'Building Client App'
         npm run build
 
-        Write-Log -Message "Deploying as a Static Web App -- $StaticWebsiteStorageAccount"
+        Write-Log -Message "Deploying as a Static Web App in Storage Account [ $StaticWebsiteStorageAccount ]"
 
         Write-Log -Message 'Delete existing content in `$web storage container (Just in case of a redeploy)'
         # Running in Error only mode since this cmd shows a warning causing misconception that user requires azure cli login
