@@ -115,7 +115,7 @@ The following details the configuration process for Moodle.
 ![Config.7](./images/Config.7.png)
 
 4. From Microsoft's Learn LTI tool's registration page, locate the Tool Settings section. 
-![Config.6](./images/Config.6png)
+![Config.6](./images/Config.6.png)
    * Use the Launch URL from Microsoft's Learn LTI tool's registration page to update your LMS tool's Tool URL and Redirection URL
    * Use the Login URL from Microsoft's Learn LTI tool's registration page to update your LMS tool's Tool Initiate login URL
    * Use the Public Key rom Microsoft's Learn LTI tool's registration page to update your LMS tool's Tool Public Key
