@@ -11,10 +11,6 @@
             "defaultValue": "api://10ef1e6b-1171-4888-92d5-c661b428796b"
 
         },
-        "baseName": {
-            "type": "string",
-            "defaultValue": "MSLearnLTI"
-        },
         "utcValue": {
             "type": "string",
             "defaultValue": "[utcNow()]"
@@ -526,13 +522,6 @@
         "StaticWebSiteName": {
             "value": "[variables('staticWebsite')]",
             "type": "string"
-        },
-        "StaticWebSiteUrl": {
-            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
-            "type": "string"
         }
-        
-
-
     }
 }

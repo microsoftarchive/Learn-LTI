@@ -1,103 +1,149 @@
-Write-Host ' __  __  _____     _      ______          _____  _   _';
-Write-Host '|  \/  |/ ____|   | |    |  ____|   /\   |  __ \| \ | |';
-Write-Host '| \  / | (___     | |    | |__     /  \  | |__) |  \| |';
-Write-Host '| |\/| |\___ \    | |    |  __|   / /\ \ |  _  /| . ` |';
-Write-Host '| |  | |____) |   | |____| |____ / ____ \| | \ \| |\  |';
-Write-Host '|_|  |_|_____/____|______|______/_/   _\_\_|_ \_\_| \_|';
-Write-Host '';
-Write-Host ' _   _______ _____     _______ ____   ____  _';
-Write-Host '| | |__   __|_   _|   |__   __/ __ \ / __ \| |';
-Write-Host '| |    | |    | |        | | | |  | | |  | | |';
-Write-Host '| |    | |    | |        | | | |  | | |  | | |';
-Write-Host '| |____| |   _| |_       | | | |__| | |__| | |____';
-Write-Host '|______|_|  |_____|      |_|  \____/ \____/|______|';
-Write-Host '';
-Write-Host '';
-Write-Host '';
-Write-Host '';
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory)]
+    [string]$ResourceGroupName, # ~ "MSLearnLTI"
+    [Parameter(Mandatory)]
+    [string]$AppName            # ~ "MS-Learn-Lti-Tool-App"
+)
 
-# Will be used for accessing specific resources based on the naming convension used in the ARM template deployment
-$resourceGroupName = Read-Host -Prompt 'Please provide the Resource Group name.'
-
-Push-Location "../backend"
-
-Write-Host '======================';
-Write-Host 'Installing the backend';
-Write-Host '======================';
-
-# Go over all the [.csproj] files under the [Functions] folder and for each of them do the following:
-# 1. Restore
-# 2. Build
-# 3. Publish
-# 4. Zip the publish result
-# 5. Deploy to the cloud
-# 
-# Best way would be to create a separate script for a single function deployment that receives parameters
-
-Write-Host 'Restoring'
-dotnet restore
-
-Write-Host 'Building'
-dotnet build --configuration RELEASE
-
-Write-Host 'Publishing'
-dotnet publish --configuration RELEASE --output Publish
-
-Write-Host '==============================';
-Write-Host 'Backend Installation Completed';
-Write-Host '==============================';
-
-Push-Location "../client"
-
-
-Write-Host '=====================';
-Write-Host 'Installing the client';
-Write-Host '=====================';
-Write-Host '';
-Write-Host 'Running npm install';
-Write-Host '-------------------';
-npm i
-Write-Host '';
-Write-Host '';
-Write-Host '';
-
-# TODO
-# Fetch the needed values from different Azure resources and rewrite the [.env.production] file.
-
-Write-Host 'Building React';
-Write-Host '--------------';
-npm run-script build
-Write-Host '';
-
-Write-Host 'Deploying as a static WebApp';
-Write-Host '----------------------------';
-Write-Host '';
-Write-Host 'Delete existing website content (Just in case of a redeploy)';
-az storage blob delete-batch --account-name psednaclienttests --source '$web'
-
-Write-Host 'Uploading build content to the static website storage container';
-az storage blob upload-batch -s 'build' -d '$web' --account-name psednaclienttests
-
-Write-Host '';
-
-# TODO:
-# Add the static website URL to the app registration redirect URL
-
-Write-Host '=============================';
-Write-Host 'Client Installation Completed';
-Write-Host '=============================';
-
-Write-Host '';
-Write-Host '';
-Write-Host '';
-
-# Check if running Powershell ISE
-if ($psISE)
-{
-    Write-Host -NoNewLine 'Script is done';
+begin {
+    . .\Install-Backend.ps1
+    . .\Install-Client.ps1
+    # TODO: ensure that user is logged into azure-cli and has an active subscription
 }
-else
-{
-    Write-Host -NoNewLine 'Press any key to continue...';
-    $x = $host.ui.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+
+process {
+    # GLOBALS
+    $VALID_FUNCTIONS =  @("LearnContent", "Links", "Assignments", "Connect", "Platforms", "Users")
+    $VALID_CLIENT = "learnclient"
+
+    # TODO: Move helpers to common file
+    function Write-Log {
+        param(
+            [Parameter(Mandatory)]
+            [string]$Message
+        ) 
+        $now = (Get-Date).ToString();
+        Write-Host "[$now] - $Message";
+    }
+
+    function Write-Title {
+        param(
+            [Parameter(Mandatory)]
+            [string]$Title
+        )
+        Write-Host ''
+        Write-Host ''
+        Write-Host '============================================================='
+        Write-Host $Title
+        Write-Host '============================================================='
+        Write-Host ''
+        Write-Host ''    
+    }
+    
+    function Get-AppRegistration ([string]$AppName) {
+        #$app = az ad sp list --display-name $AppName | ConvertFrom-Json
+        $app = az ad app list --display-name $AppName | ConvertFrom-Json
+        if (!$app) {
+            throw "Application $AppName could not be found"
+        }
+        Write-Output $app
+    }
+    
+    function Test-ResourceGroup ([string]$ResourceGroupName) {
+        $resourceGroup = az group show -n $ResourceGroupName | ConvertFrom-Json
+        if (!$resourceGroup) {
+            throw "Resource Group $ResourceGroupName could not be found"
+        }
+    }
+    
+    function Get-FunctionApps ([string]$ResourceGroupName) {
+        $PotentialFunctionApps = az functionapp list -g $ResourceGroupName | ConvertFrom-Json
+        if (!$PotentialFunctionApps) {
+            throw "Could not find any Function Apps in $ResourceGroupName"
+        }
+        
+        $FunctionApps = @{}
+        $FunctionAppNames = $PotentialFunctionApps | Select-Object -ExpandProperty "name";
+        foreach ($FunctionLabel in $VALID_FUNCTIONS) {
+            $FunctionAppName = $FunctionAppNames | Where-Object { $_ -like "$FunctionLabel-*" }
+            if($FunctionAppName) {
+                $FunctionApps["$($FunctionLabel)FunctionAppName"] = $FunctionAppName;
+            }
+        }
+        return $FunctionApps
+    }
+    
+    function Get-StaticWebsite ([string]$ResourceGroupName) {
+        $storageAccounts = az storage account list -g $ResourceGroupName | ConvertFrom-Json
+        if (!$storageAccounts -or ($storageAccounts.Count -le $VALID_FUNCTIONS.Count)) {
+            throw "Could not find any Storage Accounts in $ResourceGroupName"
+        }
+        return $storageAccounts | 
+            Where-Object { $_.name -like "$VALID_CLIENT*" } | 
+            Select-Object -Property "name", @{label="WebUrl"; expression={ $_.primaryEndpoints.web }} 
+    }
+
+    function Get-DeployedResourceInfo([string]$ResourceGroupName, [string]$AppName) {
+        Write-Log 'Validating App Registration'
+        $app = Get-AppRegistration $AppName
+    
+        Write-Log 'Validating Resource Group'
+        Test-ResourceGroup $ResourceGroupName
+    
+        Write-Log 'Getting Function Apps Info'
+        $FunctionApps = Get-FunctionApps $ResourceGroupName
+        if (!$FunctionApps) {
+            throw "Couldn't get required Function Apps from $ResourceGroupName"
+        }
+    
+        Write-Log 'Getting Static Website Info'
+        $StaticWebsite = Get-StaticWebsite $ResourceGroupName
+        if (!$StaticWebsite) {
+            throw "Couldn't get Static Website Resource from $ResourceGroupName"
+        }
+    
+        return @{
+            "resource-group"=$resourceGroupName;
+            "function-apps"=$FunctionApps;
+            "static-website"=$StaticWebsite;
+            "app-id"=$app.appId
+        }
+    }
+    
+    Write-Title 'Gathering Deployment Info'
+    $resources = Get-DeployedResourceInfo -ResourceGroupName $ResourceGroupName -AppName $AppName
+    Write-Title 'Deployment Info Gathered'
+    
+    Write-Title "Installing the backend"
+    $BackendParams = @{
+        SourceRoot="../backend";
+        ResourceGroupName="$($resources['resource-group'])";
+    }
+    $BackendParams = $BackendParams + $resources['function-apps']
+    Install-Backend @BackendParams
+    Write-Title 'Backend Installation Completed'
+
+    Write-Title "Updating the Client Config"
+    $ClientUpdateConfigParams = @{
+        ConfigFilePath="../client/.env.production";
+        AppId="$($resources['app-id'])";
+        StaticWebsiteUrl="$($($resources['static-website']).WebUrl)";
+    }
+    $ClientUpdateConfigParams = $ClientUpdateConfigParams + $resources['function-apps']
+    $ClientUpdateConfigParams.Remove("ConnectFunctionAppName")
+    Update-ClientConfig @ClientUpdateConfigParams
+    Write-Title "Client Config updated"
+    
+    Write-Title 'Installing the client'
+    Install-Client -SourceRoot "../client" -StaticWebsiteStorageAccount $($resources['static-website']).name
+    Write-Title 'Client Installation Completed'
+    
+    # Check if running Powershell ISE
+    if ($psISE) {
+        Write-Host -NoNewLine 'Script is done';
+    } else {
+        Write-Host -NoNewLine 'Press any key to continue...';
+        $host.ui.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    }
 }
