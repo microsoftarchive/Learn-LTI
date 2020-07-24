@@ -8,9 +8,9 @@
 ### Create a student account 
 
 ### Student view of assignment details
-This is the student view of the MS Learn LTI application. A student can see all assignment details, along with associated links, resources, and deadlines.
+This is the student view of the Microsoft Learn LTI application. A student can see all assignment details, along with associated links, resources, and deadlines.
 
 ![Student View](./images/View.Student.png)
 
 ### Complete a module
-When the student selects a module, they will be redirected to the MS Learn site. If the student
+When the student selects a module, they will be redirected to the Microsoft Learn site. If the student
