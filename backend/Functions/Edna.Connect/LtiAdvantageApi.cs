@@ -22,7 +22,7 @@ namespace Edna.Connect
 {
     public class LtiAdvantageApi
     {
-        private static readonly string RedirectUrl = Environment.GetEnvironmentVariable("RedirectUrl");
+        private static readonly string RedirectUrl = Environment.GetEnvironmentVariable("RedirectUrl").TrimEnd('/');
 
         private readonly ILogger<LtiAdvantageApi> _logger;
 
