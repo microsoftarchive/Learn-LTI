@@ -122,22 +122,19 @@ process {
     }
     $BackendParams = $BackendParams + $resources['function-apps']
     Install-Backend @BackendParams
-    Write-Title 'Backend Installation Completed'
 
     Write-Title "Updating the Client Config"
     $ClientUpdateConfigParams = @{
-        ConfigFilePath="../client/.env.production";
+        ConfigPath="../client/.env.production";
         AppId="$($resources['app-id'])";
         StaticWebsiteUrl="$($($resources['static-website']).WebUrl)";
     }
     $ClientUpdateConfigParams = $ClientUpdateConfigParams + $resources['function-apps']
     $ClientUpdateConfigParams.Remove("ConnectFunctionAppName")
     Update-ClientConfig @ClientUpdateConfigParams
-    Write-Title "Client Config updated"
     
     Write-Title 'Installing the client'
     Install-Client -SourceRoot "../client" -StaticWebsiteStorageAccount $($resources['static-website']).name
-    Write-Title 'Client Installation Completed'
     
     # Check if running Powershell ISE
     if ($psISE) {

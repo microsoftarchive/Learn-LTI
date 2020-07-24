@@ -80,7 +80,7 @@ try {
         throw "Encountered an Error while trying to fetch Subscription List."
     }
 
-    Write-Log -Message ($($subscriptionList | ConvertTo-Json -Compress));
+    Write-Log -Message "List of Subscriptions:-`n$($subscriptionList | ConvertTo-Json -Compress)"
 
     $subscriptionCount = 0;
     foreach ($subscription in $subscriptionList) {
@@ -122,11 +122,12 @@ try {
     #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
 
 
-    Write-Log -Message "Fetching List of Locations"
     Write-Title("STEP #3 - Choose Location");
 
+    Write-Log -Message "Fetching List of Locations"
     $locationList = (az account list-locations) | ConvertFrom-Json;
-    Write-Log -Message "$($locationList | ConvertTo-Json -Compress)"
+
+    Write-Log -Message "List of Locations:-`n$($locationList | ConvertTo-Json -Compress)"
     az account list-locations --output table --query "[].{Name:name}"
 
     Write-Host ''
@@ -238,7 +239,6 @@ try {
 
     Write-Host 'App Update Completed Successfully'
 
-
     . .\Install-Backend.ps1
     Write-Title "STEP #10 - Installing the backend"
 
@@ -253,13 +253,12 @@ try {
         UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
     }
     Install-Backend @BackendParams
-    Write-Host "Backend Installation Completed Successfully"
 
     . .\Install-Client.ps1
     Write-Title "STEP #11 - Updating client's .env.production file"
 
     $ClientUpdateConfigParams = @{
-        ConfigFilePath="../client/.env.production";
+        ConfigPath="../client/.env.production";
         AppId=$appinfo.appId;
         LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
         LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
@@ -269,7 +268,6 @@ try {
         StaticWebsiteUrl=$deploymentOutput.properties.outputs.webClientURL.value;
     }
     Update-ClientConfig @ClientUpdateConfigParams
-    Write-Host "Client's .env.production Updated Successfully"
 
     Write-Title 'STEP #12 - Installing the client'
     $ClientInstallParams = @{
@@ -277,7 +275,6 @@ try {
         StaticWebsiteStorageAccount=$deploymentOutput.properties.outputs.StaticWebSiteName.value
     }
     Install-Client @ClientInstallParams
-    Write-Host 'Client Installation Completed Successfully'
 
     Write-Title '======== Successfully Deployed Resources to Azure ==========='
 

@@ -55,7 +55,7 @@ function Update-ClientConfig {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
-        [string]$ConfigFilePath,
+        [string]$ConfigPath,
         [Parameter(Mandatory)]
         [string]$AppId,
         [Parameter(Mandatory)]
@@ -85,10 +85,12 @@ function Update-ClientConfig {
         [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL="$(Get-ServiceUrl $PlatformsFunctionAppName)";
         [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$(Get-ServiceUrl $UsersFunctionAppName)"
     }
-    Write-Log -Message "Updated Configuration:-`n`t$($Config | Out-String)"
+    Write-Log -Message "Updated Configuration:-`n$($Config | Out-String)"
 
-    Write-Log -Message "Updating [ $ConfigFilePath ] with new config variables"
-    Export-DotEnv $Config $ConfigFilePath
+    Write-Log -Message "Updating [ $ConfigPath ] with new config variables"
+    Export-DotEnv $Config $ConfigPath
+
+    Write-Output "Client Config Updated Successfully"
 }
 
 function Install-Client {
@@ -140,6 +142,7 @@ function Install-Client {
             throw "Failed to deploy Client App to $StaticWebsiteStorageAccount/`$web"
         }
 
+        Write-Output "Client App Published Successfully"
     }
     finally {
         Pop-Location

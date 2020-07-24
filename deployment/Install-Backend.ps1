@@ -46,12 +46,14 @@ function Publish-FunctionApp {
     Write-Log -Message "Zipping Artifacts [ $PublishDir ]/* --> [ $ArchivePath ]"
     Compress-Archive -Path "$PublishDir/*" -DestinationPath $ArchivePath
 
-    Write-Log -Message "Deploying to Azure FunctionApp [ $ResourceGroupName/$FunctionAppName ]"
+    Write-Log -Message "Deploying to Azure Function App [ $ResourceGroupName/$FunctionAppName ]"
     # Turning Error only mode to reduce clutter on the terminal
     $result = az functionapp deployment source config-zip -g $ResourceGroupName -n $FunctionAppName --src $ArchivePath --only-show-errors | ConvertFrom-Json
     if(!$result) {
         throw "Failed to deploy Function App [ $FunctionName ]"
     }
+
+    Write-Output "Function App [ $FunctionName ] Published Successfully"
 }
 
 function Install-Backend {
@@ -115,8 +117,9 @@ function Install-Backend {
             }
 
             Publish-FunctionApp @PublishParams
-            Write-Host "Project [ $($Project.Name) ] Published Successfully"
         }
+        
+        Write-Output "Backend Installation Completed Successfully"
     }
     finally {
         Pop-Location   
