@@ -17,7 +17,7 @@ namespace Edna.Connect
     public class Lti1Api
     {
         private static readonly string ToolSecret = Environment.GetEnvironmentVariable("Lti1Secret");
-        private static readonly string RedirectUrl = Environment.GetEnvironmentVariable("RedirectUrl");
+        private static readonly string RedirectUrl = Environment.GetEnvironmentVariable("RedirectUrl").TrimEnd('/');
 
         private readonly ILogger<Lti1Api> _logger;
 

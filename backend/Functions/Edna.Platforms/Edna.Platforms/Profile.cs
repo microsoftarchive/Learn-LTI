@@ -4,7 +4,7 @@ namespace Edna.Platforms
 {
     public class Profile : AutoMapper.Profile
     {
-        private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl");
+        private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
 
         public Profile()
         {
