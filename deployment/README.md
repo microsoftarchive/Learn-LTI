@@ -1,5 +1,5 @@
 ## Microsoft Learn LTI Tool Deployment Instructions
-To deploy MS Learn LTI tool follow these steps:
+To deploy the Microsoft Learn LTI tool follow these steps:
 1. Clone this repository to your machine
 2. Make sure that you install: -
    1. [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
