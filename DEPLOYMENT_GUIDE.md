@@ -26,13 +26,13 @@ Follow these steps to deploy the MS Learn LTI tool:
 
 ## Choose Subscription
 
-Type in the name of the Azure subscription that you hold (this is a prerequisite necessary for deployment)
+Type in the name of the Azure subscription that you hold (this is a prerequisite necessary for deployment).
 
-If you're unsure about whether your account has a subscription, check [here](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade??WT.mc_id=learnlti-github-cxa)
+If you're unsure about whether your account has a subscription, check [here.](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade??WT.mc_id=learnlti-github-cxa)
 
 ## Choose Location
 
-These regions are supported:
+The following regions are supported:
 * eastasia
 * southeastasia
 * centralus
