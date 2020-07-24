@@ -36,7 +36,11 @@ function Publish-FunctionApp {
 
     $PublishDir = Join-Path $OutputDir $FunctionName
     Write-Log -Message "Building [ $ProjectDir ] --> [ $PublishDir ]"
-    dotnet publish $ProjectDir --configuration RELEASE --output $PublishDir --nologo --verbosity quiet
+    $PublishLogs = dotnet publish $ProjectDir --configuration RELEASE --output $PublishDir --nologo
+    if($LASTEXITCODE -ne 0) {
+        Write-Log -Message $PublishLogs
+        throw "Errors while building Function App [ $FunctionName ]"
+    }
 
     $ArchivePath = Join-Path $OutputDir "$FunctionName.zip"
     Write-Log -Message "Zipping Artifacts [ $PublishDir ]/* --> [ $ArchivePath ]"
@@ -46,7 +50,7 @@ function Publish-FunctionApp {
     # Turning Error only mode to reduce clutter on the terminal
     $result = az functionapp deployment source config-zip -g $ResourceGroupName -n $FunctionAppName --src $ArchivePath --only-show-errors | ConvertFrom-Json
     if(!$result) {
-        throw "Failed to deploy $FunctionName to $FunctionAppName"
+        throw "Failed to deploy Function App [ $FunctionName ]"
     }
 }
 

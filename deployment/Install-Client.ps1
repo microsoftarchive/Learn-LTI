@@ -104,12 +104,27 @@ function Install-Client {
     Write-Log -Message "Switching to [$SourceRoot] as working directory"
     Push-Location $SourceRoot
 
-    try {        
-        Write-Log -Message 'Running npm install'
-        npm ci
+    try {
+
+        $BuildDir = 'build'
+        if(Test-Path $BuildDir) {
+            Write-Log -Message "Deleting existing Artifacts"
+            Remove-Item -LiteralPath $BuildDir -Recurse -Force
+        }
+        
+        Write-Log -Message 'Running npm ci'
+        $SetupLogs = npm ci
+        if($LASTEXITCODE -ne 0) {
+            Write-Log -Message $SetupLogs
+            throw 'Errors while executing npm ci'
+        }
 
         Write-Log -Message 'Building Client App'
-        npm run build
+        $BuildLogs = npm run build
+        if($LASTEXITCODE -ne 0) {
+            Write-Log -Message $BuildLogs
+            throw 'Errors while creating Optimized Production Build'
+        }
 
         Write-Log -Message "Deploying as a Static Web App in Storage Account [ $StaticWebsiteStorageAccount ]"
 
@@ -124,7 +139,7 @@ function Install-Client {
         if(!$result) {
             throw "Failed to deploy Client App to $StaticWebsiteStorageAccount/`$web"
         }
-    
+
     }
     finally {
         Pop-Location
