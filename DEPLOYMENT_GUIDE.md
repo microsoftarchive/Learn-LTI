@@ -123,14 +123,14 @@ The following details the configuration process for Moodle.
 ## From your LMS tool services settings
 
 Change your LMS LTI Names and Role Provisioning setting to "Use this service to retrieve members' information as per privacy settings"
-![Config.11](./images/Config.11.png)
+![Config.8](./images/Config.8.png)
 
 ## From your LMS tool privacy settings
-![Config.12](./images/Config.12.png)
+![Config.9](./images/Config.9.png)
 Update all permissions to Always
 
 ## Access your tool configuration details and make the following changes to the Microsoft Learn LTI Tool Registration page under Platform settings
-![Config.14](./images/Config.14.png)
+![Config.11](./images/Config.11.png)
 1. Make Issuer your Platform ID
 2. Make Client ID your Client ID **under Tool Settings**
 3. Make JWK Set URL your Public keyset URL
