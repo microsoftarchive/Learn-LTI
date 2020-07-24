@@ -1,6 +1,6 @@
 {
   "name": "edna-lite",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@fluentui/react": "^7.110.3",
