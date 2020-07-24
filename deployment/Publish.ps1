@@ -127,7 +127,6 @@ process {
     Write-Title "Updating the Client Config"
     $ClientUpdateConfigParams = @{
         ConfigFilePath="../client/.env.production";
-        ResourceGroupName="$($resources['resource-group'])";
         AppId="$($resources['app-id'])";
         StaticWebsiteUrl="$($($resources['static-website']).WebUrl)";
     }
