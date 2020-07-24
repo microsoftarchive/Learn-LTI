@@ -22,7 +22,7 @@ The Microsoft Learn LTI Application pairs Institutional LMSs courses/modules wit
    * Only saves callback URLs to get info about the user from the LMS.
 
 **HTTP Redirect to Microsoft Learn LTI Application web client**
-* Using the assignment information, generated a specific URL for the assignment
+* Using the assignment information, generated a specific URL for the assignment.
 * From that point, the Microsoft Learn LTI Application Connect endpoint no longer participates in the operation.
 * The LMS stops participating in the process in a direct way. Only a few calls are made by the Microsoft Learn LTI Application backend to the LMS to get information.
 
