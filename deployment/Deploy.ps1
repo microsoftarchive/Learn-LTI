@@ -47,16 +47,13 @@ function Write-Banner {
     Write-Host '| |____| |____ / ____ \| | \ \| |\  |          | |____| |   _| |_ '
     Write-Host '|______|______/_/    \_\_|  \_\_| \_|          |______|_|  |_____|'
     Write-Host ''    
+    Write-Host ''    
 }
 
 function Write-Title([string]$Title) {
-    Write-Host ''
-    Write-Host ''
-    Write-Host '============================================================='
+    Write-Host "`n`n============================================================="
     Write-Host $Title
-    Write-Host '============================================================='
-    Write-Host ''
-    Write-Host ''
+    Write-Host "=============================================================`n`n"
 }
 
 try {
@@ -102,8 +99,8 @@ try {
     else {
         $subscriptionListOutput = az account list --output table --all --query "[].{Name:name, Id:id IsDefault:isDefault}"
         $subscriptionListOutput;
-        Write-Host '';
-        Write-Host '';
+        Write-Host ''
+        Write-Host ''
         $subscriptionName = Read-Host 'Enter Subscription Name from Above List'
         Write-Log -Message "User Entered Subscription Name: $subscriptionName"
 
@@ -132,8 +129,8 @@ try {
     Write-Log -Message "$($locationList | ConvertTo-Json -Compress)"
     az account list-locations --output table --query "[].{Name:name}"
 
-    Write-Host '';
-    Write-Host '';
+    Write-Host ''
+    Write-Host ''
     $locationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
     Write-Log -Message "User Entered Location Name: $locationName"
     $isValidLocationName = $false;
@@ -161,12 +158,12 @@ try {
     #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
 
     Write-Log -Message "Updating App so as to add MS Graph -> User Profile -> Read Permissions to the AAD App"
-    $graphAPIId = '00000003-0000-0000-c000-000000000000';
-    $graphAPIPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope';
-    $appPermissionAddOp = az ad app permission add --id $appinfo.appId --api $graphAPIId --api-permissions $graphAPIPermissionId;
+    $GraphAPIId = '00000003-0000-0000-c000-000000000000'
+    $GraphAPIPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope'
+    $appPermissionAddOp = az ad app permission add --id $appinfo.appId --api $GraphAPIId --api-permissions $GraphAPIPermissionId
     #Intentionally not catching an exception here
 
-    Write-Host 'App Created Successfully';
+    Write-Host 'App Created Successfully'
 
     Write-Title 'STEP #5 - Creating Resource Group'
 
@@ -189,7 +186,7 @@ try {
     #It takes a few seconds for the Managed Identity to spin up and be available for further processing
     Write-Log -Message "Sleeping for 30 seconds"
     Start-Sleep -s 30
-    Write-Host 'Managed Identity Created Successfully';
+    Write-Host 'Managed Identity Created Successfully'
 
     Write-Title 'STEP #7 - Creating Role Assignment'
 
@@ -204,7 +201,7 @@ try {
 
     Write-Title 'STEP #8 - Creating Resources in Azure'
 
-    $userObjectId = az ad signed-in-user show --query objectId;
+    $userObjectId = az ad signed-in-user show --query objectId
     #$userObjectId
 
     $templateFileName = "azuredeploy.json"
@@ -230,7 +227,7 @@ try {
     $PlatformsUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.PlatformsFunctionName.value $EdnaKeyString
     $UsersUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.UsersFunctionName.value $EdnaKeyString
 
-    Write-Host 'Resource Creation in Azure Completed Successfully';
+    Write-Host 'Resource Creation in Azure Completed Successfully'
 
     Write-Title 'STEP #9 - Updating AAD App'
 
@@ -239,7 +236,7 @@ try {
     $appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
     #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
 
-    Write-Host 'App Update Completed Successfully';
+    Write-Host 'App Update Completed Successfully'
 
 
     . .\Install-Backend.ps1
@@ -282,7 +279,7 @@ try {
     Install-Client @ClientInstallParams
     Write-Host 'Client Installation Completed Successfully'
 
-    Write-Title('=========Successfully Deployed Resources to Azure============');
+    Write-Title '======== Successfully Deployed Resources to Azure ==========='
 
     Write-Log -Message "Deployment Complete"
 }
