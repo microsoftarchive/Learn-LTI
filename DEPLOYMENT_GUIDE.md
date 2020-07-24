@@ -60,7 +60,7 @@ Your region determines three things:
 * Service Availability
 * Pricing
 
-For information regarding your region, check [here](https://azure.microsoft.com/global-infrastructure/geographies/?WT.mc_id=learnlti-github-cxa)
+For information regarding your region, check [here.](https://azure.microsoft.com/global-infrastructure/geographies/?WT.mc_id=learnlti-github-cxa)
 
 ## Registering Azure Active Directory App
 
