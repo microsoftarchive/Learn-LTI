@@ -4,7 +4,8 @@ param (
     [string]$AppName = "MS-Learn-Lti-Tool-App",
     [string]$IdentityName = "MSLearnLTI-Identity",
     [switch]$UseActiveAzureAccount,
-    [string]$SubscriptionName = $null
+    [string]$SubscriptionName = $null,
+    [string]$LocationName=$null
 )
 
 process {
@@ -109,19 +110,9 @@ process {
         elseif ($SubscriptionName) {
             Write-Log -Message "Using User provided Subscription Name: $SubscriptionName"            
         }
-<<<<<<< HEAD
-
-        $isValidSubscriptionName = $false;
-        foreach ($subscription in $subscriptionList) {
-            if($subscription.name -ceq $subscriptionName) {
-                $isValidSubscriptionName = $true;
-                $userEmailAddress = $subscription.user.name;
-            }
-=======
         elseif ($SubscriptionCount -eq 1) {
             $SubscriptionName = $SubscriptionList[0].name;
             Write-Log -Message "Defaulting to Subscription Name: $SubscriptionName"
->>>>>>> 133ae3e... Followup (2/n): Updating subscription logic to allow reusing of passe parameters and removing extra azure-cli invocations
         }
         else {
             $SubscriptionListOutput = $SubscriptionList | Select-Object @{ l="Subscription Name"; e={ $_.name } }, "id", "isDefault"
@@ -138,23 +129,17 @@ process {
         Write-Title "STEP #3 - Choose Location`n(Please refer to the Documentation / ReadMe on Github for the List of Supported Locations)"
 
         Write-Log -Message "Fetching List of Locations"
-        $locationList = (az account list-locations) | ConvertFrom-Json;
-
+        $LocationList = ((az account list-locations) | ConvertFrom-Json)
         Write-Log -Message "List of Locations:-`n$($locationList | ConvertTo-Json -Compress)"
-        az account list-locations --output table --query "[].{Name:name}"
-    
-        Write-Host ''
-        Write-Host ''
-        $locationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
-        Write-Log -Message "User Entered Location Name: $locationName"
-        $isValidLocationName = $false;
-        foreach ($location in $locationList) {
-            if($location.name -ceq $locationName) {
-                $isValidLocationName = $true;
-            }
+
+        if(!$LocationName) {
+            Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
+            $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+            Write-Log -Message "User Entered Location Name: $LocationName"
         }
-    
-        if(!$isValidLocationName) {
+
+        $ValidLocation = $LocationList | Where-Object { $_.name -ceq $LocationName }
+        if(!$ValidLocation) {
             throw "Invalid Location Name Entered."
         }
         #endregion
@@ -184,10 +169,10 @@ process {
         #region Create New Resource Group in above Region
         Write-Title 'STEP #5 - Creating Resource Group'
     
-        Write-Log -Message "Creating Resource Group with Name: $ResourceGroupName at Location: $locationName"
-        $resourceGroupCreationOp = az group create -l $locationName -n $ResourceGroupName
+        Write-Log -Message "Creating Resource Group with Name: $ResourceGroupName at Location: $LocationName"
+        $resourceGroupCreationOp = az group create -l $LocationName -n $ResourceGroupName
         if(!$resourceGroupCreationOp) {
-            throw "Encountered an Error while creating Resource Group with Name : " + $ResourceGroupName + " at Location: " + $locationName + ". One Reason could be that the Resource Group with the same name but different location already exists in your Subscription. Delete the other Resource Group and run this script again."
+            throw "Encountered an Error while creating Resource Group with Name : " + $ResourceGroupName + " at Location: " + $LocationName + ". One Reason could be that the Resource Group with the same name but different location already exists in your Subscription. Delete the other Resource Group and run this script again."
         }
     
         Write-Host 'Resource Group Created Successfully'
