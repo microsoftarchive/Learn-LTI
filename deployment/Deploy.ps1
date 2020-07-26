@@ -3,7 +3,8 @@ param (
     [string]$ResourceGroupName = "MSLearnLTI",
     [string]$AppName = "MS-Learn-Lti-Tool-App",
     [string]$IdentityName = "MSLearnLTI-Identity",
-    [switch]$UseActiveAzureAccount
+    [switch]$UseActiveAzureAccount,
+    [string]$SubscriptionName = $null
 )
 
 process {
@@ -71,39 +72,44 @@ process {
 
         #region Choose Active Subcription 
         Write-Title 'STEP #2 - Choose Subscription'
-    
+
+        function Get-LtiSubscriptionList {
+            $AzAccountList = ((az account list --all --output json) | ConvertFrom-Json)
+            if(!$AzAccountList) {
+                throw "Encountered an Error while trying to fetch Subscription List."
+            }
+            Write-Output $AzAccountList
+        }
+
+        function Set-LtiActiveSubscription {
+            param (
+                [string]$Name,
+                $List
+            )
+            
+            $subscription = ($List | Where-Object { $_.name -ceq $Name })
+            if(!$subscription) {
+                throw "Invalid Subscription Name Entered."
+            }
+            az account set --subscription $Name
+            #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
+            
+            Write-Output $subscription
+        }
+
         Write-Log -Message "Fetching List of Subscriptions in Users Account"
-    
-        $subscriptionList = ((az account list --all --output json) | ConvertFrom-Json);
-        if(!$subscriptionList) {
-            throw "Encountered an Error while trying to fetch Subscription List."
+        $SubscriptionList = Get-LtiSubscriptionList
+        Write-Log -Message "List of Subscriptions:-`n$($SubscriptionList | ConvertTo-Json -Compress)"    
+
+        $SubscriptionCount = $SubscriptionList.Count
+        Write-Log -Message "Count of Subscriptions: $SubscriptionCount"
+        if ($SubscriptionCount -eq 0) {
+            throw "Please create at least ONE Subscription in your Azure Account"
         }
-    
-        Write-Log -Message "List of Subscriptions:-`n$($subscriptionList | ConvertTo-Json -Compress)"
-    
-        $subscriptionCount = 0;
-        foreach ($subscription in $subscriptionList) {
-            $subscriptionCount += 1;
+        elseif ($SubscriptionName) {
+            Write-Log -Message "Using User provided Subscription Name: $SubscriptionName"            
         }
-    
-        Write-Log -Message "Count of Subscriptions: $subscriptionCount"
-    
-        if ($subscriptionCount -eq 0) {
-            throw "Please create atlease ONE Subscription in your Azure Account"
-        }
-        if ($subscriptionCount -eq 1) {
-            $subscriptionName = $subscriptionList[0].name;
-            Write-Log -Message "Defaulting to Subscription with Name: $subscriptionName"
-        }
-        else {
-            $subscriptionListOutput = az account list --output table --all --query "[].{Name:name, Id:id IsDefault:isDefault}"
-            $subscriptionListOutput;
-            Write-Host ''
-            Write-Host ''
-            $subscriptionName = Read-Host 'Enter Subscription Name from Above List'
-            Write-Log -Message "User Entered Subscription Name: $subscriptionName"
-    
-        }
+<<<<<<< HEAD
 
         $isValidSubscriptionName = $false;
         foreach ($subscription in $subscriptionList) {
@@ -111,14 +117,21 @@ process {
                 $isValidSubscriptionName = $true;
                 $userEmailAddress = $subscription.user.name;
             }
+=======
+        elseif ($SubscriptionCount -eq 1) {
+            $SubscriptionName = $SubscriptionList[0].name;
+            Write-Log -Message "Defaulting to Subscription Name: $SubscriptionName"
+>>>>>>> 133ae3e... Followup (2/n): Updating subscription logic to allow reusing of passe parameters and removing extra azure-cli invocations
         }
-    
-        if(!$isValidSubscriptionName) {
-            throw "Invalid Subscription Name Entered."
+        else {
+            $SubscriptionListOutput = $SubscriptionList | Select-Object @{ l="Subscription Name"; e={ $_.name } }, "id", "isDefault"
+            Write-Host ($SubscriptionListOutput | Out-String)
+            $SubscriptionName = Read-Host 'Enter Subscription Name from Above List'
+            Write-Log -Message "User Entered Subscription Name: $SubscriptionName"
         }
-    
-        $setSubscriptionNameOp = (az account set --subscription $subscriptionName)
-        #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
+
+        $ActiveSubscription = Set-LtiActiveSubscription -Name $SubscriptionName -List $SubscriptionList
+        $UserEmailAddress = $ActiveSubscription.user.email
         #endregion
 
         #region Choose Region for Deployment
@@ -215,7 +228,7 @@ process {
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $($appinfo.appId), IdentifiedURI: $($appinfo.identifierUris)"
-        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) identityName=$($IdentityName) userEmailAddress=$($userEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
+        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) identityName=$($IdentityName) userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
         if(!$deploymentOutput) {
             throw "Encountered an Error while deploying to Azure"
         }
