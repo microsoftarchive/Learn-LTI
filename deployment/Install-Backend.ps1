@@ -9,6 +9,20 @@ enum VALID_FUNCTIONS {
     Users
 }
 
+function Write-BackendDebugLog {
+    param (
+        [Parameter(Mandatory)]
+        [string]$Message
+    )
+    
+    if( Get-Command 'Write-Log' -ErrorAction SilentlyContinue) {
+        Write-Log -Message $Message
+    }
+    else {
+        Write-Verbose $Message -Verbose
+    }
+}
+
 function Get-Project([VALID_FUNCTIONS]$FunctionName) {
     $PathRegex = "Functions/**/Edna.$FunctionName.csproj"
     $Project = Get-ChildItem -Path $PathRegex -Recurse
@@ -35,18 +49,24 @@ function Publish-FunctionApp {
     )
 
     $PublishDir = Join-Path $OutputDir $FunctionName
-    Write-Log -Message "Building [ $ProjectDir ] --> [ $PublishDir ]"
+    Write-BackendDebugLog -Message "Building [ $ProjectDir ] --> [ $PublishDir ]"
     $PublishLogs = dotnet publish $ProjectDir --configuration RELEASE --output $PublishDir --nologo
     if($LASTEXITCODE -ne 0) {
-        Write-Log -Message $PublishLogs
+        Write-BackendDebugLog -Message ($PublishLogs -join "`n")
         throw "Errors while building Function App [ $FunctionName ]"
     }
 
     $ArchivePath = Join-Path $OutputDir "$FunctionName.zip"
-    Write-Log -Message "Zipping Artifacts [ $PublishDir ]/* --> [ $ArchivePath ]"
-    Compress-Archive -Path "$PublishDir/*" -DestinationPath $ArchivePath
+    Write-BackendDebugLog -Message "Zipping Artifacts [ $PublishDir ]/* --> [ $ArchivePath ]"
+    try {
+        Compress-Archive -Path "$PublishDir/*" -DestinationPath $ArchivePath -Force -ErrorAction Stop
+    }
+    catch {
+        Write-BackendDebugLog -Message "Errors while compressing artifacts for Function App [ $FunctionName ]"
+        throw $_
+    }
 
-    Write-Log -Message "Deploying to Azure Function App [ $ResourceGroupName/$FunctionAppName ]"
+    Write-BackendDebugLog -Message "Deploying to Azure Function App [ $ResourceGroupName/$FunctionAppName ]"
     # Turning Error only mode to reduce clutter on the terminal
     $result = az functionapp deployment source config-zip -g $ResourceGroupName -n $FunctionAppName --src $ArchivePath --only-show-errors | ConvertFrom-Json
     if(!$result) {
@@ -72,12 +92,12 @@ function Install-Backend {
         [string]$UsersFunctionAppName
     )
 
-    Write-Log -Message "Switching to [$SourceRoot] as working directory"
+    Write-BackendDebugLog -Message "Switching to [$SourceRoot] as working directory"
     Push-Location $SourceRoot
 
     $PublishRoot = 'Artifacts'
     if(Test-Path $PublishRoot) {
-        Write-Log -Message "Deleting existing Artifacts"
+        Write-BackendDebugLog -Message "Deleting existing Artifacts"
         Remove-Item -LiteralPath $PublishRoot -Recurse -Force
     }
     
@@ -85,11 +105,11 @@ function Install-Backend {
         $Functions = [System.Enum]::GetNames([VALID_FUNCTIONS])
         foreach ($Function in $Functions) {
 
-            Write-Log -Message "Installing FunctionApp -- $Function"
+            Write-BackendDebugLog -Message "Installing FunctionApp -- $Function"
 
             $Project = Get-Project $Function
 
-            Write-Log -Message "Publishing Project [ $($Project.Name) ] as FunctionApp"
+            Write-BackendDebugLog -Message "Publishing Project [ $($Project.Name) ] as FunctionApp"
 
             $PublishParams = @{
                 FunctionName = $Function;
@@ -112,7 +132,7 @@ function Install-Backend {
                 $PublishParams.FunctionAppName = $FunctionAppName
             } else {
                 $MissingFunctionAppName = "Unable to map [ $Function ] to any Azure FunctionAppName"
-                Write-Log -Message $MissingFunctionAppName
+                Write-BackendDebugLog -Message $MissingFunctionAppName
                 Write-Warning $MissingFunctionAppName
             }
 

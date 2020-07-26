@@ -10,14 +10,28 @@ enum DotEnv {
     REACT_APP_EDNA_PLATFORM_SERVICE_URL
 }
 
+function Write-ClientDebugLog {
+    param (
+        [Parameter(Mandatory)]
+        [string]$Message
+    )
+    
+    if( Get-Command 'Write-Log' -ErrorAction SilentlyContinue) {
+        Write-Log -Message $Message
+    }
+    else {
+        Write-Verbose $Message -Verbose
+    }
+}
+
 function Get-ADAppScope ([string]$AppId) {
-    Write-Log -Message "Getting Default scope for AppID -- [ $AppId ]"
+    Write-ClientDebugLog -Message "Getting Default scope for AppID -- [ $AppId ]"
     return "api://$AppId/user_impersonation"
 }
 
 function Get-TenantId ([string] $AppId) {
     # Assumes that the user is currently signed into correct subscription
-    Write-Log -Message "Getting TenantID for AppID -- [ $AppId ]"
+    Write-ClientDebugLog -Message "Getting TenantID for AppID -- [ $AppId ]"
     # $app = az ad sp show --id "$AppId" | ConvertFrom-Json
     # if (!$app) {
     #     throw 'Unable to get App details for AD App Id: $AppId'
@@ -31,7 +45,7 @@ function Get-TenantId ([string] $AppId) {
 }
 
 function Get-ServiceUrl ([string]$ServiceName)  {
-    Write-Log -Message "Getting Service Url for FunctionApp -- [ $ServiceName ]"
+    Write-ClientDebugLog -Message "Getting Service Url for FunctionApp -- [ $ServiceName ]"
     return "https://$ServiceName.azurewebsites.net/api"
 }
 
@@ -73,7 +87,7 @@ function Update-ClientConfig {
     )
 
 
-    Write-Log -Message "Creating new configuration"
+    Write-ClientDebugLog -Message "Creating new configuration"
     $Config = @{
         [DotEnv]::REACT_APP_EDNA_AAD_CLIENT_ID="$AppId";
         [DotEnv]::REACT_APP_EDNA_MAIN_URL="$StaticWebsiteUrl";
@@ -85,9 +99,9 @@ function Update-ClientConfig {
         [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL="$(Get-ServiceUrl $PlatformsFunctionAppName)";
         [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$(Get-ServiceUrl $UsersFunctionAppName)"
     }
-    Write-Log -Message "Updated Configuration:-`n$($Config | Out-String)"
+    Write-ClientDebugLog -Message "Updated Configuration:-`n$($Config | Out-String)"
 
-    Write-Log -Message "Updating [ $ConfigPath ] with new config variables"
+    Write-ClientDebugLog -Message "Updating [ $ConfigPath ] with new config variables"
     Export-DotEnv $Config $ConfigPath
 
     Write-Output "Client Config Updated Successfully"
@@ -103,39 +117,43 @@ function Install-Client {
         [string]$StaticWebsiteStorageAccount
     )
     
-    Write-Log -Message "Switching to [$SourceRoot] as working directory"
+    Write-ClientDebugLog -Message "Switching to [$SourceRoot] as working directory"
     Push-Location $SourceRoot
 
     try {
 
         $BuildDir = 'build'
         if(Test-Path $BuildDir) {
-            Write-Log -Message "Deleting existing Artifacts"
+            Write-ClientDebugLog -Message "Deleting existing Artifacts"
             Remove-Item -LiteralPath $BuildDir -Recurse -Force
         }
         
-        Write-Log -Message 'Running npm ci'
+        Write-ClientDebugLog -Message 'Running npm ci'
         $SetupLogs = npm ci
         if($LASTEXITCODE -ne 0) {
-            Write-Log -Message $SetupLogs
+            if ($SetupLogs) {
+                Write-ClientDebugLog -Message ($SetupLogs -join "`n")
+            }
             throw 'Errors while executing npm ci'
         }
 
-        Write-Log -Message 'Building Client App'
+        Write-ClientDebugLog -Message 'Building Client App'
         $BuildLogs = npm run build
         if($LASTEXITCODE -ne 0) {
-            Write-Log -Message $BuildLogs
+            if ($SetupLogs) {
+                Write-ClientDebugLog -Message ($BuildLogs -join "`n")
+            }
             throw 'Errors while creating Optimized Production Build'
         }
 
-        Write-Log -Message "Deploying as a Static Web App in Storage Account [ $StaticWebsiteStorageAccount ]"
+        Write-ClientDebugLog -Message "Deploying as a Static Web App in Storage Account [ $StaticWebsiteStorageAccount ]"
 
-        Write-Log -Message 'Delete existing content in `$web storage container (Just in case of a redeploy)'
+        Write-ClientDebugLog -Message 'Delete existing content in `$web storage container (Just in case of a redeploy)'
         # Running in Error only mode since this cmd shows a warning causing misconception that user requires azure cli login
         # The command does not output anything, hence, there's no need to capture the result and check for existence
         az storage blob delete-batch --account-name $StaticWebsiteStorageAccount --source '$web' --only-show-errors
 
-        Write-Log -Message 'Uploading build content to the `$web storage container'
+        Write-ClientDebugLog -Message 'Uploading build content to the `$web storage container'
         # Turning Error only mode as this cmd shows a warning which causes misconception that user needs to sign in to azure cli
         $result = az storage blob upload-batch -s 'build' -d '$web' --account-name $StaticWebsiteStorageAccount --only-show-errors | ConvertFrom-Json
         if(!$result) {
