@@ -2,7 +2,8 @@
 param (
     [string]$ResourceGroupName = "MSLearnLTI",
     [string]$AppName = "MS-Learn-Lti-Tool-App",
-    [string]$IdentityName = "MSLearnLTI-Identity"
+    [string]$IdentityName = "MSLearnLTI-Identity",
+    [switch]$UseActiveAzureAccount
 )
 
 process {
@@ -41,12 +42,30 @@ process {
 
         #region Login to Azure CLI        
         Write-Title 'STEP #1 - Logging into Azure'
-    
-        Write-Log -Message "Logging in to Azure"
-        $loginOp = az login | ConvertFrom-Json
-        if(!$loginOp) {
-            throw "Encountered an Error while trying to Login."
+
+        function Test-LtiActiveAzAccount {
+            $account = az account show | ConvertFrom-Json
+            if(!$account) {
+                throw "Error while trying to get Active Account Info."
+            }            
         }
+
+        function Connect-LtiAzAccount {
+            $loginOp = az login | ConvertFrom-Json
+            if(!$loginOp) {
+                throw "Encountered an Error while trying to Login."
+            }
+        }
+
+        if ($UseActiveAzureAccount) { 
+            Write-Log -Message "Using Active Azure Account"
+            Test-LtiActiveAzAccount
+        }
+        else { 
+            Write-Log -Message "Logging in to Azure"
+            Connect-LtiAzAccount
+        }
+
         Write-Log -Message "Successfully logged in to Azure."
         #endregion
 
