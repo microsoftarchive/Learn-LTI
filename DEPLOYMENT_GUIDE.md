@@ -138,4 +138,4 @@ Update all permissions to Always
 5. Make Authoritization URL your Authentication request URL
 6. On the bottom right of the Microsoft LTI Tool Registration page, Hit Save Registration.
 
-That's it!! Whew. You are good to go :)
+Congratulations! You are now ready to get started assigning Microsoft Learn activities to your students within your LTI tool.
