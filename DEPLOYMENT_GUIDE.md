@@ -101,7 +101,7 @@ Once the tool has been successfully deployed, the next step is to configure the 
 The following details the configuration process for Moodle. 
 
 ![Config.1](./images/Config.1.PNG)
-![Config.2](./images/Config.2.png)
+![Config.2](./images/Config.2.PNG)
 ![Config.3](./images/Config.3.png)
 ![Config.4](./images/Config.4.png)
 
