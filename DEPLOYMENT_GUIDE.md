@@ -17,7 +17,8 @@ To begin, you will need:
 Follow these steps to deploy the Microsoft Learn LTI tool:
 
 # Steps from repository
-* In the cloned repo, inside the deployment directory, execute the file **Deploy.ps1**.
+* In the cloned repo, inside the deployment directory, execute the file **run.bat**.
+* run.bat bypasses signing requirements and runs Deploy.ps1 automatically.
 * You should now see the Microsoft Learn LTI Tool script popup.
 ![run.start.png](./images/run.start.png)
 
