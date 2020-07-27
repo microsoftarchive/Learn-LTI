@@ -31,7 +31,7 @@ From your Institution's LMS
    2. Now you'll see that the modules are added to your selected tutorials.
    
 ### Review your Microsoft Learn Activity
-   ![Preview](./images/View.Preview.png)
+   ![Preview](./images/View.Preview.PNG)
    1. On the left hand side, under View, click Preview
       - Review your Lesson Plan to make sure it's correct.
       
