@@ -15,7 +15,7 @@
 ### Create a Microsoft Learn Activity
 From your Institution's LMS 
    1. Add an external tool to Azure
-   2. Now that you're in Edna, locate the General Tab under Configurations
+   2. Now that you're in the Learn LTI tool, locate the General Tab under Configurations
       ![General](./images/Configuration.General.png)
       - **Description**: Include a brief overview of the activity and key learning objectives for your students
       - **Deadline**: Use the calender to enter when you expect students to have completed the activity
