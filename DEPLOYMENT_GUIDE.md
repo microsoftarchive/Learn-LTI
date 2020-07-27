@@ -19,8 +19,7 @@ Follow these steps to deploy the Microsoft Learn LTI tool:
 # Steps from repository
 * In the cloned repo, inside the deployment directory, execute the file **Deploy.ps1**.
 * You should now see the Microsoft Learn LTI Tool script popup.
-
-**"IMAGE HERE OF SCRIPT -- VIPUL WILL SEND"**
+![run.start.png](./images/run.start.png)
 
 # Steps from Script
 
