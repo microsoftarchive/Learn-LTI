@@ -14,11 +14,11 @@ To begin, you will need:
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
 - An Azure subscription
 
-Follow these steps to deploy the MS Learn LTI tool:
+Follow these steps to deploy the Microsoft Learn LTI tool:
 
 # Steps from repository
 * In the cloned repo, inside the deployment directory, execute the file **Deploy.ps1**.
-* You should now see the MS Learn LTI Tool script popup.
+* You should now see the Microsoft Learn LTI Tool script popup.
 
 **"IMAGE HERE OF SCRIPT -- VIPUL WILL SEND"**
 
