@@ -16,7 +16,7 @@
 From your Institution's LMS 
    1. Add an external tool to Azure
    2. Now that you're in the Learn LTI tool, locate the General Tab under Configurations
-      ![General](./images/Configuration.General.png)
+      ![General](./images/Configuration.General.PNG)
       - **Description**: Include a brief overview of the activity and key learning objectives for your students
       - **Deadline**: Use the calender to enter when you expect students to have completed the activity
       - **Add Link**: Include links to external sites and sources of information that you believe will help the students to gain more from the activity 
