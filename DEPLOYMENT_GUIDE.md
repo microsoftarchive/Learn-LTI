@@ -130,7 +130,7 @@ Change your LMS LTI Names and Role Provisioning setting to "Use this service to 
 Update all permissions to Always
 
 ## Access your tool configuration details and make the following changes to the Microsoft Learn LTI Tool Registration page under Platform settings
-![Config.11](./images/Config.11.png)
+![Config.11](./images/Config.11.PNG)
 1. Make Issuer your Platform ID
 2. Make Client ID your Client ID **under Tool Settings**
 3. Make JWK Set URL your Public keyset URL
