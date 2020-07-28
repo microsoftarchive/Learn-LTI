@@ -1,9 +1,9 @@
 # Microsoft Learn LTI Tool Deployment Instructions
 
 ## Table of Contents
-1. Steps from repository: [link](#steps-from-repository)
-2. Steps from Script: [link](#steps-from-script)
-3. Configuring the tool in your LMS and in Azure: [link](#configuring-the-tool-in-your-lms-and-in-azure)
+1. Clone the repo: [link](#steps-from-repository)
+2. Deploy to Azure Subscription using the script: [link](#steps-from-script)
+3. Configure the tool: [link](#configuring-the-tool-in-your-lms-and-in-azure)
 
 ## Prerequisites
 To begin, you will need:
