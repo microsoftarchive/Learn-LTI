@@ -116,11 +116,13 @@ The following details the configuration process for Moodle.
 
 ## From your LMS tool services settings
 
-Change your LMS LTI Names and Role Provisioning setting to "Use this service to retrieve members' information as per privacy settings"
 ![Config.8](./images/Config.8.png)
+
+Change your LMS LTI Names and Role Provisioning setting to "Use this service to retrieve members' information as per privacy settings"
 
 ## From your LMS tool privacy settings
 ![Config.9](./images/Config.9.png)
+
 Update all permissions to Always
 
 ## Access your tool configuration details and make the following changes to the Microsoft Learn LTI Tool Registration page under Platform settings
