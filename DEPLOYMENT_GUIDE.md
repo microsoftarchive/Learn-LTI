@@ -75,7 +75,7 @@ The Script will display the Tool Registration URL after completion. Please **cop
 
 **Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
-![Deployment.2](./images/Deployment.2.jpg)
+![Deployment.3](./images/Deployment.3.jpg)
 
 If your **deployment failed**, click [here](./TROUBLESHOOTING.md) for help.
 
