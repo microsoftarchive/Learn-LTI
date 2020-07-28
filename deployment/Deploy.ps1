@@ -108,7 +108,7 @@ try {
 
     $isValidSubscriptionName = $false;
     foreach ($subscription in $subscriptionList) {
-        if($subscription.name -ceq $subscriptionName) {
+        if($subscription.name -ieq $subscriptionName) {
             $isValidSubscriptionName = $true;
             $userEmailAddress = $subscription.user.name;
         }
@@ -136,7 +136,7 @@ try {
     Write-Log -Message "User Entered Location Name: $locationName"
     $isValidLocationName = $false;
     foreach ($location in $locationList) {
-        if($location.name -ceq $locationName) {
+        if($location.name -ieq $locationName) {
             $isValidLocationName = $true;
         }
     }
