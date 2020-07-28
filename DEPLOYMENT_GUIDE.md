@@ -106,6 +106,7 @@ The following details the configuration process for Moodle.
 1. **Public key type**: Select 'RSA key'
 2. **LTI version**: Select 'LTI 1.3'
 3. **Default launch container**: Select 'New Window'
+4. **Tool Name**: Enter Tool name of choice.
 
 
 4. From Microsoft's Learn LTI tool's registration page, locate the Tool Settings section. 
@@ -123,15 +124,26 @@ Change your LMS LTI Names and Role Provisioning setting to "Use this service to 
 ## From your LMS tool privacy settings
 ![Config.9](./images/Config.9.png)
 
-Update all permissions to Always
+* Update all permissions to Always
+* Then, hit 'Save Changes' 
 
-## Access your tool configuration details and make the following changes to the Microsoft Learn LTI Tool Registration page under Platform settings
+## Access your tool configuration details
+![Config.12](./images/Config.12.PNG)
+Here's how to access Tool Configuration details:
+* Under Site Administration, go to Manage Tools
+* From the List of Tools presented, select the 'View Configuration Details' option for the Tool we registered in the previous step
+* Select the hamburger icon.
+
+
+## Make the following changes to the Microsoft Learn LTI Tool Registration page under Platform settings
 ![Config.11](./images/Config.11.PNG)
 1. Make Issuer your Platform ID
 2. Make Client ID your Client ID **under Tool Settings**
 3. Make JWK Set URL your Public keyset URL
 4. Make Access token URL your Access token URL 
 5. Make Authoritization URL your Authentication request URL
-6. On the bottom right of the Microsoft LTI Tool Registration page, Hit Save Registration.
+6. Enter Institution Name
+7. Enter the Logo URL
+8. On the bottom right of the Microsoft LTI Tool Registration page, Hit Save Registration.
 
 Congratulations! You are now ready to get started assigning Microsoft Learn activities to your students within your LTI tool.
