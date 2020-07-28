@@ -73,9 +73,9 @@ The **Deploy.ps1** script will automatically configure the required resources fo
 
 The Script will display the Tool Registration URL after completion. Please **copy the URL and keep it handy** since it will be required while configuring the tool in the LMS.
 
-**Congratulations!** Your instance of the tool should now be deployed on Azure! 
-
 ![Deployment.4](./images/Deployment.4.PNG)
+
+**Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
 If your **deployment failed**, click [here](./TROUBLESHOOTING.md) for help.
 
