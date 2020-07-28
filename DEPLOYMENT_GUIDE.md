@@ -139,7 +139,7 @@ Here's how to access Tool Configuration details:
 
 
 ## Make the following changes to the Microsoft Learn LTI Tool Registration page under Platform settings
-![Config.11](./images/Config.11.PNG)
+![Config.11](./images/Config.11.png)
 
 1. Make Issuer your Platform ID
 2. Make Client ID your Client ID **under Tool Settings**
