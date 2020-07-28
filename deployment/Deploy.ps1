@@ -122,7 +122,7 @@ try {
     #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
 
 
-    Write-Title("STEP #3 - Choose Location");
+    Write-Title("STEP #3 - Choose Location `n(Please refer to the Documentation / ReadMe on Github for the List of Supported Locations)");
 
     Write-Log -Message "Fetching List of Locations"
     $locationList = (az account list-locations) | ConvertFrom-Json;
@@ -276,7 +276,10 @@ try {
     }
     Install-Client @ClientInstallParams
 
-    Write-Title '======== Successfully Deployed Resources to Azure ==========='
+    
+    Write-Title "TOOL REGISTRATION URL (Please Copy, Required for Next Steps) -> $($deploymentOutput.properties.outputs.webClientURL.value)platform"
+
+    Write-Title '======== Successfully Deployed Resources to Azure ==========='    
 
     Write-Log -Message "Deployment Complete"
 }
