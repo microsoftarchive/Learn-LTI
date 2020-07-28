@@ -10,7 +10,6 @@ To begin, you will need:
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
 - [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
 - [Node.js](https://nodejs.org/en/download/)
-- [npm](https://www.npmjs.com/get-npm)
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
 - An Azure subscription
 
@@ -23,6 +22,10 @@ Follow these steps to deploy the Microsoft Learn LTI tool:
 ![run.start.png](./images/run.start.png)
 
 # Steps from Script
+
+## Login to Azure
+
+The script will ask you to login to Azure by navigating to the Azure Login Page on your browser.
 
 ## Choose Subscription
 
@@ -62,29 +65,13 @@ Your region determines three things:
 
 For information regarding your region, check [here.](https://azure.microsoft.com/global-infrastructure/geographies/?WT.mc_id=learnlti-github-cxa)
 
-## Registering Azure Active Directory App
+## Azure Autoconfigure
 
-The **Deploy.ps1** script will automatically configure this step. 
+The **Deploy.ps1** script will automatically configure the required resources for you.
 
-## Creating your Resource Group
+## Tool Registration URL IMPORTANT!
 
-The **Deploy.ps1** script will automatically configure this step.
-
-## Creating Managed Identity
-
-The **Deploy.ps1** script will automatically configure this step.
-
-## Creating Role Assignment
-
-The **Deploy.ps1** script will automatically configure this step.
-
-## Deploying Resources to Azure
-
-The **Deploy.ps1** script will automatically configure this step.
-
-## Updating Azure Active Directory App
-
-The **Deploy.ps1** script will automatically configure this step.
+The Script will display the Tool Registration URL after completion. Please **copy the URL and keep it handy** since it will be required while configuring the tool in the LMS.
 
 **Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
