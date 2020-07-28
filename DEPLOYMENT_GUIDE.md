@@ -102,12 +102,11 @@ The following details the configuration process for Moodle.
 
 ## From the tool settings page, identify the following fields and make the corresponding changes.
 
+![Config.5](./images/Config.5.png)
 1. **Public key type**: Select 'RSA key'
 2. **LTI version**: Select 'LTI 1.3'
-![Config.5](./images/Config.5.png)
-
 3. **Default launch container**: Select 'New Window'
-![Config.7](./images/Config.7.png)
+
 
 4. From Microsoft's Learn LTI tool's registration page, locate the Tool Settings section. 
 ![Config.6](./images/Config.6.png)
