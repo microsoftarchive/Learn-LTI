@@ -9,7 +9,6 @@ The Microsoft Learn LTI application enables institutions to seamlessly embed mod
 ### Key Features: ###
 * **SSO** - users only have to sign into their institution once to get access to Learn content 
 * **LMS Pairing** - instructors can create, edit, and publish Learn-based assignments for their courses and populate their insitution's LMS with them easily
-* **Progress Tracking** - instructors and students can track progression and acquired expertise through Learn content.
 * **LTI v1.1 and v1.3 Compliant** - student data is not gathered and their data cannot be accessed; all user data is protected.
 
 ### What do I need to get started? ###
