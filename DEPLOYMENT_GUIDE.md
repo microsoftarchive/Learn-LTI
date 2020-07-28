@@ -83,7 +83,15 @@ Once the tool has been successfully deployed, the next step is to configure the 
 
 # Configuring the tool in your LMS and in Azure
 
-## From your LMS administration settings, configure a tool manually. 
+## Open the Tool Registration Page
+
+Use the Tool Registration URL you copied and paste it into your browser. Make sure you are signed in with the same account that was used to login to Azure while running "run.bat".
+
+## Login to your LMS admin account
+
+Open your LMS and sign in with the admin account.
+
+## From the Site Administration Option in your LMS, configure a tool manually.
 
 The following details the configuration process for Moodle. 
 
