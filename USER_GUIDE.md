@@ -9,7 +9,7 @@
 ### If you have issues with this guide or with our tool please:
 - Raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa)
 
-> The team at Microsoft hope you love using the LTI tool! Thank you for teaching our future!
+> The teams at Microsoft hope you love using the LTI tool! Thank you for teaching our future!
 ## How to
 ### Create a Microsoft Learn Activity
    In the Learn LTI tool, locate the General Tab under Configurations
