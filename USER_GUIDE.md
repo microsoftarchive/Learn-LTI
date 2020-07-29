@@ -7,7 +7,6 @@
 - Publish your activity so that students can view it and complete the learning
 
 ### If you have issues with this guide or with our tool please:
-- Email us here: *email here* **or**
 - Raise a GitHub Issue via the reporting link [here.](https://help.github.com/github/managing-your-work-on-github/creating-an-issue)
 
 > The team at Microsoft hope you love using the LTI tool! Thank you for teaching our future!
