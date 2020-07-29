@@ -14,11 +14,11 @@
 ## How to
 ### Create a Microsoft Learn Activity
    In the Learn LTI tool, locate the General Tab under Configurations
-      ![General](./images/Configuration.General.PNG)
-      - **Description**: Include a brief overview of the activity and key learning objectives for your students
-      - **Deadline**: Use the calender to enter when you expect students to have completed the activity
-      - **Add Link**: Include links to external sites and sources of information that you believe will help the students to gain more from the activity 
-      - Click the **Add** button and you will be redirected to the Tutorial tab under Configurations.
+   ![General](./images/Configuration.General.PNG)
+   * **Description**: Include a brief overview of the activity and key learning objectives for your students
+   * **Deadline**: Use the calender to enter when you expect students to have completed the activity
+   * **Add Link**: Include links to external sites and sources of information that you believe will help the students to gain more from the activity 
+   * Click the **Add** button and you will be redirected to the Tutorial tab under Configurations.
       
 ### Customize your Microsoft Learn Activity
    ![Tutorial](./images/Configurations.Tutorial.ClickBubble.png)
