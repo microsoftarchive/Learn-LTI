@@ -89,6 +89,7 @@ function Update-ClientConfig {
 
     Write-ClientDebugLog -Message "Creating new configuration"
     $Config = @{
+        GENERATE_SOURCEMAP="false";
         [DotEnv]::REACT_APP_EDNA_AAD_CLIENT_ID="$AppId";
         [DotEnv]::REACT_APP_EDNA_MAIN_URL="$StaticWebsiteUrl";
         [DotEnv]::REACT_APP_EDNA_DEFAULT_SCOPE="$(Get-ADAppScope $AppId)";
