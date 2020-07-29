@@ -7,7 +7,7 @@
 - Publish your activity so that students can view it and complete the learning
 
 ### If you have issues with this guide or with our tool please:
-- Raise a GitHub Issue via the reporting link [here.](https://help.github.com/github/managing-your-work-on-github/creating-an-issue)
+- Raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa)
 
 > The team at Microsoft hope you love using the LTI tool! Thank you for teaching our future!
 ## How to
