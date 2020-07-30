@@ -12,7 +12,15 @@
 > The teams at Microsoft hope you love using the LTI tool! Thank you for teaching our future!
 ## How to
 ### Create a Microsoft Learn Activity
-   In the Learn LTI tool, locate the General Tab under Configurations
+
+   Once you have deployed the Microsoft Learn LTI Tool, turn on editing in your LMS and select 'Add a new activity or resource'. The included example below details the process with Moodle. 
+   ![UserGuide1](./images/UserGuide.1.PNG)
+   Add a new external tool. 
+   ![UserGuide2](./images/UserGuide.2.PNG)
+   * **Preconfigured tool**: In this section, select the name of the tool you configured during initial deployment.
+   ![UserGuide3](./images/UserGuide.3.PNG)
+   Once you have saved your preferred tool settings, return to the course dashboard in your LMS and you will see your configured instance of the Microsoft Learn LTI tool. 
+   Launch the tool, and locate the General Tab under Configurations
    ![General](./images/Configuration.General.PNG)
    * **Description**: Include a brief overview of the activity and key learning objectives for your students
    * **Deadline**: Use the calender to enter when you expect students to have completed the activity
