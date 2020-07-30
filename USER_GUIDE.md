@@ -16,6 +16,7 @@
    Once you have deployed the Microsoft Learn LTI Tool, turn on editing in your LMS and select 'Add a new activity or resource'. The included example below details the process with Moodle. 
    ![UserGuide1](./images/UserGuide.1.PNG)
    Add a new external tool. 
+   
    ![UserGuide2](./images/UserGuide.2.PNG)
    * **Preconfigured tool**: In this section, select the name of the tool you configured during initial deployment.
    ![UserGuide3](./images/UserGuide.3.PNG)
