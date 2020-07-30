@@ -88,7 +88,7 @@ process {
                 $List
             )
             
-            $subscription = ($List | Where-Object { $_.name -ceq $Name })
+            $subscription = ($List | Where-Object { $_.name -ieq $Name })
             if(!$subscription) {
                 throw "Invalid Subscription Name Entered."
             }
@@ -102,7 +102,7 @@ process {
         $SubscriptionList = Get-LtiSubscriptionList
         Write-Log -Message "List of Subscriptions:-`n$($SubscriptionList | ConvertTo-Json -Compress)"    
 
-        $SubscriptionCount = $SubscriptionList.Count
+        $SubscriptionCount = ($SubscriptionList | Measure-Object).Count
         Write-Log -Message "Count of Subscriptions: $SubscriptionCount"
         if ($SubscriptionCount -eq 0) {
             throw "Please create at least ONE Subscription in your Azure Account"
@@ -122,7 +122,7 @@ process {
         }
 
         $ActiveSubscription = Set-LtiActiveSubscription -Name $SubscriptionName -List $SubscriptionList
-        $UserEmailAddress = $ActiveSubscription.user.email
+        $UserEmailAddress = $ActiveSubscription.user.name
         #endregion
 
         #region Choose Region for Deployment
@@ -138,7 +138,7 @@ process {
             Write-Log -Message "User Entered Location Name: $LocationName"
         }
 
-        $ValidLocation = $LocationList | Where-Object { $_.name -ceq $LocationName }
+        $ValidLocation = $LocationList | Where-Object { $_.name -ieq $LocationName }
         if(!$ValidLocation) {
             throw "Invalid Location Name Entered."
         }
@@ -172,7 +172,12 @@ process {
         Write-Log -Message "Creating Resource Group with Name: $ResourceGroupName at Location: $LocationName"
         $resourceGroupCreationOp = az group create -l $LocationName -n $ResourceGroupName
         if(!$resourceGroupCreationOp) {
-            throw "Encountered an Error while creating Resource Group with Name : " + $ResourceGroupName + " at Location: " + $LocationName + ". One Reason could be that the Resource Group with the same name but different location already exists in your Subscription. Delete the other Resource Group and run this script again."
+            $ex = @(
+                "Error while creating Resource Group with Name : [ $ResourceGroupName ] at Location: [ $LocationName ]."
+                "One Reason could be that a Resource Group with same name but different location already exists in your Subscription."
+                "Delete the other Resource Group and run this script again."
+            ) -join ' '
+            throw $ex
         }
     
         Write-Host 'Resource Group Created Successfully'
