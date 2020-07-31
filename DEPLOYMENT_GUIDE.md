@@ -11,11 +11,19 @@ To begin, you will need:
 - [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
 - [Node.js](https://nodejs.org/en/download/)
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
+- [Git](https://git-scm.com/downloads)
 - An Azure subscription
 
 Follow these steps to deploy the Microsoft Learn LTI tool:
 
 # Clone the repo
+1. Open Git
+2. Enter in the command in the Git console
+   * `git clone https://github.com/microsoft/Learn-LTI.git`
+
+You have now cloned the repo.
+
+## After Cloning
 * In the cloned repo, inside the deployment directory, execute the file **run.bat**.
 * run.bat bypasses signing requirements and runs Deploy.ps1 automatically.
 * You should now see the Microsoft Learn LTI Tool script popup.
