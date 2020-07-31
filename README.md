@@ -2,7 +2,7 @@
 
 [Microsoft Learn](https://learn.microsoft.com/#/?WT.mc_id=learnlti-github-cxa) is a free, online training platform that provides interactive learning resources for Microsoft products and cutting edge technologies. Our goal is to empower students and educators to learn about technology through fun, guided, hands-on content aimed at specific learning goals. 
 
-To bring Microsoft's content to students, we've made an LTI application. LTI stands for Learning Tools Inoperability. Think of an LTI as a set of rules to follow when a third party communicates with an education system. To keep student data private and secure we've adhered to LTIs v1.1 and v1.3. For more specifics on the application itself, check out the [Architecture Overview](./ARCHITECTURE_OVERVIEW.md)
+To bring Microsoft Learn's content to students, we've made an LTI application. LTI stands for Learning Tools Interoperability. Think of an LTI as a set of rules to follow when a third party communicates with an education system. To keep student data private and secure we've adhered to LTI v1.1 and v1.3. For more specifics on the application itself, check out the [Architecture Overview](./ARCHITECTURE_OVERVIEW.md)
 
 The Microsoft Learn LTI application enables institutions to seamlessly embed modules and pathways from the Microsoft Learn Catalog within a Learning Management System (LMS). Educators can leverage the LTI application to integrate Microsoft Learn units and learning paths into their existing curricula while providing hands-on experiences with Azure and other Microsoft technology. Learners will be routed from their LMS to Microsoft Learn, where they can accrue points and achievements and track progress on learning activities. 
 
