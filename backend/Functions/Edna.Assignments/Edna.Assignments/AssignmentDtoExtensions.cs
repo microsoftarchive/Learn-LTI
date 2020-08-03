@@ -1,9 +1,25 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
+using System;
+using System.Runtime.InteropServices.ComTypes;
+using System.Text;
 
 namespace Edna.Assignments
 {
     public static class AssignmentExtensions
     {
+
+        static string GetEncoded(string rawStr)
+        {
+            byte[] textBytes = Encoding.UTF8.GetBytes(rawStr);
+            return Convert.ToBase64String(textBytes);
+        }
+
+        static string GetDecoded(string encodedStr)
+        {
+            byte[] base64EncodedBytes = Convert.FromBase64String(encodedStr);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
         public static (string partitionKey, string rowKey) ToEntityIdentifiers(this string assignmentId)
         {
             if (string.IsNullOrEmpty(assignmentId))
@@ -12,10 +28,11 @@ namespace Edna.Assignments
             string[] assignmentIdParts = assignmentId.Split("_");
             if (assignmentIdParts.Length != 2)
                 return ("", "");
-
-            return (assignmentIdParts[0], assignmentIdParts[1]);
+            
+            return (GetDecoded(assignmentIdParts[0]), GetDecoded(assignmentIdParts[1]));
         }
 
-        public static string ToAssignmentId(this ITableEntity entity) => $"{entity.PartitionKey}_{entity.RowKey}";
+        public static string ToAssignmentId(this ITableEntity entity) => $"{GetEncoded(entity.PartitionKey)}_{GetEncoded(entity.RowKey)}";
+
     }
 }
