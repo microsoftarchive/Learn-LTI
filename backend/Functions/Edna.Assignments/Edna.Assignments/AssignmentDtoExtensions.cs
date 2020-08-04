@@ -32,6 +32,5 @@ namespace Edna.Assignments
         }
 
         public static string ToAssignmentId(this ITableEntity entity) => $"{GetEncoded(entity.PartitionKey)}_{GetEncoded(entity.RowKey)}";
-
     }
 }
