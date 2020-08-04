@@ -14,17 +14,33 @@ namespace Edna.Bindings.LtiAdvantage.BindingConfigurations
 
         public async Task<IValueProvider> BindAsync(BindingContext context)
         {
+            LoginParams loginParams = null;
             HttpRequest httpRequest = context.GetHttpRequest();
-            IFormCollection form = await (httpRequest?.ReadFormAsync() ?? Task.FromResult<IFormCollection>(null));
-            if (form == null)
-                throw new NullReferenceException("The HTTP form could not be fetched.");
-            
-            LoginParams loginParams = new LoginParams
+            if (httpRequest.HasFormContentType)
             {
-                TargetLinkUri = form["target_link_uri"].ToString(),
-                LoginHint = form["login_hint"].ToString(),
-                LtiMessageHint = form["lti_message_hint"]
-            };
+                var form = await (httpRequest?.ReadFormAsync() ?? Task.FromResult<IFormCollection>(null));
+                if (form == null)
+                    throw new NullReferenceException("The HTTP form could not be fetched.");
+
+                loginParams = new LoginParams
+                {
+                    TargetLinkUri = form["target_link_uri"].ToString(),
+                    LoginHint = form["login_hint"].ToString(),
+                    LtiMessageHint = form["lti_message_hint"]
+                };
+            }
+            else
+            {
+                var query = httpRequest?.Query;
+                if (query == null)
+                    throw new NullReferenceException("The HTTP Query could not be fetched.");
+                loginParams = new LoginParams
+                {
+                    TargetLinkUri = query["target_link_uri"].ToString(),
+                    LoginHint = query["login_hint"].ToString(),
+                    LtiMessageHint = query["lti_message_hint"].ToString()
+                };
+            }
             return new LtiAdvantageLoginRedirectValueProvider(loginParams);
         }
 

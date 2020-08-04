@@ -33,7 +33,7 @@ namespace Edna.Connect
 
         [FunctionName(nameof(OidcLogin))]
         public async Task<IActionResult> OidcLogin(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "oidc-login/{platformId}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "oidc-login/{platformId}")] HttpRequest req,
             [Platform(PlatformId = "{platformId}")] Platform platform,
             [LtiAdvantage] OidcClient oidcClient,
             [DurableClient] IDurableOrchestrationClient orchestrationClient)

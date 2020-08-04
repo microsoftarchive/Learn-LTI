@@ -1,9 +1,9 @@
 # Microsoft Learn LTI Tool Deployment Instructions
 
 ## Table of Contents
-1. Steps from repository: [link](#steps-from-repository)
-2. Steps from Script: [link](#steps-from-script)
-3. Configuring the tool in your LMS and in Azure: [link](#configuring-the-tool-in-your-lms-and-in-azure)
+1. Clone the repo: [link](#clone-the-repo)
+2. Deploy to Azure Subscription using the script: [link](#deploy-to-azure-subscription-using-the-script)
+3. Configure the tool: [link](#configure-the-tool)
 
 ## Prerequisites
 To begin, you will need:
@@ -11,17 +11,25 @@ To begin, you will need:
 - [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
 - [Node.js](https://nodejs.org/en/download/)
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
+- [Git](https://git-scm.com/downloads)
 - An Azure subscription
 
 Follow these steps to deploy the Microsoft Learn LTI tool:
 
-# Steps from repository
+# Clone the repo
+1. Open Git
+2. Enter in the command in the Git console
+   * `git clone https://github.com/microsoft/Learn-LTI.git`
+
+You have now cloned the repo.
+
+## After Cloning
 * In the cloned repo, inside the deployment directory, execute the file **run.bat**.
 * run.bat bypasses signing requirements and runs Deploy.ps1 automatically.
 * You should now see the Microsoft Learn LTI Tool script popup.
 ![run.start.png](./images/run.start.png)
 
-# Steps from Script
+# Deploy to Azure Subscription using the script
 
 ## Login to Azure
 
@@ -73,17 +81,25 @@ The **Deploy.ps1** script will automatically configure the required resources fo
 
 The Script will display the Tool Registration URL after completion. Please **copy the URL and keep it handy** since it will be required while configuring the tool in the LMS.
 
-**Congratulations!** Your instance of the tool should now be deployed on Azure! 
+![Deployment.4](./images/Deployment.4.PNG)
 
-![Deployment.3](./images/Deployment.3.jpg)
+**Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
 If your **deployment failed**, click [here](./TROUBLESHOOTING.md) for help.
 
 Once the tool has been successfully deployed, the next step is to configure the tool on your institution's LMS.
 
-# Configuring the tool in your LMS and in Azure
+# Configure the tool
 
-## From your LMS administration settings, configure a tool manually. 
+## Open the Tool Registration Page
+
+Use the Tool Registration URL you copied and paste it into your browser. Make sure you are signed in with the same account that was used to login to Azure while running "run.bat".
+
+## Login to your LMS admin account
+
+Open your LMS and sign in with the admin account.
+
+## From the Site Administration Option in your LMS, configure a tool manually.
 
 The following details the configuration process for Moodle. 
 
@@ -94,12 +110,12 @@ The following details the configuration process for Moodle.
 
 ## From the tool settings page, identify the following fields and make the corresponding changes.
 
+![Config.5](./images/Config.5.png)
 1. **Public key type**: Select 'RSA key'
 2. **LTI version**: Select 'LTI 1.3'
-![Config.5](./images/Config.5.png)
-
 3. **Default launch container**: Select 'New Window'
-![Config.7](./images/Config.7.png)
+4. **Tool Name**: Enter Tool name of choice.
+
 
 4. From Microsoft's Learn LTI tool's registration page, locate the Tool Settings section. 
 ![Config.6](./images/Config.6.png)
@@ -109,20 +125,37 @@ The following details the configuration process for Moodle.
 
 ## From your LMS tool services settings
 
-Change your LMS LTI Names and Role Provisioning setting to "Use this service to retrieve members' information as per privacy settings"
 ![Config.8](./images/Config.8.png)
 
-## From your LMS tool privacy settings
-![Config.9](./images/Config.9.png)
-Update all permissions to Always
+Change your LMS LTI Names and Role Provisioning setting to "Use this service to retrieve members' information as per privacy settings"
 
-## Access your tool configuration details and make the following changes to the Microsoft Learn LTI Tool Registration page under Platform settings
-![Config.11](./images/Config.11.PNG)
+## From your LMS tool privacy settings
+
+![Config.9](./images/Config.9.png)
+
+* Update all permissions to Always
+* Then, hit 'Save Changes' 
+
+## Access your tool configuration details
+
+![Config.12](./images/Config.12.PNG)
+
+Here's how to access Tool Configuration details:
+* Under Site Administration, go to Manage Tools
+* From the List of Tools presented, select the 'View Configuration Details' option for the Tool we registered in the previous step
+* Select the hamburger icon.
+
+
+## Make the following changes to the Microsoft Learn LTI Tool Registration page under Platform settings
+![Config.11](./images/Config.11.png)
+
 1. Make Issuer your Platform ID
 2. Make Client ID your Client ID **under Tool Settings**
 3. Make JWK Set URL your Public keyset URL
 4. Make Access token URL your Access token URL 
 5. Make Authoritization URL your Authentication request URL
-6. On the bottom right of the Microsoft LTI Tool Registration page, Hit Save Registration.
+6. Enter Institution Name
+7. Enter the Logo URL
+8. On the bottom right of the Microsoft LTI Tool Registration page, Hit Save Registration.
 
 Congratulations! You are now ready to get started assigning Microsoft Learn activities to your students within your LTI tool.

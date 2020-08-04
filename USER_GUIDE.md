@@ -7,20 +7,26 @@
 - Publish your activity so that students can view it and complete the learning
 
 ### If you have issues with this guide or with our tool please:
-- Email us here: *email here* **or**
-- Raise a GitHub Issue via the reporting link [here.](https://help.github.com/github/managing-your-work-on-github/creating-an-issue)
+- Raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa)
 
-> The team at Microsoft hope you love using the LTI tool! Thank you for teaching our future!
+> The teams at Microsoft hope you love using the LTI tool! Thank you for teaching our future!
 ## How to
 ### Create a Microsoft Learn Activity
-From your Institution's LMS 
-   1. Add an external tool to Azure
-   2. Now that you're in the Learn LTI tool, locate the General Tab under Configurations
-      ![General](./images/Configuration.General.PNG)
-      - **Description**: Include a brief overview of the activity and key learning objectives for your students
-      - **Deadline**: Use the calender to enter when you expect students to have completed the activity
-      - **Add Link**: Include links to external sites and sources of information that you believe will help the students to gain more from the activity 
-      - Click the **Add** button and you will be redirected to the Tutorial tab under Configurations.
+
+   Once you have deployed the Microsoft Learn LTI Tool, turn on editing in your LMS and select 'Add a new activity or resource'. The included example below details the process with Moodle. 
+   ![UserGuide1](./images/UserGuide.1.PNG)
+   Add a new external tool. 
+   
+   ![UserGuide2](./images/UserGuide.2.PNG)
+   * **Preconfigured tool**: In this section, select the name of the tool you configured during initial deployment.
+   ![UserGuide3](./images/UserGuide.3.PNG)
+   Once you have saved your preferred tool settings, return to the course dashboard in your LMS and you will see your configured instance of the Microsoft Learn LTI tool. 
+   Launch the tool, and locate the General Tab under Configurations
+   ![General](./images/Configuration.General.PNG)
+   * **Description**: Include a brief overview of the activity and key learning objectives for your students
+   * **Deadline**: Use the calender to enter when you expect students to have completed the activity
+   * **Add Link**: Include links to external sites and sources of information that you believe will help the students to gain more from the activity 
+   * Click the **Add** button and you will be redirected to the Tutorial tab under Configurations.
       
 ### Customize your Microsoft Learn Activity
    ![Tutorial](./images/Configurations.Tutorial.ClickBubble.png)
