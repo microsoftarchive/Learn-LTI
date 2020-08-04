@@ -7,14 +7,13 @@ namespace Edna.Assignments
 {
     public static class AssignmentExtensions
     {
-
-        static string GetEncoded(string rawStr)
+        private static string GetEncoded(string rawStr)
         {
             byte[] textBytes = Encoding.UTF8.GetBytes(rawStr);
             return Convert.ToBase64String(textBytes);
         }
 
-        static string GetDecoded(string encodedStr)
+        private static string GetDecoded(string encodedStr)
         {
             byte[] base64EncodedBytes = Convert.FromBase64String(encodedStr);
             return Encoding.UTF8.GetString(base64EncodedBytes);
@@ -28,7 +27,7 @@ namespace Edna.Assignments
             string[] assignmentIdParts = assignmentId.Split("_");
             if (assignmentIdParts.Length != 2)
                 return ("", "");
-            
+
             return (GetDecoded(assignmentIdParts[0]), GetDecoded(assignmentIdParts[1]));
         }
 
