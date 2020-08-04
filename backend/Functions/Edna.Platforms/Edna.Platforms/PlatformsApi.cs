@@ -22,6 +22,8 @@ namespace Edna.Platforms
     public class PlatformsApi
     {
         private const string PlatformsTableName = "Platforms";
+
+        private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
         private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
         private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
@@ -126,10 +128,10 @@ namespace Edna.Platforms
 
         private bool ValidatePermission(HttpRequest req)
         {
-            //#if DEBUG
-            //// For debug purposes, there is no authentication.
-            //return true;   
-            //#endif
+            #if DEBUG
+            // For debug purposes, there is no authentication.
+            return true;   
+            #endif
 
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
                 return false;
@@ -142,17 +144,34 @@ namespace Edna.Platforms
 
             if (appidacr == "0")
             {
-                string uniqueName = claims.FirstOrDefault(claim => claim.Type == "unique_name")?.Value;
-                if (string.IsNullOrEmpty(uniqueName))
+                if (!TryGetUserEmails(claims, out List<string> userEmails))
                 {
-                    _logger.LogWarning("There is no unique identifier for the current user.");
+                    _logger.LogError("Could not get any user email / uid for the current user.");
                     return false;
                 }
 
-                return AllowedUsers.Contains(uniqueName);
+                return AllowedUsers.Intersect(userEmails).Any();
             }
 
             return false;
+        }
+
+        private bool TryGetUserEmails(IEnumerable<Claim> claims, out List<string> userEmails)
+        {
+            userEmails = new List<string>();
+            if (claims == null)
+                return false;
+
+            Claim[] claimsArray = claims.ToArray();
+
+            userEmails = PossibleEmailClaimTypes
+                .Select(claimType => claimsArray.FirstOrDefault(claim => claim.Type == claimType))
+                .Where(claim => claim != null)
+                .Select(claim => claim.Value)
+                .Distinct()
+                .ToList();
+
+            return userEmails.Any();
         }
     }
 }

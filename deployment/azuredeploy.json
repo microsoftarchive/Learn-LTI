@@ -49,10 +49,6 @@
         "location": "[resourceGroup().location]",
         "runtimeStack": "dotnet",
         "resourceGroupName": "[resourceGroup().name]",
-        "insightsLocation": {
-            "AzureCloud": "eastus",
-            "AzureUSGovernment": "usgovvirginia"
-        },
         "ProjectNameSuffix": "[concat('-', replace(variables('uniqueIdentifier'),'-',''))]",
         "staticWebsite": "[toLower(concat('learnclient', replace(variables('uniqueIdentifier'),'-','')))]",
         "keyVaultName": "[toLower(concat('kv-', variables('uniqueIdentifier')))]",
@@ -307,7 +303,7 @@
             "type": "Microsoft.Insights/components",
             "apiVersion": "2018-05-01-preview",
             "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))]",
-            "location": "[variables('insightsLocation')[environment().name]]",
+            "location": "[variables('location')]",
             "tags": {
                 "[concat('hidden-link:', resourceId('Microsoft.Web/sites/',concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix')) ))]": "Resource"
             },
