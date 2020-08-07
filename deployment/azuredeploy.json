@@ -325,7 +325,7 @@
                 "enabledForDiskEncryption": "[variables('enabledForDiskEncryption')]",
                 "enabledForTemplateDeployment": "[variables('enabledForTemplateDeployment')]",
                 "tenantId": "[variables('tenantId')]",
-                "accessPolicies": [
+                "accessPolicies": [ 
                     {
                         "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
                         "tenantId": "[variables('tenantId')]",
