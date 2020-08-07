@@ -85,7 +85,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             // Looks like LTI 1.3 doesn't support querying by member identifiers
             IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, membershipUrl);
 
-            return allMembers.FirstOrDefault(member => userEmails.Any(userEmail => member.Email.Equals(userEmail)));
+            return allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email??String.Empty).Equals(userEmail)));
         }
 
         public async Task<Member> GetById(string clientId, string tokenUrl, string membershipUrl, string userId)
