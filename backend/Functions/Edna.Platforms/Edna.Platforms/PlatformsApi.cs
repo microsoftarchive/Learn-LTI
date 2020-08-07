@@ -79,6 +79,8 @@ namespace Edna.Platforms
 
             PlatformDto platformDto = _mapper.Map<PlatformDto>(platformEntity);
             platformDto.PublicKey = publicKey.PemString;
+            platformDto.ToolJwk = publicKey.Jwk;
+            platformDto.ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks";
 
             return new OkObjectResult(platformDto);
         }

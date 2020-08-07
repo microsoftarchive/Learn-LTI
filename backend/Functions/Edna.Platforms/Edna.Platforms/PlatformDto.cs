@@ -14,5 +14,8 @@
         public string PublicKey { get; set; }
         public string InstitutionName { get; set; }
         public string LogoUrl { get; set; }
+        public string ToolJwkSetUrl { get; set; }
+        public string ToolJwk{get; set;}
+
     }
 }

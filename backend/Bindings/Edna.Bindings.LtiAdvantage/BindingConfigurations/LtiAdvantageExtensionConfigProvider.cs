@@ -12,11 +12,13 @@ namespace Edna.Bindings.LtiAdvantage.BindingConfigurations
     {
         private readonly NrpsClient.NrpsClientFactory _nrpsClientFactory;
         private readonly IKeyVaultPemKeyProvider _keyVaultPemKeyProvider;
+        private readonly IKeyVaultJwkProvider _keyVaultJwkProvider;
 
-        public LtiAdvantageExtensionConfigProvider(NrpsClient.NrpsClientFactory nrpsClientFactory, IKeyVaultPemKeyProvider keyVaultPemKeyProvider)
+        public LtiAdvantageExtensionConfigProvider(NrpsClient.NrpsClientFactory nrpsClientFactory, IKeyVaultPemKeyProvider keyVaultPemKeyProvider, IKeyVaultJwkProvider keyVaultJwkProvider)
         {
             _nrpsClientFactory = nrpsClientFactory;
             _keyVaultPemKeyProvider = keyVaultPemKeyProvider;
+            _keyVaultJwkProvider = keyVaultJwkProvider;
         }
 
         public void Initialize(ExtensionConfigContext context)
@@ -36,7 +38,9 @@ namespace Edna.Bindings.LtiAdvantage.BindingConfigurations
 
             string pemKey = await _keyVaultPemKeyProvider.GetPemKey(keyVaultKeyIdentifier);
 
-            return new LtiToolPublicKey(pemKey);
+            string jwk = await _keyVaultJwkProvider.GetJwk(keyVaultKeyIdentifier);
+
+            return new LtiToolPublicKey(pemKey, jwk);
         }
     }
 }

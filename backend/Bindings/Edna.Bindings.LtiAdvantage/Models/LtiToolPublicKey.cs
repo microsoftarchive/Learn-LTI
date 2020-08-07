@@ -3,10 +3,13 @@
     public class LtiToolPublicKey
     {
         public string PemString { get; }
-
-        internal LtiToolPublicKey(string pemString)
+		
+        public string Jwk { get; }
+		
+        internal LtiToolPublicKey(string pemString, string jwk)
         {
             PemString = pemString;
+            Jwk = jwk;
         }
     }
 }
