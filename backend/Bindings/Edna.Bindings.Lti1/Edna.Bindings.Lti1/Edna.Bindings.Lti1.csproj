@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LtiLibrary.AspNetCore" Version="3.2.3" />
+    <PackageReference Include="LtiLibrary.AspNetCore" Version="3.2.4" />
     <PackageReference Include="Microsoft.Azure.WebJobs" Version="3.0.16" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.4" />
