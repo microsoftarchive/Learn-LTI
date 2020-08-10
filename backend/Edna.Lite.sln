@@ -7,9 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LTI", "LTI", "{E2BBE076-8869-4BBE-A35E-7F4B29293271}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LtiAdvantage", "Lti\LtiAdvantage\LtiAdvantage.csproj", "{B651929F-0CD5-470E-9B38-C4067AA00A0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LtiAdvantage", "ThirdParty\LtiAdvantage\LtiAdvantage\LtiAdvantage.csproj", "{B651929F-0CD5-470E-9B38-C4067AA00A0C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LtiAdvantage.IdentityModel", "Lti\LtiAdvantage.IdentityModel\LtiAdvantage.IdentityModel.csproj", "{D84A5AD8-002C-44FA-A436-6C1466A3944F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LtiAdvantage.IdentityModel", "ThirdParty\LtiAdvantage\LtiAdvantage.IdentityModel\LtiAdvantage.IdentityModel.csproj", "{D84A5AD8-002C-44FA-A436-6C1466A3944F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bindings", "Bindings", "{65999A96-B776-46AD-A419-40D4CE1A3941}"
 EndProject
