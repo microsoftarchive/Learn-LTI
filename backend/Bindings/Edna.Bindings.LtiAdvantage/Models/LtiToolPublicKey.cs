@@ -1,12 +1,14 @@
-﻿namespace Edna.Bindings.LtiAdvantage.Models
+﻿using IdentityModel.Jwk;
+
+namespace Edna.Bindings.LtiAdvantage.Models
 {
     public class LtiToolPublicKey
     {
         public string PemString { get; }
 		
-        public string Jwk { get; }
+        public JsonWebKey Jwk { get; }
 		
-        internal LtiToolPublicKey(string pemString, string jwk)
+        internal LtiToolPublicKey(string pemString, JsonWebKey jwk)
         {
             PemString = pemString;
             Jwk = jwk;

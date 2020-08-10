@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Edna.Bindings.LtiAdvantage.Attributes;
 using Edna.Bindings.LtiAdvantage.Models;
 using Edna.Bindings.LtiAdvantage.Services;
+using IdentityModel.Jwk;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Config;
 
@@ -37,8 +38,7 @@ namespace Edna.Bindings.LtiAdvantage.BindingConfigurations
                 throw new Exception("KeyVaultIdentifier was not set properly.");
 
             string pemKey = await _keyVaultPemKeyProvider.GetPemKey(keyVaultKeyIdentifier);
-
-            string jwk = await _keyVaultJwkProvider.GetJwk(keyVaultKeyIdentifier);
+            JsonWebKey jwk = await _keyVaultJwkProvider.GetJwk(keyVaultKeyIdentifier);
 
             return new LtiToolPublicKey(pemKey, jwk);
         }

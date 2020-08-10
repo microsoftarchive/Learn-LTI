@@ -100,7 +100,9 @@ namespace Edna.Platforms
                 LoginUrl = $"{ConnectApiBaseUrl}/oidc-login/{randomId}",
                 LaunchUrl = $"{ConnectApiBaseUrl}/lti-advantage-launch/{randomId}",
                 PublicKey = publicKey.PemString,
-            };
+                ToolJwk = publicKey.Jwk,
+                ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks"
+        };
 
             return new OkObjectResult(platformDto);
         }

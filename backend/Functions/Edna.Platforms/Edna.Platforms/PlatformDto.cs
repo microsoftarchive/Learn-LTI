@@ -1,4 +1,6 @@
-﻿namespace Edna.Platforms
+﻿using IdentityModel.Jwk;
+
+namespace Edna.Platforms
 {
     public class PlatformDto
     {
@@ -15,7 +17,8 @@
         public string InstitutionName { get; set; }
         public string LogoUrl { get; set; }
         public string ToolJwkSetUrl { get; set; }
-        public string ToolJwk{get; set;}
+        public JsonWebKey ToolJwk{get; set;}
+
 
     }
 }
