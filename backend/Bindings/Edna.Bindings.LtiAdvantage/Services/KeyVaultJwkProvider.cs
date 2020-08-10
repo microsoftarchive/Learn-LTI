@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using IdentityModel.Jwk;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
