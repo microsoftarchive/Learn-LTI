@@ -80,7 +80,7 @@ namespace Edna.Platforms
             PlatformDto platformDto = _mapper.Map<PlatformDto>(platformEntity);
             platformDto.PublicKey = publicKey.PemString;
             platformDto.ToolJwk = publicKey.Jwk;
-            platformDto.ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks";
+            platformDto.ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{platformEntity.PartitionKey}";
 
             return new OkObjectResult(platformDto);
         }
@@ -101,7 +101,7 @@ namespace Edna.Platforms
                 LaunchUrl = $"{ConnectApiBaseUrl}/lti-advantage-launch/{randomId}",
                 PublicKey = publicKey.PemString,
                 ToolJwk = publicKey.Jwk,
-                ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks"
+                ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{randomId}"
         };
 
             return new OkObjectResult(platformDto);
