@@ -1,0 +1,13 @@
+{
+    "Registrations": [ 
+        {
+            "Component": { 
+                "Type": "git", 
+                "Git": {
+                    "RepositoryUrl": "https://github.com/LtiLibrary/LtiAdvantage",
+                    "CommitHash": "719da4e055dc8c14a27a8ca1e0e26303c3c87819"
+                }
+            }
+        }
+    ]
+}

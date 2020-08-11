@@ -1,0 +1,2918 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LtiAdvantage</name>
+    </assembly>
+    <members>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.ActivityProgress">
+            <summary>
+            The activity progress or status.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.ActivityProgress.None">
+            <summary>
+            Unknown activity progress.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.ActivityProgress.Completed">
+            <summary>
+            The user has completed the activity associated with the line item.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.ActivityProgress.Initialized">
+            <summary>
+            The user has not started the activity, or the activity has been reset for that student.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.ActivityProgress.InProgress">
+            <summary>
+            The activity is being drafted and is available for comment.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.ActivityProgress.Started">
+            <summary>
+            The activity associated with the line item has been started by the user.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.ActivityProgress.Submitted">
+            <summary>
+            The activity has been submitted at least once by the user but is still able to make further submissions.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.AddLineItemRequest">
+            <summary>
+            Represents a create item request request.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.AddLineItemRequest.#ctor(System.String,LtiAdvantage.AssignmentGradeServices.LineItem)">
+            <summary>
+            Initialize a new instance of the class.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.AddLineItemRequest.ContextId">
+            <summary>
+            The context id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.AddLineItemRequest.LineItem">
+            <summary>
+            The line item.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.AddScoreRequest">
+            <summary>
+            Represents a create score request.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.AddScoreRequest.#ctor(System.String,System.String,LtiAdvantage.AssignmentGradeServices.Score)">
+            <summary>
+            Initialize a new instance of the class.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.AddScoreRequest.ContextId">
+            <summary>
+            Get or set the context id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.AddScoreRequest.LineItemId">
+            <summary>
+            Get or set the line item Id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.AddScoreRequest.Score">
+            <summary>
+            The score.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.AssignmentGradeServicesClaimValueType">
+            <summary>
+            LTI claim to include in the LtiResourceLinkRequest if the platform
+            supports Assignment and Grade Services.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.AssignmentGradeServicesClaimValueType.Scope">
+            <summary>
+            The list of scopes the tool may ask for when requesting the access token.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.AssignmentGradeServicesClaimValueType.LineItemUrl">
+            <summary>
+            The fully resolved URL to the line item endpoint associated with the resource link.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.AssignmentGradeServicesClaimValueType.LineItemsUrl">
+            <summary>
+            The fully resolved URL to the line items endpoint associated with the context.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.DeleteLineItemRequest">
+            <summary>
+            Represents a DeleteLineItem request.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.DeleteLineItemRequest.#ctor(System.String,System.String)">
+            <summary>
+            Initialize a new instance of the class.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.DeleteLineItemRequest.ContextId">
+            <summary>
+            Get or set the ContextId.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.DeleteLineItemRequest.LineItemId">
+            <summary>
+            Get or set the Id.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.GetLineItemRequest">
+            <summary>
+            Represents a GetLineItem request.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.GetLineItemRequest.#ctor(System.String,System.String)">
+            <summary>
+            Initialize a new instance of the class.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetLineItemRequest.ContextId">
+            <summary>
+            Get or set the context id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetLineItemRequest.LineItemId">
+            <summary>
+            Get or set the line item Id.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.GetLineItemsRequest">
+            <summary>
+            Represents a GetLineItems request.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.GetLineItemsRequest.#ctor(System.String,System.String,System.String,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Initialize a new instance of the class.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetLineItemsRequest.ContextId">
+            <summary>
+            Get or set the context id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetLineItemsRequest.Limit">
+            <summary>
+            Get or set the limit filter.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetLineItemsRequest.ResourceLinkId">
+            <summary>
+            Get or set the resource link id filter.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetLineItemsRequest.ResourceId">
+            <summary>
+            Get or set the resource id filter.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetLineItemsRequest.Tag">
+            <summary>
+            Get or set the tag filter.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.GetResultsRequest">
+            <summary>
+            Represents a GetResults request.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.GetResultsRequest.#ctor(System.String,System.String,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Initialize a new instance of the class.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetResultsRequest.ContextId">
+            <summary>
+            Get or set the context_id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetResultsRequest.LineItemId">
+            <summary>
+            Get or set the line item Id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetResultsRequest.Limit">
+            <summary>
+            Get or set the limit filter.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetResultsRequest.UserId">
+            <summary>
+            Get or set the user ID filter.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.GetScoreRequest">
+            <summary>
+            Represents a Get Score request.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.GetScoreRequest.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Create a GetScoreRequest.
+            </summary>
+            <param name="contextId">The context id.</param>
+            <param name="lineItemId">The line item id.</param>
+            <param name="scoreId">The score id.</param>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetScoreRequest.ContextId">
+            <summary>
+            Get or set the context id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetScoreRequest.LineItemId">
+            <summary>
+            Get or set the line item id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.GetScoreRequest.ScoreId">
+            <summary>
+            Get or set the score id.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.GradingProgess">
+            <summary>
+            The grading progress.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.GradingProgess.None">
+            <summary>
+            Unknown grading progress.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.GradingProgess.Failed">
+            <summary>
+            The grading could not complete.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.GradingProgess.FullyGraded">
+            <summary>
+            The grading process is completed.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.GradingProgess.NotReady">
+            <summary>
+            No grading process occuring.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.GradingProgess.Pending">
+            <summary>
+            Final grade is pending, and not human intervention required.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.AssignmentGradeServices.GradingProgess.PendingManual">
+            <summary>
+            Final graded is pending, and human intervention required.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.ILineItemsController">
+            <summary>
+            Marker for ILogger dependency injection.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.IResultsController">
+            <summary>
+            Marker for ILogger dependency injection.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.IScoresController">
+            <summary>
+            Marker for ILogger dependency injection.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.LineItem">
+            <summary>
+            Represents a gradebook column (e.g. an assignment).
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.LineItem.EndDateTime">
+            <summary>
+            The end date and time.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.LineItem.Id">
+            <summary>
+            The endpoint url for this item.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.LineItem.Label">
+            <summary>
+            Optional, human-friendly label for this LineItem suitable for display. 
+            For example, this label might be used as the heading of a column in a gradebook.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.LineItem.ResourceLinkId">
+            <summary>
+            The resource link id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.LineItem.ResourceId">
+            <summary>
+            The non-link resource id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.LineItem.ScoreMaximum">
+            <summary>
+            The maximum score allowed.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.LineItem.StartDateTime">
+            <summary>
+            The start date and time.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.LineItem.Tag">
+            <summary>
+            Optional tag.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.LineItemContainer">
+            <inheritdoc />
+            <summary>
+            A list of LineItems.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemContainer.#ctor">
+            <inheritdoc />
+            <summary>
+            Create an empty LineItemContainer
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemContainer.#ctor(System.Collections.Generic.IEnumerable{LtiAdvantage.AssignmentGradeServices.LineItem})">
+            <inheritdoc />
+            <summary>
+            Create a LineItemContainer that contains the line items.
+            </summary>
+            <param name="lineItems"></param>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase">
+            <inheritdoc cref="T:Microsoft.AspNetCore.Mvc.ControllerBase" />
+            <summary>
+            Implements the Assignment and Grade Services line items endpoint.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.#ctor(Microsoft.AspNetCore.Hosting.IHostingEnvironment,Microsoft.Extensions.Logging.ILogger{LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase})">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.OnAddLineItemAsync(LtiAdvantage.AssignmentGradeServices.AddLineItemRequest)">
+            <summary>
+            Add a line item to the context.
+            </summary>
+            <param name="request">The request parameters.</param>
+            <returns>The line item.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.OnDeleteLineItemAsync(LtiAdvantage.AssignmentGradeServices.DeleteLineItemRequest)">
+            <summary>
+            Deletes a line item.
+            </summary>
+            <param name="request">The request parameters.</param>
+            <returns>The result.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.OnGetLineItemAsync(LtiAdvantage.AssignmentGradeServices.GetLineItemRequest)">
+            <summary>
+            Get a line item.
+            </summary>
+            <param name="request">The request parameters.</param>
+            <returns>The line item.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.OnGetLineItemsAsync(LtiAdvantage.AssignmentGradeServices.GetLineItemsRequest)">
+            <summary>
+            Get the line items for a context.
+            </summary>
+            <param name="request">The request parameters.</param>
+            <returns>The line items.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.OnUpdateLineItemAsync(LtiAdvantage.AssignmentGradeServices.UpdateLineItemRequest)">
+            <summary>
+            Updates a line item.
+            </summary>
+            <param name="request">The request parameters.</param>
+            <returns>The result.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.AddLineItemAsync(System.String,LtiAdvantage.AssignmentGradeServices.LineItem)">
+            <summary>
+            Adds a line item to a context.
+            </summary>
+            <param name="contextId">The context id.</param>
+            <param name="lineItem">The line item to add.</param>
+            <returns>The line item added.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.DeleteLineItemAsync(System.String,System.String)">
+            <summary>
+            Deletes a line item.
+            </summary>
+            <param name="contextId">The context id.</param>
+            <param name="lineItemId">The line item id.</param>
+            <returns>The result.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.GetLineItemAsync(System.String,System.String)">
+            <summary>
+            Returns a line item.
+            </summary>
+            <param name="contextId">The context id.</param>
+            <param name="lineItemId">The line item id.</param>
+            <returns>The line item.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.GetLineItemsAsync(System.String,System.String,System.String,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Returns the line items in a context.
+            </summary>
+            <param name="contextId">The context id.</param>
+            <param name="resourceLinkId">Optional resource link id filter.</param>
+            <param name="resourceId">Optional resource id filter.</param>
+            <param name="tag">Optional tag filter.</param>
+            <param name="limit">Optional limit on number of line items to return.</param>
+            <returns>The line items.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.LineItemsControllerBase.UpdateLineItemAsync(System.String,System.String,LtiAdvantage.AssignmentGradeServices.LineItem)">
+            <summary>
+            Updates a line item.
+            </summary>
+            <param name="contextId">The context id.</param>
+            <param name="lineItemId">The line item id.</param>
+            <param name="lineItem">The updated line item.</param>
+            <returns>The result.</returns>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.Result">
+            <summary>
+            The score result for a single line item and user.
+            </summary>
+            <remarks>
+            There may be multiple scores for a given line item and user,
+            but only one result. It is up to the platform to decide how
+            to calculate the result.
+            </remarks>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Result.Id">
+            <summary>
+            The endpoint url for this result.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Result.Comment">
+            <summary>
+            A comment associated with this result.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Result.ResultMaximum">
+            <summary>
+            Maximum result score.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Result.ResultScore">
+            <summary>
+            The line item result.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Result.ScoreOf">
+            <summary>
+            The line item.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Result.UserId">
+            <summary>
+            The user id.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.ResultContainer">
+            <inheritdoc />
+            <summary>
+            A collection of results.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ResultContainer.#ctor">
+            <inheritdoc />
+            <summary>
+            Create an empty ResultContainer
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ResultContainer.#ctor(System.Collections.Generic.IEnumerable{LtiAdvantage.AssignmentGradeServices.Result})">
+            <inheritdoc />
+            <summary>
+            Create a ResultContainer that contains the results.
+            </summary>
+            <param name="results"></param>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.ResultsControllerBase">
+            <inheritdoc cref="T:Microsoft.AspNetCore.Mvc.ControllerBase" />
+            <summary>
+            Implements the Assignment and Grade Services results endpoint.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ResultsControllerBase.#ctor(Microsoft.AspNetCore.Hosting.IHostingEnvironment,Microsoft.Extensions.Logging.ILogger{LtiAdvantage.AssignmentGradeServices.ResultsControllerBase})">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ResultsControllerBase.OnGetResultsAsync(LtiAdvantage.AssignmentGradeServices.GetResultsRequest)">
+            <summary>
+            Returns the results for a line item.
+            </summary>
+            <param name="request">The request parameters.</param>
+            <returns>The results.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ResultsControllerBase.GetResultsAsync(System.String,System.String,System.String,System.Nullable{System.Int32})">
+            <summary>
+            Returns the results for a lineitem.
+            </summary>
+            <param name="contextId">The context id.</param>
+            <param name="lineItemId">The line item id.</param>
+            <param name="userId">Optional user id filter.</param>
+            <param name="limit">Optional limit to the number of results returned.</param>
+            <returns>The results.</returns>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.Score">
+            <summary>
+            Represents a score.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Score.ActivityProgress">
+            <summary>
+            Status of the user toward activity's completion.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Score.Comment">
+            <summary>
+            A comment with the score.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Score.GradingProgress">
+            <summary>
+            The status of the grading process.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Score.ScoreGiven">
+            <summary>
+            The score.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Score.ScoreMaximum">
+            <summary>
+            The maximum possible score.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Score.TimeStamp">
+            <summary>
+            The UTC time the score was set. ISO 8601 format.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.Score.UserId">
+            <summary>
+            The user id.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.ScoresControllerBase">
+            <inheritdoc cref="T:Microsoft.AspNetCore.Mvc.ControllerBase" />
+            <summary>
+            Implements the Assignment and Grade Services score publish service endpoint.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ScoresControllerBase.#ctor(Microsoft.AspNetCore.Hosting.IHostingEnvironment,Microsoft.Extensions.Logging.ILogger{LtiAdvantage.AssignmentGradeServices.ScoresControllerBase})">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ScoresControllerBase.OnAddScoreAsync(LtiAdvantage.AssignmentGradeServices.AddScoreRequest)">
+            <summary>
+            Add a score to the line item.
+            </summary>
+            <param name="request">The request parameters.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ScoresControllerBase.OnGetScoreAsync(LtiAdvantage.AssignmentGradeServices.GetScoreRequest)">
+            <summary>
+            Returns a score.
+            </summary>
+            <param name="request">The request parameters.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ScoresControllerBase.AddScoreAsync(System.String,System.String,LtiAdvantage.AssignmentGradeServices.Score)">
+            <summary>
+            Adds a score to a line item.
+            </summary>
+            <param name="contextId">The context id.</param>
+            <param name="lineItemId">The line item id.</param>
+            <param name="score">The score to add.</param>
+            <returns>The new score.</returns>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.ScoresControllerBase.GetScoreAsync(System.String,System.String,System.String)">
+            <summary>
+            Returns a score.
+            </summary>
+            <remarks>
+            This is not part of the Assignment and Grades Services spec.
+            </remarks>
+            <param name="contextId">The context id.</param>
+            <param name="lineItemId">The line item id.</param>
+            <param name="scoreId">The score id.</param>
+            <returns>The score.</returns>
+        </member>
+        <member name="T:LtiAdvantage.AssignmentGradeServices.UpdateLineItemRequest">
+            <summary>
+            Represents an update line item request.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.AssignmentGradeServices.UpdateLineItemRequest.#ctor(System.String,System.String,LtiAdvantage.AssignmentGradeServices.LineItem)">
+            <summary>
+            Initialize a new instance of the class.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.UpdateLineItemRequest.ContextId">
+            <summary>
+            Get or set the context id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.UpdateLineItemRequest.LineItem">
+            <summary>
+            Get or set the line item.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.AssignmentGradeServices.UpdateLineItemRequest.LineItemId">
+            <summary>
+            Get or set the line item id.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants">
+            <summary>
+            LTI Advantage Library constants.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.ContentItemTypes">
+            <summary>
+            Deep linking content item types.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ContentItemTypes.File">
+            <summary>
+            A file is a resource transferred from the tool to stored and/or processed
+            by the platform.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ContentItemTypes.Html">
+            <summary>
+            An HTML fragment to be embedded in html document.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ContentItemTypes.Image">
+            <summary>
+            Image is a URL pointing to an image resource that SHOULD be rendered directly
+            in the browser agent using the HTML img tag.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ContentItemTypes.Link">
+            <summary>
+            A link is a fully qualified URL to a resource hosted on the internet.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ContentItemTypes.LtiLink">
+            <summary>
+            A link to an LTI resource, usually delivered by the same tool to which
+            the deep linking request was made to.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.Lti">
+            <summary>
+            LTI Advantage constants.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.Lti.LtiDeepLinkingRequestMessageType">
+            <summary>
+            The message type of an LtiDeepLinkingRequest.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.Lti.LtiDeepLinkingResponseMessageType">
+            <summary>
+            The message type of an LtiDeepLinkingRequest.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.Lti.LtiResourceLinkRequestMessageType">
+            <summary>
+            The message type of an LtiResourceLinkRequest.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.Lti.Version">
+            <summary>
+            LTI version.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.LtiClaims">
+            <summary>
+            LTI claims.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.AssignmentGradeServices">
+            <summary>
+            The claim to include Names and Role Provisioning Service parameter in LTI 1.3 messages.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.ContentItems">
+            <summary>
+            A list of content items.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Context">
+            <summary>
+            Properties of the context from which the launch originated (for example, course id and title).
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Custom">
+            <summary>
+            This is a map of key/value custom parameters which are to be included with the launch.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Data">
+            <summary>
+            An opaque value data claim used by Deep Linking.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.DeepLinkingSettings">
+            <summary>
+            Deep Linking settings.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.DeploymentId">
+            <summary>
+            The deployment identifier, uniquely identifying the tool's deployment on the platform.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.ErrorLog">
+            <summary>
+            Optional plain text message.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.ErrorMessage">
+            <summary>
+            Optional plain text message.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.LaunchPresentation">
+            <summary>
+            Information to help the Tool present itself appropriately.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Lis">
+            <summary>
+            Properties about available Learning Information Services (LIS),
+            usually originating from the Student Information System.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Log">
+            <summary>
+            Optional plain text message.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Lti11LegacyUserId">
+            <summary>
+            User ID as defined in LTI 1.1.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Message">
+            <summary>
+            Optional plain text message.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.MessageType">
+            <summary>
+            The type of message.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.NamesRoleService">
+            <summary>
+            The claim to include Names and Role Provisioning Service parameter in LTI 1.3 messages.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Platform">
+            <summary>
+            Properties associated with the platform initiating the launch.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.ResourceLink">
+            <summary>
+            A link to tool's resource from the tool's platform.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Roles">
+            <summary>
+            An array of roles as defined in the Core LTI specification.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.RoleScopeMentor">
+            <summary>
+            An array of the user_id values which the current user can access as a mentor.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.TargetLinkUri">
+            <summary>
+            The launch url.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiClaims.Version">
+            <summary>
+            The minimum LTI version required.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.LtiScopes">
+            <summary>
+            LTI Advantage API scopes.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.LtiScopes.Ags">
+            <summary>
+            Assignment and Grade Services scopes
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiScopes.Ags.LineItem">
+            <summary>
+            Assignment and Grade Service lineitem read/write scope.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiScopes.Ags.LineItemReadonly">
+            <summary>
+            Assignment and Grade Service lineitem readonly scope.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiScopes.Ags.ResultReadonly">
+            <summary>
+            Assignment and Grade Service result readonly scope.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiScopes.Ags.Score">
+            <summary>
+            Assignment and Grade Service score read/write scope.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiScopes.Ags.ScoreReadonly">
+            <summary>
+            Custom Assignment and Grade Service score readonly scope.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.LtiScopes.Nrps">
+            <summary>
+            Names and Role Provisioning Service scopes.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.LtiScopes.Nrps.MembershipReadonly">
+            <summary>
+            Names and Role Service readonly scope.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.MediaTypes">
+            <summary>
+            Service media types.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.MediaTypes.LineItem">
+            <summary>
+            https://www.imsglobal.org/spec/lti-ags/v2p0/#media-types-and-schemas
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.MediaTypes.LineItemContainer">
+            <summary>
+            https://www.imsglobal.org/spec/lti-ags/v2p0/#media-types-and-schemas
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.MediaTypes.MembershipContainer">
+            <summary>
+            https://www.imsglobal.org/spec/lti-nrps/v2p0#membership-container-media-type
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.MediaTypes.ResultContainer">
+            <summary>
+            https://www.imsglobal.org/spec/lti-ags/v2p0/#media-types-and-schemas
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.MediaTypes.Score">
+            <summary>
+            https://www.imsglobal.org/spec/lti-ags/v2p0/#media-types-and-schemas
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.OidcClaims">
+            <summary>
+            Subset of OpenID standard claims used by LTI Advantage.
+            See https://openid.net/specs/openid-connect-core-1_0.html#Claims.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.OidcClaims.Email">
+            <summary>
+            End-User's preferred e-mail address. Its value MUST conform to the RFC 5322 [RFC5322] addr-spec
+            syntax. The RP MUST NOT rely upon this value being unique.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.OidcClaims.FamilyName">
+            <summary>
+            Surname(s) or last name(s) of the End-User. Note that in some cultures, people can have multiple
+            family names or no family name; all can be present, with the names being separated by space characters.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.OidcClaims.GivenName">
+            <summary>
+            Given name(s) or first name(s) of the End-User. Note that in some cultures, people can have multiple
+            given names; all can be present, with the names being separated by space characters.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.OidcClaims.Locale">
+            <summary>
+            End-User's locale, represented as a BCP47 [RFC5646] language tag. This is typically an
+            ISO 639-1 Alpha-2 [ISO639‑1] language code in lowercase and an ISO 3166-1 Alpha-2 [ISO3166‑1]
+            country code in uppercase, separated by a dash. For example, en-US or fr-CA. As a compatibility
+            note, some implementations have used an underscore as the separator rather than a dash, for
+            example, en_US; Tools MAY choose to accept this locale syntax as well.
+            <example>
+            en-US
+            </example>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.OidcClaims.MiddleName">
+            <summary>
+            Middle name(s) of the End-User. Note that in some cultures, people can have multiple middle
+            names; all can be present, with the names being separated by space characters. Also note that
+            in some cultures, middle names are not used.
+            <example>
+            "Marie"
+            </example>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.OidcClaims.Name">
+            <summary>
+            End-User's full name in displayable form including all name parts, possibly including titles and
+            suffixes, ordered according to the End-User's locale and preferences.
+            <example>
+            "Ms Jane Marie Doe"
+            </example>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.OidcClaims.Picture">
+            <summary>
+            URL of the End-User's profile picture. This URL MUST refer to an image file (for example, a PNG,
+            JPEG, or GIF image file), rather than to a Web page containing an image. Note that this URL SHOULD
+            specifically reference a profile photo of the End-User suitable for displaying when describing the
+            End-User, rather than an arbitrary photo taken by the End-User.
+            <example>
+            "http://example.org/jane.jpg"
+            </example>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.ServiceEndpoints">
+            <summary>
+            LTI Advantage service endpoints.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.ServiceEndpoints.Ags">
+            <summary>
+            Assignment and Grade Services endpoints.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ServiceEndpoints.Ags.LineItemService">
+            <summary>
+            Line item endpoint.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ServiceEndpoints.Ags.LineItemsService">
+            <summary>
+            Line items endpoint.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ServiceEndpoints.Ags.ResultsService">
+            <summary>
+            Results endpoint.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ServiceEndpoints.Ags.ScoreService">
+            <summary>
+            Score endpoint.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ServiceEndpoints.Ags.ScoresService">
+            <summary>
+            Scores endpoint.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Constants.ServiceEndpoints.Nrps">
+            <summary>
+            Names and Role Provisioning Service endpoints.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Constants.ServiceEndpoints.Nrps.MembershipService">
+            <summary>
+            Membership endpoint.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.ContextClaimValueType">
+            <summary>
+            Properties of the context from which the launch originated (for example, course id and title).
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ContextClaimValueType.Id">
+            <summary>
+            An opaque identifier that identifies the context where the launch originated. Must be
+            unique within the scope of the tool_consumer_instance_guid.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ContextClaimValueType.Label">
+            <summary>
+            A plain text label for the context.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ContextClaimValueType.Title">
+            <summary>
+            A plain text title of the context.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ContextClaimValueType.Type">
+            <summary>
+            An array of URI values that identify the type of context. The list MUST include a URN
+            value drawn from the LIS vocabulary. The assumed namespace of these URNs is the LIS
+            vocabulary so Tools can use the handles when the intent is to refer to an LIS context
+            type. If the Platform wants to include a context type from another namespace, a fully
+            qualified URN should be used.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.ContextType">
+            <summary>
+            Represents LIS Context Types
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.ContextType.Unknown">
+            <summary>
+            Unknown course type. Examine the claim directly.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.ContextType.CourseTemplate">
+            <summary>
+            A course template is the abstract course which is independent of when it is taught.
+            The course template may have one or more course offerings, each of which may have one
+            or more course sections.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.ContextType.CourseOffering">
+            <summary>
+            A course offering relates to the specific period of time when the course is available.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.ContextType.CourseSection">
+            <summary>
+            A course section is the specific instance into which students are enrolled and taught.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.ContextType.Group">
+            <summary>
+            A course group within a course section.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.CustomPropertySubstitutions">
+            <summary>
+            Implements custom property substitutions as described in
+            https://www.imsglobal.org/spec/lti/v1p3#custom-property-substitution.
+            </summary>
+            <remarks>
+            You must supply substitution values for any substituion variables you
+            support. Be careful not to provide personally identifiable information
+            that is not available via the normal launch.
+            </remarks>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LisCourseOffering">
+            <summary>
+            Substitution values for LIS Course Offering variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LisCourseSection">
+            <summary>
+            Substitution values for LIS Course Section variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LisCourseTemplate">
+            <summary>
+            Substitution values for LIS Course Template variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LisGroup">
+            <summary>
+            Substitution values for LIS Group variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LisMembership">
+            <summary>
+            Substitution values for LIS Membership variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LisMessage">
+            <summary>
+            Substitution values for LIS Message variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LisPerson">
+            <summary>
+            Substitution values for LIS Person variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LtiContext">
+            <summary>
+            Substitution values for LTI Context variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LtiResourceLink">
+            <summary>
+            Substitution values for LTI ResourceLink variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.LtiUser">
+            <summary>
+            Substitution values for LTI User variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.ToolPlatform">
+            <summary>
+            Substitution values for Tool Platform variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.CustomPropertySubstitutions.ToolPlatfomInstance">
+            <summary>
+            Substitution values for Tool Platform Instance variables.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Lti.CustomPropertySubstitutions.ReplaceCustomPropertyValues(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            Replace custom property variables with custom property values.
+            </summary>
+            <param name="source">Custom properties.</param>
+            <returns>Custom properties with the variables replaced.</returns>
+        </member>
+        <member name="M:LtiAdvantage.Lti.CustomPropertySubstitutions.SubstituteCustomVariable(System.String)">
+            <summary>
+            Replace variable with value. Unknown variables are ignored.
+            </summary>
+            <param name="value">Variable to replace.</param>
+            <returns>Value if variable is known.</returns>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LisCourseOffering">
+            <summary>
+            Substitution values for LIS Course Offering variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseOffering.AcademicSession">
+            <summary>
+            LIS course offering variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseOffering.academicSession.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseOffering.CourseNumber">
+            <summary>
+            LIS course offering variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseOffering.courseNumber.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseOffering.Credits">
+            <summary>
+            LIS course offering variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseOffering.credits.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseOffering.Label">
+            <summary>
+            LIS course offering variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseOffering.label.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseOffering.LongDescription">
+            <summary>
+            LIS course offering variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseOffering.longDescription.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseOffering.ShortDescription">
+            <summary>
+            LIS course offering variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseOffering.shortDescription.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseOffering.SourcedId">
+            <summary>
+            $CourseOffering.sourcedId
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseOffering.Title">
+            <summary>
+            LIS course offering variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseOffering.title.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LisCourseSection">
+            <summary>
+            Substitution values for LIS Course Section variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.CourseNumber">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.courseNumber.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.Credits">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.credits.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.DataSource">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.dataSource.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.Dept">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.dept.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.EnrollControlAccept">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.enrollControl.accept.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.EnrollControlAllowed">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.enrollControl.allowed.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.Label">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.label.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.LongDescription">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.longDescription.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.MaxNumberOfStudents">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.maxNumberofStudents.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.NumberOfStudents">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.numberofStudents.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.ShortDescription">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.shortDescription.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.SourceSectionId">
+            <summary>
+            $CourseSection.sourceSectionId
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.SourcedId">
+            <summary>
+            $CourseSection.sourcedId
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.TimeFrameBegin">
+            <summary>
+            $CourseSection.timeFrame.begin
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.TimeFrameEnd">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.timeFrame.end.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseSection.Title">
+            <summary>
+            LIS course section variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseSection.title.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LisCourseTemplate">
+            <summary>
+            Substitution values for LIS Course Template variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseTemplate.CourseNumber">
+            <summary>
+            LIS course template variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseTemplate.courseNumber.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseTemplate.Credits">
+            <summary>
+            LIS course template variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseTemplate.credits.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseTemplate.Label">
+            <summary>
+            LIS course template variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseTemplate.label.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseTemplate.LongDescription">
+            <summary>
+            LIS course template variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseTemplate.longDescription.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseTemplate.ShortDescription">
+            <summary>
+            LIS course template variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseTemplate.shortDescription.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseTemplate.SourcedId">
+            <summary>
+            LIS course template variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseTemplate.sourcedId.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisCourseTemplate.Title">
+            <summary>
+            LIS course template variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $CourseTemplate.title.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LisGroup">
+            <summary>
+            Substitution values for LIS Group variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.Email">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.email.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.EnrollControlAccept">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.enrollControl.accept.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.EnrollControlAllowed">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.enrollControl.Allowed.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.Level">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.grouptype.level.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.Scheme">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.grouptype.scheme.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.Typevalue">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.grouptype.typevalue.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.LongDescription">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.longDescription.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.ParentId">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.parentId.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.ShortDescription">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.shortDescription.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.SourcedId">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.sourcedId.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.TimeFrameBegin">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.timeFrame.begin.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.TimeFrameEnd">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.timeFrame.end.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisGroup.Url">
+            <summary>
+            LIS group variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Group.url.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LisMembership">
+            <summary>
+            Substitution values for LIS Membership variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMembership.CollectionSourcedId">
+            <summary>
+            LIS membership variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Membership.collectionSourcedId.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMembership.CreatedTimestamp">
+            <summary>
+            LIS membership variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Membership.createdTimestamp.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMembership.DataSource">
+            <summary>
+            LIS membership variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Membership.dataSource.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMembership.PersonSourcedId">
+            <summary>
+            LIS membership variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Membership.personSourcedId.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMembership.Role">
+            <summary>
+            LIS membership variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Membership.role.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMembership.RoleScopeMentor">
+            <summary>
+            role_scope_mentor property
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMembership.SourcedId">
+            <summary>
+            LIS membership variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Membership.sourcedId.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMembership.Status">
+            <summary>
+            LIS membership variable. 
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Membership.status.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LisMessage">
+            <summary>
+            Substitution values for LIS Message variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMessage.DocumentTarget">
+            <summary>
+            $Message.documentTarget
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMessage.Height">
+            <summary>
+            $Message.height
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMessage.Locale">
+            <summary>
+            $Message.locale
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMessage.ReturnUrl">
+            <summary>
+            $Message.returnUrl
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisMessage.Width">
+            <summary>
+            $Message.width
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LisPerson">
+            <summary>
+            Substitution values for LIS Persion variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.AddressCountry">
+            <summary>
+            This field contains the country of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.address.country.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.AddressLocality">
+            <summary>
+            This field contains the locality of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.address.locality.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.AddressPostCode">
+            <summary>
+            This field contains the postal code of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.address.postcode.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.AddressStatePr">
+            <summary>
+            This field contains the state or province of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.address.statepr.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.AddressStreet1">
+            <summary>
+            This field contains the street address of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.address.street1.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.AddressStreet2">
+            <summary>
+            This field contains the street address of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.address.street2.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.AddressStreet3">
+            <summary>
+            This field contains the street address of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.address.street3.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.AddressStreet4">
+            <summary>
+            This field contains the street address of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.address.street4.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.AddressTimezone">
+            <summary>
+            This field contains the timezone of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.address.timezone.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.EmailPersonal">
+            <summary>
+            This field contains the personal email address of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.email.personal.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.EmailPrimary">
+            <summary>
+            $Person.email.primary
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.NameFamily">
+            <summary>
+            $Person.name.family
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.NameFull">
+            <summary>
+            $Person.name.full
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.NameGiven">
+            <summary>
+            $Person.name.given
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.NameMiddle">
+            <summary>
+            This field contains the middle name of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.name.middle.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.NamePrefix">
+            <summary>
+            This field contains the name prefix of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.name.prefix.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.NameSuffix">
+            <summary>
+            This field contains the name suffix of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.name.suffix.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.PhoneHome">
+            <summary>
+            This field contains the home phone number of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.phone.home.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.PhoneMobile">
+            <summary>
+            This field contains the mobile phone number of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.phone.mobile.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.PhonePrimary">
+            <summary>
+            This field contains the primary phone number of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.phone.primary.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.PhoneWork">
+            <summary>
+            This field contains the work phone number of the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.phone.work.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.Sms">
+            <summary>
+            This field contains the SMS number for the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.sms.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.SourcedId">
+            <summary>
+            $Person.sourcedId
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisPerson.WebAddress">
+            <summary>
+            This field contains the website address for the user account that is performing this launch.
+            <para>
+            Parameter: n/a.
+            Custom parameter substitution: $Person.webaddress.
+            Versions: 1.0, 1.1, 1.2.
+            </para>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LtiContext">
+            <summary>
+            Substitution values for LTI Context variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiContext.Id">
+            <summary>
+            $Context.id
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiContext.IdHistory">
+            <summary>
+            $Context.id.history
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiContext.Label">
+            <summary>
+            $Context.label
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiContext.Org">
+            <summary>
+            $Context.org
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiContext.SourcedId">
+            <summary>
+            $Context.sourcedId
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiContext.Title">
+            <summary>
+            $Context.title
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiContext.Type">
+            <summary>
+            $Context.type
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LtiResourceLink">
+            <summary>
+            Substitution values for LTI ResourceLink variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiResourceLink.Description">
+            <summary>
+            $ResourceLink.description
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiResourceLink.Id">
+            <summary>
+            $ResourceLink.id
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiResourceLink.IdHistory">
+            <summary>
+            $ResourceLink.id.history
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiResourceLink.Title">
+            <summary>
+            $ResourceLink.title
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LtiUser">
+            <summary>
+            Substitution values for LTI User variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiUser.Id">
+            <summary>
+            $User.id
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiUser.Image">
+            <summary>
+            $User.image
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiUser.Org">
+            <summary>
+            $User.org
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiUser.ScopeMentor">
+            <summary>
+            $User.scope.mentor
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiUser.Username">
+            <summary>
+            $User.username
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.ToolPlatfom">
+            <summary>
+            Substitution values for Tool Platform variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ToolPlatfom.ProductFamilyCode">
+            <summary>
+            $ToolPlatform.productFamilyCode
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ToolPlatfom.Version">
+            <summary>
+            $ToolPlatform.version
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.ToolPlatfomInstance">
+            <summary>
+            Substitution values for Tool Platform Instance variables.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ToolPlatfomInstance.ContactEmail">
+            <summary>
+            $ToolPlatformInstance.contactEmail
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ToolPlatfomInstance.Description">
+            <summary>
+            $ToolPlatformInstance.description
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ToolPlatfomInstance.Guid">
+            <summary>
+            $ToolPlatformInstance.guid
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ToolPlatfomInstance.Name">
+            <summary>
+            $ToolPlatformInstance.name
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ToolPlatfomInstance.Url">
+            <summary>
+            $ToolPlatformInstance.url
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.DocumentTarget">
+            <summary>
+            Represents launch_presentation document_target values.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.DocumentTarget.None">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.DocumentTarget.Iframe">
+            <summary>
+            The Tool is being launched within an iframe placed inside the same browser page/frame
+            as the resource link.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.DocumentTarget.Window">
+            <summary>
+            The Tool is being launched within a new browser window or tab.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LaunchPresentationClaimValueType">
+            <summary>
+            Information to help the Tool present itself appropriately.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LaunchPresentationClaimValueType.DocumentTarget">
+            <summary>
+            The type of 'browsing context' the launch occurred in. See
+            https://www.w3.org/TR/html51/browsers.html#sec-browsing-contexts.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LaunchPresentationClaimValueType.Height">
+            <summary>
+            The height in pixels of the window or frame where the content from the tool
+            will be displayed.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LaunchPresentationClaimValueType.Locale">
+            <summary>
+            End-User's locale, represented as a BCP47 [RFC5646] language tag. This is typically an
+            ISO 639-1 Alpha-2 [ISO639‑1] language code in lowercase and an ISO 3166-1 Alpha-2 [ISO3166‑1]
+            country code in uppercase, separated by a dash. For example, en-US or fr-CA. As a compatibility
+            note, some implementations have used an underscore as the separator rather than a dash, for
+            example, en_US; Tools MAY choose to accept this locale syntax as well.
+            <example>
+            en-US
+            </example>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LaunchPresentationClaimValueType.ReturnUrl">
+            <summary>
+            Fully qualified URL within the tool platform interface to which the tool can
+            redirect the user when it's done. An lti_log or lti_errormsg parameter may be
+            added as a query parameter.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LaunchPresentationClaimValueType.Width">
+            <summary>
+            The width in pixels of the window or frame where the content from the tool
+            will be displayed.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LisClaimValueType">
+            <summary>
+            Properties about available Learning Information Services (LIS),
+            usually originating from the Student Information System.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisClaimValueType.CourseOfferingSourcedId">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisClaimValueType.CourseSectionSourcedId">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LisClaimValueType.PersonSourcedId">
+            <summary>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LtiRequest">
+            <inheritdoc />
+            <summary>
+            The base class for LtiResourceLinkRequest and LtiDeepLinkingRequest.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Lti.LtiRequest.#ctor">
+            <inheritdoc />
+            <summary>
+            Create an empty instance.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Lti.LtiRequest.#ctor(System.Collections.Generic.IEnumerable{System.Security.Claims.Claim})">
+            <inheritdoc />
+            <summary>
+            Create an instance with the claims.
+            </summary>
+            <param name="claims">A list of claims.</param>
+        </member>
+        <member name="M:LtiAdvantage.Lti.LtiRequest.#ctor(System.IdentityModel.Tokens.Jwt.JwtPayload)">
+            <inheritdoc />
+            <summary>
+            Create an instance with the claims in payload.
+            </summary>
+            <param name="payload"></param>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Audiences">
+            <summary>
+            REQUIRED. Audience(s) for whom this ID Token is intended i.e. the Tool.
+            It MUST contain the OAuth 2.0 client_id of the Tool as an audience value.
+            It MAY also contain identifiers for other audiences. In the general case,
+            the aud value is an array of case-sensitive strings. In the common special
+            case when there is one audience, the aud value MAY be a single case-sensitive string.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.DeploymentId">
+            <summary>
+            The required https://purl.imsglobal.org/spec/lti/claim/deployment_id claim's value
+            contains a string that identifies the platform-tool integration governing the message.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Lti11LegacyUserId">
+            <summary>
+            User ID as defined in LTI 1.1.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.MessageType">
+            <summary>
+            The type of LTI message.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Nonce">
+            <summary>
+            Value used to associate a Client session with an ID Token.
+            Should only be used once. Use GenerateCryptoNonce to generate
+            a cryptographic nonce value. Required.
+            <example>
+            LtiResourceLinkRequest request;
+            request.Nonce = LtiResourceLinkRequest.GenerateCryptographicNonce();
+            </example>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Roles">
+            <summary>
+            An array of roles as defined in the Core LTI specification.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.TargetLinkUri">
+            <summary>
+            The tool's url.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.UserId">
+            <summary>
+            The required 'sub' claim's value contains a string acting as an opaque identifier for
+            the user that initiated the launch. This value MUST be immutable and MUST be unique
+            within the platform instance.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Version">
+            <summary>
+            The version to which the message conforms. Must be "1.3.0".
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Context">
+            <summary>
+            Properties of the context from which the launch originated (for example, course id and title).
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Custom">
+            <summary>
+            This is a map of key/value custom parameters which are to be included with the launch.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.LaunchPresentation">
+            <summary>
+            Information to help the Tool present itself appropriately.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Lis">
+            <summary>
+            Properties about available Learning Information Services (LIS),
+            usually originating from the Student Information System.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Platform">
+            <summary>
+            Properties associated with the platform initiating the launch.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.RoleScopeMentor">
+            <summary>
+            An array of the user_id ('sub' claim) values which the current user can access as a mentor.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Email">
+            <summary>
+            End-User's preferred e-mail address. Its value MUST conform to the RFC 5322 [RFC5322]
+            addr-spec syntax. The Tool MUST NOT rely upon this value being unique.
+            <example>
+            "jane@example.org"
+            </example>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.FamilyName">
+            <summary>
+            Surname(s) or last name(s) of the End-User. Note that in some cultures, people can have
+            multiple family names or no family name; all can be present, with the names being separated
+            by space characters.
+            <example>
+            "Doe"
+            </example>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.GivenName">
+            <summary>
+            Given name(s) or first name(s) of the End-User. Note that in some cultures, people can have
+            multiple given names; all can be present, with the names being separated by space characters.
+            <example>
+            "Jane"
+            </example>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.MiddleName">
+            <summary>
+            Middle name(s) of the End-User. Note that in some cultures, people can have multiple middle
+            names; all can be present, with the names being separated by space characters. Also note that
+            in some cultures, middle names are not used.
+            <example>
+            "Marie"
+            </example>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Name">
+            <summary>
+            End-User's full name in displayable form including all name parts, possibly including titles and
+            suffixes, ordered according to the End-User's locale and preferences.
+            <example>
+            "Ms. Jane Marie Doe"
+            </example>
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiRequest.Picture">
+            <summary>
+            URL of the End-User's profile picture. This URL MUST refer to an image file (for example, a PNG,
+            JPEG, or GIF image file), rather than to a Web page containing an image. Note that this URL SHOULD
+            specifically reference a profile photo of the End-User suitable for displaying when describing the
+            End-User, rather than an arbitrary photo taken by the End-User.
+            <example>
+            "http://example.org/jane.jpg"
+            </example>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.LtiResourceLinkRequest">
+            <inheritdoc />
+            <summary>
+            https://purl.imsglobal.org/spec/lti/v1p3/schema/json/LtiResourceLinkRequest.json
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Lti.LtiResourceLinkRequest.#ctor">
+            <inheritdoc />
+            <summary>
+            Create an instance of <see cref="T:LtiAdvantage.Lti.LtiResourceLinkRequest" /> with default values
+            for the MessageType and Version claims.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Lti.LtiResourceLinkRequest.#ctor(System.Collections.Generic.IEnumerable{System.Security.Claims.Claim})">
+            <inheritdoc />
+            <summary>
+            Create an instance of <see cref="T:LtiAdvantage.Lti.LtiResourceLinkRequest" /> with the claims.
+            </summary>
+            <param name="claims">A list of claims.</param>
+        </member>
+        <member name="M:LtiAdvantage.Lti.LtiResourceLinkRequest.#ctor(System.IdentityModel.Tokens.Jwt.JwtPayload)">
+            <inheritdoc />
+            <summary>
+            Create an instance of <see cref="T:LtiAdvantage.Lti.LtiResourceLinkRequest" /> with the
+            claims in payload.
+            </summary>
+            <param name="payload"></param>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiResourceLinkRequest.AssignmentGradeServices">
+            <summary>
+            The Assignment and Grade Services claim.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiResourceLinkRequest.NamesRoleService">
+            <summary>
+            The Names and Roles Provisioning Service claim.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.LtiResourceLinkRequest.ResourceLink">
+            <summary>
+            The required https://purl.imsglobal.org/spec/lti/claim/resource_link claim composes
+            properties for the resource link from which the launch message occurs.
+            <example>
+            {
+              "id": "200d101f-2c14-434a-a0f3-57c2a42369fd",
+              ...
+            }
+            </example>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.PlatformClaimValueType">
+            <summary>
+            Properties associated with the platform initiating the launch.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.PlatformClaimValueType.ContactEmail">
+            <summary>
+            An email contact for the platform.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.PlatformClaimValueType.Description">
+            <summary>
+            This is a plain text user friendly field which describes the platform.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.PlatformClaimValueType.Guid">
+            <summary>
+            This is a unique identifier for the platform (not the software the platform uses).
+            By common practice, this MAY be the domain of the institution hosting the platform
+            or the subdomain of the platform instance within the institution's overall domain
+            (especially if the institution has multiple platforms within its domain).
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.PlatformClaimValueType.Name">
+            <summary>
+            This is a plain text user visible field to identify the platform.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.PlatformClaimValueType.ProductFamilyCode">
+            <summary>
+            A code to identify the tool platform's software.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.PlatformClaimValueType.Url">
+            <summary>
+            Common home HTTPS URL for the platform instance.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.PlatformClaimValueType.Version">
+            <summary>
+            The version of the software the platform is currently running on.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.ResourceLinkClaimValueType">
+            <summary>
+            A link to tool's resource from the tool's platform.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ResourceLinkClaimValueType.Id">
+            <summary>
+            This is an opaque unique within the tool platform identifier for that resource link.
+            Uniqueness MUST be enforced within the platform.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ResourceLinkClaimValueType.Description">
+            <summary>
+            A plain text description of the link’s destination, suitable for display alongside the link.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ResourceLinkClaimValueType.Title">
+            <summary>
+            A plain text title for the resource. This is the clickable text that appears in the link.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.Role">
+            <summary>
+            The role of the user within a given context.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.Unknown">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.ContextAdministrator">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.ContextContentDeveloper">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.ContextInstructor">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.ContextLearner">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.ContextMentor">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.ContextManager">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.ContextMember">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.ContextOfficer">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionAdministrator">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionGuest">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionNone">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionOther">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionStaff">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionStudent">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionAlumni">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionFaculty">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionInstructor">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionLearner">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionMember">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionMentor">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionObserver">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.InstitutionProspectiveStudent">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.SystemAdministrator">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.SystemNone">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.SystemAccountAdmin">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.SystemCreator">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.SystemSysAdmin">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.SystemSysSupport">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.Lti.Role.SystemUser">
+            <summary>
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Lti.ServiceResponse">
+            <summary>
+            Represents an LTI service response.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Lti.ServiceResponse.#ctor">
+            <summary>
+            Create an empty response
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ServiceResponse.StatusCode">
+            <summary>
+            Get or set the HTTP status code representing the success or failure of the membership
+            service request.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.Lti.ServiceResponse.StatusValue">
+            <summary>
+            Get or set the HTTP status value representing the success or failure of the membership
+            service request.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.NamesRoleProvisioningService.Context">
+            <summary>
+            The context of a membership container.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Context.Id">
+            <summary>
+            The context id.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Context.Label">
+            <summary>
+            The context label.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Context.Title">
+            <summary>
+            The context title.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.NamesRoleProvisioningService.GetMembershipRequest">
+            <summary>
+            Represents a GetMembership request.
+            </summary>
+            <remarks>
+            Does not support membership differences.
+            See https://www.imsglobal.org/spec/lti-nrps/v2p0#membership-differences.
+            </remarks>
+        </member>
+        <member name="M:LtiAdvantage.NamesRoleProvisioningService.GetMembershipRequest.#ctor(System.String,System.Nullable{System.Int32},System.String,System.Nullable{LtiAdvantage.Lti.Role})">
+            <summary>
+            Initialize a new instance of the class.
+            </summary>
+            <param name="contextId">Required context id.</param>
+            <param name="limit">Optional limit to the number of members to return.</param>
+            <param name="rlid">Optional resource link filter for members with access to resource link.</param>
+            <param name="role">Optional role filter for members that have the specified role.</param>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.GetMembershipRequest.ContextId">
+            <summary>
+            Required context ID of the membership context. For example, the course from which to get the membership.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.GetMembershipRequest.Limit">
+            <summary>
+            Specifies the maximum number of members to return.
+            </summary>
+            <remarks>
+            This parameter is merely a hint. The server is not obligated to honor this
+            limit and may at its own discretion choose a different value for the number
+            of members to return.
+            See https://www.imsglobal.org/spec/lti-nrps/v2p0#limit-query-parameter
+            </remarks>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.GetMembershipRequest.Rlid">
+            <summary>
+            <see cref="P:LtiAdvantage.Lti.ResourceLinkClaimValueType.Id"/> filter for members to return.
+            </summary>
+            <remarks>
+            The ID of a resource link within the context. The result set will be filtered
+            so that it includes only members that are permitted to access the resource link.
+            If omitted, the result set will include all members of the context with access
+            to any resource.
+            See https://www.imsglobal.org/spec/lti-nrps/v2p0#resource-link-id-query-parameter.
+            </remarks>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.GetMembershipRequest.Role">
+            <summary>
+            <see cref="P:LtiAdvantage.NamesRoleProvisioningService.GetMembershipRequest.Role"/> filter for members to return.
+            </summary>
+            <remarks>
+            The result set will be filtered so that it includes
+            only those memberships that contain this role. The value of the parameter
+            should be the full URI for the role, although the simple name may be used for
+            context-level roles. If omitted, the result set will include all members
+            with any role.
+            See https://www.imsglobal.org/spec/lti-nrps/v2p0#role-query-parameter.
+            </remarks>
+        </member>
+        <member name="T:LtiAdvantage.NamesRoleProvisioningService.IMembershipController">
+            <summary>
+            Marker for ILogger dependency injection.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.NamesRoleProvisioningService.Member">
+            <summary>
+            Represents a member in the Membership container of the Membership service.
+            </summary>
+            <remarks>
+            Member must not contain more information about the person than would be included
+            in a basic launch. For example, if PII is not sent in basic launch from the same
+            context, it should not be included in member.
+            See https://www.imsglobal.org/spec/lti-nrps/v2p0#membership-container-media-type.
+            </remarks>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.Email">
+            <summary>
+            The primary email address for the person.
+            Not specified if not included in a basic launch from same context.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.FamilyName">
+            <summary>
+            The person's assigned family name.
+            Not specified  if not included in a basic launch from same context. 
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.GivenName">
+            <summary>
+            The person's assigned first name.
+            Not specified  if not included in a basic launch from same context. 
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.Message">
+            <summary>
+            Contains context and resource link specific message parameters.
+            </summary>
+            <remarks>
+            Included with <see cref="T:LtiAdvantage.NamesRoleProvisioningService.Member"/> when the membership list is filtered to
+            users who can access a specific resource link.
+            See https://www.imsglobal.org/spec/lti-nrps/v2p0#membership-container-media-type.
+            </remarks>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.Name">
+            <summary>
+            The person's assigned full name (typically their first name followed
+            by their family name separated with a space).
+            Not specified  if not included in a basic launch from same context. 
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.Picture">
+            <summary>
+            A URL to an image for the person.
+            Not specified  if not included in a basic launch from same context. 
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.Roles">
+            <summary>
+            The role/s this member has in the context. Does not include non-context roles.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.LisPersonSourcedId">
+            <summary>
+            A unique identifier for the person as provisioned by an external system such as an SIS.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.Status">
+            <summary>
+            Membership status is either Active or Inactive. Defaults to Active if not specified.
+            </summary>
+            <remarks>
+            Use Deleted when reporting differences if membership no longer exists.
+            See https://www.imsglobal.org/spec/lti-nrps/v2p0#membership-status.
+            </remarks>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.Member.UserId">
+            <summary>
+            A unique identifier for the person.
+            Corresponds to the "sub" claim.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.NamesRoleProvisioningService.MembershipContainer">
+            <summary>
+            Represents the results returned by the Membership service.
+            See https://www.imsglobal.org/spec/lti-nrps/v2p0#membership-container-media-type.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.MembershipContainer.Id">
+            <summary>
+            The ID of these results. Typically the request URL to Membership service.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.MembershipContainer.Context">
+            <summary>
+            Context information for the list of members.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.MembershipContainer.Members">
+            <summary>
+            The list of members in the specified context.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.NamesRoleProvisioningService.MembershipControllerBase">
+            <inheritdoc cref="T:Microsoft.AspNetCore.Mvc.ControllerBase" />
+            <summary>
+            Implements the Names and Role Provisioning Service membership endpoint.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.NamesRoleProvisioningService.MembershipControllerBase.#ctor(Microsoft.AspNetCore.Hosting.IHostingEnvironment,Microsoft.Extensions.Logging.ILogger{LtiAdvantage.NamesRoleProvisioningService.MembershipControllerBase})">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.NamesRoleProvisioningService.MembershipControllerBase.OnGetMembershipAsync(LtiAdvantage.NamesRoleProvisioningService.GetMembershipRequest)">
+            <summary>
+            Returns the membership.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.NamesRoleProvisioningService.MembershipControllerBase.GetMembershipAsync(System.String,System.Nullable{System.Int32},System.String,System.Nullable{LtiAdvantage.Lti.Role})">
+            <summary>
+            Returns the membership of a context.
+            </summary>
+            <param name="contextId">The context id.</param>
+            <param name="limit">Optional limit to the number of members to return.</param>
+            <param name="rlid">Optional resource link filter for members with access to resource link.</param>
+            <param name="role">Optional role filter for members that have the specified role.</param>
+            <returns>The members.</returns>
+        </member>
+        <member name="T:LtiAdvantage.NamesRoleProvisioningService.MemberStatus">
+            <summary>
+            Names and Role Service member status values.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.NamesRoleProvisioningService.MemberStatus.Active">
+            <summary>
+            Member is active
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.NamesRoleProvisioningService.MemberStatus.Deleted">
+            <summary>
+            Member was deleted. Only used when the member is included in
+            a difference response.
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.NamesRoleProvisioningService.MemberStatus.Inactive">
+            <summary>
+            Member is inactive
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.NamesRoleProvisioningService.NamesRoleServiceClaimValueType">
+            <summary>
+            LTI claim to include in the LtiResourceLinkRequest if the platform
+            supports the Names and Role Service.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.NamesRoleProvisioningService.NamesRoleServiceClaimValueType.#ctor">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:LtiAdvantage.NamesRoleProvisioningService.NamesRoleServiceClaimValueType.Version">
+            <summary>
+            The version of this implementation.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.NamesRoleServiceClaimValueType.ContextMembershipUrl">
+            <summary>
+            Fully resolved URL to service.
+            </summary>
+        </member>
+        <member name="P:LtiAdvantage.NamesRoleProvisioningService.NamesRoleServiceClaimValueType.ServiceVersions">
+            <summary>
+            Service version. Default is <see cref="F:LtiAdvantage.NamesRoleProvisioningService.NamesRoleServiceClaimValueType.Version"/>.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Utilities.AuthorizationScopePolicyProvider">
+            <inheritdoc />
+            <summary>
+            Dynamically add required scope authorization policy.
+            See https://www.jerriepelser.com/blog/creating-dynamic-authorization-policies-aspnet-core/.
+            </summary>
+            <example>
+            To protect an API:
+            
+            [Authorize(Policy = "scope")]
+            </example>
+            <example>
+            If either scope is sufficient, separate with a space:
+            
+            [Authorize("scope1 scope2")]
+            </example>
+        </member>
+        <member name="M:LtiAdvantage.Utilities.AuthorizationScopePolicyProvider.#ctor(Microsoft.Extensions.Logging.ILogger{LtiAdvantage.Utilities.AuthorizationScopePolicyProvider},Microsoft.Extensions.Options.IOptions{Microsoft.AspNetCore.Authorization.AuthorizationOptions})">
+            <inheritdoc />
+            <summary>
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Utilities.AuthorizationScopePolicyProvider.GetPolicyAsync(System.String)">
+            <inheritdoc />
+            <summary>
+            Returns a policy that requires a scope claim = policyName.
+            </summary>
+            <param name="policyName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:LtiAdvantage.Utilities.EnumExtensions">
+            <summary>
+            Enum extensions.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Utilities.EnumExtensions.GetUris(System.Enum)">
+            <summary>
+            Return the URI associated with this Enum value.
+            </summary>
+        </member>
+        <member name="T:LtiAdvantage.Utilities.JwtExtensions">
+            <summary>
+            Extensions to make working with JWT Tokens easier.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Utilities.JwtExtensions.GetClaimValue(System.IdentityModel.Tokens.Jwt.JwtPayload,System.String)">
+            <summary>
+            Get the payload claim value as a string.
+            </summary>
+            <returns>The claim value as a string.</returns>
+        </member>
+        <member name="M:LtiAdvantage.Utilities.JwtExtensions.GetClaimValue``1(System.IdentityModel.Tokens.Jwt.JwtPayload,System.String)">
+            <summary>
+            Get the payload claim value as an object of type T.
+            </summary>
+            <typeparam name="T">The expected Type of the claim value.</typeparam>
+            <param name="payload">The <see cref="T:System.IdentityModel.Tokens.Jwt.JwtPayload"/> with the claim.</param>
+            <param name="type">The claim type.</param>
+            <returns>The claim value as an object of type T.</returns>
+        </member>
+        <member name="T:LtiAdvantage.Utilities.UriAttribute">
+            <summary>
+            URIs are used to describe enumerated field values.
+            </summary>
+        </member>
+        <member name="M:LtiAdvantage.Utilities.UriAttribute.#ctor(System.String)">
+            <summary>
+            Initialize a new instance of the UriAttribute class.
+            </summary>
+            <param name="uri">The URI associated with the enumerated field value.</param>
+        </member>
+        <member name="P:LtiAdvantage.Utilities.UriAttribute.Uri">
+            <summary>
+            Get or Set the URI associated with the enumberated field value.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.DependencyInjectionExtensions">
+            <summary>
+            Extension methods for registering additional services.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.DependencyInjectionExtensions.AddLtiAdvantagePolicies(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Adds LTI Advantage authorization policy provider that converts the policy name into
+            a <see cref="T:Microsoft.AspNetCore.Authorization.Infrastructure.ClaimsAuthorizationRequirement"/>s of type "scope".
+            </summary>
+        </member>
+    </members>
+</doc>
