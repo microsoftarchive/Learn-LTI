@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Edna.Bindings.LtiAdvantage.Attributes;
 using Edna.Bindings.LtiAdvantage.Models;
 using Edna.Bindings.LtiAdvantage.Services;
+using IdentityModel.Jwk;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Config;
 
@@ -12,11 +13,13 @@ namespace Edna.Bindings.LtiAdvantage.BindingConfigurations
     {
         private readonly NrpsClient.NrpsClientFactory _nrpsClientFactory;
         private readonly IKeyVaultPemKeyProvider _keyVaultPemKeyProvider;
+        private readonly IKeyVaultJwkProvider _keyVaultJwkProvider;
 
-        public LtiAdvantageExtensionConfigProvider(NrpsClient.NrpsClientFactory nrpsClientFactory, IKeyVaultPemKeyProvider keyVaultPemKeyProvider)
+        public LtiAdvantageExtensionConfigProvider(NrpsClient.NrpsClientFactory nrpsClientFactory, IKeyVaultPemKeyProvider keyVaultPemKeyProvider, IKeyVaultJwkProvider keyVaultJwkProvider)
         {
             _nrpsClientFactory = nrpsClientFactory;
             _keyVaultPemKeyProvider = keyVaultPemKeyProvider;
+            _keyVaultJwkProvider = keyVaultJwkProvider;
         }
 
         public void Initialize(ExtensionConfigContext context)
@@ -35,8 +38,9 @@ namespace Edna.Bindings.LtiAdvantage.BindingConfigurations
                 throw new Exception("KeyVaultIdentifier was not set properly.");
 
             string pemKey = await _keyVaultPemKeyProvider.GetPemKey(keyVaultKeyIdentifier);
+            JsonWebKey jwk = await _keyVaultJwkProvider.GetJwk(keyVaultKeyIdentifier);
 
-            return new LtiToolPublicKey(pemKey);
+            return new LtiToolPublicKey(pemKey, jwk);
         }
     }
 }

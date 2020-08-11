@@ -6,9 +6,11 @@ using System.Web.Http;
 using Edna.Bindings.Assignment.Attributes;
 using Edna.Bindings.Assignment.Models;
 using Edna.Bindings.LtiAdvantage.Attributes;
+using Edna.Bindings.LtiAdvantage.Models;
 using Edna.Bindings.LtiAdvantage.Services;
 using Edna.Bindings.Platform.Attributes;
 using Edna.Bindings.Platform.Models;
+using IdentityModel.Jwk;
 using LtiAdvantage.Lti;
 using LtiAdvantage.NamesRoleProvisioningService;
 using Microsoft.AspNetCore.Http;
@@ -41,8 +43,8 @@ namespace Edna.Connect
             NameValueCollection redirectQueryParams = oidcClient.GetRedirectQueryParams(platform.ClientId);
             string nonce = Guid.NewGuid().ToString();
             string state = Guid.NewGuid().ToString();
-            
-            string instanceId = await orchestrationClient.StartNewAsync(nameof(SaveState), (object) (nonce, state));
+
+            string instanceId = await orchestrationClient.StartNewAsync(nameof(SaveState), (object)(nonce, state));
             await orchestrationClient.WaitForCompletionOrCreateCheckStatusResponseAsync(req, instanceId);
 
             redirectQueryParams["nonce"] = nonce;
@@ -58,7 +60,7 @@ namespace Edna.Connect
         public async Task SaveState([OrchestrationTrigger] IDurableOrchestrationContext context)
         {
             (string nonce, string state) = context.GetInput<(string, string)>();
-            
+
             EntityId nonceEntityId = new EntityId(nameof(Nonce), nonce);
             await context.CallEntityAsync(nonceEntityId, nameof(Nonce.SetState), state);
         }
@@ -74,7 +76,7 @@ namespace Edna.Connect
             string platformId)
         {
             LtiResourceLinkRequest ltiResourceLinkRequest = await ltiRequestClient.GetLtiResourceLinkRequest(platform.JwkSetUrl, platform.ClientId, platform.Issuer);
-            
+
             string nonce = ltiResourceLinkRequest.Nonce;
             string state = req.Form["state"].ToString();
 
@@ -99,8 +101,20 @@ namespace Edna.Connect
 
             var urlWithParams = $"{RedirectUrl}/{assignment.Id}{asStudentParam}";
             _logger.LogInformation($"Redirect to {urlWithParams}");
-            
+
             return new RedirectResult(urlWithParams);
+        }
+
+        [FunctionName(nameof(Jwks))]
+        public IActionResult Jwks(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "jwks/{platformId}")] HttpRequest req,
+            [LtiAdvantage] LtiToolPublicKey publicKey
+)
+        {
+            var jwks = new JsonWebKeySet();
+            jwks.Keys.Add(publicKey.Jwk);
+            return new OkObjectResult(jwks);
+
         }
 
         private Assignment ConvertRequestToAssignment(LtiResourceLinkRequest ltiRequest)
@@ -145,7 +159,7 @@ namespace Edna.Connect
                 entityResponse = await entityClient.ReadEntityStateAsync<T>(entityId);
                 if (entityResponse.EntityExists)
                     break;
-                
+
                 await Task.Delay(500);
             }
 
