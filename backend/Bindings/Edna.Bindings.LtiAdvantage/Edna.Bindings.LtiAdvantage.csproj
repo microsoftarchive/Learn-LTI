@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Lti\LtiAdvantage.IdentityModel\LtiAdvantage.IdentityModel.csproj" />
-    <ProjectReference Include="..\..\Lti\LtiAdvantage\LtiAdvantage.csproj" />
+    <ProjectReference Include="..\..\ThirdParty\LtiAdvantage\LtiAdvantage.IdentityModel\LtiAdvantage.IdentityModel.csproj" />
+    <ProjectReference Include="..\..\ThirdParty\LtiAdvantage\LtiAdvantage\LtiAdvantage.csproj" />
   </ItemGroup>
 
 </Project>
