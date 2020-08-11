@@ -1,1 +1,1 @@
-export type ServiceError = 'unauthorized' | 'internal error' | 'other';
+export type ServiceError = 'unauthorized' | 'internal error' | 'other' | 'not found';

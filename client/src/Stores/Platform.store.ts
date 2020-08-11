@@ -10,6 +10,7 @@ export class PlatformStore extends ChildStore {
   @observable saveResult: PlatformSaveResult | null = null;
   @observable isSaving = false;
   @observable isNotAuthorized = false;
+  @observable responseStatus = "ok";
 
   @action
   async initializePlatform(): Promise<void> {
@@ -18,6 +19,9 @@ export class PlatformStore extends ChildStore {
     if (platforms.error) {
       if (platforms.error === 'unauthorized') {
         this.isNotAuthorized = true;
+      }
+      else{
+        this.responseStatus=platforms.error;
       }
     } else {
       if (platforms.length > 0) {

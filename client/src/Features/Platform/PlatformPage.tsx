@@ -13,6 +13,8 @@ import learnLogo from '../../Assets/icon_learn_062020.png';
 import { stickyHeaderStyle } from '../../Core/Components/Common/StickyHeaderStyle';
 import { PlatformControlArea, PlatformControlAreaStyles } from './PlatformControlArea';
 import { PlatformPageNoAuth } from './PlatformPageNoAuth';
+import { NotFoundErrorPage } from '../../Core/Components/ErrorPages/NotFoundErrorPage';
+import { InternalErrorPage } from '../../Core/Components/ErrorPages/InternalErrorPage';
 
 type PlatformPageStyles = SimpleComponentStyles<'root' | 'spinner' | 'content' | 'saveButton'>;
 
@@ -62,6 +64,10 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
       {platformStore.isNotAuthorized ? (
         <PlatformPageNoAuth />
       ) : !platformStore.platform ? (
+        platformStore.responseStatus==="not found" ?
+        <NotFoundErrorPage/> :
+        platformStore.responseStatus==="internal error" ?
+        <InternalErrorPage/> :
         <Spinner
           size={SpinnerSize.large}
           className={classes.spinner}

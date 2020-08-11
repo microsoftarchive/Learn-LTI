@@ -11,6 +11,8 @@ import { themedClassNames } from '../Utils/FluentUI';
 import { StudentPage } from '../../Features/StudentView/StudentPage';
 import learnLogo from '../../Assets/icon_learn_062020.png';
 import { useQueryValue } from '../Hooks';
+import { NotFoundErrorPage } from './ErrorPages/NotFoundErrorPage';
+import { InternalErrorPage } from './ErrorPages/InternalErrorPage';
 
 type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content'>;
 
@@ -31,6 +33,10 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         userInstitution={assignmentStore.assignment?.platformPersonalization?.institutionName}
       />
       {!assignmentStore.assignment || !usersStore.userDetails ? (
+        assignmentStore.responseStatus === "not found" ? (
+        <NotFoundErrorPage /> ) :
+        assignmentStore.responseStatus === "internal error" ? (
+        <InternalErrorPage /> ) :
         <Spinner
           size={SpinnerSize.large}
           className={classes.spinner}

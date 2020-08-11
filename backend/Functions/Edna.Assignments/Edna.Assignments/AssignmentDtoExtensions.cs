@@ -15,8 +15,16 @@ namespace Edna.Assignments
 
         private static string GetDecoded(string encodedStr)
         {
-            byte[] base64EncodedBytes = Convert.FromBase64String(encodedStr);
-            return Encoding.UTF8.GetString(base64EncodedBytes);
+            try
+            {
+                byte[] base64EncodedBytes = Convert.FromBase64String(encodedStr);
+                return Encoding.UTF8.GetString(base64EncodedBytes);
+            }
+            catch(Exception e)
+            {
+                return "";
+            }
+
         }
 
         public static (string partitionKey, string rowKey) ToEntityIdentifiers(this string assignmentId)

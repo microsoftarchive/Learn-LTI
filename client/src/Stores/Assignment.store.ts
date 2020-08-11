@@ -6,15 +6,18 @@ import { Assignment } from '../Models/Assignment.model';
 export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
+  @observable responseStatus: string = "ok";
 
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {
     const assignment = await AssignmentService.getAssignment(assignmentId);
     if (assignment.error) {
+      this.responseStatus=assignment.error;
       return;
     }
     const { deadline } = assignment;
     this.assignment = deadline ? { ...assignment, deadline: new Date(deadline) } : assignment;
+    
   }
 
   @action
