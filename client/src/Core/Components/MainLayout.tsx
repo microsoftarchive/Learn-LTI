@@ -11,8 +11,8 @@ import { themedClassNames } from '../Utils/FluentUI';
 import { StudentPage } from '../../Features/StudentView/StudentPage';
 import learnLogo from '../../Assets/icon_learn_062020.png';
 import { useQueryValue } from '../Hooks';
-import { NotFoundErrorPage } from './ErrorPages/NotFoundErrorPage';
-import { InternalErrorPage } from './ErrorPages/InternalErrorPage';
+import { NotFoundErrorPage } from './ErrorsPage';
+import { InternalErrorPage } from './ErrorsPage';
 
 type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content'>;
 
