@@ -10,4 +10,6 @@ export interface PlatformDto {
   institutionName: string;
   logoUrl: string;
   publicKey: string;
+  toolJwk: string;
+  toolJwkSetUrl: string;
 }
