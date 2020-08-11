@@ -17,7 +17,7 @@ namespace Edna.Platforms
         public string InstitutionName { get; set; }
         public string LogoUrl { get; set; }
         public string ToolJwkSetUrl { get; set; }
-        public JsonWebKey ToolJwk{get; set;}
+        public string ToolJwk{get; set;}
 
 
     }

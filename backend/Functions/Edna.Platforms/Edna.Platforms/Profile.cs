@@ -12,6 +12,7 @@ namespace Edna.Platforms
                 .ForMember(dto => dto.LoginUrl, expression => expression.MapFrom(entity => $"{ConnectApiBaseUrl}/oidc-login/{entity.PartitionKey}"))
                 .ForMember(dto => dto.LaunchUrl, expression => expression.MapFrom(entity => $"{ConnectApiBaseUrl}/lti-advantage-launch/{entity.PartitionKey}"))
                 .ForMember(dto => dto.Id, expression => expression.MapFrom(entity => entity.PartitionKey))
+                .ForMember(dto => dto.JwkSetUrl, expression => expression.MapFrom(entity => $"{ConnectApiBaseUrl}/jwks/{entity.PartitionKey}"))
                 .ReverseMap()
                 .ForMember(entity => entity.PartitionKey, expression => expression.MapFrom(dto => dto.Id))
                 .ForMember(entity => entity.RowKey, expression => expression.MapFrom(dto => dto.Id));
