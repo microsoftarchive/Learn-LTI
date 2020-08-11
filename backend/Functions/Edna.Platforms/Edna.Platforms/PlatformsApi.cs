@@ -60,7 +60,10 @@ namespace Edna.Platforms
                 IEnumerable<PlatformDto> platformDtos = querySegmentResult
                     .Results
                     .Select(_mapper.Map<PlatformDto>)
-                    .Do(dto => dto.PublicKey = publicKey.PemString);
+                    .Do(dto => { 
+                        dto.PublicKey = publicKey.PemString;
+                        dto.ToolJwk = JsonSerializer.Serialize(publicKey.Jwk);
+                    });
 
                 platforms.AddRange(platformDtos);
             } while (continuationToken != null);
@@ -79,9 +82,8 @@ namespace Edna.Platforms
 
             PlatformDto platformDto = _mapper.Map<PlatformDto>(platformEntity);
             platformDto.PublicKey = publicKey.PemString;
-            platformDto.ToolJwk = publicKey.Jwk;
-            platformDto.ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{platformEntity.PartitionKey}";
-
+            platformDto.ToolJwk = JsonSerializer.Serialize(publicKey.Jwk);
+            
             return new OkObjectResult(platformDto);
         }
 
@@ -100,7 +102,7 @@ namespace Edna.Platforms
                 LoginUrl = $"{ConnectApiBaseUrl}/oidc-login/{randomId}",
                 LaunchUrl = $"{ConnectApiBaseUrl}/lti-advantage-launch/{randomId}",
                 PublicKey = publicKey.PemString,
-                ToolJwk = publicKey.Jwk,
+                ToolJwk = JsonSerializer.Serialize(publicKey.Jwk),
                 ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{randomId}"
         };
 
