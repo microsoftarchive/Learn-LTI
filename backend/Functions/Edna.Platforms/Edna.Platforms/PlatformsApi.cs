@@ -103,8 +103,9 @@ namespace Edna.Platforms
                 LaunchUrl = $"{ConnectApiBaseUrl}/lti-advantage-launch/{randomId}",
                 PublicKey = publicKey.PemString,
                 ToolJwk = JsonSerializer.Serialize(publicKey.Jwk),
-                ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{randomId}"
-        };
+                ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{randomId}",
+                DomainUrl = new Uri(ConnectApiBaseUrl).Authority
+            };
 
             return new OkObjectResult(platformDto);
         }

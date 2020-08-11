@@ -60,6 +60,13 @@ const toolSettingsFields: field[] = [
     isCopyable: true
   },
   {
+    fieldLabel: 'Domain URL',
+    fieldName: 'domainUrl',
+    helpText: "The Domain URL of the tool",
+    disabled: true,
+    isCopyable: true
+  },
+  {
     fieldLabel: 'Client ID',
     fieldName: 'clientId',
     helpText: 'The client ID which is provided by the LMS for this specific registration.',
