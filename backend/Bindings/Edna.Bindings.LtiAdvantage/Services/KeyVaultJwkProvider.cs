@@ -17,7 +17,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             KeyVaultClient client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(keyVaultAuthCallback));
             KeyBundle keyBundle = await client.GetKeyAsync(keyVaultIdentifier);
 
-            var jwk = new JsonWebKey(keyBundle.Key.ToString());
+            JsonWebKey jwk = new JsonWebKey(keyBundle.Key.ToString());
 
             //Pruning to remove values for certian properties that are optional
             return (new JsonWebKey()
