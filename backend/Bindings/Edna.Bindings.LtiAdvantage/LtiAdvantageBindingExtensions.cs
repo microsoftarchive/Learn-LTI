@@ -17,6 +17,7 @@ namespace Edna.Bindings.LtiAdvantage
             builder.Services.AddSingleton<NrpsClient.NrpsClientFactory>();
             builder.Services.AddSingleton<IAccessTokenService, AccessTokenService>();
             builder.Services.AddSingleton<IKeyVaultPemKeyProvider, KeyVaultPemKeyProvider>();
+            builder.Services.AddSingleton<IKeyVaultJwkProvider, KeyVaultJwkProvider>();
 
             return builder;
         }
