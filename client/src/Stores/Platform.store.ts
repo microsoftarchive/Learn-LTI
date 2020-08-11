@@ -20,9 +20,7 @@ export class PlatformStore extends ChildStore {
       if (platforms.error === 'unauthorized') {
         this.isNotAuthorized = true;
       }
-      else{
-        this.responseStatus=platforms.error;
-      }
+      this.responseStatus=platforms.error;
     } else {
       if (platforms.length > 0) {
         this.platform = platforms[0];
