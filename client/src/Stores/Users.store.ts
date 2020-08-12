@@ -28,7 +28,7 @@ export class UsersStore extends ChildStore {
 
   initialize(): void {
     const detailsFromPlatform = toObservable(
-      () => this.root.platformStore.platform || this.root.platformStore.serviceError !== null
+      () => this.root.platformStore.platform || this.root.platformStore.serviceError !== undefined
     ).pipe(
       filter(platformObservable => !!platformObservable),
       map(() => AppAuthConfig.getAccountInfo()?.account),
