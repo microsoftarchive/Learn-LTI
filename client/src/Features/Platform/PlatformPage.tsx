@@ -12,9 +12,7 @@ import { platformRegistrationFieldGroups } from './PlatformRegistrationFields';
 import learnLogo from '../../Assets/icon_learn_062020.png';
 import { stickyHeaderStyle } from '../../Core/Components/Common/StickyHeaderStyle';
 import { PlatformControlArea, PlatformControlAreaStyles } from './PlatformControlArea';
-import { PlatformPageNoAuthErrorPage } from '../../Core/Components/ErrorsPage';
-import { NotFoundErrorPage } from '../../Core/Components/ErrorsPage';
-import { InternalErrorPage } from '../../Core/Components/ErrorsPage';
+import { ErrorPage } from '../../Core/Components/ErrorsPage';
 
 type PlatformPageStyles = SimpleComponentStyles<'root' | 'spinner' | 'content' | 'saveButton'>;
 
@@ -61,13 +59,9 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
         logoUrl={learnLogo}
         userInstitution={platformData?.institutionName}
       />
-      {platformStore.responseStatus === "unauthorized" ? (
-        <PlatformPageNoAuthErrorPage /> ) : 
-        !platformStore.platform ? (
-        platformStore.responseStatus === "not found" ? (
-        <NotFoundErrorPage/> ) : 
-        platformStore.responseStatus === "internal error" ? (
-        <InternalErrorPage/> ) :
+      {platformStore.serviceError !== undefined ? (
+        <ErrorPage errorCode={platformStore.serviceError} /> 
+      ) : !platformStore.platform ? ( 
         <Spinner
           size={SpinnerSize.large}
           className={classes.spinner}

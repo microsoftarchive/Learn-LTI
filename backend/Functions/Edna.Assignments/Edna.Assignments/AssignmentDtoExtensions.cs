@@ -1,6 +1,6 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace Edna.Assignments
@@ -15,19 +15,11 @@ namespace Edna.Assignments
 
         private static string GetDecoded(string encodedStr)
         {
-            try
-            {
-                byte[] base64EncodedBytes = Convert.FromBase64String(encodedStr);
-                return Encoding.UTF8.GetString(base64EncodedBytes);
-            }
-            catch(Exception e)
-            {
-                return "";
-            }
-
+            byte[] base64EncodedBytes = Convert.FromBase64String(encodedStr);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
-        public static (string partitionKey, string rowKey) ToEntityIdentifiers(this string assignmentId)
+        public static (string partitionKey, string rowKey) ToEntityIdentifiers(this string assignmentId, ILogger<AssignmentsApi> _logger)
         {
             if (string.IsNullOrEmpty(assignmentId))
                 return ("", "");
@@ -36,7 +28,26 @@ namespace Edna.Assignments
             if (assignmentIdParts.Length != 2)
                 return ("", "");
 
-            return (GetDecoded(assignmentIdParts[0]), GetDecoded(assignmentIdParts[1]));
+            string decodedPartitionKey = "", decodedRowKey = "";
+            try
+            {
+                decodedPartitionKey = GetDecoded(assignmentIdParts[0]);
+            }
+            catch (FormatException e)
+            {
+                _logger.LogError($"Error while decoding partitionKey.\n{e}");
+            }
+
+            try
+            {
+                decodedRowKey = GetDecoded(assignmentIdParts[1]);
+            }
+            catch (FormatException e)
+            {
+                _logger.LogError($"Error while decoding rowKey.\n{e}");
+            }
+
+            return (decodedPartitionKey, decodedRowKey);
         }
 
         public static string ToAssignmentId(this ITableEntity entity) => $"{GetEncoded(entity.PartitionKey)}_{GetEncoded(entity.RowKey)}";

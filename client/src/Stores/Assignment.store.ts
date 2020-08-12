@@ -2,17 +2,18 @@ import { observable, action } from 'mobx';
 import { ChildStore } from './Core';
 import { AssignmentService } from '../Services/Assignment.service';
 import { Assignment } from '../Models/Assignment.model';
+import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
-  @observable responseStatus: string = "ok";
+  @observable serviceError: ServiceError | undefined = undefined;
 
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {
     const assignment = await AssignmentService.getAssignment(assignmentId);
     if (assignment.error) {
-      this.responseStatus=assignment.error;
+      this.serviceError=assignment.error;
       return;
     }
     const { deadline } = assignment;

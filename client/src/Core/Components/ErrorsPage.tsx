@@ -2,52 +2,30 @@ import React from 'react';
 import { IThemeOnlyProps, SimpleComponentStyles, IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
 import { styled, Icon, Text, FontSizes, FontWeights } from '@fluentui/react';
 import { themedClassNames } from '../Utils/FluentUI';
+import { ServiceError } from '../Utils/Axios/ServiceError';
 
 type ErrorsPageStyles = SimpleComponentStyles<'root' | 'icon' | 'text'>;
 
-const NotFoundErrorPageInner = ({ styles }: IStylesOnly<ErrorsPageStyles>): JSX.Element => {
-  const classes = themedClassNames(styles);
-  return (
-    <div className={classes.root}>
-      <Icon iconName="" className={classes.icon} />
-      <Text variant="large" className={classes.text}>
-        Error 404. Page Not Found.
-      </Text>
-    </div>
-  );
-};
+interface ErrorPageProps {
+  errorCode: ServiceError;
+}
 
-const InternalErrorPageInner = ({ styles }: IStylesOnly<ErrorsPageStyles>): JSX.Element => {
+const ErrorPageInner = ( {styles , errorCode } : ErrorPageProps & IStylesOnly<ErrorsPageStyles> ) : JSX.Element => {
   const classes = themedClassNames(styles);
+  const errorMsg: string = ((error: ServiceError) => {
+    switch (error) {
+      case 'not found': return "Error 404. Page not found.";
+      case 'internal error': return "Oops! Something went wrong!";
+      case 'unauthorized': return "No sufficient permissions to view this page.";
+    }
+    return '';
+  }) (errorCode);
+  const iconName: string = errorCode==='unauthorized'? 'BlockedSiteSolid12' : '';
   return (
     <div className={classes.root}>
-      <Icon iconName="" className={classes.icon} />
+      <Icon iconName={iconName} className={classes.icon} />
       <Text variant="large" className={classes.text}>
-        Internal Error. Try again later.
-      </Text>
-    </div>
-  );
-};
-
-const NoAuthErrorPageInner = ({ styles }: IStylesOnly<ErrorsPageStyles>): JSX.Element => {
-  const classes = themedClassNames(styles);
-  return (
-    <div className={classes.root}>
-      <Icon iconName="" className={classes.icon} />
-      <Text variant="large" className={classes.text}>
-        No permission to view this page.
-      </Text>
-    </div>
-  );
-};
-
-const PlatformPageNoAuthErrorPageInner = ({ styles }: IStylesOnly<ErrorsPageStyles>): JSX.Element => {
-  const classes = themedClassNames(styles);
-  return (
-    <div className={classes.root}>
-      <Icon iconName="BlockedSiteSolid12" className={classes.icon} />
-      <Text variant="large" className={classes.text}>
-        No sufficient permissions to view this page.
+        {errorMsg}
       </Text>
     </div>
   );
@@ -77,7 +55,5 @@ const ErrorsPageStyles = ({ theme }: IThemeOnlyProps): ErrorsPageStyles => ({
   ]
 });
 
-export const NotFoundErrorPage = styled(NotFoundErrorPageInner, ErrorsPageStyles);
-export const InternalErrorPage = styled(InternalErrorPageInner, ErrorsPageStyles);
-export const NoAuthErrorPage = styled(NoAuthErrorPageInner, ErrorsPageStyles);
-export const PlatformPageNoAuthErrorPage = styled(PlatformPageNoAuthErrorPageInner, ErrorsPageStyles);
+export const ErrorPage = styled(ErrorPageInner, ErrorsPageStyles);
+
