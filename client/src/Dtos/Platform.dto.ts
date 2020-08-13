@@ -6,8 +6,11 @@ export interface PlatformDto {
   authorizationUrl: string;
   loginUrl: string;
   launchUrl: string;
+  domainUrl: string;
   clientId: string;
   institutionName: string;
   logoUrl: string;
   publicKey: string;
+  toolJwk: string;
+  toolJwkSetUrl: string;
 }

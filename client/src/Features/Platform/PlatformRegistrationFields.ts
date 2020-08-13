@@ -60,6 +60,13 @@ const toolSettingsFields: field[] = [
     isCopyable: true
   },
   {
+    fieldLabel: 'Domain URL',
+    fieldName: 'domainUrl',
+    helpText: "The Domain URL of the tool",
+    disabled: true,
+    isCopyable: true
+  },
+  {
     fieldLabel: 'Client ID',
     fieldName: 'clientId',
     helpText: 'The client ID which is provided by the LMS for this specific registration.',
@@ -69,10 +76,26 @@ const toolSettingsFields: field[] = [
   {
     fieldLabel: 'Public Key',
     fieldName: 'publicKey',
-    helpText: 'The public part of the RSA key to allow LMS to encrypt the messages that are sent to the tool.',
+    helpText: 'The public part of the RSA key to allow LMS to validate the messages that are sent by the tool.',
     disabled: true,
     isCopyable: true,
     multiline: true
+  },
+  {
+    fieldLabel: 'Public JWK',
+    fieldName: 'toolJwk',
+    helpText: 'The Json Web Key (JWK) representation of the Public Key to allow LMS to validate the messages that are sent by the tool.',
+    disabled: true,
+    isCopyable: true,
+    multiline: true
+  },
+  {
+    fieldLabel: 'Public JWK Set URL',
+    fieldName: 'toolJwkSetUrl',
+    helpText: 'The URL providing the Json Web Key Set(JWKS) to allow LMS to validate the messages that are sent by the tool',
+    disabled: true,
+    isCopyable: true,
+    multiline: false
   }
 ];
 

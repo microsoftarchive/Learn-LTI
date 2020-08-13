@@ -100,7 +100,7 @@ namespace Edna.Assignments
 
         private async Task<AssignmentEntity> FetchAssignment(CloudTable table, string assignmentId)
         {
-            var (partitionKey, rowKey) = assignmentId.ToEntityIdentifiers();
+            var (partitionKey, rowKey) = assignmentId.ToEntityIdentifiers(_logger);
 
             TableOperation retrieveOperation = TableOperation.Retrieve<AssignmentEntity>(partitionKey, rowKey);
 
