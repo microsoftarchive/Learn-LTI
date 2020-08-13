@@ -2,6 +2,7 @@ import { observable, action } from 'mobx';
 import { ChildStore } from './Core';
 import { PlatformService } from '../Services/Platform.service';
 import { Platform } from '../Models/Platform.model';
+import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 export type PlatformSaveResult = 'error' | 'success';
 
@@ -9,16 +10,14 @@ export class PlatformStore extends ChildStore {
   @observable platform: Platform | null = null;
   @observable saveResult: PlatformSaveResult | null = null;
   @observable isSaving = false;
-  @observable isNotAuthorized = false;
+  @observable serviceError : ServiceError | undefined = undefined;
 
   @action
   async initializePlatform(): Promise<void> {
     const platforms = await PlatformService.getAllPlatforms();
 
     if (platforms.error) {
-      if (platforms.error === 'unauthorized') {
-        this.isNotAuthorized = true;
-      }
+      this.serviceError=platforms.error;
     } else {
       if (platforms.length > 0) {
         this.platform = platforms[0];

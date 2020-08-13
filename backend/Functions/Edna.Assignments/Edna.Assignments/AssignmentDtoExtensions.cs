@@ -1,6 +1,6 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace Edna.Assignments
@@ -19,7 +19,7 @@ namespace Edna.Assignments
             return Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
-        public static (string partitionKey, string rowKey) ToEntityIdentifiers(this string assignmentId)
+        public static (string partitionKey, string rowKey) ToEntityIdentifiers(this string assignmentId, ILogger<AssignmentsApi> _logger)
         {
             if (string.IsNullOrEmpty(assignmentId))
                 return ("", "");
@@ -28,7 +28,26 @@ namespace Edna.Assignments
             if (assignmentIdParts.Length != 2)
                 return ("", "");
 
-            return (GetDecoded(assignmentIdParts[0]), GetDecoded(assignmentIdParts[1]));
+            string partitionKey = "", rowKey = "";
+            try
+            {
+                partitionKey = GetDecoded(assignmentIdParts[0]);
+            }
+            catch (FormatException e)
+            {
+                _logger.LogError($"Error while decoding partitionKey. Did not decode rowKey\n{e}");
+                return (partitionKey, rowKey);
+            }
+            try
+            {
+                rowKey = GetDecoded(assignmentIdParts[1]);
+            }
+            catch (FormatException e)
+            {
+                _logger.LogError($"Error while decoding rowKey.\n{e}");
+            }
+
+            return (partitionKey, rowKey);
         }
 
         public static string ToAssignmentId(this ITableEntity entity) => $"{GetEncoded(entity.PartitionKey)}_{GetEncoded(entity.RowKey)}";

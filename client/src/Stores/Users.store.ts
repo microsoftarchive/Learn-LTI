@@ -10,6 +10,8 @@ import { UserDto } from '../Dtos/User.dto';
 import _ from 'lodash';
 import { AppAuthConfig } from '../Core/Auth/AppAuthConfig';
 import { Account } from 'msal';
+import { ServiceError } from '../Core/Utils/Axios/ServiceError';
+import { WithError } from '../Core/Utils/Axios/safeData';
 
 export class UsersStore extends ChildStore {
   private readonly roleIdToRoleDisplayName: Map<UserRole, string> = new Map<UserRole, string>([
@@ -22,10 +24,11 @@ export class UsersStore extends ChildStore {
   @observable userImageUrl = '';
   @observable participants: User[] | null = null;
   @observable account: Account | null = null;
+  @observable serviceError: ServiceError | undefined = undefined;
 
   initialize(): void {
     const detailsFromPlatform = toObservable(
-      () => this.root.platformStore.platform || this.root.platformStore.isNotAuthorized
+      () => this.root.platformStore.platform || this.root.platformStore.serviceError !== undefined
     ).pipe(
       filter(platformObservable => !!platformObservable),
       map(() => AppAuthConfig.getAccountInfo()?.account),
@@ -35,10 +38,16 @@ export class UsersStore extends ChildStore {
       map(account => this.accountToUserModel(account))
     );
 
+    const getUser =  async (assignmentId : string) : Promise<WithError<UserDto>> =>
+    {
+      const user = await UsersService.getCurrentUserDetails(assignmentId);
+      this.serviceError = user.error;
+      return user;
+    }
     const detailsFromAssignment = toObservable(() => this.root.assignmentStore.assignment).pipe(
       filter(assignment => !!assignment),
       map(assignment => assignment!.id),
-      switchMap(assignmentId => UsersService.getCurrentUserDetails(assignmentId)),
+      switchMap(getUser),
       filter(user => !user.error),
       map(user => user as UserDto),
       filter(user => !!user?.givenName || !!user?.familyName),
