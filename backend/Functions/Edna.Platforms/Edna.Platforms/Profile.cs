@@ -16,7 +16,12 @@ namespace Edna.Platforms
                 .ForMember(dto => dto.DomainUrl, expression => expression.MapFrom(entity => new Uri(ConnectApiBaseUrl).Authority))
                 .ReverseMap()
                 .ForMember(entity => entity.PartitionKey, expression => expression.MapFrom(dto => dto.Id))
-                .ForMember(entity => entity.RowKey, expression => expression.MapFrom(dto => dto.Id));
+                .ForMember(entity => entity.RowKey, expression => expression.MapFrom(dto => dto.Id))
+                .ForMember(entity => entity.Issuer, expression => expression.MapFrom(dto => dto.Issuer.Trim()))
+                .ForMember(entity => entity.JwkSetUrl, expression => expression.MapFrom(dto => dto.JwkSetUrl.Trim()))
+                .ForMember(entity => entity.AccessTokenUrl, expression => expression.MapFrom(dto => dto.AccessTokenUrl.Trim()))
+                .ForMember(entity => entity.AuthorizationUrl, expression => expression.MapFrom(dto => dto.AuthorizationUrl.Trim()))
+                .ForMember(entity => entity.ClientId, expression => expression.MapFrom(dto => dto.ClientId.Trim()));
         }
     }
 }
