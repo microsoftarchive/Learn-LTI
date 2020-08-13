@@ -15,10 +15,9 @@ const ErrorPageInner = ( {styles , errorCode } : ErrorPageProps & IStylesOnly<Er
   const errorMsg: string = ((error: ServiceError) => {
     switch (error) {
       case 'not found': return "Error 404. Page not found.";
-      case 'internal error': return "Oops! Something went wrong!";
       case 'unauthorized': return "No sufficient permissions to view this page.";
+      default: return "Oops! Something went wrong!";
     }
-    return '';
   }) (errorCode);
   const iconName: string = errorCode==='unauthorized'? 'BlockedSiteSolid12' : '';
   return (

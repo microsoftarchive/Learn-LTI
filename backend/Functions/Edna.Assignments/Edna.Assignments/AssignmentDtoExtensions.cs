@@ -28,26 +28,26 @@ namespace Edna.Assignments
             if (assignmentIdParts.Length != 2)
                 return ("", "");
 
-            string decodedPartitionKey = "", decodedRowKey = "";
+            string partitionKey = "", rowKey = "";
             try
             {
-                decodedPartitionKey = GetDecoded(assignmentIdParts[0]);
+                partitionKey = GetDecoded(assignmentIdParts[0]);
             }
             catch (FormatException e)
             {
-                _logger.LogError($"Error while decoding partitionKey.\n{e}");
+                _logger.LogError($"Error while decoding partitionKey. Did not decode rowKey\n{e}");
+                return (partitionKey, rowKey);
             }
-
             try
             {
-                decodedRowKey = GetDecoded(assignmentIdParts[1]);
+                rowKey = GetDecoded(assignmentIdParts[1]);
             }
             catch (FormatException e)
             {
                 _logger.LogError($"Error while decoding rowKey.\n{e}");
             }
 
-            return (decodedPartitionKey, decodedRowKey);
+            return (partitionKey, rowKey);
         }
 
         public static string ToAssignmentId(this ITableEntity entity) => $"{GetEncoded(entity.PartitionKey)}_{GetEncoded(entity.RowKey)}";

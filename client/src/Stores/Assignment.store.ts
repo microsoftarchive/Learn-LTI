@@ -18,7 +18,6 @@ export class AssignmentStore extends ChildStore {
     }
     const { deadline } = assignment;
     this.assignment = deadline ? { ...assignment, deadline: new Date(deadline) } : assignment;
-    
   }
 
   @action
