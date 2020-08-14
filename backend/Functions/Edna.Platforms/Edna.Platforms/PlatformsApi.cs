@@ -16,6 +16,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
+using System.Text;
 
 namespace Edna.Platforms
 {
@@ -96,6 +97,7 @@ namespace Edna.Platforms
                 return new UnauthorizedResult();
 
             string randomId = CryptoRandom.CreateUniqueId(8);
+
             PlatformDto platformDto = new PlatformDto
             {
                 Id = randomId,
@@ -179,6 +181,23 @@ namespace Edna.Platforms
                 .ToList();
 
             return userEmails.Any();
+        }
+
+        private string GeneratePlatformID(HttpRequest req, int length)
+        {
+            StringBuilder platformID = new StringBuilder();
+            String acceptableCharSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            if (req.Headers.TryGetTokenClaims(out Claim[] claims) && TryGetUserEmails(claims, out List<string> userEmails))
+            {
+                Random random = new Random(userEmails.FirstOrDefault().Select(a => (int)a).Sum());
+
+                for (int i = 0; i < length; i++)
+                    platformID.Append(acceptableCharSet[random.Next(acceptableCharSet.Length)]);
+
+            }
+
+            return platformID.ToString();
+
         }
     }
 }
