@@ -193,11 +193,8 @@ namespace Edna.Platforms
 
                 for (int i = 0; i < length; i++)
                     platformID.Append(acceptableCharSet[random.Next(acceptableCharSet.Length)]);
-
             }
-
             return platformID.ToString();
-
         }
     }
 }
