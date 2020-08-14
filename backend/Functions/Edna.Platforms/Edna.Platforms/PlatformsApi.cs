@@ -96,7 +96,7 @@ namespace Edna.Platforms
             if (!ValidatePermission(req))
                 return new UnauthorizedResult();
 
-            string randomId = CryptoRandom.CreateUniqueId(8);
+            string randomId = GeneratePlatformID(req, 8);
 
             PlatformDto platformDto = new PlatformDto
             {
