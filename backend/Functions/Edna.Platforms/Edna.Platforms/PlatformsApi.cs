@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace Edna.Platforms
 {
@@ -96,7 +97,7 @@ namespace Edna.Platforms
             if (!ValidatePermission(req))
                 return new UnauthorizedResult();
 
-            string randomId = GeneratePlatformID(req, 8);
+            string randomId = GeneratePlatformID();
 
             PlatformDto platformDto = new PlatformDto
             {
@@ -183,18 +184,20 @@ namespace Edna.Platforms
             return userEmails.Any();
         }
 
-        private string GeneratePlatformID(HttpRequest req, int length)
+        private string GeneratePlatformID()
         {
             StringBuilder platformID = new StringBuilder();
-            String acceptableCharSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            if (req.Headers.TryGetTokenClaims(out Claim[] claims) && TryGetUserEmails(claims, out List<string> userEmails))
+            
+            using (var hash = SHA256.Create())
             {
-                Random random = new Random(userEmails.FirstOrDefault().Select(a => (int)a).Sum());
+                Encoding enc = Encoding.UTF8;
+                Byte[] result = hash.ComputeHash(enc.GetBytes(Environment.GetEnvironmentVariable("AllowedUsers")??String.Empty));
 
-                for (int i = 0; i < length; i++)
-                    platformID.Append(acceptableCharSet[random.Next(acceptableCharSet.Length)]);
+                foreach (Byte b in result)
+                    platformID.Append(b.ToString("x2"));
             }
-            return platformID.ToString();
+            return platformID.ToString().Substring(0,8);
+
         }
     }
 }
