@@ -9,7 +9,6 @@ using Edna.Bindings.LtiAdvantage.Attributes;
 using Edna.Bindings.LtiAdvantage.Models;
 using Edna.Utils.Http;
 using Edna.Utils.Linq;
-using IdentityModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -97,16 +96,16 @@ namespace Edna.Platforms
             if (!ValidatePermission(req))
                 return new UnauthorizedResult();
 
-            string randomId = GeneratePlatformID();
+            string platformId = GeneratePlatformID();
 
             PlatformDto platformDto = new PlatformDto
             {
-                Id = randomId,
-                LoginUrl = $"{ConnectApiBaseUrl}/oidc-login/{randomId}",
-                LaunchUrl = $"{ConnectApiBaseUrl}/lti-advantage-launch/{randomId}",
+                Id = platformId,
+                LoginUrl = $"{ConnectApiBaseUrl}/oidc-login/{platformId}",
+                LaunchUrl = $"{ConnectApiBaseUrl}/lti-advantage-launch/{platformId}",
                 PublicKey = publicKey.PemString,
                 ToolJwk = JsonSerializer.Serialize(publicKey.Jwk),
-                ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{randomId}",
+                ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{platformId}",
                 DomainUrl = new Uri(ConnectApiBaseUrl).Authority
             };
 
@@ -187,11 +186,11 @@ namespace Edna.Platforms
         private string GeneratePlatformID()
         {
             StringBuilder platformID = new StringBuilder();
-            
             using (var hash = SHA256.Create())
             {
                 Encoding enc = Encoding.UTF8;
-                Byte[] result = hash.ComputeHash(enc.GetBytes(Environment.GetEnvironmentVariable("AllowedUsers")??String.Empty));
+                string allowedUsers = Environment.GetEnvironmentVariable("AllowedUsers");
+                Byte[] result = hash.ComputeHash(enc.GetBytes(allowedUsers??String.Empty));
 
                 foreach (Byte b in result)
                     platformID.Append(b.ToString("x2"));
