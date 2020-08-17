@@ -22,10 +22,19 @@ const ErrorPageInner = ( {styles , errorCode } : ErrorPageProps & IStylesOnly<Er
   const iconName: string = errorCode==='unauthorized'? 'BlockedSiteSolid12' : '';
   return (
     <div className={classes.root}>
-      <Icon iconName={iconName} className={classes.icon} />
-      <Text variant="large" className={classes.text}>
-        {errorMsg}
-      </Text>
+      <div className={classes.root}>
+        <Icon iconName={iconName} className={classes.icon} />
+        <Text variant="large" className={classes.text}>
+          {errorMsg}
+        </Text>
+      </div>
+      <div className={classes.root}>
+        <Text variant="mediumPlus" >
+          We suggest you to go to our '
+          <a target='_blank' rel="noopener noreferrer" href="https://aka.ms/LearnLTI-help">HELP</a>
+          ' page.
+        </Text>
+      </div>
     </div>
   );
 };
