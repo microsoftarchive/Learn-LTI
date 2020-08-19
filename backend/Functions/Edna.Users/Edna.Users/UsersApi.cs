@@ -56,7 +56,7 @@ namespace Edna.Users
             if (!TryGetUserEmails(claims, out List<string> userEmails))
                 return new BadRequestErrorMessageResult("Could not get user email.");
 
-            _logger.LogInformation($"Getting user information for '{userEmails.ToString()}'.");
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
             if (assignment.LtiVersion != LtiAdvantageVersionString)
             {
