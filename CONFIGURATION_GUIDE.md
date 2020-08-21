@@ -7,7 +7,7 @@ The Microsoft Learn LTI application adheres to LTI v.1.1 and v1.3. The following
 3. Obtain parameters from the configured LTI tool.
 4. Configure the Microsoft Learn LTI application using the parameters from step 3.
 
-By now, you should already obtained the following parameters from the Microsoft Learn LTI application’s registration page.
+By now, you should already obtained the following parameters from the Microsoft Learn LTI application’s registration page. If not, follow the [deployment guide](./DEPLOYMENT_GUIDE.md) to deploy the Learn LTI application and obtain the following paramenters from the registration page.
 
 - Login URL
 - Launch URL
