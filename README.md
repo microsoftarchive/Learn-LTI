@@ -22,7 +22,7 @@ Typically, there will be 4 roles involved in deploying, configuring, and using t
 4. Students – This is the users of the LMS who will consume the learning provisioned to them by the Educators. LMS System that supports LTI v1.1 or v1.3
 
 The following illustrates the workflow in full:
-![readme.1.png](./images/readme.1.png)
+![Readme.1.png](./images/Readme.1.png)
 
 To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will need:
 

@@ -6,11 +6,13 @@
 - Review the activities
 - Publish the activities so that students can view it and complete the learning
 
+By now, you should already configured the Learn LTI application in your LMS. If not, follow the [configuration guide](./CONFIGURATION_GUIDE.md) to configure the tool before continuing below.
+
 The assignment creation steps are slightly different depending on the LMS you are using. The following examples show how to create assignment leveraging Learn LTI application with three of the popular LMS.
 
-- Moodle
-- Canvas
-- Blackboard
+- [Moodle](##Create-an-assignment-in-Moodle-leveraging-Microsoft-Learn-LTI-application)
+- [Canvas](##Create-an-assignment-in-Canvas-leveraging-Microsoft-Learn-LTI-application)
+- [Blackboard](##Create-an-assignment-in-Blackboard-leveraging-Microsoft-Learn-LTI-application)
 
 ### If you have issues with this guide or with our tool please:
 - Raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa)
