@@ -16,6 +16,7 @@ const ErrorPageInner = ( {styles , errorCode } : ErrorPageProps & IStylesOnly<Er
     switch (error) {
       case 'not found': return "Error 404. Page not found.";
       case 'unauthorized': return "No sufficient permissions to view this page.";
+      case 'no content': return "You are not enrolled in this course.";
       default: return "Oops! Something went wrong!";
     }
   }) (errorCode);

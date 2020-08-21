@@ -41,7 +41,10 @@ export class UsersStore extends ChildStore {
     const getUser =  async (assignmentId : string) : Promise<WithError<UserDto>> =>
     {
       const user = await UsersService.getCurrentUserDetails(assignmentId);
-      this.serviceError = user.error;
+      if(user.error)
+        this.serviceError = user.error;
+      else if(!user)
+        this.serviceError = "no content";
       return user;
     }
     const detailsFromAssignment = toObservable(() => this.root.assignmentStore.assignment).pipe(
