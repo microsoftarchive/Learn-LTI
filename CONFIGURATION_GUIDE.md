@@ -18,9 +18,9 @@ If you are not the one who deployed the application, you need to obtain the para
 
 The configuration steps are slightly different depending on the LMS you are using. In general they will involve registering the Learn LTI application as an external tool in the LMS and registering the parameters back in the Learn LTI application's registration page. The following examples show how to configure Learn LTI application with three of the popular LMS.
 
-- [Moodle](##Moodle-LMS)
-- [Canvas](##Canvas-LMS)
-- [Blacboard](##Blackboard-Learn-LMS)
+- [Moodle](#Moodle-LMS)
+- [Canvas](#Canvas-LMS)
+- [Blacboard](#Blackboard-Learn-LMS)
 
 ## Moodle LMS
 
@@ -57,7 +57,7 @@ The following steps show how to configure an LTI tool on a Moodle LMS.
 5. Click **configure a tool manually**.
 ![Config.4](./images/Config.4.png)
 6. Enter the following information:
- * **Tool name**: give the tool a name of your choice
+ * **Tool name**: give the tool a name of your choice.
  * **Tool URL**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page  Microsoft Learn LTI application’s registration page.
  * **LTI version**: LTI 1.3
  * **Public keyset**: enter "Public JWK Set URL" from the Microsoft Learn LTI application’s registration page.
@@ -122,6 +122,7 @@ At this time, we do not support LTI 1.1 with Canvas LMS.
  * **OpenID Connect Initiation URI**: enter "Login URL" from the Microsoft Learn LTI application’s registration page.
  * **JWK Method**: select **Public JWK URL**
  * **Public JWK URL**: enter "Public JWK Set URL" from the Microsoft Learn LTI application’s registration page.
+![Config.Canvas.2](./images/Config.Canvas.2.png) 
 6. Under **LTI Advantage Services**, enable the following options:
  * Can create and view assignment data in the gradebook associated with the tool.
  * Can view assignment data in the gradebook associated with the tool.
@@ -130,16 +131,22 @@ At this time, we do not support LTI 1.1 with Canvas LMS.
  * Can retrieve user data associated with the context the tool is installed in.
  * Can lookup Account information
  * Can list categorized event types.
-7. Click **Save**. The key should now appear and listed with the name you provided. 
-8. Take note of the following parameters:
+![Config.Canvas.3](./images/Config.Canvas.3.png) 
+7. Under **Additional Settings**, select the **Privacy Level** as **PUBLIC**.
+![Config.Canvas.4](./images/Config.Canvas.4.png) 
+8. Under **Placements**, make sure **Link Selection** and **Assignment Selection** are selected.
+![Config.Canvas.5](./images/Config.Canvas.5.png) 
+9. Click **Save**. The key should now appear and listed with the name you provided. 
+10. Take note of the following parameters:
  * **Client ID**: the number in the **Details** column, above the **Show Key** button
-9.	Now, click **Settings** from the left navigation pane.
-10.	Click **View App Configurations**.
-11.	Click **+App**.
-12.	Enter the following information:
+![Config.Canvas.6](./images/Config.Canvas.6.png) 
+11.	Now, click **Settings** from the left navigation pane.
+12.	Click **View App Configurations**.
+13.	Click **+App**.
+14.	Enter the following information:
  * **Configuration Type**: select **By Client ID**
  * **Client ID**: enter the "Client ID" from the LTI key registration.
-13.	Click **Submit**.
+15.	Click **Submit**.
 
 The following steps show how to register the parameters back in the Learn LTI application's registration page. If you are not the one who deployed the application, you need to provide these parameters to that person.
 
