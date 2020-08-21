@@ -145,13 +145,13 @@ The following steps show how to register the parameters back in the Learn LTI ap
 
 1. Open the tool registration page from your browser.
 2. Enter the following information:
- * **Display name**: give the tool a name of your choice.
- * **Issuer**: enter **https://canvas.instructure.com**
- * **JWK Set URL**: enter https://[tenant-name].instructure.com/api/lti/security/jwks
- * **Access Token URL**: enter https://[tenant-name].instructure.com/login/oauth2/token 
- * **Authorization URL**: enter https://[tenant-name].instructure.com/api/lti/authorize_redirect 
+  * **Display name**: give the tool a name of your choice.
+  * **Issuer**: enter **https://canvas.instructure.com**
+  * **JWK Set URL**: enter https://[tenant-name].instructure.com/api/lti/security/jwks
+  * **Access Token URL**: enter https://[tenant-name].instructure.com/login/oauth2/token 
+  * **Authorization URL**: enter https://[tenant-name].instructure.com/api/lti/authorize_redirect 
    NOTE: if you are using self-hosted Canvas, enter your canvas url instead of [tenant-name].instructure.com.
- * **Client ID**: enter "Client ID" from the LTI key registration.
+  * **Client ID**: enter "Client ID" from the LTI key registration.
 3. Click **SAVE REGISTRATION**.
 
 You're all set. The Learn LTI tool is now configured on your Moodle LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.

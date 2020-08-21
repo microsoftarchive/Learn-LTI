@@ -91,7 +91,7 @@ Open the tool registration page from your browser and take note of the following
 * Launch URL
 * Public JWK Set URL
 
-![Deployment.5](./images/Deployment.5.PNG)
+![Deployment.5](./images/Deployment.5.png)
 
 **Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
