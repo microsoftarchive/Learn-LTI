@@ -75,7 +75,17 @@ namespace Edna.Connect
             [DurableClient] IDurableEntityClient entityClient,
             string platformId)
         {
-            LtiResourceLinkRequest ltiResourceLinkRequest = await ltiRequestClient.GetLtiResourceLinkRequest(platform.JwkSetUrl, platform.ClientId, platform.Issuer);
+            LtiResourceLinkRequest ltiResourceLinkRequest = null;
+            try
+            {
+                ltiResourceLinkRequest= await ltiRequestClient.GetLtiResourceLinkRequest(platform.JwkSetUrl, platform.ClientId, platform.Issuer);
+            }
+            catch(Exception e)
+            {
+                _logger.LogError($"Could not validate request.\n{e}");
+            }
+            if (ltiResourceLinkRequest == null)
+                return new BadRequestErrorMessageResult("Could not validate request.");
 
             string nonce = ltiResourceLinkRequest.Nonce;
             string state = req.Form["state"].ToString();
