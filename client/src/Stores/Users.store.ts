@@ -25,6 +25,7 @@ export class UsersStore extends ChildStore {
   @observable participants: User[] | null = null;
   @observable account: Account | null = null;
   @observable serviceError: ServiceError | undefined = undefined;
+  @observable errorMsg: string | null = null;
 
   initialize(): void {
     const detailsFromPlatform = toObservable(
@@ -41,7 +42,10 @@ export class UsersStore extends ChildStore {
     const getUser =  async (assignmentId : string) : Promise<WithError<UserDto>> =>
     {
       const user = await UsersService.getCurrentUserDetails(assignmentId);
-      this.serviceError = user.error;
+      if(user.error)
+        this.serviceError = user.error;
+      else if(!user)
+        this.errorMsg = "no content";
       return user;
     }
     const detailsFromAssignment = toObservable(() => this.root.assignmentStore.assignment).pipe(
