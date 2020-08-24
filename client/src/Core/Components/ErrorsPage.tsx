@@ -7,19 +7,21 @@ import { ServiceError } from '../Utils/Axios/ServiceError';
 type ErrorsPageStyles = SimpleComponentStyles<'root' | 'icon' | 'text'>;
 
 interface ErrorPageProps {
-  errorCode: ServiceError;
+  errorCode : ServiceError | undefined;
+  errorMsg? : string | undefined;
 }
 
-const ErrorPageInner = ( {styles , errorCode } : ErrorPageProps & IStylesOnly<ErrorsPageStyles> ) : JSX.Element => {
+const getErrorMsg = (error: ServiceError) => {
+  switch (error) {
+    case 'not found': return "Error 404. Page not found.";
+    case 'unauthorized': return "No sufficient permissions to view this page.";
+    default: return "Oops! Something went wrong!";
+  }
+}
+const ErrorPageInner = ( {styles , errorCode, errorMsg } : ErrorPageProps & IStylesOnly<ErrorsPageStyles> ) : JSX.Element => {
   const classes = themedClassNames(styles);
-  const errorMsg: string = ((error: ServiceError) => {
-    switch (error) {
-      case 'not found': return "Error 404. Page not found.";
-      case 'unauthorized': return "No sufficient permissions to view this page.";
-      default: return "Oops! Something went wrong!";
-    }
-  }) (errorCode);
-  const iconName: string = errorCode==='unauthorized'? 'BlockedSiteSolid12' : '';
+  errorMsg = errorCode ? getErrorMsg(errorCode) : errorMsg;
+  const iconName: string = errorCode === 'unauthorized' ? 'BlockedSiteSolid12' : '';
   return (
     <div className={classes.root}>
       <div className={classes.root}>
@@ -64,4 +66,3 @@ const ErrorsPageStyles = ({ theme }: IThemeOnlyProps): ErrorsPageStyles => ({
 });
 
 export const ErrorPage = styled(ErrorPageInner, ErrorsPageStyles);
-
