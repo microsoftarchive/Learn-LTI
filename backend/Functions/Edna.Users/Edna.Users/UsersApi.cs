@@ -67,6 +67,9 @@ namespace Edna.Users
             Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
             Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
 
+            if (member == null)
+                _logger.LogError("User not enrolled.");
+
             return new OkObjectResult(_mapper.Map<MemberDto>(member));
         }
 
