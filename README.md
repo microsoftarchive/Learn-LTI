@@ -32,14 +32,14 @@ To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will ne
 
 # Table of Contents
 
-1. [Deployment Guide](./DEPLOYMENT_GUIDE.md)
-2. [Configuration Guide](./CONFIGURATION_GUIDE.md)
-3. [Educator Guide](./USER_GUIDE.md)
-4. [Student Guide](./STUDENT_GUIDE.md)
-5. [Architecture Overview](./ARCHITECTURE_OVERVIEW.md)
-6. [Pricing Structure](./PRICING_STRUCTURE.md)
-7. [Take it Further](./TAKE_IT_FURTHER.md)
-8. [Troubleshooting](./TROUBLESHOOTING.md)
+1. [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)
+2. [Configuration Guide](./docs/CONFIGURATION_GUIDE.md)
+3. [Educator Guide](./docs/USER_GUIDE.md)
+4. [Student Guide](./docs/STUDENT_GUIDE.md)
+5. [Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md)
+6. [Pricing Structure](./docs/PRICING_STRUCTURE.md)
+7. [Take it Further](./docs/TAKE_IT_FURTHER.md)
+8. [Troubleshooting](./docs/TROUBLESHOOTING.md)
 
 # Contributing
 
