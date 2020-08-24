@@ -27,7 +27,7 @@ You have now cloned the repo.
 * In the cloned repo, inside the deployment directory, execute the file **run.bat**.
 * run.bat bypasses signing requirements and runs Deploy.ps1 automatically.
 * You should now see the Microsoft Learn LTI Tool script popup.
-![run.start.png](./images/run.start.png)
+![run.start.png](/images/run.start.png)
 
 # Deploy to Azure Subscription using the script
 
@@ -65,7 +65,7 @@ The following regions are supported:
 
 **Locate your region from the list above. Then type it into the script and hit "Enter".**
 
-![Deployment.1](./images/Deployment.1.jpg)
+![Deployment.1](/images/Deployment.1.jpg)
 
 Your region determines three things:
 
@@ -83,7 +83,7 @@ The **Deploy.ps1** script will automatically provision and configure the require
 
 The Script will display the Tool Registration URL after completion. Please **copy the URL and keep it handy** since it will be required while configuring the tool in the LMS.
 
-![Deployment.4](./images/Deployment.4.PNG)
+![Deployment.4](/images/Deployment.4.PNG)
 
 Open the tool registration page from your browser and take note of the following parameters. 
 
@@ -91,7 +91,7 @@ Open the tool registration page from your browser and take note of the following
 * Launch URL
 * Public JWK Set URL
 
-![Deployment.5](./images/Deployment.5.png)
+![Deployment.5](/images/Deployment.5.png)
 
 **Congratulations!** Your instance of the tool should now be deployed on Azure! 
 

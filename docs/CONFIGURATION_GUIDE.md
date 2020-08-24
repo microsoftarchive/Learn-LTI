@@ -49,13 +49,13 @@ The following steps show how to configure an LTI tool on a Moodle LMS.
 ### LTI 1.3
 1. Open your LMS and sign in with the admin account.
 2. Click **Site administration** from the left navigation pane.
-![Config.1](./images/Config.1.PNG)
+![Config.1](/images/Config.1.PNG)
 3. Select **Plugins**.
-![Config.2](./images/Config.2.PNG)
+![Config.2](/images/Config.2.PNG)
 4. Under **Activity modules**, click **Manage tools**.
-![Config.3](./images/Config.3.PNG)
+![Config.3](/images/Config.3.PNG)
 5. Click **configure a tool manually**.
-![Config.4](./images/Config.4.png)
+![Config.4](/images/Config.4.png)
 6. Enter the following information:
  * **Tool name**: give the tool a name of your choice. For example: "Microsoft Learn".
  * **Tool URL**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page  Microsoft Learn LTI application’s registration page.
@@ -64,18 +64,18 @@ The following steps show how to configure an LTI tool on a Moodle LMS.
  * **Initiate login URL**: enter "Login URL" from the Microsoft Learn LTI application’s registration page.
  * **Redirection URI(s)**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page.
  * **Default launch container**: New window
-![Config.5](./images/Config.5.png)
-![Config.6](./images/Config.6.png)
+![Config.5](/images/Config.5.png)
+![Config.6](/images/Config.6.png)
 7. Under **Services**, **IMS LTI Names and Role Provisioning**: select **Use this service to retrieve members’ information as per privacy settings**.
-![Config.8](./images/Config.8.png)
+![Config.8](/images/Config.8.png)
 8. Under **Privacy**, select the following options:
  * **Share launcher’s name with tool**: Always
  * **Share launcher’s email with tool**: Always
  * **Accept grades from the tool**: Always
-![Config.9](./images/Config.9.png)
+![Config.9](/images/Config.9.png)
 9. Click **Save changes**. The tool should now appear and listed with the name you provided. 
 10.	Click the icon on the tool that represent **View configuration details**.
-![Config.12](./images/Config.12.PNG)
+![Config.12](/images/Config.12.PNG)
 11. Take note of the following parameters:
  * Platform ID
  * Client ID
@@ -94,7 +94,7 @@ The following steps show how to register the parameters back in the Learn LTI ap
  * **Access Token URL**: enter "Access token URL" from the LTI tool configuration details, from the Moodle LMS.
  * **Authorization URL**: enter "Authentication request URL" from the LTI tool configuration details, from the Moodle LMS.
  * **Client ID**: enter "Client ID" from the LTI tool configuration details, from the Moodle LMS.
-![Config.11](./images/Config.11.png)
+![Config.11](/images/Config.11.png)
 3. Click **SAVE REGISTRATION**.
 
 You're all set. The Learn LTI tool is now configured on your Moodle LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
@@ -125,7 +125,7 @@ The LTI 1.3 and LTI Advantage platform requires a tool to be initially configure
  * **OpenID Connect Initiation URI**: enter "Login URL" from the Microsoft Learn LTI application’s registration page.
  * **JWK Method**: select **Public JWK URL**
  * **Public JWK URL**: enter "Public JWK Set URL" from the Microsoft Learn LTI application’s registration page.
-![Config.Canvas.2](./images/Config.Canvas.2.png) 
+![Config.Canvas.2](/images/Config.Canvas.2.png) 
 6. Under **LTI Advantage Services**, enable the following options:
  * Can create and view assignment data in the gradebook associated with the tool.
  * Can view assignment data in the gradebook associated with the tool.
@@ -134,16 +134,16 @@ The LTI 1.3 and LTI Advantage platform requires a tool to be initially configure
  * Can retrieve user data associated with the context the tool is installed in.
  * Can lookup Account information
  * Can list categorized event types.
-![Config.Canvas.3](./images/Config.Canvas.3.png) 
+![Config.Canvas.3](/images/Config.Canvas.3.png) 
 7. Under **Additional Settings**, select the **Privacy Level** as **PUBLIC**.
-![Config.Canvas.4](./images/Config.Canvas.4.png) 
+![Config.Canvas.4](/images/Config.Canvas.4.png) 
 8. Under **Placements**, make sure **Link Selection** and **Assignment Selection** are selected.
-![Config.Canvas.5](./images/Config.Canvas.5.png) 
+![Config.Canvas.5](/images/Config.Canvas.5.png) 
 9. Click **Save**. The key should now appear and listed with the name you provided. 
 10. Ensure that the newly added key is set to **Enabled**.
 11. Take note of the following parameters:
  * **Client ID**: the number in the **Details** column, above the **Show Key** button
-![Config.Canvas.6](./images/Config.Canvas.6.png) 
+![Config.Canvas.6](/images/Config.Canvas.6.png) 
 
 At the account level, external tools must be installed in the External Apps page in Account Settings. LTI Advantage apps can be added via the Client ID option. Only the Client ID is required to be added.
 
@@ -153,10 +153,10 @@ At the account level, external tools must be installed in the External Apps page
 4. Enter the following information:
  * **Configuration Type**: select **By Client ID**
  * **Client ID**: enter the "Client ID" from the LTI key registration.
-![Config.Canvas.7](./images/Config.Canvas.7.png) 
+![Config.Canvas.7](/images/Config.Canvas.7.png) 
 5. Click **Submit**.
 6. If the Client ID is associated with an external tool, the tool name displays in the page. The page also confirms the tool should be installed.
-![Config.Canvas.8](./images/Config.Canvas.8.png) 
+![Config.Canvas.8](/images/Config.Canvas.8.png) 
 7. Click **Install**.
 
 The following steps show how to register the parameters back in the Learn LTI application's registration page. If you are not the one who deployed the application, you need to provide these parameters to that person.
