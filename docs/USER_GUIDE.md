@@ -22,7 +22,9 @@ The steps for creating an assignment are slightly different depending on the LMS
 1. Go to a course in your Moodle LMS.
 2. Click **Turn editing on**.
 3. Click **Add a new activity or resource**. 
-![UserGuide1](./images/UserGuide.1.PNG)
+![test](../images/UserGuide.1.PNG)
+![UserGuide1](/images/UserGuide.1.PNG)
+![test](images/UserGuide.1.PNG)
 4. Select **External Tool**.
 ![UserGuide2](./images/UserGuide.2.PNG)
 5. Enter the following information:
@@ -30,7 +32,7 @@ The steps for creating an assignment are slightly different depending on the LMS
    * **Preconfigured tool**: select the name of the tool you configured during deployment and configuration.
 ![UserGuide3](./images/UserGuide.3.PNG)
 7. Click **Save and return to course**. You will see the assignment created as an LTI link. 
-6. Click the LTI link and [configure](#Customize,-Review,-and-Publish-the-assignment) the assignment.
+6. Click the LTI link and [configure](#Customize-Review-and-Publish-the-assignment) the assignment.
 
 ## Create an assignment in Canvas leveraging Microsoft Learn LTI application
 
@@ -45,7 +47,7 @@ The steps for creating an assignment are slightly different depending on the LMS
 8. Select the name of the tool you configured during deployment and configuration and click **Select**.
 9. Fill the rest of the assignment details as per your requirement.
 10. Click **Save**. You will see the assignment created as an LTI link.
-11. Click the LTI link and [configure](#Customize,-Review,-and-Publish-the-assignment) the assignment.
+11. Click the LTI link and [configure](#Customize-Review-and-Publish-the-assignment) the assignment.
 
 ## Create an assignment in Blackboard leveraging Microsoft Learn LTI application
 
@@ -56,7 +58,7 @@ The steps for creating an assignment are slightly different depending on the LMS
 4. Click **Content Market**.
 ![UserGuide.Blackboard.2](./images/UserGuide.Blackboard.2.png)
 5. Locate the label for the Learn LTI tool and click the **+** icon. You will see the assignment created as an LTI link.
-6. Click the LTI link and [configure](#Customize,-Review,-and-Publish-the-assignment) the assignment.
+6. Click the LTI link and [configure](#Customize-Review-and-Publish-the-assignment) the assignment.
 
 ## Customize, Review, and Publish the assignment
 
