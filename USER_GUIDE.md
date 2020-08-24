@@ -30,11 +30,11 @@ The steps for creating an assignment are slightly different depending on the LMS
    * **Preconfigured tool**: select the name of the tool you configured during deployment and configuration.
 ![UserGuide3](./images/UserGuide.3.PNG)
 7. Click **Save and return to course**. You will see the assignment created as an LTI link. 
-6. Click the LTI link and configure the assignment.
+6. Click the LTI link and [configure](#Customize,-Review,-and-Publish-the-assignment) the assignment.
 
 ## Create an assignment in Canvas leveraging Microsoft Learn LTI application
 
-1. Go to a course in your Canvas LMS.
+1. Go to a course in your Canvas LMS (Users who want to add an LTI Advantage tool to a course must have the **LTI - add / edit / delete** permission).
 2. Select **Assignments** from the left sidebar.
 3. Click on **+Assignment** to add a new assignment.
 4. Enter assignment name and other details.
@@ -45,11 +45,18 @@ The steps for creating an assignment are slightly different depending on the LMS
 8. Select the name of the tool you configured during deployment and configuration and click **Select**.
 9. Fill the rest of the assignment details as per your requirement.
 10. Click **Save**. You will see the assignment created as an LTI link.
-11. Click the LTI link and configure the assignment.
+11. Click the LTI link and [configure](#Customize,-Review,-and-Publish-the-assignment) the assignment.
 
 ## Create an assignment in Blackboard leveraging Microsoft Learn LTI application
 
-Under construction
+1. Go to a course in your Blackboard LMS (Users who want to add an LTI Advantage tool to a course must have the **Instructor** role).
+2. Click on the 3 dots on the right.
+3. Click **Import Content**.
+![UserGuide.Blackboard.1](./images/UserGuide.Blackboard.1.png)
+4. Click **Content Market**.
+![UserGuide.Blackboard.2](./images/UserGuide.Blackboard.2.png)
+5. Locate the label for the Learn LTI tool and click the **+** icon. You will see the assignment created as an LTI link.
+6. Click the LTI link and [configure](#Customize,-Review,-and-Publish-the-assignment) the assignment.
 
 ## Customize, Review, and Publish the assignment
 

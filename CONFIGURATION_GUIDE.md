@@ -108,7 +108,10 @@ The following steps show how to configure an LTI tool on a Canvas LMS.
 At this time, we do not support LTI 1.1 with Canvas LMS.
  
 ### LTI 1.3
-1. Open your LMS and sign in with the admin account.
+
+The LTI 1.3 and LTI Advantage platform requires a tool to be initially configured in the Developer Keys page, followed by being added to an account or course. First, configure the tool in the Developer Keys page.
+
+1. Open your LMS and sign in with the admin account (Users who want to manage Developer Keys must have the **Developer Keys - manage** permission).
 2. Click **Admin** from the left navigation pane, then click the name of the account.
 3. Click **Developer Keys**.
 4. Click **+Developer Key** and click **+LTI Key**.
@@ -137,16 +140,24 @@ At this time, we do not support LTI 1.1 with Canvas LMS.
 8. Under **Placements**, make sure **Link Selection** and **Assignment Selection** are selected.
 ![Config.Canvas.5](./images/Config.Canvas.5.png) 
 9. Click **Save**. The key should now appear and listed with the name you provided. 
-10. Take note of the following parameters:
+10. Ensure that the newly added key is set to **Enabled**.
+11. Take note of the following parameters:
  * **Client ID**: the number in the **Details** column, above the **Show Key** button
 ![Config.Canvas.6](./images/Config.Canvas.6.png) 
-11.	Now, click **Settings** from the left navigation pane.
-12.	Click **View App Configurations**.
-13.	Click **+App**.
-14.	Enter the following information:
+
+At the account level, external tools must be installed in the External Apps page in Account Settings. LTI Advantage apps can be added via the Client ID option. Only the Client ID is required to be added.
+
+1. Click **Settings** from the left navigation pane.
+2. Click **View App Configurations**.
+3. Click **+App**.
+4. Enter the following information:
  * **Configuration Type**: select **By Client ID**
  * **Client ID**: enter the "Client ID" from the LTI key registration.
-15.	Click **Submit**.
+![Config.Canvas.7](./images/Config.Canvas.7.png) 
+5. Click **Submit**.
+6. If the Client ID is associated with an external tool, the tool name displays in the page. The page also confirms the tool should be installed.
+![Config.Canvas.8](./images/Config.Canvas.8.png) 
+7. Click **Install**.
 
 The following steps show how to register the parameters back in the Learn LTI application's registration page. If you are not the one who deployed the application, you need to provide these parameters to that person.
 
@@ -161,13 +172,73 @@ The following steps show how to register the parameters back in the Learn LTI ap
   * **Client ID**: enter "Client ID" from the LTI key registration.
 3. Click **SAVE REGISTRATION**.
 
-You're all set. The Learn LTI tool is now configured on your Moodle LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
+You're all set. The Learn LTI tool is now configured on your Canvas LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
 
 ## Blackboard Learn LMS
 
-Under construction.
+### LTI 1.1
 
+At this time, we do not support LTI 1.1 with Blackboard Learn LMS.
 
+### LTI 1.3
 
+Before the LTI Tool can be added to specific Blackboard Learn LMS Tenant, it needs to be registered as an app in Blackboard Dev Portal.
 
+1. Open your browser and go to https://developer.blackboard.com/.
+2. Click **Register** to Register and Manage Your Applications.
+3. Accept the **Terms & Condition** and click **Agree & Continue**.
+4. Create a New Account to register your application. If you already have an account, sign in with one. 
+5. Click the **+** icon to register a new application.
+6. Enter the following information:
+  * **Application Name**: give the tool a name of your choice.
+  * **Description**: give the tool a description. 
+  * **Domain**: enter “Domain URL” from the Microsoft Learn LTI application’s registration page.
+  * **My Integration supports LTI 1-3**: Enabled.
+  * **Login Initiation URL**: enter "Login URL" from the Microsoft Learn LTI application’s registration page.
+  * **Tool Redirect URL(s)**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page.
+  * **Tool JWKS URL**: enter "Public JWK Set URL" from the Microsoft Learn LTI application’s registration page.
+7. Click **Register application and generate API Key**.
+8. Important note! The secret is only shown once. Make note of the application key and secret and store them in a safe and secure location.
+9. Take note of the following parameters:
+  * **Application ID**: the string under the **Application ID** column.
 
+Now you are ready to add the app as an LTI Provider in your Blackboard Learn LMS.
+
+1. Open your LMS and sign in with the admin account.
+2. Click **Admin** from the left navigation pane to open the Administrator Panel.
+3. Click **LTI Tool Providers** under **Integrations**.
+4. Click **Register LTI 1.3/Advantage Tool**.
+5. Enter the following information:
+  * **Client ID**: enter the "Application ID" from the LTI key registration.
+6. Click **Submit**.
+7. Ensure that **Tool Status** is set to **Approved**.
+8. Under Institution Policies:
+  * Ensure that all **User Fields to Send** are selected.
+  * **Allow grade service access**: Yes
+  * **Allow Membership Service Access**: Yes
+9. Click **Submit**.
+10. Select the newly registered tool and click **Manage Placements**.
+11. Click **Create Placements**.
+12. Enter the following information:
+  * **Label**: give the placement a label.
+  * **Handle**: give the placement a handle.
+  * **Availability**: Yes
+  * **Type**: Course content tool
+  * **Allows grading**: Selected
+  * **Launch in New Window**: Selected
+  * **Target Link URI**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page.
+13. Click **Submit**.
+
+The following steps show how to register the parameters back in the Learn LTI application's registration page. If you are not the one who deployed the application, you need to provide these parameters to that person.
+
+1. Open the tool registration page from your browser.
+2. Enter the following information:
+  * **Display name**: give the tool a name of your choice.
+  * **Issuer**: enter **https://blackboard.com**
+  * **JWK Set URL**: enter https://developer.blackboard.com/api/v1/management/applications/[application-id]/jwks.json, where [application-id] is the "Application ID" from the LTI key registration.
+  * **Access Token URL**: enter https://developer.blackboard.com/api/v1/gateway/oauth2/jwttoken
+  * **Authorization URL**: enter https://developer.blackboard.com/api/v1/gateway/oidcauth
+  * **Client ID**: enter "Application ID" from the LTI key registration.
+3. Click **SAVE REGISTRATION**.
+
+You're all set. The Learn LTI tool is now configured on your Blackboard Learn LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
