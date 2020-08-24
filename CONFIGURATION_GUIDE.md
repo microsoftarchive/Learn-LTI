@@ -33,7 +33,7 @@ The following steps show how to configure an LTI tool on a Moodle LMS.
 4. Under **Activity modules**, click **Manage tools**.
 5. Click **configure a tool manually**.
 6. Enter the following information:
- * **Tool name**: give the tool a name of your choice.
+ * **Tool name**: give the tool a name of your choice. For example: "Microsoft Learn".
  * **Tool URL**: https://[lti-domain-url]/api/launch-lti1 where [lti-domain-url] is the Domain URL field from Microsoft Learn LTI application’s registration page. 
  * **LTI version**: LTI 1.0/1.1
  * **Consumer key**: key
@@ -57,7 +57,7 @@ The following steps show how to configure an LTI tool on a Moodle LMS.
 5. Click **configure a tool manually**.
 ![Config.4](./images/Config.4.png)
 6. Enter the following information:
- * **Tool name**: give the tool a name of your choice.
+ * **Tool name**: give the tool a name of your choice. For example: "Microsoft Learn".
  * **Tool URL**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page  Microsoft Learn LTI application’s registration page.
  * **LTI version**: LTI 1.3
  * **Public keyset**: enter "Public JWK Set URL" from the Microsoft Learn LTI application’s registration page.
@@ -88,7 +88,7 @@ The following steps show how to register the parameters back in the Learn LTI ap
 
 1. Open the tool registration page from your browser.
 2. Enter the following information:
- * **Display name**: give the tool a name of your choice.
+ * **Display name**: give the tool a name of your choice. 
  * **Issuer**: enter "Platform ID" from the LTI tool configuration details, from the Moodle LMS.
  * **JWK Set URL**: enter "Public keyset URL" from the LTI tool configuration details, from the Moodle LMS.
  * **Access Token URL**: enter "Access token URL" from the LTI tool configuration details, from the Moodle LMS.
@@ -116,7 +116,7 @@ The LTI 1.3 and LTI Advantage platform requires a tool to be initially configure
 3. Click **Developer Keys**.
 4. Click **+Developer Key** and click **+LTI Key**.
 5. Enter the following information:
- * **Key Name**: give the tool a name of your choice.
+ * **Key Name**: give the tool a name of your choice. For example: "Microsoft Learn".
  * **Redirection URIs**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page. 
  * **Method**: select **Manual Entry**
  * **Title**: give the tool a title.
@@ -163,7 +163,7 @@ The following steps show how to register the parameters back in the Learn LTI ap
 
 1. Open the tool registration page from your browser.
 2. Enter the following information:
-  * **Display name**: give the tool a name of your choice.
+  * **Display name**: give the tool a name of your choice. 
   * **Issuer**: enter **https://canvas.instructure.com**
   * **JWK Set URL**: enter https://[tenant-name].instructure.com/api/lti/security/jwks
   * **Access Token URL**: enter https://[tenant-name].instructure.com/login/oauth2/token 
@@ -190,7 +190,7 @@ Before the LTI Tool can be added to specific Blackboard Learn LMS Tenant, it nee
 4. Create a New Account to register your application. If you already have an account, sign in with one. 
 5. Click the **+** icon to register a new application.
 6. Enter the following information:
-  * **Application Name**: give the tool a name of your choice.
+  * **Application Name**: give the tool a name of your choice. For example: "Microsoft Learn".
   * **Description**: give the tool a description. 
   * **Domain**: enter “Domain URL” from the Microsoft Learn LTI application’s registration page.
   * **My Integration supports LTI 1-3**: Enabled.
@@ -220,7 +220,7 @@ Now you are ready to add the app as an LTI Provider in your Blackboard Learn LMS
 10. Select the newly registered tool and click **Manage Placements**.
 11. Click **Create Placements**.
 12. Enter the following information:
-  * **Label**: give the placement a label.
+  * **Label**: give the placement a label. For example: "Microsoft Learn".
   * **Handle**: give the placement a handle.
   * **Availability**: Yes
   * **Type**: Course content tool
@@ -233,7 +233,7 @@ The following steps show how to register the parameters back in the Learn LTI ap
 
 1. Open the tool registration page from your browser.
 2. Enter the following information:
-  * **Display name**: give the tool a name of your choice.
+  * **Display name**: give the tool a name of your choice. 
   * **Issuer**: enter **https://blackboard.com**
   * **JWK Set URL**: enter https://developer.blackboard.com/api/v1/management/applications/[application-id]/jwks.json, where [application-id] is the "Application ID" from the LTI key registration.
   * **Access Token URL**: enter https://developer.blackboard.com/api/v1/gateway/oauth2/jwttoken
