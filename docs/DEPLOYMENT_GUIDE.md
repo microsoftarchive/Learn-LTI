@@ -95,6 +95,6 @@ Open the tool registration page from your browser and take note of the following
 
 **Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
-If your **deployment failed**, click [here](./docs/TROUBLESHOOTING.md) for help.
+If your **deployment failed**, click [here](./TROUBLESHOOTING.md) for help.
 
-Once the tool has been successfully deployed, the next step is to [configure the tool](./docs/CONFIGURATION_GUIDE.md) on your institution's LMS.
+Once the tool has been successfully deployed, the next step is to [configure the tool](./CONFIGURATION_GUIDE.md) on your institution's LMS.

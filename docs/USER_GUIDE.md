@@ -4,7 +4,7 @@
 - Create an assignment in a course leveraging Microsoft Learn LTI application
 - Customize, Review, and Publish the assignment
 
-By now, you should already configured the Learn LTI application in your LMS. If not, follow the [configuration guide](./docs/CONFIGURATION_GUIDE.md) to configure the tool before continuing below.
+By now, you should already configured the Learn LTI application in your LMS. If not, follow the [configuration guide](./CONFIGURATION_GUIDE.md) to configure the tool before continuing below.
 
 The steps for creating an assignment are slightly different depending on the LMS you are using. The following examples show how to create assignment leveraging Learn LTI application with three of the popular LMS.
 
