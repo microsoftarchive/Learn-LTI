@@ -1,13 +1,13 @@
 # Configure the tool
 
-The Microsoft Learn LTI application adheres to LTI v.1.1 and v1.3. The following guide shows the steps to configure several popular LMS to work with the Microsoft Learn LTI application. If your LMS is not listed here, consult your LMS vendor on how to configure LTI application. Regardless of the LMS, the typical workflow is the same:
+The following guide shows the steps to configure several popular LMS to work with the Microsoft Learn LTI application. If your LMS is not listed here, consult your LMS vendor on how to configure LTI application. Regardless of the LMS, the typical workflow should remain the same:
 
 1. Obtain parameters from the deployed Microsoft Learn LTI application’s registration page
 2. Configure an LTI tool on the LMS using the parameters from step 1.
 3. Obtain parameters from the configured LTI tool.
 4. Configure the Microsoft Learn LTI application using the parameters from step 3.
 
-By now, you should already obtained the following parameters from the Microsoft Learn LTI application’s registration page. If not, follow the [deployment guide](./DEPLOYMENT_GUIDE.md) to deploy the Learn LTI application and obtain the following paramenters from the registration page.
+By now, you should've obtained the following parameters from the Microsoft Learn LTI application’s registration page. If not, follow the [deployment guide](./DEPLOYMENT_GUIDE.md) to deploy Microsoft Learn LTI application and obtain the following parameters from the registration page.
 
 - Login URL
 - Launch URL
@@ -16,11 +16,11 @@ By now, you should already obtained the following parameters from the Microsoft 
 
 If you are not the one who deployed the application, you need to obtain the parameters from that person.
 
-The configuration steps are slightly different depending on the LMS you are using. In general they will involve registering the Learn LTI application as an external tool in the LMS and registering the parameters back in the Learn LTI application's registration page. The following examples show how to configure Learn LTI application with three of the popular LMS.
+The configuration steps slightly differ depending on the LMS you are using. In general, they will involve registering the Microsoft Learn LTI application as an external tool in the LMS and registering the parameters of external tool back in the Microsoft Learn LTI application's registration page. The following examples show how to configure Microsoft Learn LTI application with three of the popular LMS.
 
 - [Moodle](#Moodle-LMS)
 - [Canvas](#Canvas-LMS)
-- [Blacboard](#Blackboard-Learn-LMS)
+- [Blackboard](#Blackboard-Learn-LMS)
 
 ## Moodle LMS
 
@@ -82,9 +82,10 @@ The following steps show how to configure an LTI tool on a Moodle LMS.
  * Public keyset URL
  * Access token URL
  * Authentication request URL
-11.	Continue to configure the Microsoft Learn LTI application, by registering the parameters back in the Learn LTI application's registration page.
+12.	Continue to configure the Microsoft Learn LTI application, by registering the parameters back in the Learn LTI application's registration page.
 
-The following steps show how to register the parameters back in the Learn LTI application's registration page. Note: For LTI 1.1, this step is not required. If you are not the one who deployed the application, you need to provide these parameters to that person.
+The following steps show how to register the parameters back in the Learn LTI application's registration page. 
+> **Note:** For LTI 1.1, this step is not required. If you are not the one who deployed the application, you need to provide these parameters to that person.
 
 1. Open the tool registration page from your browser.
 2. Enter the following information:
@@ -158,6 +159,7 @@ At the account level, external tools must be installed in the External Apps page
 6. If the Client ID is associated with an external tool, the tool name displays in the page. The page also confirms the tool should be installed.
 ![Config.Canvas.8](/images/Config.Canvas.8.png) 
 7. Click **Install**.
+8. Continue to configure the Microsoft Learn LTI application, by registering the parameters back in the Learn LTI application's registration page.
 
 The following steps show how to register the parameters back in the Learn LTI application's registration page. If you are not the one who deployed the application, you need to provide these parameters to that person.
 
@@ -228,6 +230,7 @@ Now you are ready to add the app as an LTI Provider in your Blackboard Learn LMS
   * **Launch in New Window**: Selected
   * **Target Link URI**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page.
 13. Click **Submit**.
+14. Continue to configure the Microsoft Learn LTI application, by registering the parameters back in the Learn LTI application's registration page.
 
 The following steps show how to register the parameters back in the Learn LTI application's registration page. If you are not the one who deployed the application, you need to provide these parameters to that person.
 
