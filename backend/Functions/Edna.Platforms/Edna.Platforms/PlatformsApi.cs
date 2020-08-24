@@ -63,7 +63,7 @@ namespace Edna.Platforms
                     .Select(_mapper.Map<PlatformDto>)
                     .Do(dto => { 
                         dto.PublicKey = publicKey.PemString;
-                        dto.ToolJwk = JsonSerializer.Serialize(publicKey.Jwk);
+                        dto.ToolJwk = Newtonsoft.Json.JsonConvert.SerializeObject(publicKey.Jwk);
                     });
 
                 platforms.AddRange(platformDtos);
@@ -83,7 +83,7 @@ namespace Edna.Platforms
 
             PlatformDto platformDto = _mapper.Map<PlatformDto>(platformEntity);
             platformDto.PublicKey = publicKey.PemString;
-            platformDto.ToolJwk = JsonSerializer.Serialize(publicKey.Jwk);
+            platformDto.ToolJwk = Newtonsoft.Json.JsonConvert.SerializeObject(publicKey.Jwk);
             
             return new OkObjectResult(platformDto);
         }
@@ -104,7 +104,7 @@ namespace Edna.Platforms
                 LoginUrl = $"{ConnectApiBaseUrl}/oidc-login/{platformId}",
                 LaunchUrl = $"{ConnectApiBaseUrl}/lti-advantage-launch/{platformId}",
                 PublicKey = publicKey.PemString,
-                ToolJwk = JsonSerializer.Serialize(publicKey.Jwk),
+                ToolJwk = Newtonsoft.Json.JsonConvert.SerializeObject(publicKey.Jwk),
                 ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{platformId}",
                 DomainUrl = new Uri(ConnectApiBaseUrl).Authority
             };
