@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
 using Edna.Bindings.LtiAdvantage.Attributes;
@@ -17,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using System.Text;
 using System.Security.Cryptography;
+using Newtonsoft.Json;
 
 namespace Edna.Platforms
 {
@@ -26,7 +26,6 @@ namespace Edna.Platforms
 
         private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
         private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
-        private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
 
         private readonly IMapper _mapper;
@@ -63,7 +62,7 @@ namespace Edna.Platforms
                     .Select(_mapper.Map<PlatformDto>)
                     .Do(dto => { 
                         dto.PublicKey = publicKey.PemString;
-                        dto.ToolJwk = JsonSerializer.Serialize(publicKey.Jwk);
+                        dto.ToolJwk = JsonConvert.SerializeObject(publicKey.Jwk);
                     });
 
                 platforms.AddRange(platformDtos);
@@ -83,7 +82,7 @@ namespace Edna.Platforms
 
             PlatformDto platformDto = _mapper.Map<PlatformDto>(platformEntity);
             platformDto.PublicKey = publicKey.PemString;
-            platformDto.ToolJwk = JsonSerializer.Serialize(publicKey.Jwk);
+            platformDto.ToolJwk = JsonConvert.SerializeObject(publicKey.Jwk);
             
             return new OkObjectResult(platformDto);
         }
@@ -104,7 +103,8 @@ namespace Edna.Platforms
                 LoginUrl = $"{ConnectApiBaseUrl}/oidc-login/{platformId}",
                 LaunchUrl = $"{ConnectApiBaseUrl}/lti-advantage-launch/{platformId}",
                 PublicKey = publicKey.PemString,
-                ToolJwk = JsonSerializer.Serialize(publicKey.Jwk),
+
+                ToolJwk = JsonConvert.SerializeObject(publicKey.Jwk),
                 ToolJwkSetUrl = $"{ConnectApiBaseUrl}/jwks/{platformId}",
                 DomainUrl = new Uri(ConnectApiBaseUrl).Authority
             };
@@ -121,7 +121,7 @@ namespace Edna.Platforms
                 return new UnauthorizedResult();
 
             string platformDtoJson = await req.ReadAsStringAsync();
-            PlatformDto platformDto = JsonSerializer.Deserialize<PlatformDto>(platformDtoJson, JsonOptions);
+            PlatformDto platformDto = JsonConvert.DeserializeObject<PlatformDto>(platformDtoJson);
 
             PlatformEntity platformEntity = _mapper.Map<PlatformEntity>(platformDto);
             platformEntity.ETag = "*";
