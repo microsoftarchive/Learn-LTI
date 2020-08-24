@@ -33,16 +33,21 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
       />
       {!assignmentStore.assignment || !usersStore.userDetails ? (
         assignmentStore.serviceError !== undefined ? (
-          <ErrorPage errorCode={assignmentStore.serviceError} /> ) : 
+          <ErrorPage errorCode = {assignmentStore.serviceError} /> 
+        ) : (
         usersStore.serviceError !== undefined ? (
-          <ErrorPage errorCode={usersStore.serviceError} /> ) :
+          <ErrorPage errorCode = {usersStore.serviceError} /> 
+        ) : (
+        usersStore.userDetails === null && usersStore.errorMsg === "no content" ? (
+          <ErrorPage errorCode = {undefined} errorMsg = "You are not enrolled in this course." /> 
+        ) : (
         <Spinner
           size={SpinnerSize.large}
           className={classes.spinner}
           label="Loading Assignment"
           labelPosition="bottom"
         />
-        ) : (
+        )))) : (
         <div className={classes.content}>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
