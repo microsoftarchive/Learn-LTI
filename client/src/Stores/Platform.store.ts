@@ -2,7 +2,7 @@ import { observable, action } from 'mobx';
 import { ChildStore } from './Core';
 import { PlatformService } from '../Services/Platform.service';
 import { Platform } from '../Models/Platform.model';
-import { ServiceError } from '../Core/Utils/Axios/ServiceError';
+import { ErrorPageBody } from '../Core/Components/ErrorPagebody';
 
 export type PlatformSaveResult = 'error' | 'success';
 
@@ -10,14 +10,26 @@ export class PlatformStore extends ChildStore {
   @observable platform: Platform | null = null;
   @observable saveResult: PlatformSaveResult | null = null;
   @observable isSaving = false;
-  @observable serviceError : ServiceError | undefined = undefined;
+  @observable errorBody: ErrorPageBody = { errorMsg : undefined, icon : undefined};
 
   @action
   async initializePlatform(): Promise<void> {
     const platforms = await PlatformService.getAllPlatforms();
 
     if (platforms.error) {
-      this.serviceError=platforms.error;
+      switch (platforms.error) {
+        case 'not found': 
+          this.errorBody.errorMsg = "Error 404. Page not found.";
+          this.errorBody.icon = "PageRemove";
+          break;
+        case 'unauthorized': 
+          this.errorBody.errorMsg = "No sufficient permissions to view this page.";
+          this.errorBody.icon = "BlockedSiteSolid12";
+          break;
+        default: 
+          this.errorBody.errorMsg = "Oops! Something went wrong!";
+          this.errorBody.icon = "Sad";
+      }
     } else {
       if (platforms.length > 0) {
         this.platform = platforms[0];

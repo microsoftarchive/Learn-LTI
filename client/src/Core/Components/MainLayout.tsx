@@ -32,14 +32,11 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         userInstitution={assignmentStore.assignment?.platformPersonalization?.institutionName}
       />
       {!assignmentStore.assignment || !usersStore.userDetails ? (
-        assignmentStore.serviceError !== undefined ? (
-          <ErrorPage errorCode = {assignmentStore.serviceError} /> 
+        assignmentStore.errorBody.errorMsg !== undefined ? (
+          <ErrorPage errorMsg = {assignmentStore.errorBody.errorMsg} icon={assignmentStore.errorBody.icon} /> 
         ) : (
-        usersStore.serviceError !== undefined ? (
-          <ErrorPage errorCode = {usersStore.serviceError} /> 
-        ) : (
-        usersStore.userDetails === null && usersStore.errorMsg === "no content" ? (
-          <ErrorPage errorCode = {undefined} errorMsg = "You are not enrolled in this course." /> 
+        usersStore.errorBody.errorMsg !== undefined ? (
+          <ErrorPage errorMsg = {usersStore.errorBody.errorMsg} icon={usersStore.errorBody.icon} /> 
         ) : (
         <Spinner
           size={SpinnerSize.large}
@@ -47,7 +44,7 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
           label="Loading Assignment"
           labelPosition="bottom"
         />
-        )))) : (
+        ))) : (
         <div className={classes.content}>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>

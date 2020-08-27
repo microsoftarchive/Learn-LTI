@@ -10,8 +10,8 @@ import { UserDto } from '../Dtos/User.dto';
 import _ from 'lodash';
 import { AppAuthConfig } from '../Core/Auth/AppAuthConfig';
 import { Account } from 'msal';
-import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 import { WithError } from '../Core/Utils/Axios/safeData';
+import { ErrorPageBody } from '../Core/Components/ErrorPagebody';
 
 export class UsersStore extends ChildStore {
   private readonly roleIdToRoleDisplayName: Map<UserRole, string> = new Map<UserRole, string>([
@@ -24,12 +24,11 @@ export class UsersStore extends ChildStore {
   @observable userImageUrl = '';
   @observable participants: User[] | null = null;
   @observable account: Account | null = null;
-  @observable serviceError: ServiceError | undefined = undefined;
-  @observable errorMsg: string | null = null;
+  @observable errorBody: ErrorPageBody = { errorMsg : undefined, icon : undefined};
 
   initialize(): void {
     const detailsFromPlatform = toObservable(
-      () => this.root.platformStore.platform || this.root.platformStore.serviceError !== undefined
+      () => this.root.platformStore.platform || this.root.platformStore.errorBody.errorMsg !== undefined
     ).pipe(
       filter(platformObservable => !!platformObservable),
       map(() => AppAuthConfig.getAccountInfo()?.account),
@@ -42,10 +41,14 @@ export class UsersStore extends ChildStore {
     const getUser =  async (assignmentId : string) : Promise<WithError<UserDto>> =>
     {
       const user = await UsersService.getCurrentUserDetails(assignmentId);
-      if(user.error)
-        this.serviceError = user.error;
-      else if(!user)
-        this.errorMsg = "no content";
+      if(user.error){
+        this.errorBody.errorMsg= "Oops! Something went wrong!";
+        this.errorBody.icon= "Sad";
+      }
+      else if(!user){
+        this.errorBody.errorMsg = "You are not enrolled in this course.";
+        this.errorBody.icon= "BlockContact";
+      }
       return user;
     }
     const detailsFromAssignment = toObservable(() => this.root.assignmentStore.assignment).pipe(
