@@ -200,7 +200,7 @@ Before the LTI Tool can be added to specific Blackboard Learn LMS Tenant, it nee
   * **Tool Redirect URL(s)**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page.
   * **Tool JWKS URL**: enter "Public JWK Set URL" from the Microsoft Learn LTI application’s registration page.
 7. Click **Register application and generate API Key**.
-8. Important note! The secret is only shown once. Make note of the application key and secret and store them in a safe and secure location.
+8. ⚠️ The secret is only shown once. Make note of the application key and secret and store them in a safe and secure location.
 9. Take note of the following parameters:
   * **Application ID**: the string under the **Application ID** column.
 
