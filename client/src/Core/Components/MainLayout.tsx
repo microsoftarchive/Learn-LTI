@@ -32,11 +32,11 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         userInstitution={assignmentStore.assignment?.platformPersonalization?.institutionName}
       />
       {!assignmentStore.assignment || !usersStore.userDetails ? (
-        assignmentStore.errorBody.errorMsg !== undefined ? (
-          <ErrorPage errorMsg = {assignmentStore.errorBody.errorMsg} icon={assignmentStore.errorBody.icon} /> 
+        assignmentStore.errorContent !== undefined ? (
+          <ErrorPage {...assignmentStore.errorContent} /> 
         ) : (
-        usersStore.errorBody.errorMsg !== undefined ? (
-          <ErrorPage errorMsg = {usersStore.errorBody.errorMsg} icon={usersStore.errorBody.icon} /> 
+        usersStore.errorContent !== undefined ? (
+          <ErrorPage {...usersStore.errorContent} /> 
         ) : (
         <Spinner
           size={SpinnerSize.large}

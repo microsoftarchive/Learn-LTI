@@ -11,7 +11,7 @@ import _ from 'lodash';
 import { AppAuthConfig } from '../Core/Auth/AppAuthConfig';
 import { Account } from 'msal';
 import { WithError } from '../Core/Utils/Axios/safeData';
-import { ErrorPageBody } from '../Core/Components/ErrorPagebody';
+import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
 
 export class UsersStore extends ChildStore {
   private readonly roleIdToRoleDisplayName: Map<UserRole, string> = new Map<UserRole, string>([
@@ -24,11 +24,11 @@ export class UsersStore extends ChildStore {
   @observable userImageUrl = '';
   @observable participants: User[] | null = null;
   @observable account: Account | null = null;
-  @observable errorBody: ErrorPageBody = { errorMsg : undefined, icon : undefined};
+  @observable errorContent : ErrorPageContent | undefined = undefined;
 
   initialize(): void {
     const detailsFromPlatform = toObservable(
-      () => this.root.platformStore.platform || this.root.platformStore.errorBody.errorMsg !== undefined
+      () => this.root.platformStore.platform || this.root.platformStore.errorContent !== undefined
     ).pipe(
       filter(platformObservable => !!platformObservable),
       map(() => AppAuthConfig.getAccountInfo()?.account),
@@ -42,12 +42,10 @@ export class UsersStore extends ChildStore {
     {
       const user = await UsersService.getCurrentUserDetails(assignmentId);
       if(user.error){
-        this.errorBody.errorMsg= "Oops! Something went wrong!";
-        this.errorBody.icon= "Sad";
+        this.errorContent = {errorMsg : "Oops! Something went wrong.", icon : "Sad"};
       }
       else if(!user){
-        this.errorBody.errorMsg = "You are not enrolled in this course.";
-        this.errorBody.icon= "BlockContact";
+        this.errorContent = {errorMsg : "You are not enrolled in this course.", icon : "BlockContact"};
       }
       return user;
     }

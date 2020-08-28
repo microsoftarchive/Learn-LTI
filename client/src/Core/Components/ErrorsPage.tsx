@@ -2,11 +2,11 @@ import React from 'react';
 import { IThemeOnlyProps, SimpleComponentStyles, IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
 import { styled, Icon, Text, FontSizes, FontWeights } from '@fluentui/react';
 import { themedClassNames } from '../Utils/FluentUI';
-import { ErrorPageBody } from './ErrorPagebody';
+import { ErrorPageContent } from './ErrorPageContent';
 
 type ErrorsPageStyles = SimpleComponentStyles<'root' | 'icon' | 'text' | 'error'>;
 
-const ErrorPageInner = ( {styles , errorMsg, icon } : ErrorPageBody & IStylesOnly<ErrorsPageStyles> ) : JSX.Element => {
+const ErrorPageInner = ( {styles , errorMsg, icon } : ErrorPageContent & IStylesOnly<ErrorsPageStyles> ) : JSX.Element => {
   const classes = themedClassNames(styles);
   return (
     <div className={classes.root}>
@@ -45,10 +45,9 @@ const ErrorsPageStyles = ({ theme }: IThemeOnlyProps): ErrorsPageStyles => ({
       margin: `${theme.spacing.s1} auto`
     }
   ],
-  
   error: [
     {
-      color: "#1F1F1F",
+      color: theme.palette.black,
       margin: `${theme.spacing.s1} auto`
     }
   ]

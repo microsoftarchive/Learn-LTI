@@ -2,26 +2,28 @@ import { observable, action } from 'mobx';
 import { ChildStore } from './Core';
 import { AssignmentService } from '../Services/Assignment.service';
 import { Assignment } from '../Models/Assignment.model';
-import { ErrorPageBody } from '../Core/Components/ErrorPagebody';
+import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
+import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
-  @observable errorBody: ErrorPageBody = { errorMsg : undefined, icon : undefined};
+  @observable errorContent : ErrorPageContent | undefined = undefined;
 
+  getErrorContent (error : ServiceError) : void {
+    switch (error) {
+      case 'not found':
+        this.errorContent = {errorMsg : "Error 404. Page not found.", icon : "PageRemove"}
+        break;
+      default: 
+        this.errorContent = {errorMsg : "Oops! Something went wrong.", icon : "Sad"};
+    }
+  }
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {
     const assignment = await AssignmentService.getAssignment(assignmentId);
     if (assignment.error) {
-      switch (assignment.error) {
-        case 'not found': 
-          this.errorBody.errorMsg = "Error 404. Page not found.";
-          this.errorBody.icon = "PageRemove";
-          break;
-        default: 
-          this.errorBody.errorMsg = "Oops! Something went wrong!";
-          this.errorBody.icon = "Sad";
-      }
+      this.getErrorContent (assignment.error);
       return;
     }
     const { deadline } = assignment;
