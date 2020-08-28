@@ -47,8 +47,8 @@ const StudentViewContentInner = ({ styles }: IStylesOnly<StudentViewContentStyle
 
     return (
       <div className={classes.root}>
-        {items.length === 0 && <Text>No info was entered for this assignment</Text>}
-        {items.map(item => {
+        {(assignmentStore.assignment?.publishStatus !== 'Published' && <Text>Assignment not published</Text>) || (items.length === 0  && <Text>No info was entered for this assignment</Text>)}
+        {assignmentStore.assignment?.publishStatus === 'Published' && items.map(item => {
           const itemSpecificStyles = themedClassNames(item.styles);
           const baseStyles = themedClassNames(baseSectionStyles);
           const styles = mergeStyleSets(baseStyles, itemSpecificStyles);
