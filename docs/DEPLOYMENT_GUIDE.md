@@ -79,7 +79,7 @@ For information regarding your region, check [here.](https://azure.microsoft.com
 
 The **Deploy.ps1** script will automatically provision and configure the required resources for you.
 
-## Tool Registration URL IMPORTANT!
+## ⚠️ Tool Registration URL 
 
 The Script will display the Tool Registration URL after completion. Please **copy the URL and keep it handy** since it will be required while configuring the tool in the LMS.
 
