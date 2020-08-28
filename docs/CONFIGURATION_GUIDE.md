@@ -178,6 +178,8 @@ You're all set. The Learn LTI tool is now configured on your Canvas LMS and your
 
 ## Blackboard Learn LMS
 
+The following steps show how to configure an LTI tool on a Blackboard Learn LMS.
+
 ### LTI 1.1
 
 At this time, we do not support LTI 1.1 with Blackboard Learn LMS.

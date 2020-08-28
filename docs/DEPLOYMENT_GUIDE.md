@@ -89,6 +89,9 @@ Open the tool registration page from your browser and take note of the following
 
 * Login URL
 * Launch URL
+* Domain URL
+* Public Key
+* Public JWK
 * Public JWK Set URL
 
 ![Deployment.5](/images/Deployment.5.png)
