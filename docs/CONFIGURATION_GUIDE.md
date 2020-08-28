@@ -12,6 +12,8 @@ By now, you should've obtained the following parameters from the Microsoft Learn
 - Login URL
 - Launch URL
 - Domain URL
+- Public Key
+- Public JWK
 - Public JWK Set URL
 
 If you are not the one who deployed the application, you need to obtain the parameters from that person.
@@ -60,7 +62,10 @@ The following steps show how to configure an LTI tool on a Moodle LMS.
  * **Tool name**: give the tool a name of your choice. For example: "Microsoft Learn".
  * **Tool URL**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page  Microsoft Learn LTI application’s registration page.
  * **LTI version**: LTI 1.3
+ * **Public key type**: Keyset URL
+ * We recommend to use the **Keyset URL** as the **Public Key type**. 
  * **Public keyset**: enter "Public JWK Set URL" from the Microsoft Learn LTI application’s registration page.
+ * If you select **RSA key**, instead of **Keyset URL**, as **Public key type**, you can enter the "Public Key" from the Microsoft Learn LTI application's registration page instead of the "Public JWK Set URL". 
  * **Initiate login URL**: enter "Login URL" from the Microsoft Learn LTI application’s registration page.
  * **Redirection URI(s)**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page.
  * **Default launch container**: New window
@@ -96,7 +101,8 @@ The following steps show how to register the parameters back in the Learn LTI ap
  * **Authorization URL**: enter "Authentication request URL" from the LTI tool configuration details, from the Moodle LMS.
  * **Client ID**: enter "Client ID" from the LTI tool configuration details, from the Moodle LMS.
 ![Config.11](/images/Config.11.png)
-3. Click **SAVE REGISTRATION**.
+3. Optionally, you can add your Institution name and logo on the registration page.
+4. Click **SAVE REGISTRATION**.
 
 You're all set. The Learn LTI tool is now configured on your Moodle LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
 
@@ -125,7 +131,9 @@ The LTI 1.3 and LTI Advantage platform requires a tool to be initially configure
  * **Target Link URI**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page.
  * **OpenID Connect Initiation URI**: enter "Login URL" from the Microsoft Learn LTI application’s registration page.
  * **JWK Method**: select **Public JWK URL**
+ * We recommend to select the **Public JWK URL** as **JWK Method**. 
  * **Public JWK URL**: enter "Public JWK Set URL" from the Microsoft Learn LTI application’s registration page.
+ * If you select **Public JWK**, instead of **Public JWK URL**, as ***JWK Method**, you can enter the "Public JWK" from the Microsoft Learn LTI application's registration page instead of the "Public JWK Set URL". 
 ![Config.Canvas.2](/images/Config.Canvas.2.png) 
 6. Under **LTI Advantage Services**, enable the following options:
  * Can create and view assignment data in the gradebook associated with the tool.
@@ -170,9 +178,10 @@ The following steps show how to register the parameters back in the Learn LTI ap
   * **JWK Set URL**: enter https://[tenant-name].instructure.com/api/lti/security/jwks
   * **Access Token URL**: enter https://[tenant-name].instructure.com/login/oauth2/token 
   * **Authorization URL**: enter https://[tenant-name].instructure.com/api/lti/authorize_redirect 
-   NOTE: if you are using self-hosted Canvas, enter your canvas url instead of [tenant-name].instructure.com.
+   NOTE: [tenant-name] is where your Canvas tenant name hosted by instructure. For example if the url of the LMS is https://canvas.instructure.com, then the [tenant-name] is "canvas". If you are using self-hosted Canvas, replace https://[tenant-name].instructure.com with your canvas URL.
   * **Client ID**: enter "Client ID" from the LTI key registration.
-3. Click **SAVE REGISTRATION**.
+3. Optionally, you can add your Institution name and logo on the registration page.
+4. Click **SAVE REGISTRATION**.
 
 You're all set. The Learn LTI tool is now configured on your Canvas LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
 
@@ -244,6 +253,7 @@ The following steps show how to register the parameters back in the Learn LTI ap
   * **Access Token URL**: enter https://developer.blackboard.com/api/v1/gateway/oauth2/jwttoken
   * **Authorization URL**: enter https://developer.blackboard.com/api/v1/gateway/oidcauth
   * **Client ID**: enter "Application ID" from the LTI key registration.
-3. Click **SAVE REGISTRATION**.
+3. Optionally, you can add your Institution name and logo on the registration page.
+4. Click **SAVE REGISTRATION**..
 
 You're all set. The Learn LTI tool is now configured on your Blackboard Learn LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
