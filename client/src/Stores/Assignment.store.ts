@@ -3,27 +3,17 @@ import { ChildStore } from './Core';
 import { AssignmentService } from '../Services/Assignment.service';
 import { Assignment } from '../Models/Assignment.model';
 import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
-import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
   @observable errorContent : ErrorPageContent | undefined = undefined;
 
-  getErrorContent (error : ServiceError) : void {
-    switch (error) {
-      case 'not found':
-        this.errorContent = {errorMsg : "Error 404. Page not found.", icon : "PageRemove"}
-        break;
-      default: 
-        this.errorContent = {errorMsg : "Oops! Something went wrong.", icon : "Sad"};
-    }
-  }
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {
     const assignment = await AssignmentService.getAssignment(assignmentId);
     if (assignment.error) {
-      this.getErrorContent (assignment.error);
+      this.errorContent = ErrorPageContent.CreateFromServiceError(assignment.error);
       return;
     }
     const { deadline } = assignment;

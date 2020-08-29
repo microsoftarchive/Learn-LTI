@@ -41,10 +41,9 @@ export class UsersStore extends ChildStore {
     const getUser =  async (assignmentId : string) : Promise<WithError<UserDto>> =>
     {
       const user = await UsersService.getCurrentUserDetails(assignmentId);
-      if(user.error){
-        this.errorContent = {errorMsg : "Oops! Something went wrong.", icon : "Sad"};
-      }
-      else if(!user){
+      if(user.error) {
+        this.errorContent = ErrorPageContent.CreateFromServiceError(user.error);
+      } else if(!user) {
         this.errorContent = {errorMsg : "You are not enrolled in this course.", icon : "BlockContact"};
       }
       return user;
