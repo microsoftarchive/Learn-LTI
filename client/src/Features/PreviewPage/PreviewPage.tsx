@@ -2,8 +2,8 @@ import React from 'react';
 import { SimpleComponentStyles } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { styled } from '@fluentui/react';
 import { PageWrapper } from '../../Core/Components/Common/PageWrapper';
-import { pagesDisplayNames } from '../../Router/Consts';
 import { StudentViewContent } from '../StudentView/StudentViewContent';
+import { pagesDisplayNames } from '../../Router/Consts';
 
 type PreviewPageStyles = SimpleComponentStyles<'root'>;
 
