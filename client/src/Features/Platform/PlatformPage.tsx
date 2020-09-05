@@ -59,8 +59,8 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
         logoUrl={learnLogo}
         userInstitution={platformData?.institutionName}
       />
-      {platformStore.serviceError !== undefined ? (
-        <ErrorPage errorCode={platformStore.serviceError} /> 
+      {platformStore.errorContent !== undefined ? (
+        <ErrorPage {...platformStore.errorContent} /> 
       ) : !platformStore.platform ? ( 
         <Spinner
           size={SpinnerSize.large}

@@ -2,7 +2,7 @@ import { observable, action } from 'mobx';
 import { ChildStore } from './Core';
 import { PlatformService } from '../Services/Platform.service';
 import { Platform } from '../Models/Platform.model';
-import { ServiceError } from '../Core/Utils/Axios/ServiceError';
+import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
 
 export type PlatformSaveResult = 'error' | 'success';
 
@@ -10,14 +10,14 @@ export class PlatformStore extends ChildStore {
   @observable platform: Platform | null = null;
   @observable saveResult: PlatformSaveResult | null = null;
   @observable isSaving = false;
-  @observable serviceError : ServiceError | undefined = undefined;
-
+  @observable errorContent : ErrorPageContent | undefined = undefined;
+  
   @action
   async initializePlatform(): Promise<void> {
     const platforms = await PlatformService.getAllPlatforms();
 
     if (platforms.error) {
-      this.serviceError=platforms.error;
+      this.errorContent = ErrorPageContent.CreateFromServiceError(platforms.error);
     } else {
       if (platforms.length > 0) {
         this.platform = platforms[0];
@@ -26,6 +26,8 @@ export class PlatformStore extends ChildStore {
 
         if (!newPlatform.error) {
           this.platform = newPlatform;
+        } else {
+          this.errorContent = ErrorPageContent.CreateFromServiceError(newPlatform.error);
         }
       }
     }

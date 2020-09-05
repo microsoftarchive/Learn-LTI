@@ -17,7 +17,7 @@ const StudentPageInner = ({ styles }: IStylesOnly<StudentPageStyles>): JSX.Eleme
   return useObserver(() => (
     <div className={classes.root}>
       <PageWrapper title={assignmentStore.assignment?.name || ''} styles={themedClassNames(pageWrapperStyles)}>
-        <StudentViewContent />
+        <StudentViewContent requirePublished />
       </PageWrapper>
     </div>
   ));
