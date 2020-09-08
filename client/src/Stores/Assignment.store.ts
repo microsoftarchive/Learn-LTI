@@ -2,18 +2,18 @@ import { observable, action } from 'mobx';
 import { ChildStore } from './Core';
 import { AssignmentService } from '../Services/Assignment.service';
 import { Assignment } from '../Models/Assignment.model';
-import { ServiceError } from '../Core/Utils/Axios/ServiceError';
+import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
 
 export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
-  @observable serviceError: ServiceError | undefined = undefined;
+  @observable errorContent : ErrorPageContent | undefined = undefined;
 
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {
     const assignment = await AssignmentService.getAssignment(assignmentId);
     if (assignment.error) {
-      this.serviceError=assignment.error;
+      this.errorContent = ErrorPageContent.CreateFromServiceError(assignment.error);
       return;
     }
     const { deadline } = assignment;
