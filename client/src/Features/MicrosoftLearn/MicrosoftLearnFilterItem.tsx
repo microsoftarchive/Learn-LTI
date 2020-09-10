@@ -1,6 +1,6 @@
-import { FilterItemProps, FilterOption } from "./MicrosoftLearnFilterComponentProps";
+import { FilterItemProps } from "./MicrosoftLearnFilterComponentProps";
 import { useStore } from "../../Stores/Core";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useObserver } from "mobx-react-lite";
 import React from "react";
 

@@ -4,7 +4,7 @@ import { Catalog, Product, LearnContent } from '../Models/Learn';
 import { MicrosoftLearnService } from '../Services/MicrosoftLearn.service';
 import { CatalogDto, ProductChildDto, ProductDto } from '../Dtos/Learn';
 import { toMap } from '../Core/Utils/Typescript/ToMap';
-import { debounceTime, map, filter, tap, switchMap } from 'rxjs/operators';
+import { debounceTime, map, filter, switchMap } from 'rxjs/operators';
 import _ from 'lodash';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
@@ -225,7 +225,7 @@ export class MicrosoftLearnStore extends ChildStore {
 
     // O(|filtertype|)
   private removeExtrasFromSelected = (type: FilterType) => {
-    if(type==FilterType.Product){
+    if(type===FilterType.Product){
     
           let parentProducts = Array.from(this.productMap.keys());
   
@@ -318,11 +318,11 @@ export class MicrosoftLearnStore extends ChildStore {
     let levelFilter = this.selectedFilters.get(FilterType.Level);
 
     const intersect = (a1:string[], a2:string[]|undefined)=>{   
-      if(a2?.length == 0){
+      if(a2?.length === 0){
         return true;
       } 
-      a1 = a1.filter(item=> a2?.indexOf(item)!=-1)   
-      return a1.length!=0;
+      a1 = a1.filter(item=> a2?.indexOf(item)!==-1)   
+      return a1.length!==0;
     }
 
     let _filteredCatalogContent: LearnContent[] = []

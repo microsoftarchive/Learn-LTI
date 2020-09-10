@@ -1,6 +1,7 @@
-import { Product, Role, Level, LearnType } from '../../Models/Learn';
+import { Product, LearnType } from '../../Models/Learn';
 import { FilterType } from '../../Models/Learn/FilterType.model';
 import { RoleDto } from '../../Dtos/Learn/Role.dto';
+import { LevelDto } from '../../Dtos/Learn';
 
 
 export type LearnTypeName = 'Learning Path' | 'Module'
@@ -10,7 +11,7 @@ export type LearnTypeFilterOption = {
     name: LearnTypeName
 
 }
-export type FilterOption = Product | Role | Level | LearnTypeFilterOption | Pick<RoleDto, "id" | "name"> | undefined
+export type FilterOption = Product | Pick<LevelDto, "id" | "name">  | LearnTypeFilterOption | Pick<RoleDto, "id" | "name"> | undefined
 
 export type FilterComponentProps = {
     filterType: FilterType,

@@ -1,21 +1,13 @@
-import React, { CSSProperties, useState, useEffect } from 'react';
-import { SimpleComponentStyles, IStylesOnly, IThemeOnlyProps } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-import { styled, Text, FontIcon } from '@fluentui/react';
-import { themedClassNames } from '../../Core/Utils/FluentUI';
-import { useStore } from '../../Stores/Core';
-import { FixedSizeList } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import React, { useState, useEffect } from 'react';
+import { SimpleComponentStyles } from '../../Core/Utils/FluentUI/typings.fluent-ui';
+import { Text } from '@fluentui/react';
+// import { themedClassNames } from '../../Core/Utils/FluentUI';
+// import { FixedSizeList } from 'react-window';
+// import AutoSizer from 'react-virtualized-auto-sizer';
 import { useObserver } from 'mobx-react-lite';
-import { FIXED_ITEM_HEIGHT, FIXED_ITEM_WIDTH } from './MicrosoftLearnStyles';
-import { toMap } from '../../Core/Utils/Typescript/ToMap';
-import { Catalog, Product, Role, Level, LearnType } from '../../Models/Learn';
-import { FilterType } from '../../Models/Learn/FilterType.model'; 
-import { observable } from 'mobx';
-import { RoleDto } from '../../Dtos/Learn';
-import { intersection } from 'lodash';
-import _, { set } from 'lodash';
-import { SearchBox, Label } from '@fluentui/react';
-import { FilterComponentProps, FilterItemProps, FilterOption } from './MicrosoftLearnFilterComponentProps' 
+import { FIXED_ITEM_HEIGHT } from './MicrosoftLearnStyles';
+import { SearchBox } from '@fluentui/react';
+import { FilterComponentProps } from './MicrosoftLearnFilterComponentProps' 
 import { getRegexs, getDisplayFromSearch } from './MicrosoftLearnFilterUtils'
 import { MicrosoftLearnFilterItem } from './MicrosoftLearnFilterItem';
 
@@ -28,7 +20,7 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
     const [displayOptions, setDisplayOptions] = useState(props.filterOption);
 
     const filterBySearchTerm = (stringExp: string) => {
-        if(stringExp && stringExp?.trim()!=""){
+        if(stringExp && stringExp?.trim()!==""){
             let regexs: RegExp[] = getRegexs(stringExp);
             if(props.filterOption){
               let filteresDisplay =  getDisplayFromSearch(regexs, props.filterOption)
@@ -43,7 +35,7 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
     useEffect(() => {
         setDisplayOptions(props.filterOption);  
         filterBySearchTerm(filterSearchTerm || "");      
-    }, [props])
+    }, [props, filterSearchTerm, filterBySearchTerm])
 
     return useObserver(() => {
     if(props.filterOption==null) {
@@ -89,20 +81,21 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
             
         )
 })
+
 }
 
 
-const microsoftLearnFilterStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnFilterStyles => ({
-    root: [
-        {
-        //   paddingRight: theme.spacing.s1,
-          display: 'block',
-          float: 'left',
-          height: FIXED_ITEM_HEIGHT,
-          overflow:'scroll'
-        }
-      ]
+// const microsoftLearnFilterStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnFilterStyles => ({
+//     root: [
+//         {
+//         //   paddingRight: theme.spacing.s1,
+//           display: 'block',
+//           float: 'left',
+//           height: FIXED_ITEM_HEIGHT,
+//           overflow:'scroll'
+//         }
+//       ]
 
-})
+// })
 
 export const MicrosoftLearnFilterComponent = FilterComponentInner;

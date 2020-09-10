@@ -2,7 +2,7 @@ import { Product, Role, Level } from '../../Models/Learn';
 import { FilterType } from '../../Models/Learn/FilterType.model'; 
 import { LearnTypeFilterOption, FilterOption } from './MicrosoftLearnFilterComponentProps';
 import { RoleDto, LevelDto } from '../../Dtos/Learn';
-import _, { set } from 'lodash';
+import _ from 'lodash';
 
 
 
@@ -63,16 +63,6 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
 
 export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<string, Role> |undefined) =>{
   
-    const roleComparer = (a: Pick<RoleDto, "id" | "name"> | undefined, b: Pick<RoleDto, "id" | "name"> | undefined) => {
-        if(a && b){
-            return a.name.localeCompare(b.name);
-        }
-        else if(a){
-            return 1;
-        }
-        return -1;
-    }
-   
     let roles = new Map<Pick<RoleDto, "id" | "name"> | undefined , Pick<RoleDto, "id" | "name">[]>();
 
     // O(|Roles|)
