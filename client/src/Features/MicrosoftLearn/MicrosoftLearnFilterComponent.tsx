@@ -19,23 +19,24 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
     const [filterSearchTerm, setFilterSearchTerm] = useState('');
     const [displayOptions, setDisplayOptions] = useState(props.filterOption);
 
-    const filterBySearchTerm = (stringExp: string) => {
-        if(stringExp && stringExp?.trim()!==""){
-            let regexs: RegExp[] = getRegexs(stringExp);
-            if(props.filterOption){
-              let filteresDisplay =  getDisplayFromSearch(regexs, props.filterOption)
-              setDisplayOptions(filteresDisplay);
-            }
-        }
-        else{
-            setDisplayOptions(props.filterOption);
-        }
-    }
-
     useEffect(() => {
+
+        const filterBySearchTerm = (stringExp: string) => {
+            if(stringExp && stringExp?.trim()!==""){
+                let regexs: RegExp[] = getRegexs(stringExp);
+                if(props.filterOption){
+                  let filteresDisplay =  getDisplayFromSearch(regexs, props.filterOption)
+                  setDisplayOptions(filteresDisplay);
+                }
+            }
+            else{
+                setDisplayOptions(props.filterOption);
+            }
+        } 
+
         setDisplayOptions(props.filterOption);  
         filterBySearchTerm(filterSearchTerm || "");      
-    }, [props, filterSearchTerm, filterBySearchTerm])
+    }, [props.filterOption, filterSearchTerm])
 
     return useObserver(() => {
     if(props.filterOption==null) {
@@ -55,8 +56,7 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
                             type="text"
                             value={filterSearchTerm}
                             onChange={(event, _newValue)=>{                
-                            setFilterSearchTerm(_newValue || "");                
-                            filterBySearchTerm(_newValue || "");                
+                            setFilterSearchTerm(_newValue || "");                              
                         }}
                         // style={{display: props.search? "span" : "none"}}
                         //   className={classes.searchBox}

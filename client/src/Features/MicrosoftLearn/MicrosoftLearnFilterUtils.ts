@@ -143,7 +143,7 @@ export const getDisplayFilterTags = (displayFilters: Map<FilterType, string[]>, 
     // O(|filtertype|)
     const getIntersection = (type: FilterType) => {
         let intersect = displayFilters.get(type)?.filter(item => selectedFilters.get(type)?.includes(item));
-        if(type==FilterType.Product){
+        if(type===FilterType.Product){
             let keys = Array.from(productsMap.keys())
             keys.forEach((item) => {
                 if(intersect?.includes(item.id)){

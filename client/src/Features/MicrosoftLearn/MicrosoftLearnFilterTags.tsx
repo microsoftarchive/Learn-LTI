@@ -8,7 +8,6 @@ import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
 // import { FIXED_ITEM_HEIGHT, FIXED_ITEM_WIDTH } from './MicrosoftLearnStyles';
 import { FilterType } from '../../Models/Learn/FilterType.model'; 
-import _ from 'lodash';
 import {  getDisplayFilterTags } from './MicrosoftLearnFilterUtils';
 
 

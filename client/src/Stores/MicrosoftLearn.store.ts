@@ -107,6 +107,7 @@ export class MicrosoftLearnStore extends ChildStore {
     const levels = toMap(catalog.levels, item => item.id);
     const allItems = [...modules, ...learningPaths];
     const items = toMap(allItems, item => item.uid);
+
     this.catalog = { contents: items, products, roles, levels };
     this.filteredCatalogContent = allItems;
     this.isLoadingCatalog = false;
@@ -134,6 +135,16 @@ export class MicrosoftLearnStore extends ChildStore {
       this.selectedFilters.set(type, currentFilters);
     }
     this.applyFilter(true);
+  }
+
+  @action
+  resetFilter(){
+    this.selectedFilters.set(FilterType.Product, []);
+    this.selectedFilters.set(FilterType.Role, []);
+    this.selectedFilters.set(FilterType.Type, []);
+    this.selectedFilters.set(FilterType.Level, []);
+
+    this.applyFilter(false);
   }
 
   private getProductHierarchicalMap = () => {

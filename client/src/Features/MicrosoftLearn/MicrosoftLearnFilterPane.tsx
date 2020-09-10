@@ -35,7 +35,14 @@ const FilterPaneInner = ()=>{
                 <Text>Oops No filters available</Text>
                 :
                 (        
-                <div>        
+                <div>
+                    <button 
+                    onClick={()=>{
+                        learnStore.resetFilter();
+                    }}                    
+                    >
+                        Clear All Filters
+                    </button>        
                     <MicrosoftLearnFilterTags />         
                     <MicrosoftLearnFilterComponent
                         filterType={FilterType.Product}
@@ -50,7 +57,7 @@ const FilterPaneInner = ()=>{
 
                             while(learnStore.catalog && _n<learnStore.catalog?.products.size){
                                 let product = iter?.next().value;
-                                if(product.parentId && product.parentId==target.value){
+                                if(product.parentId && product.parentId===target.value){
                                     subItems.push(product.id);
                                 }
                                 _n=_n+1;
