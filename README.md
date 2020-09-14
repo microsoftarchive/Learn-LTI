@@ -14,12 +14,12 @@ The Microsoft Learn LTI Application adheres to [v1.1](https://www.imsglobal.org/
 * **LTI v1.1 and v1.3 Compliant** - student data is not gathered and their data cannot be accessed; all user data is protected.
 
 ### What do I need to get started? ###
-Typically, there will be 4 roles involved in deploying, configuring, and using the Microsoft Learn LTI application with Institution’s LMS. 
+Typically, there will be four roles involved in deploying, configuring, and using the Microsoft Learn LTI application with Institution’s LMS.
 
-1. Central IT / IT Admin – This person will be the one deploying Microsoft Learn LTI application to Azure. They need to be an owner of an Azure subscription and have the privileges to create Azure resources. This person will also be the one configuring the Microsoft Learn LTI application to work with the LMS.
-2. LMS Admin – This person will be the one configuring the LMS to work with the deployed Microsoft Learn LTI application. Once configured, the Microsoft Learn LTI application will appear as an LTI tool (external tool) to be used by all Educators on the LMS.
-3. Educators – This is the users of the LMS who is set up as a “Teacher” in a course and will facilitate the learning. This person will create activities or resources based on the configured LTI tool on the LMS.
-4. Students – This is the users of the LMS who will consume the learning provisioned to them by the Educators. LMS System that supports LTI v1.1 or v1.3
+1. **Central IT / IT Admin** – The user deploying the Microsoft Learn LTI application to Azure. They need to be an owner of an Azure subscription and have the privileges to create Azure resources. This person will also be the one configuring the Microsoft Learn LTI application to work with the LMS.
+2. **LMS Admin** – The user configuring the LMS to work with the deployed Microsoft Learn LTI application. Once configured, the Microsoft Learn LTI application will appear as an LTI tool (external tool) to be used by all Educators on the LMS.
+3. **Educators** – The user(s) of the LMS who is set up as a “Teacher” in a course and will facilitate the learning. This person will create activities or resources based on the configured LTI tool on the LMS.
+4. **Students** – The users of the LMS who will consume the learning provisioned to them by the Educators.
 
 The following illustrates the workflow in full:
 ![Readme.1.png](./images/Readme.1.png)
