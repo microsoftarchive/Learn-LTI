@@ -25,33 +25,20 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
         productId?.forEach((pid)=>{
             products.set(pid, productMap.get(pid));
         })
-        const parentProducts = [...products.values()].filter(item => item?.parentId==null)
-        .sort(FilterOptionComparer);
+        // const parentProducts = [...products.values()].filter(item => item?.parentId==null)
+        // .sort(FilterOptionComparer);
 
-
-        parentProducts.forEach((item)=>{
-            if(item){
-                let children: Product[] = [];
-                [...products.values()].filter(child => {
-                    if(child?.parentId==item.id){
-                        children.push(child)
-                    }
-                })
-                productParentChildMap.set(item, children);
-            }            
-        })
-
-        // products.forEach((item)=>{
-        //     if(item !=null && item.parentId!=null){
-        //        let parentItem = products.get(item.parentId);
-        //        if(parentItem!=null){
-        //         let previousChildren = productParentChildMap.get(parentItem);  
-        //         previousChildren?.push(item);
-        //         previousChildren?.sort(FilterOptionComparer);
-        //         productParentChildMap.set(parentItem, previousChildren?previousChildren:[]);
-        //        }
-        //     }
-        // }) 
+        products.forEach((item)=>{
+            if(item !=null && item.parentId!=null){
+               let parentItem = products.get(item.parentId);
+               if(parentItem!=null){
+                let previousChildren = productParentChildMap.get(parentItem);  
+                previousChildren?.push(item);
+                previousChildren?.sort(FilterOptionComparer);
+                productParentChildMap.set(parentItem, previousChildren?previousChildren:[]);
+               }
+            }
+        }) 
 
         let sortedProductParentChildMap = new Map<Product, Product []>();
         let sortedKeys = Array.from(productParentChildMap.keys()).sort(FilterOptionComparer);

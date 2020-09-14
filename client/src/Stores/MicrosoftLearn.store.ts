@@ -5,7 +5,7 @@ import { MicrosoftLearnService } from '../Services/MicrosoftLearn.service';
 import { CatalogDto, ProductChildDto, ProductDto } from '../Dtos/Learn';
 import { toMap } from '../Core/Utils/Typescript/ToMap';
 import { debounceTime, map, filter, switchMap, tap } from 'rxjs/operators';
-import _ from 'lodash';
+// import _ from 'lodash';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
@@ -143,7 +143,6 @@ export class MicrosoftLearnStore extends ChildStore {
         .forEach((k)=>{
           let children = [...productMap?.values()].filter(product => product.parentId!=null && product.parentId===k.id)
           productParentChildMap.set(k, children);
-          console.log(k, children);
         })
     }
     return productParentChildMap
@@ -189,7 +188,7 @@ export class MicrosoftLearnStore extends ChildStore {
     expressions.push(new RegExp(`.*${searchTerm}.*`, 'i'));
     return expressions;
   }
-  
+
   private applyFilter (removeExtra: boolean, searchExpressions?: RegExp[]) {
     if(this.filter){
       let _filteredCatalogContent = this.filter.applyFilter(removeExtra, searchExpressions)

@@ -3,7 +3,7 @@ import { Catalog } from "./Catalog.model";
 import { FilterType } from "./FilterType.model";
 import { LearnContent } from "./LearnContent.model";
 import { Product } from "./Product.model";
-import { observable, action, decorate } from "mobx";
+import { observable, action } from "mobx";
 
 export class Filter {
     @observable displayFilters: Map<FilterType, string[]>;
