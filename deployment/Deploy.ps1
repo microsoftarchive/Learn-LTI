@@ -227,6 +227,9 @@ try {
     $ConnectUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.ConnectFunctionName.value $EdnaKeyString
     $PlatformsUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.PlatformsFunctionName.value $EdnaKeyString
     $UsersUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.UsersFunctionName.value $EdnaKeyString
+    $AssignmentsUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.AssignmentsFunctionName.value $EdnaKeyString
+    $LinksUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.LinksFunctionName.value $EdnaKeyString
+    $LearnContentUpdateOp = Update-LtiFunctionAppSettings $resourceGroupName $deploymentOutput.properties.outputs.LearnContentFunctionName.value $EdnaKeyString
 
     Write-Host 'Resource Creation in Azure Completed Successfully'
 

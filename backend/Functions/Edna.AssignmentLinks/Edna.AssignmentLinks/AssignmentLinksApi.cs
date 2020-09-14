@@ -12,6 +12,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
+using Edna.Bindings.Lti1;
+using Edna.Bindings.LtiAdvantage.Attributes;
+using Edna.Bindings.LtiAdvantage.Services;
+using Edna.Bindings.Platform;
+using Edna.Bindings.Platform.Attributes;
+using Edna.Bindings.Platform.Models;
+using Edna.Utils.Http;
+using LtiLibrary.NetCore.Lis.v2;
+using LtiAdvantage.NamesRoleProvisioningService;
+using LtiAdvantage.Lti;
+using Edna.Bindings.Assignment.Attributes;
+using Edna.Bindings.Assignment.Models;
 
 namespace Edna.AssignmentLinks
 {
@@ -20,6 +32,7 @@ namespace Edna.AssignmentLinks
         private readonly ILogger<AssignmentLinksApi> _logger;
         private readonly IMapper _mapper;
         private const string AssignmentLinksTableName = "Links";
+        private const string LtiAdvantageVersionString = "1.3.0";
 
         public AssignmentLinksApi(ILogger<AssignmentLinksApi> logger, IMapper mapper)
         {
@@ -74,13 +87,59 @@ namespace Edna.AssignmentLinks
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "assignments/{assignmentId}/links/{linkId}")] HttpRequest req,
             [Table(AssignmentLinksTableName)] IAsyncCollector<AssignmentLinkEntity> linksCollector,
             string assignmentId,
-            string linkId)
+            string linkId,
+            [Assignment(AssignmentId = "{assignmentId}")] Assignment assignment,
+            [Platform] PlatformsClient platformsClient,
+            [LtiAdvantage] INrpsClient nrpsClient,
+            [Lti1] Lti1MembershipClient membershipClient)
         {
             string linkJson = await req.ReadAsStringAsync();
             AssignmentLinkDto linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
 
             if (linkId != linkDto.Id)
                 return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
+
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
+            }
+            if (userEmails.Count > 0)
+            {
+                if (assignment.LtiVersion != LtiAdvantageVersionString)
+                {
+                    Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
+                    if (userMembership == null)
+                    {
+                        _logger.LogError("no members");
+                        return new BadRequestErrorMessageResult("Bad Request: no members");
+                    }
+
+                    var role = userMembership.Role;
+                    if (role.Equals("Learner"))
+                    {
+                        _logger.LogError("Students cannot update an assignment");
+                        return new UnauthorizedResult();
+                    }
+                }
+                else
+                {
+                    Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
+                    Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
+                    if (member == null)
+                    {
+                        _logger.LogError("no members");
+                        return new BadRequestErrorMessageResult("Bad Request: no members");
+                    }
+                    var roles = member.Roles;
+
+                    if (roles.Contains(Role.ContextLearner) || roles.Contains(Role.InstitutionLearner))
+                    {
+                        _logger.LogError("Students cannot update an assignment");
+                        return new UnauthorizedResult();
+                    }
+                }
+            }
 
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");
 
@@ -103,11 +162,60 @@ namespace Edna.AssignmentLinks
         public async Task<IActionResult> DeleteLink(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "assignments/{assignmentId}/links/{linkId}")] HttpRequest req,
             [Table(AssignmentLinksTableName)] CloudTable assignmentLinksTable,
-            [Table(AssignmentLinksTableName, "{assignmentId}", "{linkId}")] AssignmentLinkEntity entityToDelete)
+            [Table(AssignmentLinksTableName, "{assignmentId}", "{linkId}")] AssignmentLinkEntity entityToDelete,
+            [Assignment(AssignmentId = "{assignmentId}")] Assignment assignment,
+            [Platform] PlatformsClient platformsClient,
+            [LtiAdvantage] INrpsClient nrpsClient,
+            [Lti1] Lti1MembershipClient membershipClient)
         {
             if (entityToDelete == null)
+            {
+                _logger.LogInformation("Entity to delete is null");
                 return new OkResult();
+            }               
 
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
+            }
+            if (userEmails.Count > 0)
+            {
+                if (assignment.LtiVersion != LtiAdvantageVersionString)
+                {
+                    Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
+                    if (userMembership == null)
+                    {
+                        _logger.LogError("no members");
+                        return new BadRequestErrorMessageResult("Bad Request: no members");
+                    }
+
+                    var role = userMembership.Role;
+                    if (role.Equals("Learner"))
+                    {
+                        _logger.LogError("Students cannot update an assignment");
+                        return new UnauthorizedResult();
+                    }
+                }
+                else
+                {
+                    Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
+                    Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
+                    if (member == null)
+                    {
+                        _logger.LogError("no members");
+                        return new BadRequestErrorMessageResult("Bad Request: no members");
+                    }
+                    var roles = member.Roles;
+
+                    if (roles.Contains(Role.ContextLearner) || roles.Contains(Role.InstitutionLearner))
+                    {
+                        _logger.LogError("Students cannot update an assignment");
+                        return new UnauthorizedResult();
+                    }
+                }
+            }
+            
             TableOperation deleteTable = TableOperation.Delete(entityToDelete);
             TableResult deleteResult = await assignmentLinksTable.ExecuteAsync(deleteTable);
 
