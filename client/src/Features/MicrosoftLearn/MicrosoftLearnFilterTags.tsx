@@ -14,12 +14,10 @@ import {  getDisplayFilterTags } from './MicrosoftLearnFilterUtils';
 const FilterTagsInner = () => {
 
     const learnStore = useStore('microsoftLearnStore');
-    const displayFilters = learnStore.displayFilters;
-    const selectedFilters = learnStore.selectedFilters;
     const productsMap = learnStore.productMap;
-
+    const filter = learnStore.filter;
     return useObserver(()=>{
-        const tagMap: Map<FilterType, string[]> = getDisplayFilterTags(displayFilters, selectedFilters, productsMap);
+        const tagMap: Map<FilterType, string[]> = getDisplayFilterTags(filter.displayFilters, filter.selectedFilters, productsMap);
 
         return (
             <div>Selected Filters: 

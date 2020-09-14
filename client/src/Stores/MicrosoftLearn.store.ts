@@ -10,6 +10,7 @@ import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
 import { FilterType } from '../Models/Learn/FilterType.model'; 
+import { Filter } from '../Models/Learn/Filter.model';
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -17,32 +18,21 @@ export class MicrosoftLearnStore extends ChildStore {
   @observable selectedItems: AssignmentLearnContent[] | null = null;
   @observable filteredCatalogContent: LearnContent[] | null = null;
   @observable searchTerm = '';
-  @observable displayFilters: Map<FilterType, string[]> = new Map([
-                                                            [FilterType.Product, []],
-                                                            [FilterType.Role, []],
-                                                            [FilterType.Level, []],
-                                                            [FilterType.Type, []]
-                                                                    ]);;
-  @observable selectedFilters: Map<FilterType, string[]> = new Map([
-                                                            [FilterType.Product, []],
-                                                            [FilterType.Role, []],
-                                                            [FilterType.Level, []],
-                                                            [FilterType.Type, []]
-                                                                    ]);
+
   @observable productMap: Map<Product, Product[]>  = new Map<Product, Product[]>(); 
+
+  @observable filter: Filter = new Filter(this.catalog, this.productMap);
 
   initialize(): void {
     toObservable(() => this.searchTerm)
       .pipe(
         debounceTime(250),
         tap(() => (this.filteredCatalogContent = [])),
-        // map(searchTerm => this.getRegexs(searchTerm)),
+        map(searchTerm => this.getRegexs(searchTerm)),
         filter(() => !!this.catalog),
-        // map(expressions => this.getFilteredLearnContent(expressions, this.catalog!))
-        tap(()=>(this.applyFilter(false))),
-        // map(expression => this.applyFilter(false))
+        map(expressions => this.applyFilter(false, expressions))
       )
-      .subscribe(() => (this.filteredCatalogContent));
+      .subscribe((filteredCatalogContent) => (this.filteredCatalogContent = filteredCatalogContent))
 
     toObservable(() => this.root.assignmentStore.assignment)
       .pipe(
@@ -58,6 +48,9 @@ export class MicrosoftLearnStore extends ChildStore {
   @action
   updateSearchTerm(searchTerm: string): void {
     this.searchTerm = searchTerm;
+    if(this.filter){
+      this.filter.updateSearchTerm(searchTerm);
+    }
   }
 
   @action
@@ -112,64 +105,48 @@ export class MicrosoftLearnStore extends ChildStore {
     this.filteredCatalogContent = allItems;
     this.isLoadingCatalog = false;
     this.productMap = this.getProductHierarchicalMap();
-    this.setDisplayFilters(this.filteredCatalogContent, false);
+
+    this.filter.catalog = this.catalog;
+    this.filter.productMap = this.productMap;
+    this.filter.setDisplayFilters(this.filteredCatalogContent, false);
   }
 
   @action
   addFilter(type: FilterType, filters: string[]){
-     let currentFilters = this.selectedFilters.get(type);
-     if(currentFilters){
-      filters.forEach((f)=>{
-        currentFilters?.push(f);
-      })
-      this.selectedFilters.set(type, currentFilters);
-     }
-     this.applyFilter(true);
+    if(this.filter){
+      let _filteredCatalogContent = this.filter?.addFilter(type, filters); 
+      this.filteredCatalogContent = _filteredCatalogContent
+    }
   }
 
   @action
   removeFilter(type: FilterType, filters: string[]){
-    let currentFilters = this.selectedFilters.get(type);
-    if(currentFilters){
-      currentFilters = currentFilters?.filter(item => !filters.includes(item))
-      this.selectedFilters.set(type, currentFilters);
+    if(this.filter){
+      let _filteredCatalogContent = this.filter?.removeFilter(type, filters);
+      this.filteredCatalogContent = _filteredCatalogContent
     }
-    this.applyFilter(true);
   }
 
   @action
   resetFilter(){
-    this.selectedFilters.set(FilterType.Product, []);
-    this.selectedFilters.set(FilterType.Role, []);
-    this.selectedFilters.set(FilterType.Type, []);
-    this.selectedFilters.set(FilterType.Level, []);
-
-    this.applyFilter(false);
+    if(this.filter){
+      let _filteredCatalogContent = this.filter.resetFilter();
+      this.filteredCatalogContent = _filteredCatalogContent
+    } 
   }
 
   private getProductHierarchicalMap = () => {
     let productParentChildMap = new Map<Product, Product[]>();
     let productMap = this.catalog?.products;
-    var parentProducts;
     if(productMap!=null){        
-        parentProducts = Array.from(productMap.values()).filter(item => item?.parentId==null)
-        parentProducts.forEach((k)=>{
-          productParentChildMap.set(k, []);
+        [...productMap.values()].filter(item => item?.parentId==null)
+        .forEach((k)=>{
+          let children = [...productMap?.values()].filter(product => product.parentId!=null && product.parentId===k.id)
+          productParentChildMap.set(k, children);
+          console.log(k, children);
         })
-        productMap.forEach((item)=>{
-            if(item !=null && item.parentId!=null){
-               let parentItem = productMap?.get(item.parentId);
-               if(parentItem!=null){                
-                let previousChildren = productParentChildMap.get(parentItem);                  
-                if(previousChildren!=null){
-                  previousChildren.push(item);                    
-                  productParentChildMap.set(parentItem, previousChildren);
-                }
-               }
-            }
-        }) 
-      }
-      return productParentChildMap
+    }
+    return productParentChildMap
   }
 
   private getItemIndexInSelectedList = (learnContentUid: string): number | void => {
@@ -212,106 +189,12 @@ export class MicrosoftLearnStore extends ChildStore {
     expressions.push(new RegExp(`.*${searchTerm}.*`, 'i'));
     return expressions;
   }
-
-  private getSearchTermFilteredLearnContent(expressions: RegExp[], content: LearnContent[]): LearnContent[] {
-    return content
-      .map(course => ({
-        course: course,
-        score: _.sumBy(
-          expressions,
-          singleExpression =>
-            this.scoreRegex(course.summary, singleExpression) + this.scoreRegex(course.title, singleExpression, 2)
-        )
-      }))
-      .filter(scouredCourse => scouredCourse.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .map(scoredCourse => scoredCourse.course);
-  }
-
-  private scoreRegex(testPhrase: string, exp: RegExp, score = 1): number {
-    return exp.test(testPhrase) ? score : 0;
-  }
-
-  private removeExtrasFromSelected (type: FilterType) {
-    if(type===FilterType.Product){
-    
-          let parentProducts = [...this.productMap.keys()] 
   
-          // CASE 1: check for parent products which are there in selectedFilter but not in displayFilter. Remove all of them from selectedFilter, along with all their children.
-          // CASE 2: check for individual product filters whose parent is not in selected filter, but it is, and the current state of displayFilter does not. Remove them from selectedFilter.
-  
-          let prevSelected = this.selectedFilters.get(type);
-          let newDisplay = this.displayFilters.get(type);
-
-          const selectedInvisibleItems = prevSelected?.filter(item => newDisplay && !newDisplay.includes(item))
-          let removeProducts = parentProducts?.filter(parent => selectedInvisibleItems?.includes(parent.id)).map(parent => parent.id);
-
-          [...this.catalog?.products.values()].forEach(product => {
-            if((product.parentId &&
-              (removeProducts.includes(product.parentId) ||
-              (!prevSelected?.includes(product.parentId) && prevSelected?.includes(product.id) && !newDisplay?.includes(product.id))))){
-                removeProducts.push(product.id);
-            }
-          })
-
-          let newSelected = prevSelected?.filter(item => !removeProducts.includes(item) );
-          if(newSelected){
-          this.selectedFilters.set(type, newSelected);
-          }
-      }
-  
-      else{
-        let prevSelected = this.selectedFilters.get(type);
-        let newDisplay = this.displayFilters.get(type);
-
-        if(prevSelected && newDisplay){
-          let newSelected = _.intersection(prevSelected, newDisplay) 
-          this.selectedFilters.set(type, newSelected);
-        }
-      }
-  }
-
-  private setDisplayFilters (filteredContent: LearnContent[], removeExtra: boolean) {
-    let filteredProducts = new Set<string>();
-    let filteredRoles = new Set<string>(_.flatten(filteredContent.map(content => content.roles)));
-    let filteredTypes = new Set<string>(_.flatten(filteredContent.map(content => [content.type])));
-    let filteredLevels = new Set<string>(_.flatten(filteredContent.map(content => content.levels)));
-
-    const products = _.flatten(filteredContent.map(content => content.products));
-    const parents = products.map(product => this.catalog?.products.get(product)?.parentId || '').filter(pId => pId.length>0)
-    filteredProducts = new Set([...parents, ...products]);
-
-    this.displayFilters.set(FilterType.Product, Array.from(filteredProducts));
-    this.displayFilters.set(FilterType.Role, Array.from(filteredRoles));
-    this.displayFilters.set(FilterType.Level, Array.from(filteredLevels));
-    this.displayFilters.set(FilterType.Type, Array.from(filteredTypes));
-
-    if(removeExtra){
-      this.removeExtrasFromSelected(FilterType.Product);
-      this.removeExtrasFromSelected(FilterType.Role);
-      this.removeExtrasFromSelected(FilterType.Level);
-      this.removeExtrasFromSelected(FilterType.Type);
-    }
-  }
-
-  private applyFilter (removeExtra: boolean) {
-
-    let productFilter = this.selectedFilters.get(FilterType.Product) || [];
-    let roleFilter = this.selectedFilters.get(FilterType.Role) || [];
-    let typeFilter = this.selectedFilters.get(FilterType.Type) || [];
-    let levelFilter = this.selectedFilters.get(FilterType.Level) || [];
-
-    let _filteredCatalogContent :LearnContent[] =  [...this.catalog?.contents.values()]    
-                                .filter(content => (
-                                  ((productFilter.length===0 || _.intersection(content.products, productFilter).length>0) &&
-                                  (roleFilter.length===0 || _.intersection(content.roles, roleFilter).length>0) &&
-                                  (levelFilter.length===0 || _.intersection(content.levels, levelFilter).length>0) &&
-                                  (typeFilter.length===0 || _.intersection([content.type], typeFilter).length>0)
-                                  )))                      
-
-    let expressions = this.getRegexs(this.searchTerm)
-    _filteredCatalogContent = this.getSearchTermFilteredLearnContent(expressions, _filteredCatalogContent); 
-    this.filteredCatalogContent = _filteredCatalogContent;
-    this.setDisplayFilters(this.filteredCatalogContent, removeExtra);
+  private applyFilter (removeExtra: boolean, searchExpressions?: RegExp[]) {
+    if(this.filter){
+      let _filteredCatalogContent = this.filter.applyFilter(removeExtra, searchExpressions)
+      return _filteredCatalogContent
+    }                  
+    return null;
   }
 }
