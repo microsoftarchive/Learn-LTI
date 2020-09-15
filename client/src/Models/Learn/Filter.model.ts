@@ -91,8 +91,8 @@ export class Filter {
                 let keep: string[] = [];
                 let invisibleChildren: string[] = [];
                 productFilter.forEach(f=>{                    
-                    if(parents.filter(p => p.id == f).length > 0){
-                        let parent = parents.filter(p => p.id == f)[0];
+                    if(parents.filter(p => p.id === f).length > 0){
+                        let parent = parents.filter(p => p.id === f)[0];
                         keep.push(f);
                         invisibleChildren = [...invisibleChildren, ...this.productMap.get(parent)?.map(c=>c.id)]
                     }
@@ -107,7 +107,7 @@ export class Filter {
             let typeUri = typeFilter.length>0? 'types=' + typeFilter.join('%2C') : '';
             let levelUri = levelFilter.length>0? 'levels=' + levelFilter.join('%2C') : '';
             let termsUri = this.searchTerm.length>0? 'terms='+this.searchTerm : '';
-            let finalUri = [productUri, roleUri, levelUri, typeUri, termsUri].filter(s=>s.length!=0).join('&')            
+            let finalUri = [productUri, roleUri, levelUri, typeUri, termsUri].filter(s=>s.length!==0).join('&')            
 
             let uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + finalUri;
             window.history.pushState({path:uri},'',uri);       

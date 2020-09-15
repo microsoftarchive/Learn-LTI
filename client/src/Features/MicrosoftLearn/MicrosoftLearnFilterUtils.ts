@@ -33,14 +33,14 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
         let included: Product[] = []
         parentProducts.forEach((parent) => {
                 let children = [...products.values()]
-                .filter(product=> product?.parentId && product.parentId==parent?.id);                
+                .filter(product=> product?.parentId && product.parentId===parent?.id);                
                 productParentChildMap.set(parent, children);
                 included = [...included, ...children, parent]
         })
 
         let leftOver = [...products.values()].filter(item => !included.includes(item))
         leftOver.forEach(p=>{
-            if(p.id==p.parentId){
+            if(p.id===p.parentId){
                 productParentChildMap.set(p, []);
             }
         })

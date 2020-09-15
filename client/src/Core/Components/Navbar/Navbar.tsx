@@ -9,7 +9,6 @@ import { NavbarSectionHeader } from './NavbarSectionHeader';
 import { styled, FontWeights } from '@fluentui/react';
 import { IThemeOnlyProps, IStylesOnly } from '../../Utils/FluentUI/typings.fluent-ui';
 import { Assignment } from '../../../Models/Assignment.model';
-import { FilterType } from '../../../Models/Learn/FilterType.model';
 
 const getNavLinkGroups = (assignment: Assignment): INavLinkGroup[] => [
   {

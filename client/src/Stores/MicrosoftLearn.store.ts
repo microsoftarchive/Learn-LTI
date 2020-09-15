@@ -11,8 +11,6 @@ import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
 import { FilterType } from '../Models/Learn/FilterType.model'; 
 import { Filter } from '../Models/Learn/Filter.model';
-import { stringify } from 'querystring';
-import { pick } from 'lodash';
 import _ from 'lodash';
 
 export class MicrosoftLearnStore extends ChildStore {
