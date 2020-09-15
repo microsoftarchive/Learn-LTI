@@ -11,6 +11,7 @@ export class Filter {
     @observable catalog: Catalog | null;
     @observable productMap: Map<Product, Product[]>
     @observable searchTerm: string;
+    @observable learnFilterUriParam: string = '';
     constructor(catalog: Catalog | null, productMap: Map<Product, Product[]>){
         this.displayFilters = new Map([
             [FilterType.Product, []],
@@ -84,13 +85,34 @@ export class Filter {
             : this.getSearchTermFilteredLearnContent(this.getRegexs(this.searchTerm), _filteredCatalogContent);
            
             this.setDisplayFilters(_filteredCatalogContent, removeExtra);
-            
-            sessionStorage.setItem('product', JSON.stringify(productFilter));
-            sessionStorage.setItem('role', JSON.stringify(roleFilter));
-            sessionStorage.setItem('level', JSON.stringify(levelFilter));
-            sessionStorage.setItem('type', JSON.stringify(typeFilter));
-            sessionStorage.setItem('searchTerm', this.searchTerm);
 
+            const getProductUri = () => {
+                let parents = [...this.productMap.keys()]; 
+                let keep: string[] = [];
+                let invisibleChildren: string[] = [];
+                productFilter.forEach(f=>{                    
+                    if(parents.filter(p => p.id == f).length > 0){
+                        let parent = parents.filter(p => p.id == f)[0];
+                        keep.push(f);
+                        invisibleChildren = [...invisibleChildren, ...this.productMap.get(parent)?.map(c=>c.id)]
+                    }
+                })
+                
+                keep = [...keep, ...productFilter.filter(f => !keep.includes(f) && !invisibleChildren.includes(f))];
+                return 'products='+keep.join('%2C');
+            }
+
+            let productUri = productFilter.length>0? getProductUri() : '';
+            let roleUri = roleFilter.length>0? 'roles=' + roleFilter.join('%2C') : '';
+            let typeUri = typeFilter.length>0? 'types=' + typeFilter.join('%2C') : '';
+            let levelUri = levelFilter.length>0? 'levels=' + levelFilter.join('%2C') : '';
+            let termsUri = this.searchTerm.length>0? 'terms='+this.searchTerm : '';
+            let finalUri = [productUri, roleUri, levelUri, typeUri, termsUri].filter(s=>s.length!=0).join('&')            
+
+            let uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + finalUri;
+            window.history.pushState({path:uri},'',uri);       
+
+            this.learnFilterUriParam = finalUri;
             return _filteredCatalogContent
           }
 
@@ -134,7 +156,6 @@ export class Filter {
             const products = _.flatten(filteredContent.map(content => content.products));
             const parents = products.map(product => this.catalog?.products.get(product)?.parentId || '').filter(pId => pId.length>0)
             filteredProducts = new Set([...parents, ...products]);
-        
             this.displayFilters.set(FilterType.Product, [...filteredProducts]);
             this.displayFilters.set(FilterType.Role, [...filteredRoles]);
             this.displayFilters.set(FilterType.Level, [...filteredLevels]);

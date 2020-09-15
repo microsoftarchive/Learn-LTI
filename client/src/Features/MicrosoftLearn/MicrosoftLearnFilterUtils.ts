@@ -28,30 +28,22 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
                 products.set(pid, product);
             }
         })
-        // const parentProducts = [...products.values()].filter(item => item && item?.parentId==null)
-        // .sort(FilterOptionComparer);
-        // let included: Product[] = []
-        // parentProducts.forEach((parent) => {
-        //         let children = [...products.values()]
-        //         .filter(product=> product?.parentId && product.parentId==parent?.id);                
-        //         productParentChildMap.set(parent, children);
-        //         included = [...included, ...children, parent]
-        // })
+        const parentProducts = [...products.values()].filter(item => item && item?.parentId==null)
+        .sort(FilterOptionComparer);
+        let included: Product[] = []
+        parentProducts.forEach((parent) => {
+                let children = [...products.values()]
+                .filter(product=> product?.parentId && product.parentId==parent?.id);                
+                productParentChildMap.set(parent, children);
+                included = [...included, ...children, parent]
+        })
 
-        // let leftOver = [...products.values()].filter(item => !included.includes(item))
-        // console.log("leftover", leftOver);
-
-        products.forEach((item)=>{
-            if(item !=null && item.parentId!=null){
-               let parentItem = products.get(item.parentId);
-               if(parentItem!=null){
-                let previousChildren = productParentChildMap.get(parentItem);  
-                previousChildren?.push(item);
-                previousChildren?.sort(FilterOptionComparer);
-                productParentChildMap.set(parentItem, previousChildren?previousChildren:[]);
-               }
+        let leftOver = [...products.values()].filter(item => !included.includes(item))
+        leftOver.forEach(p=>{
+            if(p.id==p.parentId){
+                productParentChildMap.set(p, []);
             }
-        }) 
+        })
 
         let sortedProductParentChildMap = new Map<Product, Product []>();
         let sortedKeys = Array.from(productParentChildMap.keys()).sort(FilterOptionComparer);

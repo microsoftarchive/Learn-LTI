@@ -13,7 +13,7 @@ export const ProductFilterComponent = () => {
 
     return useObserver(()=>{
         const displayProducts = getProductsToDisplay(filter?.displayFilters.get(FilterType.Product), catalog?.products)    
-    return (
+        return (
         <>
             <MicrosoftLearnFilterComponent
             filterType={FilterType.Product}
@@ -39,7 +39,6 @@ export const ProductFilterComponent = () => {
             subItemClickHandler={(event)=>{
                 let target = event?.target as HTMLInputElement
                 let type = FilterType.Product
-                console.log(target.checked, target.getAttribute('aria-describedby'));
                 let value = target.getAttribute('aria-describedby')
 
                 if(target.checked && value){
@@ -73,7 +72,6 @@ export const RoleFilterComponent = () => {
         mainItemClickHandler={(event) => {
             let target = event?.target as HTMLInputElement
             let type = FilterType.Role
-            console.log(target.checked, target.getAttribute('aria-describedby'));
             let value = target.getAttribute('aria-describedby')
 
             if(target.checked && value){
@@ -109,7 +107,6 @@ export const LevelFilterComponent = () => {
             mainItemClickHandler={(event)=>{
                 let target = event?.target as HTMLInputElement
                 let type = FilterType.Level
-                console.log(target.checked, target.getAttribute('aria-describedby'));
                 let value = target.getAttribute('aria-describedby')
 
                 if(target.checked && value){
@@ -143,7 +140,6 @@ export const TypeFilterComponent = () =>{
                         mainItemClickHandler={(event)=>{
                             let target = event?.target as HTMLInputElement
                             let type = FilterType.Type
-                            console.log(target.checked, target.getAttribute('aria-describedby'));
                             let value = target.getAttribute('aria-describedby')
 
                             if(target.checked && value){

@@ -9,6 +9,7 @@ import { NavbarSectionHeader } from './NavbarSectionHeader';
 import { styled, FontWeights } from '@fluentui/react';
 import { IThemeOnlyProps, IStylesOnly } from '../../Utils/FluentUI/typings.fluent-ui';
 import { Assignment } from '../../../Models/Assignment.model';
+import { FilterType } from '../../../Models/Learn/FilterType.model';
 
 const getNavLinkGroups = (assignment: Assignment): INavLinkGroup[] => [
   {
@@ -28,6 +29,7 @@ const removeSlashFromStringEnd = (initialString: string): string => initialStrin
 
 const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null => {
   const assignmentStore = useStore('assignmentStore');
+  const learnStore = useStore('microsoftLearnStore');
   const history = useHistory();
   const location = useLocation();
 
@@ -48,7 +50,13 @@ const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null =>
 
   const handleLinkClick = (event?: MouseEvent, item?: INavLink): void => {
     event?.preventDefault();
-    if (item) {
+    if(item && item.url?.indexOf('ms-learn')>0){
+      history.push({
+        pathname: item.url,
+        search: '?'+learnStore.filter.learnFilterUriParam
+      })
+    }
+    else if (item) {
       history.push(item.url);
     }
   };

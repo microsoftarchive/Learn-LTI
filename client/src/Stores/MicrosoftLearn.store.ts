@@ -11,6 +11,9 @@ import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
 import { FilterType } from '../Models/Learn/FilterType.model'; 
 import { Filter } from '../Models/Learn/Filter.model';
+import { stringify } from 'querystring';
+import { pick } from 'lodash';
+import _ from 'lodash';
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -18,10 +21,9 @@ export class MicrosoftLearnStore extends ChildStore {
   @observable selectedItems: AssignmentLearnContent[] | null = null;
   @observable filteredCatalogContent: LearnContent[] | null = null;
   @observable searchTerm = '';
-
   @observable productMap: Map<Product, Product[]>  = new Map<Product, Product[]>(); 
-
   @observable filter: Filter = new Filter(this.catalog, this.productMap);
+
 
   initialize(): void {
     toObservable(() => this.searchTerm)
@@ -47,10 +49,10 @@ export class MicrosoftLearnStore extends ChildStore {
 
   @action
   updateSearchTerm(searchTerm: string): void {
-    this.searchTerm = searchTerm;
     if(this.filter){
       this.filter.updateSearchTerm(searchTerm);
-    }
+    } 
+    this.searchTerm = searchTerm;
   }
 
   @action
@@ -110,8 +112,7 @@ export class MicrosoftLearnStore extends ChildStore {
     this.filter.productMap = this.productMap;
     this.filter.setDisplayFilters(this.filteredCatalogContent, false);
 
-    this.populateFiltersFromSession();
-
+    this.loadFiltersFromPath();
   }
 
   @action
@@ -200,50 +201,47 @@ export class MicrosoftLearnStore extends ChildStore {
     return null;
   }
 
-  private populateFiltersFromSession(){
-    let idToken = this.parseJWT();
-    let sessionIat = sessionStorage.getItem('session_iat');
+  private loadFiltersFromPath(){
+    let searchParams = window.location.search
+    if(searchParams.length>0){
+      let searchParamMap: Map<string, string[]> = new Map<string, string[]>();
+      searchParams.slice(1).split('&').forEach(s=>{
+        let [key, value] = s.split('=');
+        searchParamMap.set(key, value.split('%2C'));
+      })
 
-    if(sessionIat && Number(sessionIat)===idToken['iat']){
-      let sessionProduct = sessionStorage.getItem("product");
-      let sessionRole = sessionStorage.getItem("role");
-      let sessionType = sessionStorage.getItem("type");
-      let sessionLevel = sessionStorage.getItem("level");
-      let sessionSearchTerm = sessionStorage.getItem("searchTerm");
-  
-      let productFilter: string[] = sessionProduct ? JSON.parse(sessionProduct) : [];
-      let roleFilter: string[] = sessionRole ? JSON.parse(sessionRole) : [];
-      let typeFilter: string[] = sessionType ? JSON.parse(sessionType) : [];
-      let levelFilter: string[] = sessionLevel ? JSON.parse(sessionLevel) : [];
-      if(sessionSearchTerm){
-        this.updateSearchTerm(sessionSearchTerm);
+      let setRoles = searchParamMap.get('roles')
+      if(setRoles){
+        this.filter.selectedFilters.set(FilterType.Role, setRoles);
       }
-  
-      this.addFilter(FilterType.Product, productFilter);
-      this.addFilter(FilterType.Role, roleFilter);
-      this.addFilter(FilterType.Level, levelFilter);
-      this.addFilter(FilterType.Type, typeFilter);
-    }
 
-    else{
-      sessionStorage.setItem("session_iat", idToken['iat']);
-      this.resetFilter();
-    }
+      let setLevels = searchParamMap.get('levels');
+      if(setLevels){
+        this.filter.selectedFilters.set(FilterType.Level, setLevels);
+      }
 
+      let setTypes = searchParamMap.get('types');
+      if(setTypes){
+        this.filter.selectedFilters.set(FilterType.Type, setTypes);
+      }
 
-  }
+      let setProducts = searchParamMap.get('products');
+      if(setProducts){
+        let parents = [...this.productMap.keys()];
+        let parenIds = parents.map(p => p.id);
+        
+        let selectedParents = setProducts.filter(p => parenIds.includes(p)).map(pId => this.catalog?.products.get(pId)!!); 
+        let addChildren = _.flatten(selectedParents.map(p => this.productMap.get(p)!!)).map(c=>c.id);
+        setProducts = [...setProducts, ...addChildren];
+        this.filter.selectedFilters.set(FilterType.Product, setProducts);
+      }
 
-  private parseJWT(){
-    let token = localStorage.getItem('msal.idtoken');
-    if(!token){
-      return null;
-    }
+      this.filteredCatalogContent = this.applyFilter(true);
 
-    try{
-      return JSON.parse(atob(token.split('.')[1]));
-    }
-    catch(e){
-      return null
+      let searchTerm = searchParamMap.get("terms");
+      if(searchTerm){
+        this.updateSearchTerm(searchTerm[0].split('%20').join(' '));
+      }
     }
   }
 }

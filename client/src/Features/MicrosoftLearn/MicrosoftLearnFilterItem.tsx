@@ -7,13 +7,13 @@ import React from "react";
 
 
 const FilterItemInner = (props: FilterItemProps) =>{
-
     const learnStore = useStore('microsoftLearnStore');
-    let _n_subItems = props.subItems? props.subItems.length : 0;
     const itemInSelectedFilter = (subItemId: string | undefined) =>{
         let selectedFilters = learnStore.filter.selectedFilters.get(props.filterType);
         return subItemId? selectedFilters?.includes(subItemId) : false;
     }
+    let _n_subItems = props.subItems? props.subItems.length  : 0;
+
     // const childInSelectedFilter = (subItems: FilterOption[] | undefined) => {
     //     var flag = false;
     //     subItems?.forEach((item) => {                      
@@ -51,7 +51,6 @@ const FilterItemInner = (props: FilterItemProps) =>{
         checked = {itemInSelectedFilter(props.mainItem?.id)}
         onChange = {(event)=>{            
             if(props.mainItemClickHandler!=null){
-                console.log(props.mainItem?.id)
                 props.mainItemClickHandler(event)
             }
             }}
@@ -68,7 +67,6 @@ const FilterItemInner = (props: FilterItemProps) =>{
             onChange={(event)=>{
                 
                 if(props.subItemClickHandler!=null){
-                    console.log(subItem?.id)
                     props.subItemClickHandler(event)
                     setCollapseSubItems(true);
                 }
