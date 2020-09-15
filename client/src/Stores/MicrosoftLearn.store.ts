@@ -109,6 +109,9 @@ export class MicrosoftLearnStore extends ChildStore {
     this.filter.catalog = this.catalog;
     this.filter.productMap = this.productMap;
     this.filter.setDisplayFilters(this.filteredCatalogContent, false);
+
+    this.populateFiltersFromSession();
+
   }
 
   @action
@@ -195,5 +198,52 @@ export class MicrosoftLearnStore extends ChildStore {
       return _filteredCatalogContent
     }                  
     return null;
+  }
+
+  private populateFiltersFromSession(){
+    let idToken = this.parseJWT();
+    let sessionIat = sessionStorage.getItem('session_iat');
+
+    if(sessionIat && Number(sessionIat)===idToken['iat']){
+      let sessionProduct = sessionStorage.getItem("product");
+      let sessionRole = sessionStorage.getItem("role");
+      let sessionType = sessionStorage.getItem("type");
+      let sessionLevel = sessionStorage.getItem("level");
+      let sessionSearchTerm = sessionStorage.getItem("searchTerm");
+  
+      let productFilter: string[] = sessionProduct ? JSON.parse(sessionProduct) : [];
+      let roleFilter: string[] = sessionRole ? JSON.parse(sessionRole) : [];
+      let typeFilter: string[] = sessionType ? JSON.parse(sessionType) : [];
+      let levelFilter: string[] = sessionLevel ? JSON.parse(sessionLevel) : [];
+      if(sessionSearchTerm){
+        this.updateSearchTerm(sessionSearchTerm);
+      }
+  
+      this.addFilter(FilterType.Product, productFilter);
+      this.addFilter(FilterType.Role, roleFilter);
+      this.addFilter(FilterType.Level, levelFilter);
+      this.addFilter(FilterType.Type, typeFilter);
+    }
+
+    else{
+      sessionStorage.setItem("session_iat", idToken['iat']);
+      this.resetFilter();
+    }
+
+
+  }
+
+  private parseJWT(){
+    let token = localStorage.getItem('msal.idtoken');
+    if(!token){
+      return null;
+    }
+
+    try{
+      return JSON.parse(atob(token.split('.')[1]));
+    }
+    catch(e){
+      return null
+    }
   }
 }

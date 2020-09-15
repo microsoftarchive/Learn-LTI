@@ -78,13 +78,19 @@ export class Filter {
                                           (levelFilter.length===0 || _.intersection(content.levels, levelFilter).length>0) &&
                                           (typeFilter.length===0 || _.intersection([content.type], typeFilter).length>0)
                                           )))                      
-            console.log(_filteredCatalogContent.length);
 
             _filteredCatalogContent = searchExpressions?
             this.getSearchTermFilteredLearnContent(searchExpressions, _filteredCatalogContent)
             : this.getSearchTermFilteredLearnContent(this.getRegexs(this.searchTerm), _filteredCatalogContent);
            
             this.setDisplayFilters(_filteredCatalogContent, removeExtra);
+            
+            sessionStorage.setItem('product', JSON.stringify(productFilter));
+            sessionStorage.setItem('role', JSON.stringify(roleFilter));
+            sessionStorage.setItem('level', JSON.stringify(levelFilter));
+            sessionStorage.setItem('type', JSON.stringify(typeFilter));
+            sessionStorage.setItem('searchTerm', this.searchTerm);
+
             return _filteredCatalogContent
           }
 
@@ -129,10 +135,10 @@ export class Filter {
             const parents = products.map(product => this.catalog?.products.get(product)?.parentId || '').filter(pId => pId.length>0)
             filteredProducts = new Set([...parents, ...products]);
         
-            this.displayFilters.set(FilterType.Product, Array.from(filteredProducts));
-            this.displayFilters.set(FilterType.Role, Array.from(filteredRoles));
-            this.displayFilters.set(FilterType.Level, Array.from(filteredLevels));
-            this.displayFilters.set(FilterType.Type, Array.from(filteredTypes));
+            this.displayFilters.set(FilterType.Product, [...filteredProducts]);
+            this.displayFilters.set(FilterType.Role, [...filteredRoles]);
+            this.displayFilters.set(FilterType.Level, [...filteredLevels]);
+            this.displayFilters.set(FilterType.Type, [...filteredTypes]);
         
             if(removeExtra){
               this.removeExtrasFromSelected(FilterType.Product);

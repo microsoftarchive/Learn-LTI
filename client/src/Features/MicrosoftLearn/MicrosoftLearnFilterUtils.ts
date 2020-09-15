@@ -18,15 +18,28 @@ export const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
 
 export const getProductsToDisplay = (productId: string[] | undefined, productMap: Map<string, Product> | undefined) =>{
 
-    let products: Map<string, Product | undefined> = new Map<string, Product>();
+    let products: Map<string, Product> = new Map<string, Product>();
     let productParentChildMap = new Map<Product, Product[]>();
     if(productMap!=null){
 
         productId?.forEach((pid)=>{
-            products.set(pid, productMap.get(pid));
+            let product = productMap.get(pid)
+            if(product){
+                products.set(pid, product);
+            }
         })
-        // const parentProducts = [...products.values()].filter(item => item?.parentId==null)
+        // const parentProducts = [...products.values()].filter(item => item && item?.parentId==null)
         // .sort(FilterOptionComparer);
+        // let included: Product[] = []
+        // parentProducts.forEach((parent) => {
+        //         let children = [...products.values()]
+        //         .filter(product=> product?.parentId && product.parentId==parent?.id);                
+        //         productParentChildMap.set(parent, children);
+        //         included = [...included, ...children, parent]
+        // })
+
+        // let leftOver = [...products.values()].filter(item => !included.includes(item))
+        // console.log("leftover", leftOver);
 
         products.forEach((item)=>{
             if(item !=null && item.parentId!=null){
@@ -52,10 +65,7 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
 }
 
 export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<string, Role> |undefined) =>{
-  
     let roles = new Map<Pick<RoleDto, "id" | "name"> | undefined , Pick<RoleDto, "id" | "name">[]>();
-
-    // O(|Roles|)
     if(roleMap!=null){
         roleId?.forEach((rid)=>{
             if(roleMap.get(rid)){
@@ -63,7 +73,6 @@ export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<str
             }            
         });
 
-    // O(|Roles|*log(|Roles|))
         let sortedKeys = Array.from(roles.keys()).sort(FilterOptionComparer);
         let sortedRoles = new Map<Pick<RoleDto, "id" | "name"> | undefined , Pick<RoleDto, "id" | "name">[]>();
         sortedKeys.forEach((item)=>{
@@ -83,7 +92,6 @@ export const getLevelsToDisplay = (levelId:  string[] | undefined, levelMap: Map
                 levels.set(levelMap.get(lid), []);
             }
         })
-    // O(|Levels|*log(|levels|))
         let sortedKeys = Array.from(levels.keys()).sort(FilterOptionComparer);
         let sortedLevels = new Map< Pick<LevelDto, "id" | "name"> | undefined, Pick<LevelDto, "id" | "name">[]>();
         sortedKeys.forEach((item) =>{
@@ -128,9 +136,7 @@ export const getTypesToDisplay = (typeId: string[] | undefined) =>{
 }
 
 export const getDisplayFilterTags = (displayFilters: Map<FilterType, string[]>, selectedFilters: Map<FilterType, string[]>, productsMap: Map<Product, Product[]>) => {
-    // all in display which are also in selected: given that if a parent is there, child must not be a tag.
 
-    // O(|filtertype|)
     const getIntersection = (type: FilterType) => {
         let intersect = displayFilters.get(type)?.filter(item => selectedFilters.get(type)?.includes(item));
         if(type===FilterType.Product){

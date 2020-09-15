@@ -20,6 +20,7 @@ const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchS
           onChange={(_e, newValue) => learnStore.updateSearchTerm(newValue || '')}
           className={classes.searchBox}
           disabled={!!learnStore.isLoadingCatalog}
+          value={learnStore.searchTerm}
         />
       </div>
     );

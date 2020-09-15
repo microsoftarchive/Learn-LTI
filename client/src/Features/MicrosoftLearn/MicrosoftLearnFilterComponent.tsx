@@ -10,12 +10,13 @@ import { SearchBox } from '@fluentui/react';
 import { FilterComponentProps } from './MicrosoftLearnFilterComponentProps' 
 import { getRegexs, getDisplayFromSearch } from './MicrosoftLearnFilterUtils'
 import { MicrosoftLearnFilterItem } from './MicrosoftLearnFilterItem';
+import { useStore } from '../../Stores/Core';
 
 export type MicrosoftLearnFilterStyles = SimpleComponentStyles<'root'>;
 
 
 const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
-
+    const learnStore = useStore('microsoftLearnStore');
     const [filterSearchTerm, setFilterSearchTerm] = useState('');
     const [displayOptions, setDisplayOptions] = useState(props.filterOption);
 
@@ -58,9 +59,9 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
                             onChange={(event, _newValue)=>{                
                             setFilterSearchTerm(_newValue || "");                              
                         }}
+                        disabled={!!learnStore.isLoadingCatalog}
                         // style={{display: props.search? "span" : "none"}}
                         //   className={classes.searchBox}
-                        //   disabled={!!learnStore.isLoadingCatalog}
                         />                
                 ): 
                 (
