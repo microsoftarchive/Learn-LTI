@@ -12,6 +12,8 @@ export class Filter {
     @observable productMap: Map<Product, Product[]>
     @observable searchTerm: string;
     @observable learnFilterUriParam: string = '';
+    @observable expandedProducts: string[]=[];
+    
     constructor(catalog: Catalog | null, productMap: Map<Product, Product[]>){
         this.displayFilters = new Map([
             [FilterType.Product, []],

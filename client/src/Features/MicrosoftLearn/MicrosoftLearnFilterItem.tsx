@@ -14,17 +14,19 @@ const FilterItemInner = (props: FilterItemProps) =>{
     }
     let _n_subItems = props.subItems? props.subItems.length  : 0;
 
-    // const childInSelectedFilter = (subItems: FilterOption[] | undefined) => {
-    //     var flag = false;
-    //     subItems?.forEach((item) => {                      
-    //         if(item && itemInSelectedFilter(item.id) && !itemInSelectedFilter(props.mainItem?.id)){                
-    //             flag=true;
-    //             return true;
-    //         }
-    //     })
-    //     return flag;  
-    // }
-    const [collapseSubItems, setCollapseSubItems] = useState(false);
+    const updateExpandedSet = (oldState: boolean | undefined | "") =>{
+        if(oldState===true){
+            learnStore.filter.expandedProducts = learnStore.filter.expandedProducts.filter(i => i!==props.mainItem?.id); 
+        }
+        else if(oldState!==undefined && props.mainItem?.id){
+            learnStore.filter.expandedProducts.push(props.mainItem?.id)
+        }
+    }
+
+    const inExpanded = (id: string | undefined)=>{
+        return id && learnStore.filter.expandedProducts.includes(id)
+    }
+    const [collapseSubItems, setCollapseSubItems] = useState(inExpanded(props.mainItem?.id));
 
     return useObserver(() => {
 
@@ -40,7 +42,10 @@ const FilterItemInner = (props: FilterItemProps) =>{
                 }}
         onClick = {(event)=>{
         event.preventDefault();
+        let previous = collapseSubItems
         setCollapseSubItems(!collapseSubItems);
+        updateExpandedSet(previous);
+        console.log("expanded:", learnStore.filter.expandedProducts, collapseSubItems);
         }}
         disabled = {_n_subItems===0}        
         />
