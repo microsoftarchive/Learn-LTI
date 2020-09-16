@@ -1,6 +1,6 @@
 import React from 'react';
 import { Header } from './Header';
-import { styled, Spinner, SpinnerSize, FontSizes, FontWeights } from '@fluentui/react';
+import { styled, Spinner, SpinnerSize, FontSizes, FontWeights, Text } from '@fluentui/react';
 import { SimpleComponentStyles, IThemeOnlyProps, IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
 import { PagesRouter } from '../../Router/PagesRouter';
 import { useObserver } from 'mobx-react-lite';
@@ -46,9 +46,11 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         />
         ))) : (
         <div className={classes.content}>
+            <Text variant="xLargePlus" className={classes.assignmentTitle}>
+              {assignmentStore.assignment.name}
+            </Text>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
-
               <NavPivot/>
               <PagesRouter />
             </>
@@ -93,7 +95,12 @@ const mainLayoutStyle = ({ theme }: IThemeOnlyProps): MainLayoutStyles => {
     ],
     assignmentTitle: [
       {
-
+        color: theme.palette.neutralPrimary,
+        backgroundColor: theme.palette.neutralLighterAlt,
+        lineHeight: FontSizes.xxLarge,
+        paddingLeft: `calc(${theme.spacing.l1}*1.6)`,
+        paddingBottom: `calc(${theme.spacing.l1}*0.5)`,
+        paddingTop:`calc(${theme.spacing.l1}*1.5)`,
       }
     ]
   };
