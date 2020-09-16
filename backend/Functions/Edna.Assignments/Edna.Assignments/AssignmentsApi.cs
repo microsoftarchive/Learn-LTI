@@ -54,7 +54,6 @@ namespace Edna.Assignments
             assignmentEntity.ETag = "*";
 
             var res = await ValidateUser(req, assignmentDto, platformsClient, nrpsClient, membershipClient);
-
             if(res.GetType() != typeof(OkResult))
                 return res;
             
@@ -113,7 +112,6 @@ namespace Edna.Assignments
             AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
 
             var res = await ValidateUser(req, assignmentDto, platformsClient, nrpsClient, membershipClient);
-
             if (res.GetType() != typeof(OkResult))
                 return res;
 
@@ -137,7 +135,6 @@ namespace Edna.Assignments
             AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
 
             var res = await ValidateUser(req, assignmentDto, platformsClient, nrpsClient, membershipClient);
-
             if (res.GetType() != typeof(OkResult))
                 return res;
 
@@ -171,12 +168,7 @@ namespace Edna.Assignments
             return new OkResult();
         }
     
-        private async Task<IActionResult> ValidateUser(
-            HttpRequest req,
-            AssignmentDto assignmentDto,
-            PlatformsClient platformsClient,
-            INrpsClient nrpsClient,
-            Lti1MembershipClient membershipClient)
+        private async Task<IActionResult> ValidateUser(HttpRequest req, AssignmentDto assignmentDto, PlatformsClient platformsClient, INrpsClient nrpsClient, Lti1MembershipClient membershipClient)
         {
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
             {
@@ -194,7 +186,6 @@ namespace Edna.Assignments
                         _logger.LogError("no members");
                         return new BadRequestErrorMessageResult("Bad Request: no members");
                     }
-
                     var role = userMembership.Role;
                     if (role.Equals("Learner"))
                     {
@@ -212,7 +203,6 @@ namespace Edna.Assignments
                         return new BadRequestErrorMessageResult("Bad Request: no members");
                     }
                     var roles = member.Roles;
-
                     if (roles.Contains(Role.ContextLearner) || roles.Contains(Role.InstitutionLearner))
                     {
                         _logger.LogError("Students cannot update an assignment");
@@ -222,6 +212,7 @@ namespace Edna.Assignments
             }
 
             _logger.LogInformation("Valid user");
+
             return new OkResult();
         }
     }
