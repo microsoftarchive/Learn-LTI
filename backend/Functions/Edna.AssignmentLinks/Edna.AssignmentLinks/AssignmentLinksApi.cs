@@ -99,47 +99,10 @@ namespace Edna.AssignmentLinks
             if (linkId != linkDto.Id)
                 return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
 
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
-            {
-                _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
-            }
-            if (userEmails.Count > 0)
-            {
-                if (assignment.LtiVersion != LtiAdvantageVersionString)
-                {
-                    Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
-                    if (userMembership == null)
-                    {
-                        _logger.LogError("no members");
-                        return new BadRequestErrorMessageResult("Bad Request: no members");
-                    }
+            IActionResult res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
 
-                    var role = userMembership.Role;
-                    if (role.Equals("Learner"))
-                    {
-                        _logger.LogError("Students cannot update an assignment");
-                        return new UnauthorizedResult();
-                    }
-                }
-                else
-                {
-                    Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
-                    Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
-                    if (member == null)
-                    {
-                        _logger.LogError("no members");
-                        return new BadRequestErrorMessageResult("Bad Request: no members");
-                    }
-                    var roles = member.Roles;
-
-                    if (roles.Contains(Role.ContextLearner) || roles.Contains(Role.InstitutionLearner))
-                    {
-                        _logger.LogError("Students cannot update an assignment");
-                        return new UnauthorizedResult();
-                    }
-                }
-            }
+            if (res.GetType() != typeof(OkResult))
+                return res;
 
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");
 
@@ -172,13 +135,37 @@ namespace Edna.AssignmentLinks
             {
                 _logger.LogInformation("Entity to delete is null");
                 return new OkResult();
-            }               
+            }
 
+            var res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
+
+            if (res.GetType() != typeof(OkResult))
+                return res;
+
+            TableOperation deleteTable = TableOperation.Delete(entityToDelete);
+            TableResult deleteResult = await assignmentLinksTable.ExecuteAsync(deleteTable);
+
+            if (deleteResult.HttpStatusCode < 200 || deleteResult.HttpStatusCode >= 300)
+                return new InternalServerErrorResult();
+
+            _logger.LogInformation("Link deleted.");
+
+            return new OkResult();
+        }
+
+        private async Task<IActionResult> ValidateUser(
+            HttpRequest req,
+            Assignment assignment,
+            PlatformsClient platformsClient,
+            INrpsClient nrpsClient,
+            Lti1MembershipClient membershipClient)
+        {
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
             {
                 _logger.LogError("Could not get user email.");
                 return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
             }
+
             if (userEmails.Count > 0)
             {
                 if (assignment.LtiVersion != LtiAdvantageVersionString)
@@ -215,12 +202,8 @@ namespace Edna.AssignmentLinks
                     }
                 }
             }
-            
-            TableOperation deleteTable = TableOperation.Delete(entityToDelete);
-            TableResult deleteResult = await assignmentLinksTable.ExecuteAsync(deleteTable);
 
-            if (deleteResult.HttpStatusCode < 200 || deleteResult.HttpStatusCode >= 300)
-                return new InternalServerErrorResult();
+            _logger.LogInformation("Valid user");
 
             return new OkResult();
         }

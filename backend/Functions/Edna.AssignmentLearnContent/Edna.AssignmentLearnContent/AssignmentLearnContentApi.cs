@@ -90,48 +90,10 @@ namespace Edna.AssignmentLearnContent
             [LtiAdvantage] INrpsClient nrpsClient,
             [Lti1] Lti1MembershipClient membershipClient)
         {
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
-            {
-                _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
-            }
-            
-            if (userEmails.Count > 0)
-            {
-                if (assignment.LtiVersion != LtiAdvantageVersionString)
-                {
-                    Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
-                    if (userMembership == null)
-                    {
-                        _logger.LogError("no members");
-                        return new BadRequestErrorMessageResult("Bad Request: no members");
-                    }
+            var res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
 
-                    var role = userMembership.Role;
-                    if (role.Equals("Learner"))
-                    {
-                        _logger.LogError("Students cannot update an assignment");
-                        return new UnauthorizedResult();
-                    }
-                }
-                else
-                {
-                    Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
-                    Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
-                    if (member == null)
-                    {
-                        _logger.LogError("no members");
-                        return new BadRequestErrorMessageResult("Bad Request: no members");
-                    }
-                    var roles = member.Roles;
-
-                    if (roles.Contains(Role.ContextLearner) || roles.Contains(Role.InstitutionLearner))
-                    {
-                        _logger.LogError("Students cannot update an assignment");
-                        return new UnauthorizedResult();
-                    }
-                }
-            }
+            if (res.GetType() != typeof(OkResult))
+                return res;
 
             _logger.LogInformation($"Saving assignment learn content with uid [{contentUid}] to assignment {assignmentId}");
 
@@ -169,48 +131,10 @@ namespace Edna.AssignmentLearnContent
                 return new OkResult();
             }
 
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
-            {
-                _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
-            }
-            
-            if (userEmails.Count > 0)
-            {
-                if (assignment.LtiVersion != LtiAdvantageVersionString)
-                {
-                    Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
-                    if (userMembership == null)
-                    {
-                        _logger.LogError("no members");
-                        return new BadRequestErrorMessageResult("Bad Request: no members");
-                    }
+            var res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
 
-                    var role = userMembership.Role;
-                    if (role.Equals("Learner"))
-                    {
-                        _logger.LogError("Students cannot update an assignment");
-                        return new UnauthorizedResult();
-                    }
-                }
-                else
-                {
-                    Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
-                    Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
-                    if (member == null)
-                    {
-                        _logger.LogError("no members");
-                        return new BadRequestErrorMessageResult("Bad Request: no members");
-                    }
-                    var roles = member.Roles;
-
-                    if (roles.Contains(Role.ContextLearner) || roles.Contains(Role.InstitutionLearner))
-                    {
-                        _logger.LogError("Students cannot update an assignment");
-                        return new UnauthorizedResult();
-                    }
-                }
-            }
+            if (res.GetType() != typeof(OkResult))
+                return res;
 
             _logger.LogInformation($"Removing assignment learn content with uid [{contentUid}] from assignment {assignmentId}");
 
@@ -219,6 +143,8 @@ namespace Edna.AssignmentLearnContent
 
             if (deleteResult.HttpStatusCode < 200 || deleteResult.HttpStatusCode >= 300)
                 return new InternalServerErrorResult();
+
+            _logger.LogInformation("Learn Content removed.");
 
             return new OkResult();
         }
@@ -233,48 +159,10 @@ namespace Edna.AssignmentLearnContent
             [LtiAdvantage] INrpsClient nrpsClient,
             [Lti1] Lti1MembershipClient membershipClient)
         {
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
-            {
-                _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
-            }
+            var res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
 
-            if (userEmails.Count > 0)
-            {
-                if (assignment.LtiVersion != LtiAdvantageVersionString)
-                {
-                    Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
-                    if (userMembership == null)
-                    {
-                        _logger.LogError("no members");
-                        return new BadRequestErrorMessageResult("Bad Request: no members");
-                    }
-
-                    var role = userMembership.Role;
-                    if (role.Equals("Learner"))
-                    {
-                        _logger.LogError("Students cannot update an assignment");
-                        return new UnauthorizedResult();
-                    }
-                }
-                else
-                {
-                    Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
-                    Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
-                    if (member == null)
-                    {
-                        _logger.LogError("no members");
-                        return new BadRequestErrorMessageResult("Bad Request: no members");
-                    }
-                    var roles = member.Roles;
-
-                    if (roles.Contains(Role.ContextLearner) || roles.Contains(Role.InstitutionLearner))
-                    {
-                        _logger.LogError("Students cannot update an assignment");
-                        return new UnauthorizedResult();
-                    }
-                }
-            }
+            if (res.GetType() != typeof(OkResult))
+                return res;
 
             _logger.LogInformation($"Removing all assignment learn content from assignment {assignmentId}");
 
@@ -287,9 +175,12 @@ namespace Edna.AssignmentLearnContent
             IList<TableResult> executeBatchResults = await assignmentLearnContentTable.ExecuteBatchAsync(deleteBatchOperations);
             bool errorExists = executeBatchResults.Any(result => result.HttpStatusCode < 200 || result.HttpStatusCode >= 300);
 
-            return errorExists 
-                ? (IActionResult) new InternalServerErrorResult() 
-                : new OkResult();
+            if (errorExists)
+                return new InternalServerErrorResult();
+
+            _logger.LogInformation("Learn Content removed.");
+    
+            return new OkResult();
         }
 
         private async Task<List<AssignmentLearnContentEntity>> GetAllAssignmentLearnContentEntities(CloudTable assignmentLearnContentTable, string assignmentId)
@@ -324,6 +215,61 @@ namespace Edna.AssignmentLearnContent
             UriBuilder newUriBuilder = new UriBuilder(url) { Query = queryParams.ToString() };
 
             contentJToken["url"] = newUriBuilder.Uri.ToString();
+        }
+
+        private async Task<IActionResult> ValidateUser(
+            HttpRequest req,
+            Assignment assignment,
+            PlatformsClient platformsClient,
+            INrpsClient nrpsClient,
+            Lti1MembershipClient membershipClient)
+        {
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
+            }
+
+            if (userEmails.Count > 0)
+            {
+                if (assignment.LtiVersion != LtiAdvantageVersionString)
+                {
+                    Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
+                    if (userMembership == null)
+                    {
+                        _logger.LogError("no members");
+                        return new BadRequestErrorMessageResult("Bad Request: no members");
+                    }
+
+                    var role = userMembership.Role;
+                    if (role.Equals("Learner"))
+                    {
+                        _logger.LogError("Students cannot update an assignment");
+                        return new UnauthorizedResult();
+                    }
+                }
+                else
+                {
+                    Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
+                    Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
+                    if (member == null)
+                    {
+                        _logger.LogError("no members");
+                        return new BadRequestErrorMessageResult("Bad Request: no members");
+                    }
+                    var roles = member.Roles;
+
+                    if (roles.Contains(Role.ContextLearner) || roles.Contains(Role.InstitutionLearner))
+                    {
+                        _logger.LogError("Students cannot update an assignment");
+                        return new UnauthorizedResult();
+                    }
+                }
+            }
+
+            _logger.LogInformation("Valid user");
+
+            return new OkResult();
         }
     }
 }
