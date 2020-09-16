@@ -36,6 +36,16 @@ export class Filter {
         this.searchTerm = newTerm;
     }
 
+    @action updateExpandedProducts(action: boolean, id: string){
+        if(action){
+          this.expandedProducts.push(id);
+        }
+        else{
+          this.expandedProducts = this.expandedProducts.filter(pId => pId!==id);
+        }
+        this.updateURI();
+    }
+
     @action
     public addFilter(type: FilterType, filters: string[]){
         let currentFilters = this.selectedFilters.get(type);
@@ -87,34 +97,8 @@ export class Filter {
             : this.getSearchTermFilteredLearnContent(this.getRegexs(this.searchTerm), _filteredCatalogContent);
            
             this.setDisplayFilters(_filteredCatalogContent, removeExtra);
+            this.updateURI();
 
-            const getProductUri = () => {
-                let parents = [...this.productMap.keys()]; 
-                let keep: string[] = [];
-                let invisibleChildren: string[] = [];
-                productFilter.forEach(f=>{                    
-                    if(parents.filter(p => p.id === f).length > 0){
-                        let parent = parents.filter(p => p.id === f)[0];
-                        keep.push(f);
-                        invisibleChildren = [...invisibleChildren, ...this.productMap.get(parent)?.map(c=>c.id)]
-                    }
-                })
-                
-                keep = [...keep, ...productFilter.filter(f => !keep.includes(f) && !invisibleChildren.includes(f))];
-                return 'products='+keep.join('%2C');
-            }
-
-            let productUri = productFilter.length>0? getProductUri() : '';
-            let roleUri = roleFilter.length>0? 'roles=' + roleFilter.join('%2C') : '';
-            let typeUri = typeFilter.length>0? 'types=' + typeFilter.join('%2C') : '';
-            let levelUri = levelFilter.length>0? 'levels=' + levelFilter.join('%2C') : '';
-            let termsUri = this.searchTerm.length>0? 'terms='+this.searchTerm : '';
-            let finalUri = [productUri, roleUri, levelUri, typeUri, termsUri].filter(s=>s.length!==0).join('&')            
-
-            let uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + finalUri;
-            window.history.pushState({path:uri},'',uri);       
-
-            this.learnFilterUriParam = finalUri;
             return _filteredCatalogContent
           }
 
@@ -170,6 +154,42 @@ export class Filter {
               this.removeExtrasFromSelected(FilterType.Type);
             }
           }        
+
+          private updateURI() {
+            let productFilter = this.selectedFilters.get(FilterType.Product) || [];
+            let roleFilter = this.selectedFilters.get(FilterType.Role) || [];
+            let typeFilter = this.selectedFilters.get(FilterType.Type) || [];
+            let levelFilter = this.selectedFilters.get(FilterType.Level) || [];
+
+            const getProductUri = () => {
+              let parents = [...this.productMap.keys()]; 
+              let keep: string[] = [];
+              let invisibleChildren: string[] = [];
+              productFilter.forEach(f=>{                    
+                  if(parents.filter(p => p.id === f).length > 0){
+                      let parent = parents.filter(p => p.id === f)[0];
+                      keep.push(f);
+                      invisibleChildren = [...invisibleChildren, ...this.productMap.get(parent)?.map(c=>c.id)]
+                  }
+              })
+              
+              keep = [...keep, ...productFilter.filter(f => !keep.includes(f) && !invisibleChildren.includes(f))];
+              return 'products='+keep.join('%2C');
+          }
+
+            let productUri = productFilter.length>0? getProductUri() : '';
+            let roleUri = roleFilter.length>0? 'roles=' + roleFilter.join('%2C') : '';
+            let typeUri = typeFilter.length>0? 'types=' + typeFilter.join('%2C') : '';
+            let levelUri = levelFilter.length>0? 'levels=' + levelFilter.join('%2C') : '';
+            let termsUri = this.searchTerm.length>0? 'terms='+this.searchTerm : '';
+            let expandedProductsUri = this.expandedProducts.length>0? 'expanded='+this.expandedProducts.join('%2C') : '';
+            let finalUri = [productUri, roleUri, levelUri, typeUri, termsUri, expandedProductsUri].filter(s=>s.length!==0).join('&')            
+
+            let uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + finalUri;
+            window.history.pushState({path:uri},'',uri);       
+
+            this.learnFilterUriParam = finalUri;
+          }
 
           private getRegexs(searchTerm: string): RegExp[] {
             const expressions: RegExp[] = searchTerm

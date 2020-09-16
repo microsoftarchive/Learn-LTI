@@ -240,6 +240,11 @@ export class MicrosoftLearnStore extends ChildStore {
       if(searchTerm){
         this.updateSearchTerm(searchTerm[0].split('%20').join(' '));
       }
+
+      let expandedProducts = searchParamMap.get("expanded");
+      if(expandedProducts){
+        this.filter.expandedProducts = expandedProducts;
+      }
     }
   }
 }
