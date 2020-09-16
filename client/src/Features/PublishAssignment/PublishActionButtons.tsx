@@ -118,6 +118,7 @@ const editButtonStyle = ({ theme, isPublished }: EditButtonStyleProps): Partial<
         marginRight: `calc(${theme.spacing.s1} + ${theme.spacing.s2})`,
         color: theme.palette.themePrimary,
         borderColor: theme.palette.themePrimary,
+        width:`calc(${theme.spacing.l1}*4)`,
         display: isPublished ? 'block' : 'none'
       }
     ],
@@ -132,7 +133,8 @@ const publishButtonStyle = ({ theme }: IThemeOnlyProps): Partial<IButtonStyles> 
   mergeStyleSets(commonButtonStyle, {
     root: [
       {
-        backgroundColor: theme.palette.themeDark
+        backgroundColor: theme.palette.themeDark,
+        width:`calc(${theme.spacing.l1}*4.35)`
       }
     ]
   });

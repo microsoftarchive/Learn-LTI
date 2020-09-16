@@ -51,12 +51,14 @@ const publishStatusIndicatorStyles = ({ theme }: IThemeOnlyProps): PublishStatus
   root: [
     {
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      paddingTop: theme.spacing.s1
     }
   ],
   text: [
     mergeStyles(textIconStyle, {
-      marginLeft: theme.spacing.s1
+      marginLeft: theme.spacing.s1,
+      marginRight: theme.spacing.l1
     })
   ],
   publishedIcon: [
