@@ -27,7 +27,7 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
     <div className={classes.root}>
       <Header
         mainHeader={assignmentStore.assignment?.courseName}
-        secondaryHeader={assignmentStore.assignment?.name}
+        // secondaryHeader={assignmentStore.assignment?.name}
         logoUrl={assignmentStore.assignment?.platformPersonalization?.logoUrl || learnLogo}
         userInstitution={assignmentStore.assignment?.platformPersonalization?.institutionName}
       />
@@ -46,11 +46,11 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         />
         ))) : (
         <div className={classes.content}>
-            <Text variant="xLargePlus" className={classes.assignmentTitle}>
-              {assignmentStore.assignment.name}
-            </Text>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
+              <Text variant="xLargePlus" className={classes.assignmentTitle}>
+                {assignmentStore.assignment.name}
+              </Text>
               <NavPivot/>
               <PagesRouter />
             </>

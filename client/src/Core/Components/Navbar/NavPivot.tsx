@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import _ from 'lodash';
 import { configurationRoutes, viewRoutes } from '../../../Router/RoutesConfiguration';
 import { useStore } from '../../../Stores/Core';
-import { styled, PivotItem, Pivot, IPivotStyles, MessageBarType, AnimationClassNames, mergeStyles, Separator } from '@fluentui/react';
+import { styled, PivotItem, Pivot, IPivotStyles, MessageBarType, AnimationClassNames, mergeStyles, Separator, FontSizes } from '@fluentui/react';
 import { IThemeOnlyProps, IStylesOnly, SimpleComponentStyles } from '../../Utils/FluentUI/typings.fluent-ui';
 import { Assignment } from '../../../Models/Assignment.model';
 import { PublishControlArea } from '../../../Features/PublishAssignment/PublishControlArea';
@@ -145,6 +145,13 @@ root: {
 link:{
     padding: '0px',
     marginRight: `calc(${theme.spacing.s1}*2)`,
+    fontSize: '16px',
+    // selectors: {
+    //     '.ms-Pivot-link.is-selected &':{
+    //         fontSize: '16px',
+    //         backgroundColor: 'red'
+    //     }
+    // }
 }
 })
 
