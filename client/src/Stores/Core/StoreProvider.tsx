@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { createContext, PropsWithChildren } from 'react';
 import { RootStore } from '../Root.store';
 import { useLocalStore } from 'mobx-react-lite';

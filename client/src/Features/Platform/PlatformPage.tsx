@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { useEffect, useState } from 'react';
 import { PageWrapper, PageWrapperStyles } from '../../Core/Components/Common/PageWrapper';
 import { Header } from '../../Core/Components/Header';

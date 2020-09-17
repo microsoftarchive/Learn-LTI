@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { MouseEvent } from 'react';
 import { Nav, INavLinkGroup, INavLink, INavStyles } from 'office-ui-fabric-react/lib/Nav';
 import { useObserver } from 'mobx-react-lite';

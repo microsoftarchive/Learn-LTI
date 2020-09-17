@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { useState, useEffect } from 'react';
 import { IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import {
