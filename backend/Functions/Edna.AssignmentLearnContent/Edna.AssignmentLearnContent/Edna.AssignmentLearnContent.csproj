@@ -12,10 +12,10 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
   </ItemGroup>
   <ItemGroup>
-	  <ProjectReference Include="..\..\..\Bindings\Edna.Bindings.Assignment\Edna.Bindings.Assignment.csproj" />
-	  <ProjectReference Include="..\..\..\Bindings\Edna.Bindings.Lti1\Edna.Bindings.Lti1\Edna.Bindings.Lti1.csproj" />
-	  <ProjectReference Include="..\..\..\Bindings\Edna.Bindings.LtiAdvantage\Edna.Bindings.LtiAdvantage.csproj" />
-	  <ProjectReference Include="..\..\..\Bindings\Edna.Bindings.Platform\Edna.Bindings.Platform\Edna.Bindings.Platform.csproj" />
+	<ProjectReference Include="..\..\..\Bindings\Edna.Bindings.Assignment\Edna.Bindings.Assignment.csproj" />
+	<ProjectReference Include="..\..\..\Bindings\Edna.Bindings.Lti1\Edna.Bindings.Lti1\Edna.Bindings.Lti1.csproj" />
+	<ProjectReference Include="..\..\..\Bindings\Edna.Bindings.LtiAdvantage\Edna.Bindings.LtiAdvantage.csproj" />
+	<ProjectReference Include="..\..\..\Bindings\Edna.Bindings.Platform\Edna.Bindings.Platform\Edna.Bindings.Platform.csproj" />
     <ProjectReference Include="..\..\..\Utils\Edna.Utils.Linq\Edna.Utils.Linq\Edna.Utils.Linq.csproj" />
   </ItemGroup>
   <ItemGroup>
