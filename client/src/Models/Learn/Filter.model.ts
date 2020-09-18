@@ -31,7 +31,7 @@ export class Filter {
         this.productMap = productMap;     
         this.searchTerm = '';
     }
-        
+
     public updateSearchTerm(newTerm: string){
         this.searchTerm = newTerm;
     }
@@ -117,8 +117,8 @@ export class Filter {
                   ).map(product => product.id);
         
                   let removeProducts = [...removeParentProducts, ...removeChilrenProducts];
-                  let newSelected = prevSelected?.filter(item => !removeProducts.includes(item) );
-                  if(newSelected){
+                  let newSelected = prevSelected?.filter(item => !removeProducts.includes(item));
+                  if(newSelected!==undefined){
                   this.selectedFilters.set(type, newSelected);
                   }
               }
@@ -126,7 +126,7 @@ export class Filter {
               else{
                 let prevSelected = this.selectedFilters.get(type);
                 let newDisplay = this.displayFilters.get(type);
-                if(prevSelected && newDisplay){
+                if(prevSelected!==undefined && newDisplay!==undefined){
                   this.selectedFilters.set(type, _.intersection(prevSelected, newDisplay));
                 }
               }

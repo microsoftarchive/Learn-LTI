@@ -4,7 +4,11 @@ import React from 'react';
 import { getProductsToDisplay, getRolesToDisplay, getLevelsToDisplay, getTypesToDisplay } from './MicrosoftLearnFilterUtils';
 import { FilterType } from "../../Models/Learn/FilterType.model";
 import { MicrosoftLearnFilterComponent } from "./MicrosoftLearnFilterComponent";
+import { FontWeights } from "@fluentui/react";
+import { IThemeOnlyProps, SimpleComponentStyles } from "../../Core/Utils/FluentUI/typings.fluent-ui";
+import { themedClassNames } from "../../Core/Utils/FluentUI";
 
+export type FilterComponentStyles = SimpleComponentStyles<'root' | 'title' | 'search' | 'optionsList' | 'subOptionsList'>;
 
 export const ProductFilterComponent = () => {
     const learnStore = useStore('microsoftLearnStore');
@@ -16,6 +20,7 @@ export const ProductFilterComponent = () => {
         return (
         <>
             <MicrosoftLearnFilterComponent
+            styles={themedClassNames(FilterComponentStyles)}
             filterType={FilterType.Product}
             filterName="Products"
             filterOption={displayProducts}
@@ -65,6 +70,7 @@ export const RoleFilterComponent = () => {
     return (
         <>
         <MicrosoftLearnFilterComponent  
+        styles={themedClassNames(FilterComponentStyles)}
         filterType={FilterType.Role}
         filterName="Roles"
         filterOption={displayRoles}
@@ -100,6 +106,7 @@ export const LevelFilterComponent = () => {
     return (
         <>
             <MicrosoftLearnFilterComponent  
+            styles={themedClassNames(FilterComponentStyles)}
             filterType={FilterType.Level}
             filterName="Levels"
             filterOption={displayLevels}
@@ -130,9 +137,10 @@ export const TypeFilterComponent = () =>{
 
     return useObserver(()=>{
         const displayTypes = getTypesToDisplay(filter?.displayFilters.get(FilterType.Type))        
-    return (
-            <>
+        return (
+                <>
                     <MicrosoftLearnFilterComponent  
+                        styles={themedClassNames(FilterComponentStyles)}
                         filterType={FilterType.Type}
                         filterName="Types"
                         filterOption={displayTypes}
@@ -151,7 +159,43 @@ export const TypeFilterComponent = () =>{
                         subItemClickHandler={(event)=>{
                         }}                
                     />
-</>
-    )
-})
+                </>
+            )
+    })
 }
+
+const FilterComponentStyles = ({ theme }: IThemeOnlyProps): FilterComponentStyles => ({
+    root: [
+        {
+            marginBottom:theme.spacing.l1
+        }
+      ],
+    title: [
+        {
+            color: theme.palette.neutralPrimary,
+            fontWeight: FontWeights.semibold, 
+            display: window.innerWidth>768? 'block': 'none'            
+        }
+    ],
+    search: [
+        {
+            marginTop: `calc(${theme.spacing.s1}*2)`
+        }
+    ],
+    optionsList: [
+        {
+            width:'260px',
+            height:'max-content',
+            maxHeight: window.innerWidth>768? '260px': '85%',
+            overflowY:'auto', 
+            marginTop: `calc(${theme.spacing.s1}*2)`
+        }
+    ],
+
+    subOptionsList: [
+        {
+            paddingLeft: `calc(${theme.spacing.l1}*3)`
+        }
+    ]
+
+})

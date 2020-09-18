@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState } from 'react';
 import { SimpleComponentStyles, IStylesOnly, IThemeOnlyProps } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-import { styled, Text } from '@fluentui/react';
+import { FontWeights, styled, Text } from '@fluentui/react';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { MicrosoftLearnItemShimmer } from './MicrosoftLearnItemShimmer';
 import { MicrosoftLearnItem } from './MicrosoftLearnItem';
@@ -11,7 +11,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { useObserver } from 'mobx-react-lite';
 import { FIXED_ITEM_HEIGHT, FIXED_ITEM_WIDTH } from './MicrosoftLearnStyles';
 
-type MicrosoftLearnListStyles = SimpleComponentStyles<'root' | 'noResultsText' | 'row' | 'item'>;
+type MicrosoftLearnListStyles = SimpleComponentStyles<'root' | 'noResultsText' | 'row' | 'item' | 'contentCount'>;
 const ListRow = ({
   data: { numItemsPerRow, itemsData, isLoadingCatalog },
   index,
@@ -60,6 +60,14 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
         {noVisibleItems ? (
           <Text className={classes.noResultsText}>No items match your search. Please refine your search criteria.</Text>
         ) : (
+
+          <>
+          <div className={classes.contentCount}>
+          {learnStore.filteredCatalogContent && learnStore.filteredCatalogContent?.length>0?
+            <Text variant="mediumPlus" className='contentCountText'> {learnStore.filteredCatalogContent?.length.toLocaleString()} results from Microsoft Learn </Text>:
+            <Text> </Text>            
+          }
+          </div>
           <AutoSizer>
             {({ height, width }): JSX.Element | null => {
               if (autoSizerWidth === 0 || Math.abs(autoSizerWidth - width) > 25) {
@@ -88,6 +96,7 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
               );
             }}
           </AutoSizer>
+          </>
         )}
       </div>
     );
@@ -115,6 +124,18 @@ const microsoftLearnListStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnLis
   item: [
     {
       flex: 1
+    }
+  ],
+  contentCount: [
+    {
+      marginLeft: theme.spacing.s1,
+      marginBottom: theme.spacing.l1,
+      selectors: {
+        '.contentCountText':{
+          fontWeight: FontWeights.semibold
+        }
+      }
+
     }
   ]
 });

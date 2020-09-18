@@ -33,11 +33,11 @@ const FilterItemInner = (props: FilterItemProps) =>{
         <div>
             <span style={{display:'flex', flexDirection: 'row', alignItems: 'center', margin: `4px 4px`}}>
                 <ActionButton
-                iconProps={{iconName: inExpanded(props.mainItem?.id)? 'ChevronUpMed':'ChevronDownMed' }}
-                style = {{display: 'inline',
-                        color: _n_subItems===0? 'white' : '#605E5C',
-                        height: 'max-content'    
-                        }}
+                iconProps={{iconName: inExpanded(props.mainItem?.id)? 'ChevronUpMed':'ChevronDownMed'}}
+                style = {{display: 'inline',                        
+                        height: 'max-content' ,
+                        color: _n_subItems===0? 'white' : '#605E5C'   
+                        }}                
                 onClick = {(event)=>{
                 event.preventDefault();
                 let previous = inExpanded(props.mainItem?.id)
@@ -58,7 +58,7 @@ const FilterItemInner = (props: FilterItemProps) =>{
                 style={{display:"inline", alignItems: 'center'}}
                 />
             </span>
-            <div style={{display:  inExpanded(props.mainItem?.id)? 'block' : 'none' }}>
+            <div style={{display:  inExpanded(props.mainItem?.id)? 'block' : 'none' }} className={props.styles.subOptionsList?.toString()}>
             {props.subItems?.map(subItem => 
                 <span style={{display:'block', margin: `4px 4px` }}>
                     <Checkbox

@@ -1,177 +1,245 @@
-import React, { useState } from 'react';
-// import { SimpleComponentStyles, IStylesOnly, IThemeOnlyProps } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-import { ActionButton, DefaultButton, Icon, Panel, PanelType, Text } from '@fluentui/react';
-// import { themedClassNames } from '../../Core/Utils/FluentUI';
+import React, { useEffect, useState } from 'react';
+import { ActionButton, DefaultButton, Icon, Panel, PanelType, PrimaryButton, styled, Text } from '@fluentui/react';
 import { useStore } from '../../Stores/Core';
-// import { FixedSizeList } from 'react-window';
-// import AutoSizer from 'react-virtualized-auto-sizer';
 import { useObserver } from 'mobx-react-lite';
-// import { FIXED_ITEM_HEIGHT, FIXED_ITEM_WIDTH } from './MicrosoftLearnStyles';
-import { MicrosoftLearnFilterTags } from './MicrosoftLearnFilterTags';
 import { ProductFilterComponent, RoleFilterComponent, TypeFilterComponent, LevelFilterComponent } from './MicrosoftLearnFilterComponentUtils';
+import { debounce } from 'lodash';
+import { IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
+import { themedClassNames } from '../../Core/Utils/FluentUI';
+import { FilterType } from '../../Models/Learn/FilterType.model';
+import { FilterPaneStyles } from './MicrosoftLearnFilterPaneStyles';
 
-const FilterPaneInner = ()=>{
+const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element | null  =>   {
 
     const learnStore = useStore('microsoftLearnStore');
     const isLoadingCatalog = !!learnStore.isLoadingCatalog;
     const catalogContent = learnStore.filteredCatalogContent;
     const noVisibleFilter = !isLoadingCatalog && catalogContent?.length === 0;
 
-    const width = window.innerWidth;
-    
+
+    const [width, setWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const debouncedHandleResize = debounce(function handleResize() {
+            setWidth(window.innerWidth)
+        }, 500)
+        window.addEventListener('resize', debouncedHandleResize)
+        return () => {
+            window.removeEventListener('resize', debouncedHandleResize)        
+        }
+    })
+
     const [mainIsOpen, setMainOpen] = useState(false);
     const [productIsOpen, setProductOpen] = useState(false);
     const [roleIsOpen, setRoleOpen] = useState(false);
     const [typeIsOpen, setTypeOpen] = useState(false);
     const [levelIsOpen, setLevelOpen] = useState(false);
+    const [panelIsOpen, setPanelOpen] = useState(false);
+
+    const classes = themedClassNames(styles);
+
+
+    const noFiltersExist = () => {
+        let selectedFilters = learnStore.filter.selectedFilters;
+        return selectedFilters.get(FilterType.Product)?.length===0 && selectedFilters.get(FilterType.Role)?.length===0 &&
+                selectedFilters.get(FilterType.Type)?.length===0 && selectedFilters.get(FilterType.Level)?.length===0
+    }
+
+    // const kFormatter = (num: number | bigint | any) => {
+    //     return Math.abs(num) > 999 ? (Math.abs(num)/1000).toFixed(1) + 'K' : Math.sign(num)*Math.abs(num)
+    // }
+    
+    // const [num, setNum] = useState(learnStore.filteredCatalogContent?.length);
+
+    // useEffect(()=>{
+    //     setNum(learnStore.filteredCatalogContent?.length);
+    // }, [learnStore.filteredCatalogContent])
+
+    const onRenderFooterContent =  () => {
+        return(
+            <div className={classes.filterPanelFooter}>
+                <PrimaryButton
+                text='View results'
+                onClick={()=>{
+                    setPanelOpen(false);
+                    setMainOpen(false);
+                    setProductOpen(false);
+                    setRoleOpen(false);
+                    setLevelOpen(false);
+                    setTypeOpen(false);
+                }}
+                />
+                <DefaultButton 
+                text="Clear All"
+                onClick = {()=>{
+                    learnStore.resetFilter()
+                }}
+                />
+            </div>
+    )}
 
     return useObserver(() => {
         if(width>768){
-            console.log(" >768 rendering filter full")
-        return(
-            <div style={{
-                width:`25%`
-            }}>
-                FILTERS {learnStore.filteredCatalogContent?.length}
-                {noVisibleFilter? 
-                <Text>Oops No filters available</Text>
-                :
-                (        
-                <div>
-                    <button 
-                    onClick={()=>{
-                        learnStore.resetFilter();
-                    }}                    
-                    >
-                        Clear All Filters
-                    </button>        
-                    <MicrosoftLearnFilterTags />         
-                    <ProductFilterComponent/>
-                    <br />
-                    <RoleFilterComponent/>
-                    <br />
-                    <LevelFilterComponent />
-                    <br />
-                    <TypeFilterComponent />
+            return(
+                <div className={classes.root}>
+                    <Text className={classes.title} >Filters</Text> 
+                    {noVisibleFilter? 
+                        <Text variant="medium">Oops No filters available</Text>
+                        :
+                        (<div>
+                            <ActionButton
+                                onClick={()=>{learnStore.resetFilter()}}
+                                style={{display: noFiltersExist()? 'none' : 'block'}}
+                                className={classes.clearAll}
+                                text="Clear all filters"
+                            />
+                            <ProductFilterComponent/>
+                            <RoleFilterComponent/>
+                            <LevelFilterComponent />
+                            <TypeFilterComponent />
+                        </div>)
+                    }
                 </div>
-                )}
-            </div>
-        )
+            )
         }
 
         else{
             const backToMainFilters = (props: any, defaultRender: any)=>{
-                return (
-                    <>
-                    <ActionButton
-                        onClick = {(event)=>{
-                            setRoleOpen(false);
-                            setTypeOpen(false);
-                            setLevelOpen(false);
-                            setProductOpen(false)
-                            setMainOpen(true);
-                        }}
-                    >
-                    <Icon iconName="Back"/>
-                    <Text>All Filters</Text>
-                    </ActionButton>
-                    {defaultRender!(props)}
-                    </>
-                )
+                if(mainIsOpen){
+                    return(
+                        <>
+                        {defaultRender!(props)}
+                        </>
+                    )
+                }
+                    return (
+                        <div className={classes.filterPanelHeader}>
+                        <ActionButton
+                            onClick = {(event)=>{
+                                setRoleOpen(false);
+                                setTypeOpen(false);
+                                setLevelOpen(false);
+                                setProductOpen(false)
+                                setMainOpen(true);
+                            }}
+                        >
+                        <Icon iconName="Back"/>
+                        <Text className='backTitle'>All Filters</Text>
+                        </ActionButton>
+                        {defaultRender!(props)}
+                        </div>
+                    )
             }
+
+            const getHeader = ()=>{
+                if(mainIsOpen)
+                    return "Search Filters"
+                else if(productIsOpen)
+                    return "Products"
+                else if(roleIsOpen)
+                    return "Roles"
+                else if(typeIsOpen)
+                    return "Types"
+                else if(levelIsOpen)
+                    return "Levels"
+                return ""
+            }
+
             return(
                 <div>
-                <DefaultButton text="Open panel" onClick={()=>(setMainOpen(true))} />
-                <Panel
-                    headerText="Search Filters"
-                    isOpen={mainIsOpen}
-                    onDismiss={()=>(setMainOpen(false))}
-                    closeButtonAriaLabel="Close"
-                    isFooterAtBottom={true}
-                    type={PanelType.smallFixedNear}
-                >
-
-                <ActionButton                  
-                    onClick = {()=>(setProductOpen(true))}                                        
-                >
-                <Text>Products</Text>
-                <Icon iconName='ChevronRight'/>
-                </ActionButton>
-                <br/>
-                <ActionButton                  
-                    onClick = {()=>(setRoleOpen(true))}                    
-                >
-                <Text>Roles</Text>
-                <Icon iconName='ChevronRight'/>
-                </ActionButton>
-                <br/>
-                <ActionButton                  
-                    onClick = {()=>(setLevelOpen(true))}                    
-                >
-                <Text>Levels</Text>
-                <Icon iconName='ChevronRight'/>
-                </ActionButton>
-                <br/>
-                <ActionButton                  
-                    onClick = {()=>(setTypeOpen(true))}                    
-                >
-                <Text>Types</Text>
-                <Icon iconName='ChevronRight'/>
-                </ActionButton>
-                </Panel>
+                <DefaultButton 
+                iconProps={{iconName:"FilterSettings"}} 
+                className={classes.collapsePanelButton} 
+                text="Search Filters" 
+                onClick={()=>{setPanelOpen(true);
+                            setMainOpen(true);}
+                } 
+                disabled={learnStore.isLoadingCatalog? true : false}
+                />
 
                 <Panel
-                    headerText="Products"
-                    isOpen={productIsOpen}
-                    onDismiss={()=>(setProductOpen(false))}
+                    headerText={getHeader()}
+                    isOpen={panelIsOpen}
+                    onDismiss={()=>(setPanelOpen(false))}
                     closeButtonAriaLabel="Close"
                     isFooterAtBottom={true}
-                    type={PanelType.smallFixedNear}     
-                    onRenderNavigationContent={backToMainFilters} 
-                >
-                    <ProductFilterComponent/>
-                </Panel>
+                    onRenderFooterContent={onRenderFooterContent}
+                    className={classes.filterPanelTabView}
+                    onRenderNavigationContent={backToMainFilters}
+                    type={PanelType.smallFixedNear}>
 
-                <Panel
-                    headerText="Roles"
-                    isOpen={roleIsOpen}
-                    onDismiss={()=>(setRoleOpen(false))}
-                    closeButtonAriaLabel="Close"
-                    isFooterAtBottom={true}
-                    type={PanelType.smallFixedNear}     
-                    onRenderNavigationContent={backToMainFilters} 
-                >
-                    <RoleFilterComponent/>
-                </Panel>
+                    <>
+                    {mainIsOpen?(
+                    <>
+                        <ActionButton                  
+                            onClick = {()=>{
+                                setMainOpen(false)
+                                setRoleOpen(false);
+                                setTypeOpen(false);
+                                setLevelOpen(false);
+                                setProductOpen(true)}}
+                            className={classes.mainPanelActionButtons}>
+                        <Text className='buttonTitle'>Products</Text>
+                        <Icon iconName='ChevronRight'/>
+                        </ActionButton>
 
-                <Panel
-                    headerText="Levels"
-                    isOpen={levelIsOpen}
-                    onDismiss={()=>(setLevelOpen(false))}
-                    closeButtonAriaLabel="Close"
-                    isFooterAtBottom={true}
-                    type={PanelType.smallFixedNear}     
-                    onRenderNavigationContent={backToMainFilters} 
-                >
-                    <LevelFilterComponent/>
-                </Panel>
+                        <ActionButton                  
+                            onClick = {()=>{
+                                setMainOpen(false)
+                                setRoleOpen(true);
+                                setTypeOpen(false);
+                                setLevelOpen(false);
+                                setProductOpen(false)
+                            }}
+                            className={classes.mainPanelActionButtons}>
+                        <Text className='buttonTitle'>Roles</Text>
+                        <Icon iconName='ChevronRight'/>
+                        </ActionButton>
 
-                <Panel
-                    headerText="Types"
-                    isOpen={typeIsOpen}
-                    onDismiss={()=>(setTypeOpen(false))}
-                    closeButtonAriaLabel="Close"
-                    isFooterAtBottom={true}
-                    type={PanelType.smallFixedNear}     
-                    onRenderNavigationContent={backToMainFilters} 
-                >
-                <TypeFilterComponent/>
+                        <ActionButton                  
+                            onClick = {()=>{
+                                setMainOpen(false)
+                                setRoleOpen(false);
+                                setTypeOpen(false);
+                                setLevelOpen(true);
+                                setProductOpen(false)
+                            }}
+                            className={classes.mainPanelActionButtons}>
+                        <Text className='buttonTitle'>Levels</Text>
+                        <Icon iconName='ChevronRight'/>
+                        </ActionButton>
+
+                        <ActionButton                  
+                            onClick = {()=>{
+                                setMainOpen(false)
+                                setRoleOpen(false);
+                                setTypeOpen(true);
+                                setLevelOpen(false);
+                                setProductOpen(false)
+                            }}
+                            className={classes.mainPanelActionButtons}>
+                        <Text className='buttonTitle'>Types</Text>
+                        <Icon iconName='ChevronRight'/>
+                        </ActionButton>   
+                    </>
+                    ): 
+                    (productIsOpen?
+                        (<ProductFilterComponent/>): 
+                        (roleIsOpen?
+                            (<RoleFilterComponent/>):
+                            (levelIsOpen?
+                                (<LevelFilterComponent/>):
+                                    (<TypeFilterComponent/>)
+                            )
+                        )
+                    )
+                    }
+                    </>
                 </Panel>
-                </div>
-               )
+            </div>
+            )
         }
-
     })
 }
 
-export const MicrosoftLearnFilterPane = FilterPaneInner;
+export const MicrosoftLearnFilterPane = styled(FilterPaneInner, FilterPaneStyles);

@@ -3,6 +3,7 @@ import { FilterType } from '../../Models/Learn/FilterType.model';
 import { RoleDto } from '../../Dtos/Learn/Role.dto';
 import { LevelDto } from '../../Dtos/Learn';
 import { FormEvent } from 'react';
+import { FilterComponentStyles } from './MicrosoftLearnFilterComponentUtils';
 
 
 export type LearnTypeName = 'Learning Path' | 'Module'
@@ -15,17 +16,18 @@ export type LearnTypeFilterOption = {
 export type FilterOption = Product | Pick<LevelDto, "id" | "name">  | LearnTypeFilterOption | Pick<RoleDto, "id" | "name"> | undefined
 
 export type FilterComponentProps = {
+    styles: FilterComponentStyles,
     filterType: FilterType,
     filterName: string,
     filterOption: Map<FilterOption, FilterOption[]> | null,
     mainItemClickHandler: ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void) | undefined,
-    // ((event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void) | undefined,
     subItemClickHandler: ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void) | undefined,
     search: boolean
 
 }
 
 export type FilterItemProps = {
+    styles: FilterComponentStyles,
     filterType: FilterType,
     mainItem: FilterOption,
     subItems: FilterOption[] | undefined,

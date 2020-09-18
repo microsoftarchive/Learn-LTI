@@ -3,7 +3,7 @@ import { Header } from './Header';
 import { styled, Spinner, SpinnerSize, FontSizes, FontWeights } from '@fluentui/react';
 import { SimpleComponentStyles, IThemeOnlyProps, IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
 import { PagesRouter } from '../../Router/PagesRouter';
-import { Navbar } from './Navbar/Navbar';
+// import { Navbar } from './Navbar/Navbar';
 import { useObserver } from 'mobx-react-lite';
 import { useStore } from '../../Stores/Core';
 import { useAssignmentInitializer } from '../Hooks/useAssignmentInitializer';
@@ -48,7 +48,7 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         <div className={classes.content}>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
-              <Navbar />
+              {/* <Navbar /> */}
               <PagesRouter />
             </>
           ) : (

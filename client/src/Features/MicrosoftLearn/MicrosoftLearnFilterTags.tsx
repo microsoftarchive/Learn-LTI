@@ -1,42 +1,75 @@
 import React from 'react';
-// import { SimpleComponentStyles, IStylesOnly, IThemeOnlyProps } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-// import { styled, Text, FontIcon } from '@fluentui/react';
-// import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { useStore } from '../../Stores/Core';
-// import { FixedSizeList } from 'react-window';
-// import AutoSizer from 'react-virtualized-auto-sizer';
 import { useObserver } from 'mobx-react-lite';
-// import { FIXED_ITEM_HEIGHT, FIXED_ITEM_WIDTH } from './MicrosoftLearnStyles';
 import { FilterType } from '../../Models/Learn/FilterType.model'; 
-import {  getDisplayFilterTags } from './MicrosoftLearnFilterUtils';
+import {  FilterTag, getDisplayFilterTags } from './MicrosoftLearnFilterUtils';
+import { DefaultButton, styled } from '@fluentui/react';
+import { IStylesOnly, IThemeOnlyProps, SimpleComponentStyles } from '../../Core/Utils/FluentUI/typings.fluent-ui';
+import { themedClassNames } from '../../Core/Utils/FluentUI';
 
+type FilterTagStyles = SimpleComponentStyles<'root' | 'tags'>;
 
-const FilterTagsInner = () => {
+const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>):JSX.Element | null => {
 
     const learnStore = useStore('microsoftLearnStore');
     const productsMap = learnStore.productMap;
     const filter = learnStore.filter;
-    return useObserver(()=>{
-        const tagMap: Map<FilterType, string[]> = getDisplayFilterTags(filter.displayFilters, filter.selectedFilters, productsMap);
+    const classes = themedClassNames(styles);
 
+    return useObserver(()=>{
+        let tagMap: FilterTag[] = getDisplayFilterTags(filter.displayFilters, filter.selectedFilters, productsMap, learnStore.catalog);
         return (
-            <div>Selected Filters: 
-                        
-            {Array.from(tagMap.keys()).map(key => 
-            (
-            <div>                         
-              {tagMap.get(key)?.map(tag => 
-                  (<span>
-                      {tag}
-                      <br/>
-                  </span>)  
-              )}
-              </div>  
-            )
-            )}                                            
-        </div>  
+            <div className={classes.root}>          
+                {tagMap.map(tag => (
+                    <DefaultButton 
+                    className={classes.tags}
+                    iconProps={{iconName:"StatusCircleErrorX"}} 
+                    text={tag.name} 
+                    onClick={()=>{
+                        if(tag.type===FilterType.Product){
+                            let subItems: string[] = [];
+                            [...learnStore.catalog?.products.values()].forEach((product)=>{
+                                if(product.parentId && product.parentId===tag.id){
+                                    subItems.push(product.id);
+                                }
+                            })
+                            learnStore.removeFilter(tag.type, [...subItems, tag.id])
+                        }
+                        else{
+                            learnStore.removeFilter(tag.type, [tag.id])
+                        }                    
+                    }} />
+                ))}
+            </div>  
         )
     })
 }
 
-export const MicrosoftLearnFilterTags = FilterTagsInner
+const FilterTagStyles = ({ theme }: IThemeOnlyProps): FilterTagStyles => ({
+    root: [
+        {
+            margin: `calc(${theme.spacing.s1}*1.5)`
+        }
+    ],
+    tags: [
+        {
+            display: 'inline',
+            backgroundColor: '#F3F2F1',
+            borderRadius: '2px',
+            marginRight: '4px',
+            marginBottom: '4px',
+            border: `0px`,
+            padding: `0px 8px`,
+            selectors: {
+                '.ms-Button-flexContainer':{
+                    flexDirection: 'row-reverse'
+                },
+                '.ms-Icon':{
+                    fontWeight: 900
+                }
+            }
+        }
+    ]
+})
+
+export const MicrosoftLearnFilterTags = styled(FilterTagsInner, FilterTagStyles) 

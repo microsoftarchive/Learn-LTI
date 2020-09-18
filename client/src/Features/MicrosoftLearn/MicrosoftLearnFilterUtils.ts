@@ -1,10 +1,8 @@
-import { Product, Role, Level } from '../../Models/Learn';
+import { Product, Role, Level, Catalog } from '../../Models/Learn';
 import { FilterType } from '../../Models/Learn/FilterType.model'; 
 import { LearnTypeFilterOption, FilterOption } from './MicrosoftLearnFilterComponentProps';
 import { RoleDto, LevelDto } from '../../Dtos/Learn';
 import _ from 'lodash';
-
-
 
 export const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
     if(a && b){
@@ -46,7 +44,7 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
         })
 
         let sortedProductParentChildMap = new Map<Product, Product []>();
-        let sortedKeys = Array.from(productParentChildMap.keys()).sort(FilterOptionComparer);
+        let sortedKeys = [...productParentChildMap.keys()].sort(FilterOptionComparer);
         sortedKeys.forEach((item)=>{
             let val = productParentChildMap.get(item)
             sortedProductParentChildMap.set(item, val? val : []);
@@ -65,7 +63,7 @@ export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<str
             }            
         });
 
-        let sortedKeys = Array.from(roles.keys()).sort(FilterOptionComparer);
+        let sortedKeys = [...roles.keys()].sort(FilterOptionComparer);
         let sortedRoles = new Map<Pick<RoleDto, "id" | "name"> | undefined , Pick<RoleDto, "id" | "name">[]>();
         sortedKeys.forEach((item)=>{
             let val = roles.get(item)
@@ -84,7 +82,7 @@ export const getLevelsToDisplay = (levelId:  string[] | undefined, levelMap: Map
                 levels.set(levelMap.get(lid), []);
             }
         })
-        let sortedKeys = Array.from(levels.keys()).sort(FilterOptionComparer);
+        let sortedKeys = [...levels.keys()].sort(FilterOptionComparer);
         let sortedLevels = new Map< Pick<LevelDto, "id" | "name"> | undefined, Pick<LevelDto, "id" | "name">[]>();
         sortedKeys.forEach((item) =>{
             let val = levels.get(item)
@@ -118,7 +116,7 @@ export const getTypesToDisplay = (typeId: string[] | undefined) =>{
         })
     
     let sortedTypes = new Map<LearnTypeFilterOption, LearnTypeFilterOption[]>();
-    let sortedKeys = Array.from(types.keys()).sort(FilterOptionComparer);
+    let sortedKeys = [...types.keys()].sort(FilterOptionComparer);
     sortedKeys.forEach((item)=>{
         let val = types.get(item);
         sortedTypes.set(item, val? val: []);
@@ -127,12 +125,18 @@ export const getTypesToDisplay = (typeId: string[] | undefined) =>{
     return types; 
 }
 
-export const getDisplayFilterTags = (displayFilters: Map<FilterType, string[]>, selectedFilters: Map<FilterType, string[]>, productsMap: Map<Product, Product[]>) => {
+export type FilterTag = {
+    id: string,
+    name: string,
+    type: FilterType
+}
+
+export const getDisplayFilterTags = (displayFilters: Map<FilterType, string[]>, selectedFilters: Map<FilterType, string[]>, productsMap: Map<Product, Product[]>, learnCatalog: Catalog | null) => {
 
     const getIntersection = (type: FilterType) => {
         let intersect = displayFilters.get(type)?.filter(item => selectedFilters.get(type)?.includes(item));
         if(type===FilterType.Product){
-            let keys = Array.from(productsMap.keys())
+            let keys = [...productsMap.keys()]
             keys.forEach((item) => {
                 if(intersect?.includes(item.id)){
                     let childId = productsMap.get(item)?.map(child => child.id)
@@ -143,19 +147,59 @@ export const getDisplayFilterTags = (displayFilters: Map<FilterType, string[]>, 
         return intersect;
     }
 
-    let productTags = getIntersection(FilterType.Product);
-    let roleTags = getIntersection(FilterType.Role);
-    let levelTags = getIntersection(FilterType.Level);
-    let typeTags = getIntersection(FilterType.Type);
-    let tagMap: Map<FilterType, string[]> = new Map<FilterType, string[]>();
+    let productTags: FilterTag[] = []
+    if(learnCatalog?.products?.values()){
+        let productFilters = getIntersection(FilterType.Product);
+        productTags = [...learnCatalog?.products?.values()]
+                    .filter(product => productFilters?.includes(product.id))
+                    .map(p => ({id: p.id, name: p.name, type: FilterType.Product}))    
+    }
+                                                                                                                        
+    let roleTags: FilterTag[] = []
+    if(learnCatalog?.roles.values()){
+    let roleFilters = getIntersection(FilterType.Role);
+    roleTags = [...learnCatalog?.roles.values()]
+                .filter(role => roleFilters?.includes(role.id))
+                .map(r => ({id: r.id, name: r.name, type: FilterType.Role}))
+    }
 
-    tagMap.set(FilterType.Product, productTags?productTags:[]);
-    tagMap.set(FilterType.Role, roleTags?roleTags:[]);
-    tagMap.set(FilterType.Level, levelTags?levelTags:[]);
-    tagMap.set(FilterType.Type, typeTags?typeTags:[]);
-    return tagMap;
+    let levelTags: FilterTag[] = []
+    if(learnCatalog?.levels.values()){
+        let levelFilters = getIntersection(FilterType.Level);
+        levelTags = [...learnCatalog?.levels.values()]
+                    .filter(level => levelFilters?.includes(level.id))
+                    .map(l => ({id: l.id, name: l.name, type: FilterType.Level}));    
+    }
+    
+    let typeFilters = getIntersection(FilterType.Type)?.filter(item => item!!);
+    let typeTags: FilterTag[] = []
+    if(typeFilters){
+         let _typeTags = typeFilters?.map(typeId => {
+            switch(typeId){
+                case 'module':
+                    return {
+                        id: typeId,
+                        name: 'Module',
+                        type: FilterType.Type
+                    }
+                case 'learningPath':
+                    return {
+                        id: typeId,
+                        name: 'Learning Path',
+                        type: FilterType.Type
+                    }
+                default:
+                    return {
+                        id: '',
+                        name: '',
+                        type: FilterType.Type
+                    }
+            }
+        })        
+        typeTags = _typeTags? _typeTags.filter(item => item.id.length>0) : []; 
+    }
+    return  [...productTags, ...roleTags, ...levelTags, ...typeTags]
 }
-
 
 export const getRegexs = (searchTerm: string): RegExp[] => {
     const expressions: RegExp[] = searchTerm
@@ -165,19 +209,19 @@ export const getRegexs = (searchTerm: string): RegExp[] => {
       .map(termPart => new RegExp(`.*${termPart}.*`, 'i'));
     expressions.push(new RegExp(`.*${searchTerm}.*`, 'i'));
     return expressions;
-  }
+}
 
 export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 1): number => {
     if(!testPhrase){
         return 0;
     }
     return exp.test(testPhrase) ? score : 0;
-  }
+}
 
 export const getDisplayFromSearch = (expressions: RegExp [], currentDisplay: Map<FilterOption, FilterOption[]>) => {
 
         let filteredDisplay: Map<FilterOption, FilterOption[]> = new Map<FilterOption, FilterOption[]>();
-        let keys = Array.from(currentDisplay.keys());
+        let keys = [...currentDisplay.keys()];
         
         keys.forEach((key) => {
             let children = currentDisplay.get(key);
