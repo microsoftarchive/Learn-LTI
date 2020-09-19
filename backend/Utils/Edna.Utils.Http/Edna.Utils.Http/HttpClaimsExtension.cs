@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +20,7 @@ namespace Edna.Utils.Http
             userEmails = new List<string>();
             if (!headers.TryGetTokenClaims(out Claim[] claims, logAction))
             {
-                logAction("Error in sent JWT");
+                logAction?.Invoke("Error in sent JWT");
                 return false;
             }
 
@@ -33,7 +38,7 @@ namespace Edna.Utils.Http
             switch (appidacr)
             {
                 case "0":
-                    return GetUserDetailsFromClaims(claims, out userEmails);
+                    return ParseUserEmailsFromClaims(claims, out userEmails);
 
                 case "2":
                     return true;
@@ -44,7 +49,7 @@ namespace Edna.Utils.Http
             }
         }
 
-        private static bool GetUserDetailsFromClaims(Claim[] claims, out List<String> userEmails)
+        private static bool ParseUserEmailsFromClaims(Claim[] claims, out List<String> userEmails)
         {
             Claim[] claimsArray = claims.ToArray();
             userEmails = PossibleEmailClaimTypes

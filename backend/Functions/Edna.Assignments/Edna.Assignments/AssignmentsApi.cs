@@ -162,7 +162,7 @@ namespace Edna.Assignments
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
             {
                 _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
             _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
@@ -180,8 +180,8 @@ namespace Edna.Assignments
                 Membership userMembership = await membershipClient.GetMemberByEmail(assignmentDto.ContextMembershipsUrl, assignmentDto.OAuthConsumerKey, assignmentDto.ResourceLinkId, userEmails);
                 if (userMembership == null)
                 {
-                    _logger.LogError("no members");
-                    return new BadRequestErrorMessageResult("Bad Request: no members");
+                    _logger.LogError("no members with the given user emails");
+                    return new BadRequestErrorMessageResult("Invalid User");
                 }
                 if (userMembership.Role.Equals(ContextRole.Learner))
                 {

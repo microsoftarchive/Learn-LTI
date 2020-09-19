@@ -113,8 +113,6 @@ namespace Edna.AssignmentLinks
             await linksCollector.AddAsync(assignmentLinkEntity);
             await linksCollector.FlushAsync();
 
-            _logger.LogInformation("Link saved.");
-
             AssignmentLinkDto savedLinkDto = _mapper.Map<AssignmentLinkDto>(assignmentLinkEntity);
             string assignmentUrl = $"{req.Scheme}://{req.Host}/api/assignments/{assignmentId}/links/{savedLinkDto.Id}";
 
@@ -132,10 +130,7 @@ namespace Edna.AssignmentLinks
             [Lti1] Lti1MembershipClient membershipClient)
         {
             if (entityToDelete == null)
-            {
-                _logger.LogInformation("Entity to delete is null");
-                return new OkResult();
-            }
+                return new NoContentResult();
 
             IActionResult res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
             if (res.GetType() != typeof(OkResult))
@@ -147,8 +142,6 @@ namespace Edna.AssignmentLinks
             if (deleteResult.HttpStatusCode < 200 || deleteResult.HttpStatusCode >= 300)
                 return new InternalServerErrorResult();
 
-            _logger.LogInformation("Link deleted.");
-
             return new OkResult();
         }
 
@@ -157,7 +150,7 @@ namespace Edna.AssignmentLinks
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
             {
                 _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
             _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");

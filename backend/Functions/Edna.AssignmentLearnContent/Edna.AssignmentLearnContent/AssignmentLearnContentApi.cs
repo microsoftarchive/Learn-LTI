@@ -97,15 +97,10 @@ namespace Edna.AssignmentLearnContent
 
             _logger.LogInformation($"Saving assignment learn content with uid [{contentUid}] to assignment {assignmentId}");
 
-            AssignmentLearnContentEntity assignmentLearnContentEntity = new AssignmentLearnContentEntity();
-            assignmentLearnContentEntity.PartitionKey = assignmentId;
-            assignmentLearnContentEntity.RowKey = contentUid;
-            assignmentLearnContentEntity.ETag = "*";
+            AssignmentLearnContentEntity assignmentLearnContentEntity = new AssignmentLearnContentEntity { PartitionKey = assignmentId, RowKey = contentUid, ETag = "*" };
 
             await linksCollector.AddAsync(assignmentLearnContentEntity);
             await linksCollector.FlushAsync();
-
-            _logger.LogInformation("Learn Content saved.");
 
             AssignmentLearnContentDto savedLearnContentDto = _mapper.Map<AssignmentLearnContentDto>(assignmentLearnContentEntity);
             string assignmentUrl = $"{req.Scheme}://{req.Host}/api/assignments/{assignmentId}/learn-content/{savedLearnContentDto.ContentUid}";
@@ -126,10 +121,7 @@ namespace Edna.AssignmentLearnContent
             [Lti1] Lti1MembershipClient membershipClient)
         {
             if (assignmentLearnContentEntityToDelete == null)
-            {
-                _logger.LogInformation("entity is null");
-                return new OkResult();
-            }
+                return new NoContentResult();
 
             IActionResult res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
             if (res.GetType() != typeof(OkResult))
@@ -142,8 +134,6 @@ namespace Edna.AssignmentLearnContent
 
             if (deleteResult.HttpStatusCode < 200 || deleteResult.HttpStatusCode >= 300)
                 return new InternalServerErrorResult();
-
-            _logger.LogInformation("Learn Content removed.");
 
             return new OkResult();
         }
@@ -173,12 +163,9 @@ namespace Edna.AssignmentLearnContent
             IList<TableResult> executeBatchResults = await assignmentLearnContentTable.ExecuteBatchAsync(deleteBatchOperations);
             bool errorExists = executeBatchResults.Any(result => result.HttpStatusCode < 200 || result.HttpStatusCode >= 300);
 
-            if (errorExists)
-                return new InternalServerErrorResult();
-
-            _logger.LogInformation("Learn Content removed.");
-
-            return new OkResult();
+            return errorExists
+                ? (IActionResult)new InternalServerErrorResult()
+                : new OkResult();
         }
 
         private async Task<List<AssignmentLearnContentEntity>> GetAllAssignmentLearnContentEntities(CloudTable assignmentLearnContentTable, string assignmentId)
@@ -220,7 +207,7 @@ namespace Edna.AssignmentLearnContent
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
             {
                 _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Bad Request: Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
             _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
