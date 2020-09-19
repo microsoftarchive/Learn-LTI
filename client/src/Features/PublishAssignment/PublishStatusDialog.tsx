@@ -7,7 +7,7 @@ import {
   DefaultButton,
   IModalProps,
   IModalStyles,
-  IDialogStyles
+  IDialogStyles, Spinner, SpinnerSize
 } from '@fluentui/react';
 import { DIALOG_MIN_WIDTH, commonDialogContentProps } from '../../Core/Components/Common/Dialog/EdnaDialogStyles';
 import { useStore } from '../../Stores/Core';
@@ -40,7 +40,6 @@ export const PublishStatusDialog = ({
   }, [isOpen]);
 
   const onClickApprove = (): void => {
-    setIsDialogWindowVisible(false);
     onApprove();
   };
 
@@ -61,8 +60,28 @@ export const PublishStatusDialog = ({
         subText={subText}
       >
         <DialogFooter>
-          <PrimaryButton onClick={onClickApprove} text={approveButtonText} />
-          <DefaultButton onClick={onDismiss} text="Cancel" />
+          <PrimaryButton 
+          onClick={onClickApprove}
+          disabled={assignmentStore.isChangingPublishState?assignmentStore.isChangingPublishState:false}
+          >
+          {assignmentStore.isChangingPublishState?
+          (<>
+          <Spinner className='stateChangeSpinner' size={SpinnerSize.xSmall}/>
+          {approveButtonText}
+          </>):
+          (<>
+            {approveButtonText}
+          </>)
+          }
+          </PrimaryButton>
+          <DefaultButton 
+            onClick={onDismiss} 
+            disabled={assignmentStore.isChangingPublishState?assignmentStore.isChangingPublishState:false}
+          >
+            <>
+            Cancel
+            </>
+          </DefaultButton>
         </DialogFooter>
       </Dialog>
     );
@@ -72,7 +91,13 @@ export const PublishStatusDialog = ({
 const modalStyle = (isDialogWindowVisible: boolean): Partial<IModalStyles> => ({
   main: [
     {
-      display: isDialogWindowVisible ? 'flex' : 'none'
+      display: isDialogWindowVisible ? 'flex' : 'none',
+      selectors: {
+        '.stateChangeSpinner':{
+          marginLeft: '4px',
+          marginRight: '20px'
+        }
+      }
     }
   ]
 });

@@ -44,6 +44,11 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
       theme: getTheme()
     });
 
+    const publishButtonClassNames = classNamesFunction<EditButtonStyleProps, IButtonStyles>()(publishButtonStyle, {
+      isPublished: assignmentStore?.assignment?.publishStatus === 'Published',
+      theme: getTheme()
+    })
+
     return (
       <div className={classes.root}>
         <DefaultButton
@@ -67,7 +72,7 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
 
         <PrimaryButton
           text="Publish"
-          styles={themedClassNames(publishButtonStyle)}
+          styles={publishButtonClassNames}
           disabled={
             !assignmentStore ||
             !assignmentStore.assignment ||
@@ -129,12 +134,13 @@ const editButtonStyle = ({ theme, isPublished }: EditButtonStyleProps): Partial<
     ]
   });
 
-const publishButtonStyle = ({ theme }: IThemeOnlyProps): Partial<IButtonStyles> =>
+const publishButtonStyle = ({ theme, isPublished }: EditButtonStyleProps): Partial<IButtonStyles> =>
   mergeStyleSets(commonButtonStyle, {
     root: [
       {
         backgroundColor: theme.palette.themeDark,
-        width:`calc(${theme.spacing.l1}*4.35)`
+        width:`calc(${theme.spacing.l1}*4.35)`,
+        display: isPublished ? 'none' : 'block'
       }
     ]
   });

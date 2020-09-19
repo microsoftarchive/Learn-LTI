@@ -19,10 +19,7 @@ const PublishStatusIndicatorInner = ({ styles }: IStylesOnly<PublishStatusIndica
     if (assignmentStore.isChangingPublishState) {
       return (
         <div className={classes.root}>
-          <Spinner />
-          <Text variant="medium" className={classes.text}>
-            {assignmentStore.assignment.publishStatus === 'Published' ? 'Switching to edit mode...' : 'Publishing...'}
-          </Text>
+          <Spinner className='stateChangeSpinner' />
         </div>
       );
     }
@@ -52,7 +49,13 @@ const publishStatusIndicatorStyles = ({ theme }: IThemeOnlyProps): PublishStatus
     {
       display: 'flex',
       alignItems: 'center',
-      paddingTop: theme.spacing.s1
+      paddingTop: theme.spacing.s1,
+      selectors: {
+        '.stateChangeSpinner':{
+          marginLeft: theme.spacing.s1,
+          marginRight: theme.spacing.l1
+        }
+      }
     }
   ],
   text: [
