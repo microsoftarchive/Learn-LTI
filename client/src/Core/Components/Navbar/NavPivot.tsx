@@ -5,7 +5,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import _ from 'lodash';
 import { configurationRoutes, viewRoutes } from '../../../Router/RoutesConfiguration';
 import { useStore } from '../../../Stores/Core';
-import { styled, PivotItem, Pivot, IPivotStyles, MessageBarType, AnimationClassNames, mergeStyles, Separator, FontSizes } from '@fluentui/react';
+import { styled, PivotItem, Pivot, IPivotStyles, MessageBarType, AnimationClassNames, mergeStyles, Separator, FontSizes, FontWeights } from '@fluentui/react';
 import { IThemeOnlyProps, IStylesOnly, SimpleComponentStyles } from '../../Utils/FluentUI/typings.fluent-ui';
 import { Assignment } from '../../../Models/Assignment.model';
 import { PublishControlArea } from '../../../Features/PublishAssignment/PublishControlArea';
@@ -50,7 +50,7 @@ const NavPivotInner = ({ styles }: IStylesOnly<NavWrapperStyles>): JSX.Element |
 
       const selectedNavKey = removeSlashFromStringEnd(location.pathname);
       const classes = themedClassNames(styles);
-
+      console.log(getMappedLinks(assignmentStore.assignment!), 'mapped links')
       return useObserver(() => {
         if (!assignmentStore.assignment) {
             return null;
@@ -69,7 +69,8 @@ const NavPivotInner = ({ styles }: IStylesOnly<NavWrapperStyles>): JSX.Element |
                         <PivotItem
                         headerText={link.name}
                         itemIcon={link.icon}    
-                        itemKey={link.url}                     
+                        itemKey={link.url} 
+                        headerButtonProps={{disabled:link.disabled?link.disabled: false}}
                         />)
                     })}
                     </Pivot>
@@ -139,19 +140,22 @@ root: {
     width: `calc(${theme.spacing.l1} * 20.4)`,
     height:`calc(${theme.spacing.l1} * 2.6)`,
     backgroundColor: theme.palette.neutralLighterAlt,
-    paddingTop: '10px'
+    paddingTop: '10px',
+    selectors: {
+      '.is-disabled':{
+        color: theme.semanticColors.disabledText
+      },
+      '.is-selected':{
+        fontSize: '16px',
+        fontWeight: FontWeights.semibold
+      }
+    }
 },
 
 link:{
     padding: '0px',
     marginRight: `calc(${theme.spacing.s1}*2)`,
-    fontSize: '16px',
-    // selectors: {
-    //     '.ms-Pivot-link.is-selected &':{
-    //         fontSize: '16px',
-    //         backgroundColor: 'red'
-    //     }
-    // }
+    fontSize: '16px',    
 }
 })
 
