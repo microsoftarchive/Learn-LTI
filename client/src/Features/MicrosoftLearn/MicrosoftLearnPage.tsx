@@ -88,7 +88,7 @@ const microsoftLearnPageStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnPag
       fontSize: 0,
       padding: 0,
       marginTop: theme.spacing.s1,
-      marginBottom: `calc(${theme.spacing.l1} + ${theme.spacing.s1})`,
+      marginBottom: `calc(${theme.spacing.l1}*0.5 + ${theme.spacing.s1})`,
       selectors: {
         '::before': {
           backgroundColor: theme.semanticColors.bodyDivider

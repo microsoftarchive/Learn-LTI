@@ -58,7 +58,7 @@ export const FilterPaneStyles = ({ theme }: IThemeOnlyProps): FilterPaneStyles =
 
     filterPanelTabView: [
         {
-            width: '300px',
+            width: '340px',
             selectors:{
                 '.ms-Panel-main':{
                     width: '100%'
@@ -68,6 +68,9 @@ export const FilterPaneStyles = ({ theme }: IThemeOnlyProps): FilterPaneStyles =
     ],
     filterPanelFooter: [
         {
+            width: '85%',
+            position: 'absolute',
+            bottom: '0px',
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-evenly',
