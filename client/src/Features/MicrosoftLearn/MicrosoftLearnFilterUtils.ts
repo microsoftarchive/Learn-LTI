@@ -3,7 +3,7 @@ import { FilterType } from '../../Models/Learn/FilterType.model';
 import { LearnTypeFilterOption, FilterOption } from './MicrosoftLearnFilterComponentProps';
 import _ from 'lodash';
 
-export const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
+const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
     if(a && b){
         return a.name.localeCompare(b.name);
     }

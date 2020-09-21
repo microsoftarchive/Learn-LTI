@@ -35,7 +35,8 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>):JSX.Element |
                         else{
                             learnStore.removeFilter(tag.type, [tag.id])
                         }                    
-                    }} />
+                    }} 
+                    />
                 ))}
             </div>  
         )
