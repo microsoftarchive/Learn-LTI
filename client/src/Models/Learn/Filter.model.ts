@@ -140,6 +140,9 @@ export class Filter {
             let filteredLevels = new Set<string>(_.flatten(filteredContent.map(content => content.levels)));
         
             const products = _.flatten(filteredContent.map(content => content.products));
+
+            // For multi-hierarchy
+            // Add all ancestors instead of just parents.
             const parents = products.map(product => this.catalog?.products.get(product)?.parentId || '').filter(pId => pId.length>0)
             filteredProducts = new Set([...parents, ...products]);
             this.displayFilters.set(FilterType.Product, [...filteredProducts]);
@@ -172,7 +175,8 @@ export class Filter {
                       invisibleChildren = [...invisibleChildren, ...this.productMap.get(parent)?.map(c=>c.id)]
                   }
               })
-              
+              // For multi-hierarchy
+              // keep = keep.filter(p => !invisibleChildren.includes(p))
               keep = [...keep, ...productFilter.filter(f => !keep.includes(f) && !invisibleChildren.includes(f))];
               return 'products='+keep.join('%2C');
           }

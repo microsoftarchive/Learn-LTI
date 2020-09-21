@@ -28,18 +28,13 @@ export const ProductFilterComponent = () => {
             mainItemClickHandler={(event)=>{                    
                 let target = event?.target as HTMLInputElement
                 let value = target.getAttribute('aria-describedby');
-
                 if(value){
-                let subItems: string[] = [];
-                [...learnStore.catalog?.products.values()].forEach((product)=>{
-                    if(product.parentId && product.parentId===value){
-                        subItems.push(product.id);
-                    }
-                })
+                let subItems: string[] = [...learnStore.catalog?.products.values()].filter(product => product.parentId && product.parentId===value)
+                                                                                   .map(product => product.id);
                 let type = FilterType.Product
                 target.checked? learnStore.addFilter(type, [...subItems, value]) 
                 : learnStore.removeFilter(type, [...subItems, value]);
-            }
+                }
             }}
             subItemClickHandler={(event)=>{
                 let target = event?.target as HTMLInputElement
