@@ -27,12 +27,9 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>):JSX.Element |
                     text={tag.name} 
                     onClick={()=>{
                         if(tag.type===FilterType.Product){
-                            let subItems: string[] = [];
-                            [...learnStore.catalog?.products.values()].forEach((product)=>{
-                                if(product.parentId && product.parentId===tag.id){
-                                    subItems.push(product.id);
-                                }
-                            })
+                            let subItems: string[] = [...learnStore.catalog?.products.values()]
+                            .filter(product => product.parentId && product.parentId===tag.id)
+                            .map(product => product.id);                            
                             learnStore.removeFilter(tag.type, [...subItems, tag.id])
                         }
                         else{

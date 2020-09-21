@@ -1,7 +1,9 @@
 import { FontWeights, FontSizes } from "@fluentui/react";
 import { SimpleComponentStyles, IThemeOnlyProps } from "../../Core/Utils/FluentUI/typings.fluent-ui";
 
-export type FilterPaneStyles = SimpleComponentStyles<'root' | 'title' | 'collapsePanelButton' | 'clearAll' | 'mainPanelActionButtons' | 'filterPanelTabView' | 'filterPanelFooter' | 'filterPanelHeader'>;
+export type FilterPaneStyles = SimpleComponentStyles<'root' | 'title' | 'collapsePanelButton' | 'clearAll' | 
+                                                'mainPanelActionButtons' | 'filterPanelTabView' | 'filterPanelFooter' | 
+                                                'filterPanelHeader'>;
 
 export const FilterPaneStyles = ({ theme }: IThemeOnlyProps): FilterPaneStyles => ({
     root: [

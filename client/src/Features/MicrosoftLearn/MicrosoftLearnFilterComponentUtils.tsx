@@ -8,7 +8,7 @@ import { FontWeights } from "@fluentui/react";
 import { IThemeOnlyProps, SimpleComponentStyles } from "../../Core/Utils/FluentUI/typings.fluent-ui";
 import { themedClassNames } from "../../Core/Utils/FluentUI";
 
-export type FilterComponentStyles = SimpleComponentStyles<'root' | 'title' | 'search' | 'optionsList' | 'subOptionsList'>;
+export type FilterComponentStyles = SimpleComponentStyles<'root' | 'title' | 'search' | 'optionsList' | 'subOptionsList' | 'filterItem'>;
 
 export const ProductFilterComponent = () => {
     const learnStore = useStore('microsoftLearnStore');
@@ -20,34 +20,34 @@ export const ProductFilterComponent = () => {
         return (
         <>
             <MicrosoftLearnFilterComponent
-            styles={themedClassNames(FilterComponentStyles)}
-            filterType={FilterType.Product}
-            filterName="Products"
-            filterOption={displayProducts}
-            search={true}
-            mainItemClickHandler={(event)=>{                    
-                let target = event?.target as HTMLInputElement
-                let value = target.getAttribute('aria-describedby');
-                if(value){
-                let subItems: string[] = [...learnStore.catalog?.products.values()].filter(product => product.parentId && product.parentId===value)
-                                                                                   .map(product => product.id);
-                let type = FilterType.Product
-                target.checked? learnStore.addFilter(type, [...subItems, value]) 
-                : learnStore.removeFilter(type, [...subItems, value]);
-                }
-            }}
-            subItemClickHandler={(event)=>{
-                let target = event?.target as HTMLInputElement
-                let type = FilterType.Product
-                let value = target.getAttribute('aria-describedby')
+                styles={themedClassNames(FilterComponentStyles)}
+                filterType={FilterType.Product}
+                filterName="Products"
+                filterOption={displayProducts}
+                search={true}
+                mainItemClickHandler={(event)=>{                    
+                    let target = event?.target as HTMLInputElement
+                    let value = target.getAttribute('aria-describedby');
+                    if(value){
+                    let subItems: string[] = [...learnStore.catalog?.products.values()].filter(product => product.parentId && product.parentId===value)
+                                                                                    .map(product => product.id);
+                    let type = FilterType.Product
+                    target.checked? learnStore.addFilter(type, [...subItems, value]) 
+                    : learnStore.removeFilter(type, [...subItems, value]);
+                    }
+                }}
+                subItemClickHandler={(event)=>{
+                    let target = event?.target as HTMLInputElement
+                    let type = FilterType.Product
+                    let value = target.getAttribute('aria-describedby')
 
-                if(target.checked && value){
-                    learnStore.addFilter(type, [value])                                    
-                }
-                else if(!target.checked && value){
-                    learnStore.removeFilter(type, [value])
-                }                                                         
-            }}
+                    if(target.checked && value){
+                        learnStore.addFilter(type, [value])                                    
+                    }
+                    else if(!target.checked && value){
+                        learnStore.removeFilter(type, [value])
+                    }                                                         
+                }}
             />
         </>
     )
@@ -61,32 +61,29 @@ export const RoleFilterComponent = () => {
     const catalog = learnStore.catalog;
     return useObserver(()=>{
         const displayRoles = getRolesToDisplay(filter?.displayFilters.get(FilterType.Role), catalog?.roles);
+        return (
+            <>
+                <MicrosoftLearnFilterComponent  
+                    styles={themedClassNames(FilterComponentStyles)}
+                    filterType={FilterType.Role}
+                    filterName="Roles"
+                    filterOption={displayRoles}
+                    search={true}
+                    mainItemClickHandler={(event) => {
+                        let target = event?.target as HTMLInputElement
+                        let type = FilterType.Role
+                        let value = target.getAttribute('aria-describedby')
 
-    return (
-        <>
-        <MicrosoftLearnFilterComponent  
-        styles={themedClassNames(FilterComponentStyles)}
-        filterType={FilterType.Role}
-        filterName="Roles"
-        filterOption={displayRoles}
-        search={true}
-        mainItemClickHandler={(event) => {
-            let target = event?.target as HTMLInputElement
-            let type = FilterType.Role
-            let value = target.getAttribute('aria-describedby')
-
-            if(target.checked && value){
-                learnStore.addFilter(type, [value])                                    
-            }
-            else if(!target.checked && value){
-                learnStore.removeFilter(type, [value])
-            }
-        }}
-        subItemClickHandler={(event)=>{
-        }}                
-    />
-        </>
-    )
+                        if(target.checked && value){
+                            learnStore.addFilter(type, [value])                                    
+                        }
+                        else if(!target.checked && value){
+                            learnStore.removeFilter(type, [value])
+                        }
+                    }}              
+                />
+            </>
+        )
 })
 }
 
@@ -97,31 +94,29 @@ export const LevelFilterComponent = () => {
 
     return useObserver(()=>{
         const displayLevels = getLevelsToDisplay(learnStore.filter?.displayFilters.get(FilterType.Level), catalog?.levels)
+        return (
+            <>
+                <MicrosoftLearnFilterComponent  
+                    styles={themedClassNames(FilterComponentStyles)}
+                    filterType={FilterType.Level}
+                    filterName="Levels"
+                    filterOption={displayLevels}
+                    search={false}
+                    mainItemClickHandler={(event)=>{
+                        let target = event?.target as HTMLInputElement
+                        let type = FilterType.Level
+                        let value = target.getAttribute('aria-describedby')
 
-    return (
-        <>
-            <MicrosoftLearnFilterComponent  
-            styles={themedClassNames(FilterComponentStyles)}
-            filterType={FilterType.Level}
-            filterName="Levels"
-            filterOption={displayLevels}
-            search={false}
-            mainItemClickHandler={(event)=>{
-                let target = event?.target as HTMLInputElement
-                let type = FilterType.Level
-                let value = target.getAttribute('aria-describedby')
-
-                if(target.checked && value){
-                    learnStore.addFilter(type, [value])                                    
-                }
-                else if(!target.checked && value){
-                    learnStore.removeFilter(type, [value])
-                }                        }}
-            subItemClickHandler={(event)=>{
-            }}                
-            />
-        </>
-    )
+                        if(target.checked && value){
+                            learnStore.addFilter(type, [value])                                    
+                        }
+                        else if(!target.checked && value){
+                            learnStore.removeFilter(type, [value])
+                        }                        
+                    }}             
+                />
+            </>
+        )
 })
 }
 
@@ -150,9 +145,8 @@ export const TypeFilterComponent = () =>{
                             }
                             else if(!target.checked && value){
                                 learnStore.removeFilter(type, [value])
-                            }                        }}
-                        subItemClickHandler={(event)=>{
-                        }}                
+                            }                        
+                        }}
                     />
                 </>
             )
@@ -190,6 +184,21 @@ const FilterComponentStyles = ({ theme }: IThemeOnlyProps): FilterComponentStyle
     subOptionsList: [
         {
             paddingLeft: `calc(${theme.spacing.l1}*3)`
+        }
+    ],
+    filterItem: [
+        {
+            display:'flex', 
+            flexDirection: 'row', 
+            alignItems: 'center', 
+            margin: `4px 4px`, 
+            selectors: {
+                '.collapseSubMenuIcon': {
+                    display: 'inline',                        
+                    height: 'max-content'
+                }
+            }
+
         }
     ]
 

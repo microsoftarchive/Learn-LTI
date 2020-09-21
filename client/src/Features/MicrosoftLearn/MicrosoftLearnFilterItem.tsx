@@ -6,6 +6,7 @@ import React from "react";
 
 
 const FilterItemInner = (props: FilterItemProps) =>{
+
     const learnStore = useStore('microsoftLearnStore');
 
     const itemInSelectedFilter = (subItemId: string | undefined) =>{
@@ -31,20 +32,18 @@ const FilterItemInner = (props: FilterItemProps) =>{
     return useObserver(() => {
         return(
         <div>
-            <span style={{display:'flex', flexDirection: 'row', alignItems: 'center', margin: `4px 4px`}}>
+            <span className={props.styles.filterItem?.toString()}>
                 <ActionButton
                 iconProps={{iconName: inExpanded(props.mainItem?.id)? 'ChevronUpMed':'ChevronDownMed'}}
-                style = {{display: 'inline',                        
-                        height: 'max-content' ,
-                        color: _n_subItems===0? 'white' : '#605E5C'   
-                        }}                
+                className='collapseSubMenuIcon'
+                style = {{color: _n_subItems===0? 'white' : '#605E5C'}}                
                 onClick = {(event)=>{
-                event.preventDefault();
-                let previous = inExpanded(props.mainItem?.id)
-                updateExpandedSet(previous);
+                    event.preventDefault();
+                    updateExpandedSet(inExpanded(props.mainItem?.id));
                 }}
                 disabled = {_n_subItems===0}        
                 />
+
                 <Checkbox
                 value={props.mainItem?.id}
                 ariaDescribedBy={props.mainItem?.id}
@@ -55,19 +54,20 @@ const FilterItemInner = (props: FilterItemProps) =>{
                     }
                     }}
                 label = {props.mainItem?.name}
-                style={{display:"inline", alignItems: 'center'}}
                 />
             </span>
-            <div style={{display:  inExpanded(props.mainItem?.id)? 'block' : 'none' }} className={props.styles.subOptionsList?.toString()}>
+            <div 
+            style={{display:  inExpanded(props.mainItem?.id)? 'block' : 'none' }} 
+            className={props.styles.subOptionsList?.toString()}>
             {props.subItems?.map(subItem => 
-                <span style={{display:'block', margin: `4px 4px` }}>
+                <span className={props.styles.filterItem?.toString()}>
                     <Checkbox
                     value={subItem?.id}
                     onChange={(event)=>{                
                         if(props.subItemClickHandler!=null){
                             props.subItemClickHandler(event)
-                        }}
-                    }
+                        }
+                    }}
                     checked={itemInSelectedFilter(subItem?.id) || itemInSelectedFilter(props.mainItem?.id)}
                     disabled={itemInSelectedFilter(props.mainItem?.id)}
                     label = {subItem?.name}

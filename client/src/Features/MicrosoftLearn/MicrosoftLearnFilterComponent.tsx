@@ -51,7 +51,8 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
                         type="text"
                         value={filterSearchTerm}
                         onChange={(event, _newValue)=>{                
-                        setFilterSearchTerm(_newValue || "");}}
+                            setFilterSearchTerm(_newValue || "");
+                        }}
                         disabled={!!learnStore.isLoadingCatalog}
                         placeholder={`Find a ${props.filterName.toLowerCase().substring(0, props.filterName.length-1)}`}
                     />                

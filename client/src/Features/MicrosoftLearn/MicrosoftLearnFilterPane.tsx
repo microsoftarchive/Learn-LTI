@@ -38,9 +38,11 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
         return selectedFilters.get(FilterType.Product)?.length===0 && selectedFilters.get(FilterType.Role)?.length===0 &&
                 selectedFilters.get(FilterType.Type)?.length===0 && selectedFilters.get(FilterType.Level)?.length===0
     }
+
     const kFormatter = (num: number | bigint | any) => {
         return Math.abs(num) > 999 ? (Math.abs(num)/1000).toFixed(1) + 'K' : Math.sign(num)*Math.abs(num)
     }
+
     const PanelFooterContent =  (num: number | undefined) => {
         return(
             <div className={classes.filterPanelFooter}>
@@ -149,6 +151,7 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                             } 
                             disabled={learnStore.isLoadingCatalog? true : false}
                             />
+                            
                             <Panel
                                 headerText={getHeader()}
                                 isOpen={panelIsOpen}
@@ -164,7 +167,7 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                                 <>
                                     <ActionButton                  
                                         onClick = {()=>{
-                                            setMainOpen(false)
+                                            setMainOpen(false);
                                             setRoleOpen(false);
                                             setTypeOpen(false);
                                             setLevelOpen(false);
@@ -215,14 +218,14 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                                 </>
                                 ): 
                                 (productIsOpen?
-                                    (<ProductFilterComponent/>): 
-                                    (roleIsOpen?
-                                        (<RoleFilterComponent/>):
-                                        (levelIsOpen?
-                                            (<LevelFilterComponent/>):
-                                                (<TypeFilterComponent/>)
+                                    <ProductFilterComponent/>: 
+                                        (roleIsOpen?
+                                            <RoleFilterComponent/>:
+                                                (levelIsOpen?
+                                                    <LevelFilterComponent/>:
+                                                    <TypeFilterComponent/>
+                                                )
                                         )
-                                    )
                                 )
                                 }
                                 </>

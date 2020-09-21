@@ -5,7 +5,6 @@ import { MicrosoftLearnService } from '../Services/MicrosoftLearn.service';
 import { CatalogDto, ProductChildDto, ProductDto } from '../Dtos/Learn';
 import { toMap } from '../Core/Utils/Typescript/ToMap';
 import { debounceTime, map, filter, switchMap, tap } from 'rxjs/operators';
-// import _ from 'lodash';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
@@ -168,7 +167,7 @@ export class MicrosoftLearnStore extends ChildStore {
 
       [...productMap.values()].filter(item => item?.parentId==null)
         .forEach((k)=>{
-          let children = [...productMap?.values()].filter(product => product.parentId!=null && product.parentId===k.id)
+          let children = [...productMap?.values()].filter(product => product.parentId!==null && product.parentId===k.id)
           productParentChildMap.set(k, children);
         });
     }
@@ -233,20 +232,10 @@ export class MicrosoftLearnStore extends ChildStore {
         searchParamMap.set(key, value.split('%2C'));
       })
 
-      let setRoles = searchParamMap.get('roles')
-      if(setRoles){
-        this.filter.selectedFilters.set(FilterType.Role, setRoles);
-      }
-
-      let setLevels = searchParamMap.get('levels');
-      if(setLevels){
-        this.filter.selectedFilters.set(FilterType.Level, setLevels);
-      }
-
-      let setTypes = searchParamMap.get('types');
-      if(setTypes){
-        this.filter.selectedFilters.set(FilterType.Type, setTypes);
-      }
+      this.filter.expandedProducts = searchParamMap.get("expanded") || [];
+      this.filter.selectedFilters.set(FilterType.Role, searchParamMap.get('roles') || []);
+      this.filter.selectedFilters.set(FilterType.Level, searchParamMap.get('levels') || []);
+      this.filter.selectedFilters.set(FilterType.Type, searchParamMap.get('types') || []);
 
       let setProducts = searchParamMap.get('products');
       if(setProducts){
@@ -255,20 +244,13 @@ export class MicrosoftLearnStore extends ChildStore {
         
         let selectedParents = setProducts.filter(p => parenIds.includes(p)).map(pId => this.catalog?.products.get(pId)!!); 
         let addChildren = _.flatten(selectedParents.map(p => this.productMap.get(p)!!)).map(c=>c.id);
-        setProducts = [...setProducts, ...addChildren];
-        this.filter.selectedFilters.set(FilterType.Product, setProducts);
+        this.filter.selectedFilters.set(FilterType.Product,  [...setProducts, ...addChildren]);
       }
-
       this.filteredCatalogContent = this.applyFilter(true);
 
       let searchTerm = searchParamMap.get("terms");
       if(searchTerm){
         this.updateSearchTerm(searchTerm[0].split('%20').join(' '));
-      }
-
-      let expandedProducts = searchParamMap.get("expanded");
-      if(expandedProducts){
-        this.filter.expandedProducts = expandedProducts;
       }
     }
   }

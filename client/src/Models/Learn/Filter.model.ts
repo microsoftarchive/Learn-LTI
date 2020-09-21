@@ -37,12 +37,8 @@ export class Filter {
     }
 
     @action updateExpandedProducts(action: boolean, id: string){
-        if(action){
-          this.expandedProducts.push(id);
-        }
-        else{
-          this.expandedProducts = this.expandedProducts.filter(pId => pId!==id);
-        }
+        action? this.expandedProducts.push(id) :
+                this.expandedProducts = this.expandedProducts.filter(pId => pId!==id);
         this.updateURI();
     }
 
@@ -50,10 +46,7 @@ export class Filter {
     public addFilter(type: FilterType, filters: string[]){
         let currentFilters = this.selectedFilters.get(type);
         if(currentFilters){
-         filters.forEach((f)=>{
-           currentFilters?.push(f);
-         })
-         this.selectedFilters.set(type, currentFilters);
+         this.selectedFilters.set(type, [...currentFilters, ...filters]);
         }
         return this.applyFilter(true);
     }
@@ -62,8 +55,7 @@ export class Filter {
     public removeFilter(type: FilterType, filters: string[]){
         let currentFilters = this.selectedFilters.get(type);
         if(currentFilters){
-          currentFilters = currentFilters?.filter(item => !filters.includes(item))
-          this.selectedFilters.set(type, currentFilters);
+          this.selectedFilters.set(type, currentFilters?.filter(item => !filters.includes(item)));
         }
         return this.applyFilter(true);
     }
@@ -105,17 +97,17 @@ export class Filter {
           @action
           public removeExtrasFromSelected (type: FilterType) {
             if(type===FilterType.Product){
-                  let parentProducts = [...this.productMap.keys()] 
+                  let parentProducts = [...this.productMap.keys()]; 
                   let prevSelected = this.selectedFilters.get(type);
                   let newDisplay = this.displayFilters.get(type);
                   const selectedInvisibleItems = prevSelected?.filter(item => newDisplay && !newDisplay.includes(item))
                 
                   let removeParentProducts = parentProducts?.filter(parent => selectedInvisibleItems?.includes(parent.id)).map(parent => parent.id);
-                  let removeChilrenProducts = [...this.catalog?.products.values()].filter(product => 
-                    (product.parentId && (removeParentProducts.includes(product.parentId) ||
-                    (!prevSelected?.includes(product.parentId) && prevSelected?.includes(product.id) && !newDisplay?.includes(product.id))))
-                  ).map(product => product.id);
-        
+                  let removeChilrenProducts = [...this.catalog?.products.values()]
+                                              .filter(product => (product.parentId && (removeParentProducts.includes(product.parentId) ||
+                                              (!prevSelected?.includes(product.parentId) && prevSelected?.includes(product.id) && !newDisplay?.includes(product.id)))))
+                                              .map(product => product.id);
+  
                   let removeProducts = [...removeParentProducts, ...removeChilrenProducts];
                   let newSelected = prevSelected?.filter(item => !removeProducts.includes(item));
                   if(newSelected!==undefined){
@@ -145,6 +137,7 @@ export class Filter {
             // Add all ancestors instead of just parents.
             const parents = products.map(product => this.catalog?.products.get(product)?.parentId || '').filter(pId => pId.length>0)
             filteredProducts = new Set([...parents, ...products]);
+
             this.displayFilters.set(FilterType.Product, [...filteredProducts]);
             this.displayFilters.set(FilterType.Role, [...filteredRoles]);
             this.displayFilters.set(FilterType.Level, [...filteredLevels]);
@@ -167,14 +160,9 @@ export class Filter {
             const getProductUri = () => {
               let parents = [...this.productMap.keys()]; 
               let keep: string[] = [];
-              let invisibleChildren: string[] = [];
-              productFilter.forEach(f=>{                    
-                  if(parents.filter(p => p.id === f).length > 0){
-                      let parent = parents.filter(p => p.id === f)[0];
-                      keep.push(f);
-                      invisibleChildren = [...invisibleChildren, ...this.productMap.get(parent)?.map(c=>c.id)]
-                  }
-              })
+              let parentProductFilters: Product[] = parents.filter(p => productFilter.includes(p.id));
+              let invisibleChildren = _.flatten(parentProductFilters.map(parent => this.productMap.get(parent)?.map(c=>c.id)));
+
               // For multi-hierarchy
               // keep = keep.filter(p => !invisibleChildren.includes(p))
               keep = [...keep, ...productFilter.filter(f => !keep.includes(f) && !invisibleChildren.includes(f))];

@@ -1,7 +1,5 @@
-import { Product, LearnType } from '../../Models/Learn';
+import { Product, LearnType, Level, Role } from '../../Models/Learn';
 import { FilterType } from '../../Models/Learn/FilterType.model';
-import { RoleDto } from '../../Dtos/Learn/Role.dto';
-import { LevelDto } from '../../Dtos/Learn';
 import { FormEvent } from 'react';
 import { FilterComponentStyles } from './MicrosoftLearnFilterComponentUtils';
 
@@ -11,9 +9,9 @@ export type LearnTypeName = 'Learning Path' | 'Module'
 export type LearnTypeFilterOption = {
     id: LearnType,
     name: LearnTypeName
-
 }
-export type FilterOption = Product | Pick<LevelDto, "id" | "name">  | LearnTypeFilterOption | Pick<RoleDto, "id" | "name"> | undefined
+
+export type FilterOption = Product | Role | Level | LearnTypeFilterOption;
 
 export type FilterComponentProps = {
     styles: FilterComponentStyles,
@@ -21,7 +19,7 @@ export type FilterComponentProps = {
     filterName: string,
     filterOption: Map<FilterOption, FilterOption[]> | null,
     mainItemClickHandler: ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void) | undefined,
-    subItemClickHandler: ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void) | undefined,
+    subItemClickHandler?: ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void) | undefined,
     search: boolean
 
 }
@@ -32,5 +30,5 @@ export type FilterItemProps = {
     mainItem: FilterOption,
     subItems: FilterOption[] | undefined,
     mainItemClickHandler:  ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void) | undefined,   // ((event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void) | undefined,
-    subItemClickHandler: ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void) | undefined  
+    subItemClickHandler?: ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void) | undefined  
 }
