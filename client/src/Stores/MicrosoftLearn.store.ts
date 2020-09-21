@@ -141,11 +141,34 @@ export class MicrosoftLearnStore extends ChildStore {
     let productParentChildMap = new Map<Product, Product[]>();
     let productMap = this.catalog?.products;
     if(productMap!=null){        
-        [...productMap.values()].filter(item => item?.parentId==null)
+
+      // Assuming that the catalog.products structure would have map all the product ids to corresponding product objects (slight modifications to the dtos and getProducts function would be needed)
+      // we can extend the productHierarchicalMap by having keys for all those children as well which have further sub items; for instance:
+      // P1
+      //    -C1
+      //       -GC1
+      //       -GC2
+      // P2
+      //    -C2
+      // 
+      // The above structure would appear in the productHierarchicalMap as:
+      // P1: [C1]
+      // P2: [C2]
+      // C1: [GC1, GC2]
+      // 
+      // The following piece of code could be used in that case, and most of the remaining logic would also need only slight changes.
+      // [...productMap.values()].forEach((item) => {
+      //   let children = [...productMap?.values()].filter(product => product.parentId!==null && product.parentId===item.id);
+      //   if(children.length>0){
+      //     productParentChildMap.set(item, children);
+      //   }
+      // });
+
+      [...productMap.values()].filter(item => item?.parentId==null)
         .forEach((k)=>{
           let children = [...productMap?.values()].filter(product => product.parentId!=null && product.parentId===k.id)
           productParentChildMap.set(k, children);
-        })
+        });
     }
     return productParentChildMap
   }
