@@ -26,12 +26,8 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
                 included = [...included, ...children, parent]
         })
 
-        products.filter(item => !included.includes(item))
-                .forEach(p=>{
-                    if(p.id===p.parentId){
-                        productParentChildMap.set(p, []);
-                    }
-                });
+        products.filter(item => !included.includes(item) && item.id===item.parentId)
+                .forEach(p=> productParentChildMap.set(p, []));
 
         let sortedProductParentChildMap = new Map<Product, Product[]>();
         [...productParentChildMap.keys()]
@@ -119,7 +115,7 @@ export const getDisplayFilterTags = (displayFilters: Map<FilterType, string[]>, 
         return intersect;
     }
     const getTags = (_map: Map<string, FilterOption> | undefined, _type: FilterType) => {
-        let _tags: FilterTag[] = []
+        let _tags: FilterTag[] = [];
         let _filters = getIntersection(_type);
         if(_map?.values()){
            _tags = [..._map.values()].filter(item => _filters?.includes(item.id))
@@ -179,9 +175,8 @@ export const getDisplayFromSearch = (expressions: RegExp [], currentDisplay: Map
                     singleExpression =>
                         scoreRegex(chlid?.name , singleExpression)
                 ) 
-                }))
-                .filter(chlid => chlid.score > 0)
-                .map(chlid => chlid.item)
+            }))
+            .filter(chlid => chlid.score > 0).map(chlid => chlid.item)
 
             if(filteredByRegEx?.length && filteredByRegEx.length >0){
                 filteredDisplay.set(key, filteredByRegEx);   
@@ -197,8 +192,7 @@ export const getDisplayFromSearch = (expressions: RegExp [], currentDisplay: Map
                         scoreRegex(key?.name, singleExpression) 
                 )
                 }]
-                .filter(e => e.score>0)
-                .map(e=>e.item);
+                .filter(e => e.score>0).map(e=>e.item);
         
             if(filteredByRegEx.length>0){
                 filteredDisplay.set(key, []);

@@ -13,14 +13,12 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
 
     const learnStore = useStore('microsoftLearnStore');
     const [width, setWidth] = useState(window.innerWidth);
-
     const [mainIsOpen, setMainOpen] = useState(false);
     const [productIsOpen, setProductOpen] = useState(false);
     const [roleIsOpen, setRoleOpen] = useState(false);
     const [typeIsOpen, setTypeOpen] = useState(false);
     const [levelIsOpen, setLevelOpen] = useState(false);
     const [panelIsOpen, setPanelOpen] = useState(false);
-
     const classes = themedClassNames(styles);
 
     useEffect(() => {
@@ -36,32 +34,27 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
     const noFiltersExist = () => {
         let selectedFilters = learnStore.filter.selectedFilters;
         return selectedFilters.get(FilterType.Product)?.length===0 && selectedFilters.get(FilterType.Role)?.length===0 &&
-                selectedFilters.get(FilterType.Type)?.length===0 && selectedFilters.get(FilterType.Level)?.length===0
+                selectedFilters.get(FilterType.Type)?.length===0 && selectedFilters.get(FilterType.Level)?.length===0;
     }
 
     const kFormatter = (num: number | bigint | any) => {
-        return Math.abs(num) > 999 ? (Math.abs(num)/1000).toFixed(1) + 'K' : Math.sign(num)*Math.abs(num)
+        return Math.abs(num) > 999 ? (Math.abs(num)/1000).toFixed(1) + 'K' : Math.sign(num)*Math.abs(num);
     }
 
     const PanelFooterContent =  (num: number | undefined) => {
         return(
             <div className={classes.filterPanelFooter}>
                 <PrimaryButton
-                text={num? `View results (${kFormatter(num)})` : `View results`}
-                onClick={()=>{
-                    setPanelOpen(false);
-                    setMainOpen(false);
-                    setProductOpen(false);
-                    setRoleOpen(false);
-                    setLevelOpen(false);
-                    setTypeOpen(false);
-                }}
+                    text={num? `View results (${kFormatter(num)})` : `View results`}
+                    onClick={()=>{
+                        setPanelOpen(false);
+                    }}
                 />
                 <DefaultButton 
-                text="Clear All"
-                onClick = {()=>{
-                    learnStore.resetFilter()
-                }}
+                    text="Clear All"
+                    onClick = {()=>{
+                        learnStore.resetFilter()
+                    }}
                 />
             </div>
     )}
@@ -99,25 +92,25 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                 if(mainIsOpen){
                     return(
                         <>
-                        {defaultRender!(props)}
+                            {defaultRender!(props)}
                         </>
                     )
                 }
                 return (
                     <div className={classes.filterPanelHeader}>
-                    <ActionButton
-                        onClick = {(event)=>{
-                            setRoleOpen(false);
-                            setTypeOpen(false);
-                            setLevelOpen(false);
-                            setProductOpen(false)
-                            setMainOpen(true);
-                        }}
-                    >
-                    <Icon iconName="Back"/>
-                    <Text className='backTitle'>All Filters</Text>
-                    </ActionButton>
-                    {defaultRender!(props)}
+                        <ActionButton
+                            onClick = {(event)=>{
+                                setRoleOpen(false);
+                                setTypeOpen(false);
+                                setLevelOpen(false);
+                                setProductOpen(false)
+                                setMainOpen(true);
+                            }}
+                        >
+                        <Icon iconName="Back"/>
+                        <Text className='backTitle'>All Filters</Text>
+                        </ActionButton>
+                        {defaultRender!(props)}
                     </div>
                 )
             }
@@ -136,6 +129,14 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                 return ""
             }
 
+            const setOpen = (main: boolean, products: boolean, roles: boolean, types: boolean, levels:  boolean ) => {
+                setMainOpen(main);
+                setProductOpen(products);
+                setRoleOpen(roles);
+                setLevelOpen(levels);
+                setTypeOpen(types);
+            }
+
             return(
                 <div>
                     {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0?
@@ -143,15 +144,16 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                         :
                         (<>      
                             <DefaultButton 
-                            iconProps={{iconName:"FilterSettings"}} 
-                            className={classes.collapsePanelButton} 
-                            text="Search Filters" 
-                            onClick={()=>{setPanelOpen(true);
-                                        setMainOpen(true);}
-                            } 
-                            disabled={learnStore.isLoadingCatalog? true : false}
+                                iconProps={{iconName:"FilterSettings"}} 
+                                className={classes.collapsePanelButton} 
+                                text="Search Filters" 
+                                onClick={()=>{
+                                    setPanelOpen(true);
+                                    setMainOpen(true);
+                                }} 
+                                disabled={learnStore.isLoadingCatalog? true : false}
                             />
-                            
+
                             <Panel
                                 headerText={getHeader()}
                                 isOpen={panelIsOpen}
@@ -166,51 +168,28 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                                 {mainIsOpen?(
                                 <>
                                     <ActionButton                  
-                                        onClick = {()=>{
-                                            setMainOpen(false);
-                                            setRoleOpen(false);
-                                            setTypeOpen(false);
-                                            setLevelOpen(false);
-                                            setProductOpen(true)}}
+                                        onClick = {()=>setOpen(false, true, false, false, false)}
                                         className={classes.mainPanelActionButtons}>
                                     <Text className='buttonTitle'>Products</Text>
                                     <Icon iconName='ChevronRight'/>
                                     </ActionButton>
 
                                     <ActionButton                  
-                                        onClick = {()=>{
-                                            setMainOpen(false)
-                                            setRoleOpen(true);
-                                            setTypeOpen(false);
-                                            setLevelOpen(false);
-                                            setProductOpen(false)
-                                        }}
+                                        onClick = {()=>setOpen(false, false, true, false, false)}
                                         className={classes.mainPanelActionButtons}>
                                     <Text className='buttonTitle'>Roles</Text>
                                     <Icon iconName='ChevronRight'/>
                                     </ActionButton>
 
                                     <ActionButton                  
-                                        onClick = {()=>{
-                                            setMainOpen(false)
-                                            setRoleOpen(false);
-                                            setTypeOpen(false);
-                                            setLevelOpen(true);
-                                            setProductOpen(false)
-                                        }}
+                                        onClick = {()=>setOpen(false, false, false, false, true)}
                                         className={classes.mainPanelActionButtons}>
                                     <Text className='buttonTitle'>Levels</Text>
                                     <Icon iconName='ChevronRight'/>
                                     </ActionButton>
 
                                     <ActionButton                  
-                                        onClick = {()=>{
-                                            setMainOpen(false)
-                                            setRoleOpen(false);
-                                            setTypeOpen(true);
-                                            setLevelOpen(false);
-                                            setProductOpen(false)
-                                        }}
+                                        onClick = {()=>setOpen(false, false, false, true, false)}
                                         className={classes.mainPanelActionButtons}>
                                     <Text className='buttonTitle'>Types</Text>
                                     <Icon iconName='ChevronRight'/>

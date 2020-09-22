@@ -6,7 +6,6 @@ import React from "react";
 
 
 const FilterItemInner = (props: FilterItemProps) =>{
-
     const learnStore = useStore('microsoftLearnStore');
 
     const itemInSelectedFilter = (subItemId: string | undefined) =>{
@@ -34,47 +33,48 @@ const FilterItemInner = (props: FilterItemProps) =>{
         <div>
             <span className={props.styles.filterItem?.toString()}>
                 <ActionButton
-                iconProps={{iconName: inExpanded(props.mainItem?.id)? 'ChevronUpMed':'ChevronDownMed'}}
-                className='collapseSubMenuIcon'
-                style = {{color: _n_subItems===0? 'white' : '#605E5C'}}                
-                onClick = {(event)=>{
-                    event.preventDefault();
-                    updateExpandedSet(inExpanded(props.mainItem?.id));
-                }}
-                disabled = {_n_subItems===0}        
+                    iconProps={{iconName: inExpanded(props.mainItem?.id)? 'ChevronUpMed':'ChevronDownMed'}}
+                    className='collapseSubMenuIcon'
+                    style = {{color: _n_subItems===0? 'white' : '#605E5C'}}                
+                    onClick = {(event)=>{
+                        event.preventDefault();
+                        updateExpandedSet(inExpanded(props.mainItem?.id));
+                    }}
+                    disabled = {_n_subItems===0}        
                 />
 
                 <Checkbox
-                value={props.mainItem?.id}
-                ariaDescribedBy={props.mainItem?.id}
-                checked = {itemInSelectedFilter(props.mainItem?.id)}
-                onChange = {(event)=>{            
-                    if(props.mainItemClickHandler!=null){
-                        props.mainItemClickHandler(event)
-                    }
-                    }}
-                label = {props.mainItem?.name}
+                    value={props.mainItem?.id}
+                    ariaDescribedBy={props.mainItem?.id}
+                    checked = {itemInSelectedFilter(props.mainItem?.id)}
+                    onChange = {(event)=>{            
+                        if(props.mainItemClickHandler!=null){
+                            props.mainItemClickHandler(event)
+                        }
+                        }}
+                    label = {props.mainItem?.name}
                 />
             </span>
             <div 
-            style={{display:  inExpanded(props.mainItem?.id)? 'block' : 'none' }} 
-            className={props.styles.subOptionsList?.toString()}>
-            {props.subItems?.map(subItem => 
-                <span className={props.styles.filterItem?.toString()}>
-                    <Checkbox
-                    value={subItem?.id}
-                    onChange={(event)=>{                
-                        if(props.subItemClickHandler!=null){
-                            props.subItemClickHandler(event)
-                        }
-                    }}
-                    checked={itemInSelectedFilter(subItem?.id) || itemInSelectedFilter(props.mainItem?.id)}
-                    disabled={itemInSelectedFilter(props.mainItem?.id)}
-                    label = {subItem?.name}
-                    ariaDescribedBy = {subItem?.id}
-                    />
-                </span>
-            )}
+                style={{display:  inExpanded(props.mainItem?.id)? 'block' : 'none' }} 
+                className={props.styles.subOptionsList?.toString()}
+            >
+                {props.subItems?.map(subItem => 
+                    <span className={props.styles.filterItem?.toString()}>
+                        <Checkbox
+                            value={subItem?.id}
+                            onChange={(event)=>{                
+                                if(props.subItemClickHandler!=null){
+                                    props.subItemClickHandler(event)
+                                }
+                            }}
+                            checked={itemInSelectedFilter(subItem?.id) || itemInSelectedFilter(props.mainItem?.id)}
+                            disabled={itemInSelectedFilter(props.mainItem?.id)}
+                            label = {subItem?.name}
+                            ariaDescribedBy = {subItem?.id}
+                        />
+                    </span>
+                )}
             </div>
         </div>
         )

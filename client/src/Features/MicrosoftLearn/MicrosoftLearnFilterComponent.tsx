@@ -42,37 +42,38 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
 
         return(    
             <div className={props.styles.root?.toString()}>
-            <form>
-            <Text variant="medium" className={props.styles.title?.toString()} > {props.filterName} </Text>
-            {props.search?        
-                (
-                    <SearchBox
-                        className={props.styles.search?.toString()}
-                        type="text"
-                        value={filterSearchTerm}
-                        onChange={(event, _newValue)=>{                
-                            setFilterSearchTerm(_newValue || "");
-                        }}
-                        disabled={!!learnStore.isLoadingCatalog}
-                        placeholder={`Find a ${props.filterName.toLowerCase().substring(0, props.filterName.length-1)}`}
-                    />                
-                ): 
-                (
-                    <span></span>
-                )
-            }
-            <div className={props.styles.optionsList?.toString()}>
-            {[...displayOptions?.keys()].map(item => <MicrosoftLearnFilterItem mainItem = {item}
-                                                            filterType = {props.filterType}
-                                                            subItems = {displayOptions?.get(item)}
-                                                            mainItemClickHandler = {props.mainItemClickHandler}
-                                                            subItemClickHandler = {props.subItemClickHandler}  
-                                                            styles={props.styles}                                                                                                                                  
-                                                                />)}               
+                <form>
+                    <Text variant="medium" className={props.styles.title?.toString()} > {props.filterName} </Text>
+                    {props.search?        
+                        (
+                            <SearchBox
+                                className={props.styles.search?.toString()}
+                                type="text"
+                                value={filterSearchTerm}
+                                onChange={(event, _newValue)=> setFilterSearchTerm(_newValue || "")}
+                                disabled={!!learnStore.isLoadingCatalog}
+                                placeholder={`Find a ${props.filterName.toLowerCase().substring(0, props.filterName.length-1)}`}
+                            />                
+                        ): 
+                        (<span></span>)
+                    }
+
+                    <div className={props.styles.optionsList?.toString()}>
+                        {[...displayOptions?.keys()]
+                            .map(item => 
+                                    <MicrosoftLearnFilterItem 
+                                        mainItem = {item}
+                                        filterType = {props.filterType}
+                                        subItems = {displayOptions?.get(item)}
+                                        mainItemClickHandler = {props.mainItemClickHandler}
+                                        subItemClickHandler = {props.subItemClickHandler}  
+                                        styles={props.styles}                                                                                                                                  
+                                    />
+                                )
+                        }               
+                    </div>            
+                </form>
             </div>            
-            </form>
-            </div>
-            
         )
     })
 }

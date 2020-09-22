@@ -11,6 +11,8 @@ import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.
 import { FilterType } from '../Models/Learn/FilterType.model'; 
 import { Filter } from '../Models/Learn/Filter.model';
 import _ from 'lodash';
+import { getRegexs } from '../Features/MicrosoftLearn/MicrosoftLearnFilterUtils'
+
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -27,7 +29,7 @@ export class MicrosoftLearnStore extends ChildStore {
       .pipe(
         debounceTime(250),
         tap(() => (this.filteredCatalogContent = [])),
-        map(searchTerm => this.getRegexs(searchTerm)),
+        map(searchTerm => getRegexs(searchTerm)),
         filter(() => !!this.catalog),
         map(expressions => this.applyFilter(false, expressions))
       )
@@ -99,7 +101,6 @@ export class MicrosoftLearnStore extends ChildStore {
     const levels = toMap(catalog.levels, item => item.id);
     const allItems = [...modules, ...learningPaths];
     const items = toMap(allItems, item => item.uid);
-
     this.catalog = { contents: items, products, roles, levels };
     this.filteredCatalogContent = allItems;
     this.isLoadingCatalog = false;
@@ -204,16 +205,6 @@ export class MicrosoftLearnStore extends ChildStore {
 
     return productsMap;
   };
-
-  private getRegexs(searchTerm: string): RegExp[] {
-    const expressions: RegExp[] = searchTerm
-      .trim()
-      .replace(/\s+/g, ' ')
-      .split(' ')
-      .map(termPart => new RegExp(`.*${termPart}.*`, 'i'));
-    expressions.push(new RegExp(`.*${searchTerm}.*`, 'i'));
-    return expressions;
-  }
 
   private applyFilter (removeExtra: boolean, searchExpressions?: RegExp[]) {
     if(this.filter){

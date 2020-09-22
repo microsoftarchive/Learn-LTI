@@ -66,8 +66,7 @@ export class Filter {
         this.selectedFilters.set(FilterType.Product, []);
         this.selectedFilters.set(FilterType.Role, []);
         this.selectedFilters.set(FilterType.Type, []);
-        this.selectedFilters.set(FilterType.Level, []);
-        
+        this.selectedFilters.set(FilterType.Level, []);        
         return this.applyFilter(true);
       }
     

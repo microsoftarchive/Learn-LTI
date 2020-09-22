@@ -22,20 +22,20 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>):JSX.Element |
             <div className={classes.root}>          
                 {tagMap.map(tag => (
                     <DefaultButton 
-                    className={classes.tags}
-                    iconProps={{iconName:"StatusCircleErrorX"}} 
-                    text={tag.name} 
-                    onClick={()=>{
-                        if(tag.type===FilterType.Product){
-                            let subItems: string[] = [...learnStore.catalog?.products.values()]
-                            .filter(product => product.parentId && product.parentId===tag.id)
-                            .map(product => product.id);                            
-                            learnStore.removeFilter(tag.type, [...subItems, tag.id])
-                        }
-                        else{
-                            learnStore.removeFilter(tag.type, [tag.id])
-                        }                    
-                    }} 
+                        className={classes.tags}
+                        iconProps={{iconName:"StatusCircleErrorX"}} 
+                        text={tag.name} 
+                        onClick={()=>{
+                            if(tag.type===FilterType.Product){
+                                let subItems: string[] = [...learnStore.catalog?.products.values()]
+                                .filter(product => product.parentId && product.parentId===tag.id)
+                                .map(product => product.id);                            
+                                learnStore.removeFilter(tag.type, [...subItems, tag.id]);
+                            }
+                            else{
+                                learnStore.removeFilter(tag.type, [tag.id]);
+                            }                    
+                        }} 
                     />
                 ))}
             </div>  

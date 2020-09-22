@@ -40,7 +40,6 @@ export const ProductFilterComponent = () => {
                     let target = event?.target as HTMLInputElement
                     let type = FilterType.Product
                     let value = target.getAttribute('aria-describedby')
-
                     if(target.checked && value){
                         learnStore.addFilter(type, [value])                                    
                     }
@@ -73,7 +72,6 @@ export const RoleFilterComponent = () => {
                         let target = event?.target as HTMLInputElement
                         let type = FilterType.Role
                         let value = target.getAttribute('aria-describedby')
-
                         if(target.checked && value){
                             learnStore.addFilter(type, [value])                                    
                         }
@@ -106,7 +104,6 @@ export const LevelFilterComponent = () => {
                         let target = event?.target as HTMLInputElement
                         let type = FilterType.Level
                         let value = target.getAttribute('aria-describedby')
-
                         if(target.checked && value){
                             learnStore.addFilter(type, [value])                                    
                         }
@@ -139,7 +136,6 @@ export const TypeFilterComponent = () =>{
                             let target = event?.target as HTMLInputElement
                             let type = FilterType.Type
                             let value = target.getAttribute('aria-describedby')
-
                             if(target.checked && value){
                                learnStore.addFilter(type, [value])                                    
                             }
