@@ -59,8 +59,8 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
                     }
 
                     <div className={props.styles.optionsList?.toString()}>
-                        {[...displayOptions?.keys()]
-                            .map(item => 
+                        {[...displayOptions?.keys()].length>0 ?
+                            ([...displayOptions?.keys()].map(item => 
                                     <MicrosoftLearnFilterItem 
                                         mainItem = {item}
                                         filterType = {props.filterType}
@@ -69,7 +69,10 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element=>{
                                         subItemClickHandler = {props.subItemClickHandler}  
                                         styles={props.styles}                                                                                                                                  
                                     />
-                                )
+                            )) :
+                            (
+                                learnStore.isLoadingCatalog ? '' : 'No results'
+                            )                                                        
                         }               
                     </div>            
                 </form>

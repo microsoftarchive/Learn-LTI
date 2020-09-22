@@ -13,6 +13,12 @@ const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
     return -1;
 }
 
+const createOptoinArrayFromKeys = (keys: FilterOption[]) => {
+    let map: Map<FilterOption, FilterOption[]> = new Map<FilterOption, FilterOption[]>();
+    keys.forEach(key => map.set(key, []));
+    return map; 
+}
+
 export const getProductsToDisplay = (productId: string[] | undefined, productMap: Map<string, Product> | undefined) => {
     let products: Product[] = [];
     let productParentChildMap = new Map<Product, Product[]>();
@@ -22,83 +28,35 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
         let included: Product[] = [];
         parentProducts.forEach((parent) => {
                 let children = products.filter(product=> product?.parentId && product.parentId===parent?.id);                
-                productParentChildMap.set(parent, children);
+                productParentChildMap.set(parent, children.sort(FilterOptionComparer));
                 included = [...included, ...children, parent]
         })
-
         products.filter(item => !included.includes(item) && item.id===item.parentId)
                 .forEach(p=> productParentChildMap.set(p, []));
-
-        let sortedProductParentChildMap = new Map<Product, Product[]>();
-        [...productParentChildMap.keys()]
-        .sort(FilterOptionComparer)
-        .forEach((item)=>{
-            let val = productParentChildMap.get(item)?.sort(FilterOptionComparer)            
-            sortedProductParentChildMap.set(item, val? val : []);
-        })
-        productParentChildMap = sortedProductParentChildMap;
     }
     return productParentChildMap;
 }
 
-export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<string, Role> |undefined) =>{
-    let roles = new Map<Role, Role[]>();
+export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<string, Role> | undefined) =>{
     if(roleMap!=null){
-        roleId?.forEach((rid)=>{
-            let role = roleMap.get(rid);
-            if(role){
-                roles.set(role, []);
-            }            
-        });
-        let sortedRoles = new Map<Role, Role[]>();
-        [...roles.keys()].sort(FilterOptionComparer)
-            .forEach((item)=>{
-            sortedRoles.set(item, []);
-        })
-        roles = sortedRoles;    
+        let sortedRoles = roleId?.map(id => roleMap.get(id)!!).sort(FilterOptionComparer);
+        return createOptoinArrayFromKeys(sortedRoles || []);
     }
-    return roles;
+    return new Map<Role, Role[]>();
 }
 
 export const getLevelsToDisplay = (levelId:  string[] | undefined, levelMap: Map<string, Level> | undefined) => {
-    let levels = new Map<Level, Level[]>();
     if(levelMap!=null){
-        levelId?.forEach((lid)=>{
-            let level = levelMap.get(lid); 
-            if(level){
-                levels.set(level, []);
-            }
-        })
-        let sortedLevels = new Map<Level, Level[]>();
-        [...levels.keys()].sort(FilterOptionComparer)
-        .forEach((item) =>{
-            sortedLevels.set(item, []);
-        });
-        levels = sortedLevels;
+        let sortedLevels = levelId?.map(id => levelMap.get(id)!!).sort(FilterOptionComparer); 
+        return createOptoinArrayFromKeys(sortedLevels || []);
     }
-    return levels;
+    return new Map<Level, Level[]>();
 }
 
 export const getTypesToDisplay = (typeId: string[] | undefined) =>{
-    let types = new Map<LearnTypeFilterOption, LearnTypeFilterOption[]>();
     const t1: LearnTypeFilterOption =  { id:'module', name:'Module' };
     const t2: LearnTypeFilterOption = { id:'learningPath', name:'Learning Path' };
-
-    typeId?.forEach((tid)=>{
-        switch(tid){
-            case 'module':     
-                types.set(t1, []); break;
-            case 'learningPath':
-                types.set(t2, []); break;
-        }                
-        })
-    
-    let sortedTypes = new Map<LearnTypeFilterOption, LearnTypeFilterOption[]>();
-    [...types.keys()].sort(FilterOptionComparer)
-    .forEach((item)=>{
-        sortedTypes.set(item, []);
-    })
-    return sortedTypes;  
+    return createOptoinArrayFromKeys(typeId?.sort().map(id => id==='module'? t1 : t2) || []);
 }
 
 export type FilterTag = { id: string, name: string, type: FilterType }
@@ -114,6 +72,7 @@ export const getDisplayFilterTags = (displayFilters: Map<FilterType, string[]>, 
         }
         return intersect;
     }
+
     const getTags = (_map: Map<string, FilterOption> | undefined, _type: FilterType) => {
         let _tags: FilterTag[] = [];
         let _filters = getIntersection(_type);
@@ -131,17 +90,8 @@ export const getDisplayFilterTags = (displayFilters: Map<FilterType, string[]>, 
     let typeFilters = getIntersection(FilterType.Type)?.filter(item => item!!);
     let typeTags: FilterTag[] = []
     if(typeFilters){
-         let _typeTags = typeFilters?.map(typeId => {
-            switch(typeId){
-                case 'module':
-                    return { id: typeId, name: 'Module', type: FilterType.Type }
-                case 'learningPath':
-                    return { id: typeId, name: 'Learning Path', type: FilterType.Type }
-                default:
-                    return { id: '', name: '', type: FilterType.Type }
-            }
-        })        
-        typeTags = _typeTags? _typeTags.filter(item => item.id.length>0) : []; 
+         typeTags = typeFilters?.map(typeId =>  typeId==='module'? { id: typeId, name: 'Module', type: FilterType.Type }
+                                                                 : { id: typeId, name: 'Learning Path', type: FilterType.Type })         
     }
     return  [...productTags, ...roleTags, ...levelTags, ...typeTags]
 }
@@ -162,22 +112,15 @@ export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 
 
 export const getDisplayFromSearch = (expressions: RegExp [], currentDisplay: Map<FilterOption, FilterOption[]>) => {
     let filteredDisplay: Map<FilterOption, FilterOption[]> = new Map<FilterOption, FilterOption[]>();
-    let keys = [...currentDisplay.keys()];
-        
-    keys.forEach((key) => {
+    [...currentDisplay.keys()].forEach((key) => {
         let children = currentDisplay.get(key);
         let filteredByRegEx: FilterOption[] = [];
         if(children && children.length>0){
             filteredByRegEx = children.map(chlid => ({
                 item: chlid,
-                score: _.sumBy(
-                    expressions,
-                    singleExpression =>
-                        scoreRegex(chlid?.name , singleExpression)
-                ) 
-            }))
-            .filter(chlid => chlid.score > 0).map(chlid => chlid.item)
-
+                score: _.sumBy( expressions, singleExpression => scoreRegex(chlid?.name , singleExpression) ) 
+                }))
+                .filter(chlid => chlid.score > 0).map(chlid => chlid.item);
             if(filteredByRegEx?.length && filteredByRegEx.length >0){
                 filteredDisplay.set(key, filteredByRegEx);   
             }
@@ -186,14 +129,8 @@ export const getDisplayFromSearch = (expressions: RegExp [], currentDisplay: Map
         else{
             filteredByRegEx = [{
                 item: key,
-                score: _.sumBy(
-                    expressions,
-                    singleExpression =>
-                        scoreRegex(key?.name, singleExpression) 
-                )
-                }]
-                .filter(e => e.score>0).map(e=>e.item);
-        
+                score: _.sumBy( expressions, singleExpression => scoreRegex(key?.name, singleExpression) )
+                }].filter(element => element.score>0).map(element=>element.item);
             if(filteredByRegEx.length>0){
                 filteredDisplay.set(key, []);
             }
