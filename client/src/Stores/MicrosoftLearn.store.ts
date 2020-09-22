@@ -1,40 +1,20 @@
 import { ChildStore } from './Core';
 import { observable, action } from 'mobx';
-import { Catalog, Product, LearnContent } from '../Models/Learn';
+import { Catalog, Product } from '../Models/Learn';
 import { MicrosoftLearnService } from '../Services/MicrosoftLearn.service';
 import { CatalogDto, ProductChildDto, ProductDto } from '../Dtos/Learn';
 import { toMap } from '../Core/Utils/Typescript/ToMap';
-import { debounceTime, map, filter, switchMap, tap } from 'rxjs/operators';
+import { map, filter, switchMap } from 'rxjs/operators';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
-import { FilterType } from '../Models/Learn/FilterType.model'; 
-import { Filter } from '../Models/Learn/Filter.model';
-import _ from 'lodash';
-import { getRegexs } from '../Features/MicrosoftLearn/MicrosoftLearnFilterUtils'
-
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
   @observable catalog: Catalog | null = null;
   @observable selectedItems: AssignmentLearnContent[] | null = null;
-  @observable filteredCatalogContent: LearnContent[] | null = null;
-  @observable searchTerm = '';
-  @observable productMap: Map<Product, Product[]>  = new Map<Product, Product[]>(); 
-  @observable filter: Filter = new Filter(this.catalog, this.productMap);
-
-
+  
   initialize(): void {
-    toObservable(() => this.searchTerm)
-      .pipe(
-        debounceTime(250),
-        tap(() => (this.filteredCatalogContent = [])),
-        map(searchTerm => getRegexs(searchTerm)),
-        filter(() => !!this.catalog),
-        map(expressions => this.applyFilter(false, expressions))
-      )
-      .subscribe((filteredCatalogContent) => (this.filteredCatalogContent = filteredCatalogContent))
-
     toObservable(() => this.root.assignmentStore.assignment)
       .pipe(
         filter(assignment => !!assignment),
@@ -44,14 +24,6 @@ export class MicrosoftLearnStore extends ChildStore {
         map(assignmentLearnContent => assignmentLearnContent as AssignmentLearnContentDto[])
       )
       .subscribe(selectedItems => (this.selectedItems = selectedItems));         
-    }
-
-  @action
-  updateSearchTerm(searchTerm: string): void {
-    if(this.filter){
-      this.filter.updateSearchTerm(searchTerm);
-    } 
-    this.searchTerm = searchTerm;
   }
 
   @action
@@ -102,83 +74,13 @@ export class MicrosoftLearnStore extends ChildStore {
     const allItems = [...modules, ...learningPaths];
     const items = toMap(allItems, item => item.uid);
     this.catalog = { contents: items, products, roles, levels };
-    this.filteredCatalogContent = allItems;
     this.isLoadingCatalog = false;
-    this.productMap = this.getProductHierarchicalMap();
-
-    this.filter.catalog = this.catalog;
-    this.filter.productMap = this.productMap;
-    this.filter.setDisplayFilters(this.filteredCatalogContent, false);
-
-    this.loadFiltersFromPath();
-  }
-
-  @action
-  addFilter(type: FilterType, filters: string[]){
-    if(this.filter){
-      let _filteredCatalogContent = this.filter?.addFilter(type, filters); 
-      this.filteredCatalogContent = _filteredCatalogContent
-    }
-  }
-
-  @action
-  removeFilter(type: FilterType, filters: string[]){
-    if(this.filter){
-      let _filteredCatalogContent = this.filter?.removeFilter(type, filters);
-      this.filteredCatalogContent = _filteredCatalogContent
-    }
-  }
-
-  @action
-  resetFilter(){
-    if(this.filter){
-      let _filteredCatalogContent = this.filter.resetFilter();
-      this.filteredCatalogContent = _filteredCatalogContent
-    } 
-  }
-
-  private getProductHierarchicalMap = () => {
-    let productParentChildMap = new Map<Product, Product[]>();
-    let productMap = this.catalog?.products;
-    if(productMap!=null){        
-
-      // For multi-hierarchy:
-      // Assuming that the catalog.products structure would have mapped all the product ids to corresponding product objects (slight modifications to the dtos and getProducts function would be needed)
-      // we can extend the productHierarchicalMap by having keys for all those children as well which have further sub items; for instance:
-      // P1
-      //    -C1
-      //       -GC1
-      //       -GC2
-      // P2
-      //    -C2
-      // 
-      // The above structure would appear in the productHierarchicalMap (productParentChildMap) as:
-      // P1: [C1]
-      // P2: [C2]
-      // C1: [GC1, GC2]
-      // 
-      // The following piece of code could be used in that case, and most of the remaining logic would also need only slight changes.
-      //
-      //  [...productMap.values()].forEach((item) => {
-      //   let children = [...productMap?.values()].filter(product => product.parentId!==null && product.parentId===item.id);
-      //   if(children.length>0){
-      //     productParentChildMap.set(item, children);
-      //   }
-      // });
-
-      [...productMap.values()].filter(item => item?.parentId==null)
-        .forEach((k)=>{
-          let children = [...productMap?.values()].filter(product => product.parentId!==null && product.parentId===k.id)
-          productParentChildMap.set(k, children);
-        });
-    }
-    return productParentChildMap
   }
 
   private getItemIndexInSelectedList = (learnContentUid: string): number | void => {
     return this.selectedItems?.findIndex(item => item.contentUid === learnContentUid);
   };
-;
+
   private applyRemoveItemSelection = (
     itemIndexInSelectedItemsList: number,
     assignmentId: string,
@@ -206,43 +108,4 @@ export class MicrosoftLearnStore extends ChildStore {
     return productsMap;
   };
 
-  private applyFilter (removeExtra: boolean, searchExpressions?: RegExp[]) {
-    if(this.filter){
-      let _filteredCatalogContent = this.filter.applyFilter(removeExtra, searchExpressions)
-      return _filteredCatalogContent
-    }                  
-    return null;
-  }
-
-  private loadFiltersFromPath(){
-    let searchParams = window.location.search
-    if(searchParams.length>0){
-      let searchParamMap: Map<string, string[]> = new Map<string, string[]>();
-      searchParams.slice(1).split('&').forEach(s=>{
-        let [key, value] = s.split('=');
-        searchParamMap.set(key, value.split('%2C'));
-      })
-
-      this.filter.expandedProducts = searchParamMap.get("expanded") || [];
-      this.filter.selectedFilters.set(FilterType.Role, searchParamMap.get('roles') || []);
-      this.filter.selectedFilters.set(FilterType.Level, searchParamMap.get('levels') || []);
-      this.filter.selectedFilters.set(FilterType.Type, searchParamMap.get('types') || []);
-
-      let setProducts = searchParamMap.get('products');
-      if(setProducts){
-        let parents = [...this.productMap.keys()];
-        let parenIds = parents.map(p => p.id);
-        
-        let selectedParents = setProducts.filter(p => parenIds.includes(p)).map(pId => this.catalog?.products.get(pId)!!); 
-        let addChildren = _.flatten(selectedParents.map(p => this.productMap.get(p)!!)).map(c=>c.id);
-        this.filter.selectedFilters.set(FilterType.Product,  [...setProducts, ...addChildren]);
-      }
-      this.filteredCatalogContent = this.applyFilter(true);
-
-      let searchTerm = searchParamMap.get("terms");
-      if(searchTerm){
-        this.updateSearchTerm(searchTerm[0].split('%20').join(' '));
-      }
-    }
-  }
 }

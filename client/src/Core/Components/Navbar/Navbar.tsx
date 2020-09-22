@@ -28,7 +28,7 @@ const removeSlashFromStringEnd = (initialString: string): string => initialStrin
 
 const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null => {
   const assignmentStore = useStore('assignmentStore');
-  const learnStore = useStore('microsoftLearnStore');
+  const learnFilterStore = useStore('microsoftLearnFilterStore');
   const history = useHistory();
   const location = useLocation();
 
@@ -52,7 +52,7 @@ const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null =>
     if(item && item.url?.indexOf('ms-learn')>0){
       history.push({
         pathname: item.url,
-        search: '?'+learnStore.filter.learnFilterUriParam
+        search: '?'+learnFilterStore.learnFilterUriParam
       })
     }
     else if (item) {

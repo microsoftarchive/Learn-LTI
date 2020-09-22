@@ -11,7 +11,7 @@ import { FilterPaneStyles } from './MicrosoftLearnFilterPaneStyles';
 
 const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element | null  =>   {
 
-    const learnStore = useStore('microsoftLearnStore');
+    const learnFilterStore = useStore('microsoftLearnFilterStore');
     const [width, setWidth] = useState(window.innerWidth);
     const [mainIsOpen, setMainOpen] = useState(false);
     const [productIsOpen, setProductOpen] = useState(false);
@@ -32,7 +32,7 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
     })
 
     const noFiltersExist = () => {
-        let selectedFilters = learnStore.filter.selectedFilters;
+        let selectedFilters = learnFilterStore.selectedFilters;
         return selectedFilters.get(FilterType.Product)?.length===0 && selectedFilters.get(FilterType.Role)?.length===0 &&
                 selectedFilters.get(FilterType.Type)?.length===0 && selectedFilters.get(FilterType.Level)?.length===0;
     }
@@ -53,7 +53,7 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                 <DefaultButton 
                     text="Clear All"
                     onClick = {()=>{
-                        learnStore.resetFilter()
+                        learnFilterStore.resetFilter()
                     }}
                 />
             </div>
@@ -64,12 +64,12 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
             return(
                 <div className={classes.root}>
                     <Text className={classes.title} >Filters</Text> 
-                    {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0? 
+                    {!learnFilterStore.isLoadingCatalog && learnFilterStore.filteredCatalogContent?.length === 0? 
                         <></>
                         :
                         (<div>
                             <ActionButton
-                                onClick={()=>{learnStore.resetFilter()}}
+                                onClick={()=>{learnFilterStore.resetFilter()}}
                                 style={{display: noFiltersExist()? 'none' : 'block'}}
                                 className={classes.clearAll}
                                 text="Clear all filters"
@@ -139,7 +139,7 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
 
             return(
                 <div>
-                    {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0?
+                    {!learnFilterStore.isLoadingCatalog && learnFilterStore.filteredCatalogContent?.length === 0?
                         <></> 
                         :
                         (<>      
@@ -151,7 +151,7 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                                     setPanelOpen(true);
                                     setMainOpen(true);
                                 }} 
-                                disabled={learnStore.isLoadingCatalog? true : false}
+                                disabled={learnFilterStore.isLoadingCatalog? true : false}
                             />
 
                             <Panel
@@ -208,7 +208,7 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                                 )
                                 }
                                 </>
-                                {PanelFooterContent(learnStore.filteredCatalogContent?.length)}
+                                {PanelFooterContent(learnFilterStore.filteredCatalogContent?.length)}
                             </Panel>
                         </>)
                     }

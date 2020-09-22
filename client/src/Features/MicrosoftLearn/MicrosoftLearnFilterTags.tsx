@@ -11,13 +11,12 @@ type FilterTagStyles = SimpleComponentStyles<'root' | 'tags'>;
 
 const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>):JSX.Element | null => {
 
-    const learnStore = useStore('microsoftLearnStore');
-    const productsMap = learnStore.productMap;
-    const filter = learnStore.filter;
+    const learnFilterStore = useStore('microsoftLearnFilterStore');
+    const productsMap = learnFilterStore.productMap;
     const classes = themedClassNames(styles);
 
     return useObserver(()=>{
-        let tagMap: FilterTag[] = getDisplayFilterTags(filter.displayFilters, filter.selectedFilters, productsMap, learnStore.catalog);
+        let tagMap: FilterTag[] = getDisplayFilterTags(learnFilterStore.displayFilters, learnFilterStore.selectedFilters, productsMap, learnFilterStore.catalog);
         return (
             <div className={classes.root}>          
                 {tagMap.map(tag => (
@@ -27,13 +26,13 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>):JSX.Element |
                         text={tag.name} 
                         onClick={()=>{
                             if(tag.type===FilterType.Product){
-                                let subItems: string[] = [...learnStore.catalog?.products.values()]
+                                let subItems: string[] = [...learnFilterStore.catalog?.products.values()]
                                 .filter(product => product.parentId && product.parentId===tag.id)
                                 .map(product => product.id);                            
-                                learnStore.removeFilter(tag.type, [...subItems, tag.id]);
+                                learnFilterStore.removeFilter(tag.type, [...subItems, tag.id]);
                             }
                             else{
-                                learnStore.removeFilter(tag.type, [tag.id]);
+                                learnFilterStore.removeFilter(tag.type, [tag.id]);
                             }                    
                         }} 
                     />

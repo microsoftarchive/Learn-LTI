@@ -21,11 +21,18 @@ type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator' | 'wr
 
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
+  const learnFilterStore = useStore('microsoftLearnFilterStore');
+
   useEffect(() => {
     if (learnStore.catalog == null) {
-      learnStore.initializeCatalog();
+      learnStore.initializeCatalog()
+      .then(()=>{
+        if(learnStore.catalog!==null){
+          learnFilterStore.initializeFilters(learnStore.catalog);
+        }
+      })
     }
-  }, [learnStore]);
+  }, [learnStore, learnFilterStore]);
 
   const classes = themedClassNames(styles);
   const [width, setWidth] = useState(window.innerWidth);

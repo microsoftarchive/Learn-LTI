@@ -45,6 +45,7 @@ const ListRow = ({
 
 const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
+  const learnFilterStore = useStore('microsoftLearnFilterStore');
 
   const classes = themedClassNames(styles);
 
@@ -52,7 +53,7 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
 
   return useObserver(() => {
     const isLoadingCatalog = !!learnStore.isLoadingCatalog;
-    const catalogContent = learnStore.filteredCatalogContent;
+    const catalogContent = learnFilterStore.filteredCatalogContent;
     const noVisibleItems = !isLoadingCatalog && catalogContent?.length === 0;
 
     return (
@@ -63,8 +64,8 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
 
           <>
           <div className={classes.contentCount}>
-          {learnStore.filteredCatalogContent && learnStore.filteredCatalogContent?.length>0?
-            <Text variant="mediumPlus" className='contentCountText'> {learnStore.filteredCatalogContent?.length.toLocaleString()} results from Microsoft Learn </Text>:
+          {learnFilterStore.filteredCatalogContent && learnFilterStore.filteredCatalogContent?.length>0?
+            <Text variant="mediumPlus" className='contentCountText'> {learnFilterStore.filteredCatalogContent?.length.toLocaleString()} results from Microsoft Learn </Text>:
             <Text> </Text>            
           }
           </div>
