@@ -12,7 +12,6 @@ export class RootStore {
   assignmentLinksStore = new AssignmentLinksStore();
   microsoftLearnStore = new MicrosoftLearnStore();
   platformStore = new PlatformStore();
-  microsoftLearnFilterStore = new MicrosoftLearnFilterStore();
 
   constructor() {
     const childStores: ChildStore[] = Object.keys(this)

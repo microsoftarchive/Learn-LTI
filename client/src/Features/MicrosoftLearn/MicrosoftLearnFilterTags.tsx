@@ -11,12 +11,12 @@ type FilterTagStyles = SimpleComponentStyles<'root' | 'tags'>;
 
 const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>):JSX.Element | null => {
 
-    const learnFilterStore = useStore('microsoftLearnFilterStore');
-    const productsMap = learnFilterStore.productMap;
+    const learnStore = useStore('microsoftLearnStore');
+    const productsMap = learnStore.microsoftLearnFilterStore.productMap;
     const classes = themedClassNames(styles);
 
     return useObserver(()=>{
-        let tagMap: FilterTag[] = getDisplayFilterTags(learnFilterStore.displayFilters, learnFilterStore.selectedFilters, productsMap, learnFilterStore.catalog);
+        let tagMap: FilterTag[] = getDisplayFilterTags(learnStore.microsoftLearnFilterStore.displayFilters, learnStore.microsoftLearnFilterStore.selectedFilters, productsMap, learnStore.catalog);
         return (
             <div className={classes.root}>          
                 {tagMap.map(tag => (
@@ -26,13 +26,13 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>):JSX.Element |
                         text={tag.name} 
                         onClick={()=>{
                             if(tag.type===FilterType.Product){
-                                let subItems: string[] = [...learnFilterStore.catalog?.products.values()]
+                                let subItems: string[] = [...learnStore.catalog?.products.values()]
                                 .filter(product => product.parentId && product.parentId===tag.id)
                                 .map(product => product.id);                            
-                                learnFilterStore.removeFilter(tag.type, [...subItems, tag.id]);
+                                learnStore.microsoftLearnFilterStore.removeFilter(tag.type, [...subItems, tag.id]);
                             }
                             else{
-                                learnFilterStore.removeFilter(tag.type, [tag.id]);
+                                learnStore.microsoftLearnFilterStore.removeFilter(tag.type, [tag.id]);
                             }                    
                         }} 
                     />

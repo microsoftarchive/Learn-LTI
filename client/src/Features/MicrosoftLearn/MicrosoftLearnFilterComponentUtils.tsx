@@ -11,11 +11,11 @@ import { themedClassNames } from "../../Core/Utils/FluentUI";
 export type FilterComponentStyles = SimpleComponentStyles<'root' | 'title' | 'search' | 'optionsList' | 'subOptionsList' | 'filterItem'>;
 
 export const ProductFilterComponent = () => {
-    const learnFilterStore = useStore('microsoftLearnFilterStore');
-    const catalog = learnFilterStore.catalog;
+    const learnStore = useStore('microsoftLearnStore');
+    const catalog = learnStore.catalog;
 
     return useObserver(()=>{
-        const displayProducts = getProductsToDisplay(learnFilterStore.displayFilters.get(FilterType.Product), catalog?.products)    
+        const displayProducts = getProductsToDisplay(learnStore.microsoftLearnFilterStore.displayFilters.get(FilterType.Product), catalog?.products)    
         return (
             <>
                 <MicrosoftLearnFilterComponent
@@ -28,11 +28,11 @@ export const ProductFilterComponent = () => {
                         let target = event?.target as HTMLInputElement
                         let value = target.getAttribute('aria-describedby');
                         if(value){
-                        let subItems: string[] = [...learnFilterStore.catalog?.products.values()].filter(product => product.parentId && product.parentId===value)
+                        let subItems: string[] = [...learnStore.catalog?.products.values()].filter(product => product.parentId && product.parentId===value)
                                                                                         .map(product => product.id);
                         let type = FilterType.Product
-                        target.checked? learnFilterStore.addFilter(type, [...subItems, value]) 
-                        : learnFilterStore.removeFilter(type, [...subItems, value]);
+                        target.checked? learnStore.microsoftLearnFilterStore.addFilter(type, [...subItems, value]) 
+                        : learnStore.microsoftLearnFilterStore.removeFilter(type, [...subItems, value]);
                         }
                     }}
                     subItemClickHandler={(event)=>{
@@ -40,10 +40,10 @@ export const ProductFilterComponent = () => {
                         let type = FilterType.Product
                         let value = target.getAttribute('aria-describedby')
                         if(target.checked && value){
-                            learnFilterStore.addFilter(type, [value])                                    
+                            learnStore.microsoftLearnFilterStore.addFilter(type, [value])                                    
                         }
                         else if(!target.checked && value){
-                            learnFilterStore.removeFilter(type, [value])
+                            learnStore.microsoftLearnFilterStore.removeFilter(type, [value])
                         }                                                         
                     }}
                 />
@@ -54,11 +54,11 @@ export const ProductFilterComponent = () => {
 
 export const RoleFilterComponent = () => {
 
-    const learnFilterStore = useStore('microsoftLearnFilterStore');
-    const catalog = learnFilterStore.catalog;
+    const learnStore = useStore('microsoftLearnStore');
+    const catalog = learnStore.catalog;
 
     return useObserver(()=>{
-        const displayRoles = getRolesToDisplay(learnFilterStore?.displayFilters.get(FilterType.Role), catalog?.roles);
+        const displayRoles = getRolesToDisplay(learnStore.microsoftLearnFilterStore.displayFilters.get(FilterType.Role), catalog?.roles);
         return (
             <>
                 <MicrosoftLearnFilterComponent  
@@ -72,10 +72,10 @@ export const RoleFilterComponent = () => {
                         let type = FilterType.Role
                         let value = target.getAttribute('aria-describedby')
                         if(target.checked && value){
-                            learnFilterStore.addFilter(type, [value])                                    
+                            learnStore.microsoftLearnFilterStore.addFilter(type, [value])                                    
                         }
                         else if(!target.checked && value){
-                            learnFilterStore.removeFilter(type, [value])
+                            learnStore.microsoftLearnFilterStore.removeFilter(type, [value])
                         }
                     }}              
                 />
@@ -86,11 +86,11 @@ export const RoleFilterComponent = () => {
 
 export const LevelFilterComponent = () => {
 
-    const learnFilterStore = useStore('microsoftLearnFilterStore');
-    const catalog = learnFilterStore.catalog;
+    const learnStore = useStore('microsoftLearnStore');
+    const catalog = learnStore.catalog;
 
     return useObserver(()=>{
-        const displayLevels = getLevelsToDisplay(learnFilterStore.displayFilters.get(FilterType.Level), catalog?.levels)
+        const displayLevels = getLevelsToDisplay(learnStore.microsoftLearnFilterStore.displayFilters.get(FilterType.Level), catalog?.levels)
         return (
             <>
                 <MicrosoftLearnFilterComponent  
@@ -104,10 +104,10 @@ export const LevelFilterComponent = () => {
                         let type = FilterType.Level
                         let value = target.getAttribute('aria-describedby')
                         if(target.checked && value){
-                            learnFilterStore.addFilter(type, [value])                                    
+                            learnStore.microsoftLearnFilterStore.addFilter(type, [value])                                    
                         }
                         else if(!target.checked && value){
-                            learnFilterStore.removeFilter(type, [value])
+                            learnStore.microsoftLearnFilterStore.removeFilter(type, [value])
                         }                        
                     }}             
                 />
@@ -118,10 +118,10 @@ export const LevelFilterComponent = () => {
 
 export const TypeFilterComponent = () =>{
 
-    const learnFilterStore = useStore('microsoftLearnFilterStore');
+    const learnStore = useStore('microsoftLearnStore');
 
     return useObserver(()=>{
-        const displayTypes = getTypesToDisplay(learnFilterStore.displayFilters.get(FilterType.Type))        
+        const displayTypes = getTypesToDisplay(learnStore.microsoftLearnFilterStore.displayFilters.get(FilterType.Type))        
         return (
             <>
                 <MicrosoftLearnFilterComponent  
@@ -135,10 +135,10 @@ export const TypeFilterComponent = () =>{
                         let type = FilterType.Type
                         let value = target.getAttribute('aria-describedby')
                         if(target.checked && value){
-                            learnFilterStore.addFilter(type, [value])                                    
+                            learnStore.microsoftLearnFilterStore.addFilter(type, [value])                                    
                         }
                         else if(!target.checked && value){
-                            learnFilterStore.removeFilter(type, [value])
+                            learnStore.microsoftLearnFilterStore.removeFilter(type, [value])
                         }                        
                     }}
                 />

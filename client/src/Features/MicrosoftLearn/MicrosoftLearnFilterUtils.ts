@@ -1,7 +1,8 @@
-import { Product, Role, Level, Catalog } from '../../Models/Learn';
+import { Product, Role, Level, Catalog, LearnContent } from '../../Models/Learn';
 import { FilterType } from '../../Models/Learn/FilterType.model'; 
 import { LearnTypeFilterOption, FilterOption } from './MicrosoftLearnFilterComponentProps';
 import _ from 'lodash';
+import { getRegexs, scoreRegex } from "./MicrosoftLearnFilterCore";
 
 const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
     if(a && b){
@@ -22,6 +23,7 @@ const createOptoinArrayFromKeys = (keys: FilterOption[]) => {
 export const getProductsToDisplay = (productId: string[] | undefined, productMap: Map<string, Product> | undefined) => {
     let products: Product[] = [];
     let productParentChildMap = new Map<Product, Product[]>();
+    
     if(productMap!=null){
         products = [...productMap.values()].filter(product => productId?.includes(product.id))
         const parentProducts = products.filter(item => item && item?.parentId==null).sort(FilterOptionComparer);
@@ -96,19 +98,7 @@ export const getDisplayFilterTags = (displayFilters: Map<FilterType, string[]>, 
     return  [...productTags, ...roleTags, ...levelTags, ...typeTags]
 }
 
-export const getRegexs = (searchTerm: string): RegExp[] => {
-    const expressions: RegExp[] = searchTerm
-                                 .trim().replace(/\s+/g, ' ').split(' ').map(termPart => new RegExp(`.*${termPart}.*`, 'i'));
-    expressions.push(new RegExp(`.*${searchTerm}.*`, 'i'));
-    return expressions;
-}
 
-export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 1): number => {
-    if(!testPhrase){
-        return 0;
-    }
-    return exp.test(testPhrase) ? score : 0;
-}
 
 export const getDisplayFromSearch = (expressions: RegExp [], currentDisplay: Map<FilterOption, FilterOption[]>) => {
     let filteredDisplay: Map<FilterOption, FilterOption[]> = new Map<FilterOption, FilterOption[]>();

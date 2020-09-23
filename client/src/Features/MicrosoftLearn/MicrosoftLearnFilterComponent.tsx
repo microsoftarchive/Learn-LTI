@@ -4,7 +4,8 @@ import { Text } from '@fluentui/react';
 import { useObserver } from 'mobx-react-lite';
 import { SearchBox } from '@fluentui/react';
 import { FilterComponentProps } from './MicrosoftLearnFilterComponentProps' 
-import { getRegexs, getDisplayFromSearch } from './MicrosoftLearnFilterUtils'
+import { getDisplayFromSearch } from './MicrosoftLearnFilterUtils'
+import { getRegexs } from './MicrosoftLearnFilterCore'
 import { MicrosoftLearnFilterItem } from './MicrosoftLearnFilterItem';
 import { useStore } from '../../Stores/Core';
 

@@ -9,7 +9,6 @@ import { useObserver } from 'mobx-react-lite';
 export type MicrosoftLearnSearchStyles = SimpleComponentStyles<'root' | 'label' | 'searchBox'>;
 
 const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchStyles>): JSX.Element => {
-  const learnFilterStore = useStore('microsoftLearnFilterStore');
   const learnStore = useStore('microsoftLearnStore');
 
   const classes = themedClassNames(styles);
@@ -18,10 +17,10 @@ const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchS
       <div className={classes.root}>
         <Label className={classes.label}>Search</Label>
         <SearchBox
-          onChange={(_e, newValue) => learnFilterStore.updateSearchTerm(newValue || '')}
+          onChange={(_e, newValue) => learnStore.microsoftLearnFilterStore.updateSearchTerm(newValue || '')}
           className={classes.searchBox}
           disabled={!!learnStore.isLoadingCatalog}
-          value={learnFilterStore.searchTerm}
+          value={learnStore.microsoftLearnFilterStore.searchTerm}
         />
       </div>
     );

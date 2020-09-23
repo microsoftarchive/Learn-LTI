@@ -10,11 +10,11 @@ import { FilterType } from '../../Models/Learn/FilterType.model';
 import { FilterPaneStyles } from './MicrosoftLearnFilterPaneStyles';
 
 const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element | null => {
-    const learnFilterStore = useStore('microsoftLearnFilterStore');
+    const learnStore = useStore('microsoftLearnStore');
     const classes = themedClassNames(styles);
 
     const noFiltersExist = () => {
-        let selectedFilters = learnFilterStore.selectedFilters;
+        let selectedFilters = learnStore.microsoftLearnFilterStore.selectedFilters;
         return selectedFilters.get(FilterType.Product)?.length===0 && selectedFilters.get(FilterType.Role)?.length===0 &&
                 selectedFilters.get(FilterType.Type)?.length===0 && selectedFilters.get(FilterType.Level)?.length===0;
     }
@@ -22,7 +22,7 @@ const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
     return(
         <div>
             <ActionButton
-                onClick={()=>{learnFilterStore.resetFilter()}}
+                onClick={()=>learnStore.microsoftLearnFilterStore.resetFilter()}
                 style={{display: noFiltersExist()? 'none' : 'block'}}
                 className={classes.clearAll}
                 text="Clear all filters"
@@ -39,7 +39,7 @@ const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
 }
 
 const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element | null => {
-    const learnFilterStore = useStore('microsoftLearnFilterStore');
+    const learnStore = useStore('microsoftLearnStore');
 
     const [mainIsOpen, setMainOpen] = useState(false);
     const [productIsOpen, setProductOpen] = useState(false);
@@ -108,7 +108,7 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                 <DefaultButton 
                     text="Clear All"
                     onClick = {()=>{
-                        learnFilterStore.resetFilter()
+                        learnStore.microsoftLearnFilterStore.resetFilter()
                     }}
                 />
             </div>
@@ -125,7 +125,7 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                     setPanelOpen(true);
                     setMainOpen(true);
                 }} 
-                disabled={learnFilterStore.isLoadingCatalog? true : false}
+                disabled={learnStore.isLoadingCatalog? true : false}
             />
 
             <Panel
@@ -181,15 +181,14 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                 )
                 }
                 </>
-                {PanelFooterContent(learnFilterStore.filteredCatalogContent?.length)}
+                {PanelFooterContent(learnStore.filteredCatalogContent?.length)}
             </Panel>
         </>
     )
 }
 
 const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element | null  =>   {
-
-    const learnFilterStore = useStore('microsoftLearnFilterStore');
+    const learnStore = useStore('microsoftLearnStore');
     const [width, setWidth] = useState(window.innerWidth);
     const classes = themedClassNames(styles);
 
@@ -207,7 +206,7 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
         return width>768 ?
             (<div className={classes.root}>
                 <Text className={classes.title} >Filters</Text> 
-                {!learnFilterStore.isLoadingCatalog && learnFilterStore.filteredCatalogContent?.length === 0? 
+                {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0? 
                     <></>
                     :
                     (<div>
@@ -216,7 +215,7 @@ const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>):JSX.Element 
                 }
             </div>) : 
             (<div>
-                {!learnFilterStore.isLoadingCatalog && learnFilterStore.filteredCatalogContent?.length === 0?
+                {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0?
                     <></> : <FilterPaneSmall styles={styles}/>
                 }
             </div>)

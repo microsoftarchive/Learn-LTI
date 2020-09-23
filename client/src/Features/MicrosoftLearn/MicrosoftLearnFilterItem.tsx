@@ -6,10 +6,10 @@ import React from "react";
 
 
 const FilterItemInner = (props: FilterItemProps) =>{
-    const learnFilterStore = useStore('microsoftLearnFilterStore');
+    const learnStore = useStore('microsoftLearnStore');
 
     const itemInSelectedFilter = (subItemId: string | undefined) =>{
-        let selectedFilters = learnFilterStore.selectedFilters.get(props.filterType);
+        let selectedFilters = learnStore.microsoftLearnFilterStore.selectedFilters.get(props.filterType);
         return subItemId? selectedFilters?.includes(subItemId) : false;
     }
 
@@ -17,15 +17,15 @@ const FilterItemInner = (props: FilterItemProps) =>{
 
     const updateExpandedSet = (oldState: boolean | undefined | "") =>{
         if(oldState===true && props.mainItem?.id){
-            learnFilterStore.updateExpandedProducts(false, props.mainItem?.id);
+            learnStore.microsoftLearnFilterStore.updateExpandedProducts(false, props.mainItem?.id);
         }
         else if(oldState!==undefined && props.mainItem?.id){
-            learnFilterStore.updateExpandedProducts(true, props.mainItem?.id);
+            learnStore.microsoftLearnFilterStore.updateExpandedProducts(true, props.mainItem?.id);
         }
     }
 
     const inExpanded = (id: string | undefined)=>{
-        return id && learnFilterStore.expandedProducts.includes(id);
+        return id && learnStore.microsoftLearnFilterStore.expandedProducts.includes(id);
     }
 
     return useObserver(() => {
