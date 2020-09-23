@@ -148,11 +148,13 @@ const getSearchTermFilteredLearnContent = (expressions: RegExp[], content: Learn
 
 export const loadFiltersFromPath = (catalog: Catalog, productHierarchicalMap: Map<Product, Product[]>) => {
     let searchParams = window.location.search
-    if(searchParams.length>0){
+    if(searchParams && searchParams.length>0){
       let searchParamMap: Map<string, string[]> = new Map<string, string[]>();
       searchParams.slice(1).split('&').forEach(s=>{
         let [key, value] = s.split('=');
-        searchParamMap.set(key, value.split('%2C'));
+        if(value){
+            searchParamMap.set(key, value.split('%2C'));
+        }
       })
 
       let _selectedFilters: Map<FilterType, string[]> = new Map<FilterType, string[]>();
