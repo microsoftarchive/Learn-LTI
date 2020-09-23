@@ -10,9 +10,6 @@ import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.
 import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
 import { debounceTime, map, filter, tap, switchMap } from 'rxjs/operators';
 import { getRegexs, filterLearnContent } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
-import { FilterType } from '../Models/Learn/FilterType.model';
-import _ from 'lodash';
-
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;

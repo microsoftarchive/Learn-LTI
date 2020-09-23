@@ -4,7 +4,6 @@ import { UsersStore } from './Users.store';
 import { AssignmentLinksStore } from './AssignmentLinks.store';
 import { MicrosoftLearnStore } from './MicrosoftLearn.store';
 import { PlatformStore } from './Platform.store';
-import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
 
 export class RootStore {
   assignmentStore = new AssignmentStore();

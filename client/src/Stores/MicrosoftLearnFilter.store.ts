@@ -1,4 +1,4 @@
-import _, { cloneDeep } from "lodash";
+import _ from "lodash";
 import { action, observable } from "mobx";
 import { setDisplayFilters, loadFiltersFromPath, updateURI } from "../Features/MicrosoftLearn/MicrosoftLearnFilterCore";
 import { Catalog, Product } from "../Models/Learn";

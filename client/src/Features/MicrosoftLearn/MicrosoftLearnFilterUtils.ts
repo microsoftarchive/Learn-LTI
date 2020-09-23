@@ -1,8 +1,8 @@
-import { Product, Role, Level, Catalog, LearnContent } from '../../Models/Learn';
+import { Product, Role, Level, Catalog } from '../../Models/Learn';
 import { FilterType } from '../../Models/Learn/FilterType.model'; 
 import { LearnTypeFilterOption, FilterOption } from './MicrosoftLearnFilterComponentProps';
 import _ from 'lodash';
-import { getRegexs, scoreRegex } from "./MicrosoftLearnFilterCore";
+import { scoreRegex } from "./MicrosoftLearnFilterCore";
 
 const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
     if(a && b){
