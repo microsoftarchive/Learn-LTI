@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT license.
+# --------------------------------------------------------------------------------------------
+
 enum DotEnv {
     REACT_APP_EDNA_AAD_CLIENT_ID;
     REACT_APP_EDNA_MAIN_URL;

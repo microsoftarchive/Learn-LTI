@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import { Level } from './Level.model';
 import { Role } from './Role.model';
 import { LearnContent } from './LearnContent.model';

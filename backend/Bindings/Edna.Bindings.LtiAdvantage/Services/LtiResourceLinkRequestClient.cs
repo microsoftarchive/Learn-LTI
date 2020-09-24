@@ -1,4 +1,9 @@
-﻿using System.Security.Claims;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Edna.Bindings.LtiAdvantage.Utils;
 using LtiAdvantage.Lti;

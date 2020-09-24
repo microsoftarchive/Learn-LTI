@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { useEffect } from 'react';
 import { useObserver } from 'mobx-react-lite';
 import { useStore } from '../../Stores/Core';

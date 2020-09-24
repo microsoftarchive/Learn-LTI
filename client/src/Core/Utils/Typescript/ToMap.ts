@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 export function toMap<TItem, TKey, TValue = TItem>(
   array: Array<TItem>,
   keySelector: (item: TItem) => TKey,
