@@ -13,10 +13,8 @@ import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
 import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
-import { debounceTime, map, filter, tap, switchMap } from 'rxjs/operators';
-import { getRegexs, applySelectedFilter, setDisplayFilters, getUpdatedURI } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
-import { FilterType } from '../Models/Learn/FilterType.model';
-import { act } from 'react-dom/test-utils';
+import { debounceTime, map, filter, switchMap } from 'rxjs/operators';
+import { applySelectedFilter } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -24,26 +22,18 @@ export class MicrosoftLearnStore extends ChildStore {
   @observable selectedItems: AssignmentLearnContent[] | null = null;
   @observable filteredCatalogContent: LearnContent[] | null = null;
 
-  microsoftLearnFilterStore = new MicrosoftLearnFilterStore();
+  filterStore = new MicrosoftLearnFilterStore();
 
   initialize(): void {
-    toObservable(() => this.microsoftLearnFilterStore.searchTerm)
+    toObservable(() => this.filterStore.selectedFilter)
       .pipe(
         debounceTime(250),
-        tap(() => (this.filteredCatalogContent = [])),
-        map(searchTerm => getRegexs(searchTerm)),
         filter(() => !!this.catalog)
       )
-     .subscribe(expressions => this.filteredCatalogContent = applySelectedFilter(this.catalog, this.microsoftLearnFilterStore.selectedFilters, 
-          this.microsoftLearnFilterStore.searchTerm, expressions))
+     .subscribe(filter => this.filteredCatalogContent = applySelectedFilter(this.catalog, filter))
       
-    let x = toObservable(() => this.filteredCatalogContent);
-      x.subscribe(filteredCatalogContent => {this.microsoftLearnFilterStore.displayFilters = setDisplayFilters(this.catalog, filteredCatalogContent);
-                              console.log('calling update display filter subscriber.')
-        })
-
-      x.subscribe(() => this.microsoftLearnFilterStore.learnFilterUriParam =  getUpdatedURI(this.microsoftLearnFilterStore.selectedFilters, this.microsoftLearnFilterStore.searchTerm,
-        this.microsoftLearnFilterStore.expandedProducts, this.microsoftLearnFilterStore.productMap))
+    toObservable(() => this.filteredCatalogContent)
+      .subscribe(filteredCatalogContent => this.filterStore.displayFilter = this.filterStore.updateFiltersToDisplay(this.catalog, filteredCatalogContent))
 
     toObservable(() => this.root.assignmentStore.assignment)
       .pipe(
@@ -89,7 +79,7 @@ export class MicrosoftLearnStore extends ChildStore {
   }
 
   @action
-  async initializeCatalog(): Promise<void> {
+  async initializeCatalog(searchParams?: URLSearchParams): Promise<void> {
     this.isLoadingCatalog = true;
     const catalog = await MicrosoftLearnService.getCatalog();
     if (catalog.error) {
@@ -107,8 +97,7 @@ export class MicrosoftLearnStore extends ChildStore {
     this.isLoadingCatalog = false;
     this.filteredCatalogContent = [...this.catalog.contents.values()];
 
-    this.microsoftLearnFilterStore.initializeFilters(this.catalog);
-    this.filteredCatalogContent = applySelectedFilter(this.catalog, this.microsoftLearnFilterStore.selectedFilters, this.microsoftLearnFilterStore.searchTerm);
+    this.filterStore.initializeFilters(this.catalog, searchParams);
   }
 
   private getItemIndexInSelectedList = (learnContentUid: string): number | void => {
@@ -140,27 +129,5 @@ export class MicrosoftLearnStore extends ChildStore {
     });
 
     return productsMap;
-  }
-
-  @action
-  addFilter(type: FilterType, filters: string[]){
-    this.microsoftLearnFilterStore.addFilter(type, filters);
-    this.filteredCatalogContent = applySelectedFilter(this.catalog, this.microsoftLearnFilterStore.selectedFilters, 
-                                                              this.microsoftLearnFilterStore.searchTerm);
-  }
-
-  @action
-  removeFilter(type: FilterType, filters: string[]){
-    this.microsoftLearnFilterStore.removeFilter(type, filters); 
-    this.filteredCatalogContent = applySelectedFilter(this.catalog, this.microsoftLearnFilterStore.selectedFilters, 
-                          this.microsoftLearnFilterStore.searchTerm);
-
-  }
-  
-  @action
-  resetFilters(){
-    this.microsoftLearnFilterStore.resetFilter();
-    this.filteredCatalogContent = applySelectedFilter(this.catalog, this.microsoftLearnFilterStore.selectedFilters, 
-      this.microsoftLearnFilterStore.searchTerm);
   }
 }

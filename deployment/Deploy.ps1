@@ -7,9 +7,9 @@ $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 $ExecutionStartTime = $(get-date -f dd-MM-yyyy-HH-mm-ss)
 $LogRoot = Join-Path $scriptPath "Log"
 $LogFile = Join-Path $LogRoot "Log-$ExecutionStartTime.log"
-$resourceGroupName = "MSLearnLTI"
-$identityName = "MSLearnLTI-Identity"
-$appName = "MS-Learn-Lti-Tool-App"
+$resourceGroupName = "Canvas-ML-FilterTest2"
+$identityName = "Canvas-ML-FilterTest2-Identity"
+$appName = "Canvas-ML-FilterTest2-App"
 
 function Write-LogInternal {
     param (

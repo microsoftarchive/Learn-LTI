@@ -1,6 +1,7 @@
 export enum FilterType {
-    Product,
-    Role,
-    Type,
-    Level
+    products,
+    roles,
+    types,
+    levels,
+    terms
 }

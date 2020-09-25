@@ -1,38 +1,6 @@
 import _ from "lodash";
 import { Catalog, Product, LearnContent } from "../../Models/Learn";
 import { Filter } from "../../Models/Learn/Filter.model";
-import { FilterType } from "../../Models/Learn/FilterType.model";
-
-// export const filterLearnContent = (catalog: Catalog | null, selectedFilters: Map<FilterType, string[]>, searchTerm: string, productHierarchicalMap: Map<Product, Product[]>, expandedProducts: string[], searchExpressions?: RegExp[]) => {
-//     if(catalog){
-//         let _filteredCatalogContent =  applySelectedFilter(catalog, selectedFilters, searchTerm, searchExpressions) 
-//         let _displayFilters = setDisplayFilters(catalog, _filteredCatalogContent);
-//         let _uri = updateURI(selectedFilters, searchTerm, expandedProducts, productHierarchicalMap);
-
-//         if(searchExpressions===undefined){
-//             let _newSelected: Map<FilterType, string[]> = new Map<FilterType, string[]>();
-//             [...selectedFilters.keys()].forEach(type => {
-//                 let _newFilters = removeExtrasFromSelected(type, catalog, selectedFilters, _displayFilters, productHierarchicalMap);
-//                 if(_newFilters){
-//                     _newSelected.set(type, _newFilters);
-//                 }
-//             });
-//             return {
-//                 filteredCatalogContent: _filteredCatalogContent,
-//                 displayFilters: _displayFilters,
-//                 uri: _uri,
-//                 newSelectedFilters: _newSelected
-//             }
-//         }
-
-//         return {
-//             filteredCatalogContent: _filteredCatalogContent,
-//             displayFilters: _displayFilters,
-//             uri: _uri
-//         }
-//     }
-//     return null;
-// }
 
 
 export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Filter): LearnContent[] {     
@@ -42,44 +10,12 @@ export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Fi
         .filter(content => filterBy(selectedFilters.levels, content.levels))
         .filter(content => filterBy(selectedFilters.types, [content.type]));
 
-
   function filterBy(filter: string[], catalog: string[]) {
-    return (
-      // include if no selected filters or item present in selected filters
-      filter.length == 0 || filter.filter(value => catalog.includes(value)).length > 0
-    );
+    return (filter.length === 0 || filter.filter(value => catalog.includes(value)).length > 0);
   }
 }
 
-
-const removeExtrasFromSelected = (type: FilterType, catalog: Catalog, selectedFilters: Map<FilterType, string[]>, displayFilters: Map<FilterType, string[]>, productHierarchicalMap: Map<Product, Product[]>) => {
-  if(type===FilterType.Product){
-        let parentProducts = [...productHierarchicalMap.keys()]; 
-        let prevSelected = selectedFilters.get(type);
-        let newDisplay = displayFilters.get(type);
-        const selectedInvisibleItems = prevSelected?.filter(item => newDisplay && !newDisplay.includes(item))
-      
-        let removeParentProducts = parentProducts?.filter(parent => selectedInvisibleItems?.includes(parent.id)).map(parent => parent.id);
-        let removeChilrenProducts = [...catalog?.products.values()]
-                                    .filter(product => (product.parentId && (removeParentProducts.includes(product.parentId) ||
-                                    (!prevSelected?.includes(product.parentId) && prevSelected?.includes(product.id) && !newDisplay?.includes(product.id)))))
-                                    .map(product => product.id);
-
-        let removeProducts = [...removeParentProducts, ...removeChilrenProducts];
-        let newSelected = prevSelected?.filter(item => !removeProducts.includes(item));
-        return newSelected;
-    }
-
-    else{
-      let prevSelected = selectedFilters.get(type);
-      let newDisplay = displayFilters.get(type);
-      if(prevSelected!==undefined && newDisplay!==undefined){
-        return  _.intersection(prevSelected, newDisplay);
-      }
-    }
-}
-    
-export function setDisplayFilters (catalog: Catalog | null, filteredContent: LearnContent[]): Filter {
+export function getfiltersToDisplay (catalog: Catalog | null, filteredContent: LearnContent[]): Filter {
   let newDisplayFilter = new Filter();  
 
   const filteredProducts = new Set(getFilteredProducts());
@@ -94,58 +30,26 @@ export function setDisplayFilters (catalog: Catalog | null, filteredContent: Lea
 
   return newDisplayFilter;
 
-
   function getFiltered(transform: (value: LearnContent) => string[]): string[] {
     return filteredContent?.map(transform).flat(1);
   }
 
   function getFilteredProducts() {
     const children = getFiltered(content => content.products);
-    const parents = children.map(getParentProduct).filter(pId => !!pId);
+    const parents = children.map(childProduct => getParentProduct(childProduct, catalog?.products)).filter(pId => !!pId);
     return [...parents, ...children];
-  }
-     
-  function getParentProduct(product: string): string {
-    const productDetails = catalog?.products.get(product);
-    if (productDetails) {
-      const { id, parentId } = productDetails;
-      if (parentId && parentId != id) {
-        return parentId;
-      }
-    }
-    return '';
   }
 }        
 
-export const getUpdatedURI = (selectedFilters: Map<FilterType, string[]>, searchTerm: string, expandedProducts: string[], productHierarchicalMap: Map<Product, Product[]>) => {
-    let productFilter = selectedFilters.get(FilterType.Product) || [];
-    let roleFilter = selectedFilters.get(FilterType.Role) || [];
-    let typeFilter = selectedFilters.get(FilterType.Type) || [];
-    let levelFilter = selectedFilters.get(FilterType.Level) || [];
-
-    const getProductUri = () => {
-      let parents = [...productHierarchicalMap.keys()]; 
-      let keep: string[] = [];
-      let parentProductFilters: Product[] = parents.filter(p => productFilter.includes(p.id));
-      let invisibleChildren = _.flatten(parentProductFilters.map(parent => productHierarchicalMap.get(parent)?.map(c=>c.id)));
-
-      keep = [...keep, ...productFilter.filter(f => !keep.includes(f) && !invisibleChildren.includes(f))];
-      return 'products='+keep.join('%2C');
+function getParentProduct(product: string, products: Map<string, Product> | undefined): string {
+  const productDetails = products?.get(product);
+  if (productDetails) {
+    const { id, parentId } = productDetails;
+    if (parentId && parentId !== id) {
+      return parentId;
     }
-
-    let productUri = productFilter.length>0? getProductUri() : '';
-    let roleUri = roleFilter.length>0? 'roles=' + roleFilter.join('%2C') : '';
-    let typeUri = typeFilter.length>0? 'types=' + typeFilter.join('%2C') : '';
-    let levelUri = levelFilter.length>0? 'levels=' + levelFilter.join('%2C') : '';
-    let termsUri = searchTerm.length>0? 'terms='+searchTerm : '';
-    let expandedProductsUri = expandedProducts.length>0? 'expanded='+expandedProducts.join('%2C') : '';
-    let finalUri = [productUri, roleUri, levelUri, typeUri, termsUri, expandedProductsUri]
-                    .filter(s=>s.length!==0).join('&')            
-
-    let uri = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + finalUri;
-    window.history.pushState({path:uri},'',uri);       
-
-    return finalUri;
+  }
+  return '';
 }
 
 const getSearchTermFilteredLearnContent = (expressions: RegExp[], content: LearnContent[]): LearnContent[] => {
@@ -163,42 +67,62 @@ const getSearchTermFilteredLearnContent = (expressions: RegExp[], content: Learn
       .map(scoredCourse => scoredCourse.course);
 }
 
-export const loadFiltersFromPath = (catalog: Catalog, productHierarchicalMap: Map<Product, Product[]>) => {
-    let searchParams = window.location.search
-    if(searchParams && searchParams.length>0){
-      let searchParamMap: Map<string, string[]> = new Map<string, string[]>();
-      searchParams.slice(1).split('&').forEach(s=>{
-        let [key, value] = s.split('=');
-        if(value){
-            searchParamMap.set(key, value.split('%2C'));
-        }
-      })
+export function loadFiltersFromQueryParams(queryParams: URLSearchParams, products: Map<string, Product>): Filter{
+  let filterFromQS = new Filter();
+  filterFromQS.products = parseQSValues(queryParams.get('products'));
+  filterFromQS.products = [...filterFromQS.products, ...addChildrenProducts(filterFromQS.products, products)]
 
-      let _selectedFilters: Map<FilterType, string[]> = new Map<FilterType, string[]>();
+  filterFromQS.roles = parseQSValues(queryParams.get('roles'));
+  filterFromQS.levels = parseQSValues(queryParams.get('levels'));
+  filterFromQS.types = parseQSValues(queryParams.get('types'));
+  filterFromQS.terms = parseQSValues(queryParams.get('terms'));
 
-      let _expandedProducts = searchParamMap.get("expanded") || [];
-      _selectedFilters.set(FilterType.Role, searchParamMap.get('roles') || []);
-      _selectedFilters.set(FilterType.Level, searchParamMap.get('levels') || []);
-      _selectedFilters.set(FilterType.Type, searchParamMap.get('types') || []);
+  return filterFromQS;
 
-      let setProducts = searchParamMap.get('products');
-      if(setProducts){
-        let parents = [...productHierarchicalMap.keys()];
-        let parenIds = parents.map(p => p.id);
-        
-        let selectedParents = setProducts.filter(p => parenIds.includes(p)).map(pId => catalog?.products.get(pId)!!); 
-        let addChildren = _.flatten(selectedParents.map(p => productHierarchicalMap.get(p)!!)).map(c=>c.id);
-        _selectedFilters.set(FilterType.Product,  [...setProducts, ...addChildren]);
-      }
+  function parseQSValues(value: string | null, separator: string = ','){
+    return value? value.split(separator) : [];
+  }
 
-      let _searchTerm = searchParamMap.get("terms");
+  function addChildrenProducts(filters: string[], products: Map<string, Product>){
+    return [...products.values()].filter(product => product.parentId && product.parentId!==product.id && filters.includes(product.parentId))
+      .map(product => product.id);
+  }
+}
 
-      return {
-            selectedFilters: _selectedFilters,
-            expandedProducts: _expandedProducts,
-            searchTerm: _searchTerm? _searchTerm[0].split('%20').join(' ') : ''
-        }
-    }
+export function loadExpandedProductsFromQueryParams(queryParams: URLSearchParams): string[]{
+  return queryParams.get('expand')?.split(',') || [];
+}
+
+export function getUpdatedURIfromSelectedFilters(filters: Filter, expandedProducts: string[], products: Map<string, Product> | undefined): string{
+  let newQueryParams = new URLSearchParams();
+
+  let productUriFilters = getProductUri(products, filters.products);
+  if(productUriFilters.length>0){
+    newQueryParams.append('products', productUriFilters.toString());
+  }
+  if(filters.roles.length>0){
+    newQueryParams.append('roles', filters.roles.toString());
+  }
+  if(filters.types.length>0){
+      newQueryParams.append('types', filters.types.toString());
+  }
+  if(filters.levels.length>0){
+      newQueryParams.append('levels', filters.levels.toString());
+  }
+  if(filters.terms.length>0 && filters.terms.toString().length>0){
+    newQueryParams.append('terms', filters.terms.toString());
+  }
+  if(expandedProducts.length>0){
+    newQueryParams.append('expanded', expandedProducts.toString());
+  }
+
+  return newQueryParams.toString();
+
+  function getProductUri(products: Map<string, Product> | undefined, filters: string[]){
+    const parentFilters = filters.filter(filter => getParentProduct(filter, products)==='')
+    const childrenToInclude = filters.filter(filter => !parentFilters.includes(getParentProduct(filter, products)));
+    return [...parentFilters, ...childrenToInclude]
+  }
 }
 
 export const getRegexs = (searchTerm: string): RegExp[] => {
@@ -214,3 +138,31 @@ export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 
     }
     return exp.test(testPhrase) ? score : 0;
 }
+
+// const removeExtrasFromSelected = (type: FilterType, catalog: Catalog, selectedFilters: Map<FilterType, string[]>, displayFilters: Map<FilterType, string[]>, productHierarchicalMap: Map<Product, Product[]>) => {
+//   if(type===FilterType.Product){
+//         let parentProducts = [...productHierarchicalMap.keys()]; 
+//         let prevSelected = selectedFilters.get(type);
+//         let newDisplay = displayFilters.get(type);
+//         const selectedInvisibleItems = prevSelected?.filter(item => newDisplay && !newDisplay.includes(item))
+      
+//         let removeParentProducts = parentProducts?.filter(parent => selectedInvisibleItems?.includes(parent.id)).map(parent => parent.id);
+//         let removeChilrenProducts = [...catalog?.products.values()]
+//                                     .filter(product => (product.parentId && (removeParentProducts.includes(product.parentId) ||
+//                                     (!prevSelected?.includes(product.parentId) && prevSelected?.includes(product.id) && !newDisplay?.includes(product.id)))))
+//                                     .map(product => product.id);
+
+//         let removeProducts = [...removeParentProducts, ...removeChilrenProducts];
+//         let newSelected = prevSelected?.filter(item => !removeProducts.includes(item));
+//         return newSelected;
+//     }
+
+//     else{
+//       let prevSelected = selectedFilters.get(type);
+//       let newDisplay = displayFilters.get(type);
+//       if(prevSelected!==undefined && newDisplay!==undefined){
+//         return  _.intersection(prevSelected, newDisplay);
+//       }
+//     }
+// }
+    

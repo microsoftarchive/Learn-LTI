@@ -1,5 +1,3 @@
-import { LearnTypeDto, LevelDto, ProductDto, RoleDto } from "../../Dtos/Learn";
-
 export class Filter {
     products: string[];
     roles: string[];

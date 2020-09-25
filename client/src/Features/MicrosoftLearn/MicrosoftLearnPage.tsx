@@ -18,16 +18,21 @@ import {
 } from './MicrosoftLearnSelectedItemsList';
 import { getCommonSpacingStyle } from './MicrosoftLearnStyles';
 import { pagesDisplayNames } from '../../Router/Consts';
+import { useLocation } from 'react-router-dom';
 
 type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator'>;
 
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
+  const location = useLocation();  
+  
+  let qsParams = new URLSearchParams(location.search);
+
   useEffect(() => {
     if (learnStore.catalog == null) {
-      learnStore.initializeCatalog();
+      learnStore.initializeCatalog(qsParams);
     }
-  }, [learnStore]);
+  }, [learnStore, qsParams]);
 
   const classes = themedClassNames(styles);
   return useObserver(() => {
