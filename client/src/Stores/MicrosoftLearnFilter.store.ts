@@ -1,26 +1,21 @@
 import _ from "lodash";
 import { action, observable } from "mobx";
-import { setDisplayFilters, loadFiltersFromPath, updateURI } from "../Features/MicrosoftLearn/MicrosoftLearnFilterCore";
+import { setDisplayFilters, loadFiltersFromPath, updateURI, getRegexs } from "../Features/MicrosoftLearn/MicrosoftLearnFilterCore";
 import { Catalog, Product } from "../Models/Learn";
+import { debounceTime, map, filter, tap, switchMap } from 'rxjs/operators';
 import { FilterType } from "../Models/Learn/FilterType.model";
 import { ChildStore } from "./Core";
+import { Filter } from "../Models/Learn/Filter.model";
 
 export class MicrosoftLearnFilterStore extends ChildStore{
-    @observable displayFilters: Map<FilterType, string[]> = new Map([
-        [FilterType.Product, []],
-        [FilterType.Role, []],
-        [FilterType.Level, []],
-        [FilterType.Type, []]]);
+  @observable displayFilter: Filter = new Filter();
+  @observable selectedFilter: Filter = new Filter();
 
-    @observable selectedFilters: Map<FilterType, string[]> = new Map([
-        [FilterType.Product, []],
-        [FilterType.Role, []],
-        [FilterType.Level, []],
-        [FilterType.Type, []]]);  
+  @observable learnFilterUriParam: string = '';
+  @observable expandedProducts: string[]=[];
 
-    @observable searchTerm: string = '';
-    @observable learnFilterUriParam: string = '';
-    @observable expandedProducts: string[]=[];
+
+
     productMap: Map<Product, Product[]>  = new Map<Product, Product[]>(); 
 
     public initializeFilters(catalog: Catalog){
@@ -30,7 +25,7 @@ export class MicrosoftLearnFilterStore extends ChildStore{
 
         if(response){
           this.expandedProducts = response?.expandedProducts;
-          this.selectedFilters = _.cloneDeep(response?.selectedFilters);
+          this.selectedFilters = response?.selectedFilters;
           this.searchTerm = response?.searchTerm;
         }
     }
@@ -52,7 +47,6 @@ export class MicrosoftLearnFilterStore extends ChildStore{
       let currentFilters = this.selectedFilters.get(type);
         if(currentFilters){
           this.selectedFilters.set(type, [...currentFilters, ...filters]);
-          this.selectedFilters = _.cloneDeep(this.selectedFilters);
         }
     }
 
@@ -61,7 +55,6 @@ export class MicrosoftLearnFilterStore extends ChildStore{
       let currentFilters = this.selectedFilters.get(type);
         if(currentFilters){
           this.selectedFilters.set(type, currentFilters?.filter(item => !filters.includes(item)));
-          this.selectedFilters = _.cloneDeep(this.selectedFilters);
         }
     }
 
@@ -71,7 +64,6 @@ export class MicrosoftLearnFilterStore extends ChildStore{
         this.selectedFilters.set(FilterType.Role, []);
         this.selectedFilters.set(FilterType.Type, []);
         this.selectedFilters.set(FilterType.Level, []);     
-        this.selectedFilters = _.cloneDeep(this.selectedFilters);
     }
     
     private getProductHierarchicalMap = (catalog: Catalog) => {

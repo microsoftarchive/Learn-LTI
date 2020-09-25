@@ -57,8 +57,8 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
 
   return useObserver(() => {
     const isLoadingCatalog = !!learnStore.isLoadingCatalog;
-    const catalogContent = learnStore.filteredCatalogContent;
-    const noVisibleItems = !isLoadingCatalog && catalogContent?.length === 0;
+    const { filteredCatalogContent } = learnStore;
+    const noVisibleItems = !isLoadingCatalog && filteredCatalogContent?.length === 0;
 
     return (
       <div className={classes.root}>
@@ -67,12 +67,12 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
         ) : (
 
           <>
-          <div className={classes.contentCount}>
-          {learnStore.filteredCatalogContent && learnStore.filteredCatalogContent?.length>0?
-            <Text variant="mediumPlus" className='contentCountText'> {learnStore.filteredCatalogContent?.length.toLocaleString()} results from Microsoft Learn </Text>:
-            <Text> </Text>            
+          
+          {filteredCatalogContent && filteredCatalogContent.length>0 &&
+            (<div className={classes.contentCount}>
+            <Text variant="mediumPlus" className='contentCountText'> {filteredCatalogContent.length.toLocaleString()} results from Microsoft Learn </Text>         
+            </div>)
           }
-          </div>
           <AutoSizer>
             {({ height, width }): JSX.Element | null => {
               if (autoSizerWidth === 0 || Math.abs(autoSizerWidth - width) > 25) {
@@ -80,8 +80,8 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
               }
 
               const numItemsPerRow = Math.floor(autoSizerWidth / FIXED_ITEM_WIDTH);
-              const rowCount = catalogContent
-                ? Math.floor(catalogContent.length / numItemsPerRow) + (catalogContent.length % numItemsPerRow ? 1 : 0)
+              const rowCount = filteredCatalogContent
+                ? Math.floor(filteredCatalogContent.length / numItemsPerRow) + (filteredCatalogContent.length % numItemsPerRow ? 1 : 0)
                 : 2;
               return (
                 <FixedSizeList
@@ -90,7 +90,7 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
                   itemCount={rowCount}
                   itemData={{
                     numItemsPerRow,
-                    itemsData: catalogContent,
+                    itemsData: filteredCatalogContent,
                     isLoadingCatalog
                   }}
                   itemSize={FIXED_ITEM_HEIGHT}
