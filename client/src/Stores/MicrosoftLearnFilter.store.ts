@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import _ from "lodash";
 import { action, observable } from "mobx";
 import { getfiltersToDisplay, loadFiltersFromQueryParams, loadExpandedProductsFromQueryParams, getUpdatedURIfromSelectedFilters } from "../Features/MicrosoftLearn/MicrosoftLearnFilterCore";

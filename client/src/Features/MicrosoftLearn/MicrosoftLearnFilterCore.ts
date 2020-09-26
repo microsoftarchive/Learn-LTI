@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import _ from "lodash";
 import { Catalog, Product, LearnContent } from "../../Models/Learn";
 import { Filter } from "../../Models/Learn/Filter.model";
