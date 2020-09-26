@@ -38,15 +38,15 @@ export class Filter {
     public set(type: FilterType, newValue: string[]): void {
         switch(type){
             case FilterType.products:
-                this.products = newValue;
+                this.products = newValue; break;
             case FilterType.roles:
-                this.roles = newValue;
+                this.roles = newValue; break;
             case FilterType.levels:
-                this.levels = newValue;
+                this.levels = newValue; break;
             case FilterType.types:
-                this.types = newValue;
+                this.types = newValue; break;
             case FilterType.terms:
-                this.terms = newValue;
+                this.terms = newValue; break;
         }
     }
 }

@@ -6,8 +6,6 @@
 import _ from "lodash";
 import { Catalog, Product, LearnContent } from "../../Models/Learn";
 import { Filter } from "../../Models/Learn/Filter.model";
-import { FilterType } from "../../Models/Learn/FilterType.model";
-
 
 export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Filter): LearnContent[] {     
   return getSearchTermFilteredLearnContent(getRegexs(selectedFilters.terms.join(' ')), [...catalog?.contents.values()])
@@ -149,7 +147,8 @@ export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 
 }
 
 // This function is not currently being used anywhere, but we may want to keep it around in case the filter functionality needs to accomodate it.
-function removeExtrasFromSelected( type: FilterType, selectedFilters: Filter, displayFilters: Filter, products: Map<string, Product>): string[] {
+
+/*function removeExtrasFromSelected( type: FilterType, selectedFilters: Filter, displayFilters: Filter, products: Map<string, Product>): string[] {
   const itemsSelected = selectedFilters.get(type);
   const itemsToDisplay = displayFilters.get(type);
     
@@ -157,7 +156,7 @@ function removeExtrasFromSelected( type: FilterType, selectedFilters: Filter, di
     return itemsSelected;
   }
 
-  if (type == FilterType.products) {
+  if (type === FilterType.products) {
     return removeExtraProductsFromSelected(itemsSelected, itemsToDisplay);
   } else {
     return itemsSelected.filter(item => itemsToDisplay.includes(item));
@@ -181,4 +180,4 @@ function removeExtrasFromSelected( type: FilterType, selectedFilters: Filter, di
     const productsToRemove = [...parentProductsToRemove, ...childProductsToRemove];
     return productsSelected.filter(product => !productsToRemove.includes(product));
   }
-}
+}*/
