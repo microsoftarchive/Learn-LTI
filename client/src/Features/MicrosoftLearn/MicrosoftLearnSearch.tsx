@@ -22,7 +22,6 @@ const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchS
 
   useEffect(() => {
     setSearchTerm(filterStore.selectedFilter.terms.join(' '));
-    console.log("updating via side effect");
   }, [filterStore.selectedFilter])
 
   let history = useHistory();

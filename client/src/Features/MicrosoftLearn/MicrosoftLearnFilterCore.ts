@@ -149,7 +149,7 @@ export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 
 }
 
 // This function is not currently being used anywhere, but we may want to keep it around in case the filter functionality needs to accomodate it.
-+function removeExtrasFromSelected( type: FilterType, selectedFilters: Filter, displayFilters: Filter, products: Map<string, Product>): string[] {
+function removeExtrasFromSelected( type: FilterType, selectedFilters: Filter, displayFilters: Filter, products: Map<string, Product>): string[] {
   const itemsSelected = selectedFilters.get(type);
   const itemsToDisplay = displayFilters.get(type);
     
