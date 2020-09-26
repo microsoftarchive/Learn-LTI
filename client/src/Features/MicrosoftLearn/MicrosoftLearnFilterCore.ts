@@ -6,14 +6,15 @@
 import _ from "lodash";
 import { Catalog, Product, LearnContent } from "../../Models/Learn";
 import { Filter } from "../../Models/Learn/Filter.model";
+import { FilterType } from "../../Models/Learn/FilterType.model";
 
 
 export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Filter): LearnContent[] {     
   return getSearchTermFilteredLearnContent(getRegexs(selectedFilters.terms.join(' ')), [...catalog?.contents.values()])
-        .filter(content => filterBy(selectedFilters.products, content.products))
-        .filter(content => filterBy(selectedFilters.roles, content.roles))
-        .filter(content => filterBy(selectedFilters.levels, content.levels))
-        .filter(content => filterBy(selectedFilters.types, [content.type]));
+          .filter(content => filterBy(selectedFilters.products, content.products))
+          .filter(content => filterBy(selectedFilters.roles, content.roles))
+          .filter(content => filterBy(selectedFilters.levels, content.levels))
+          .filter(content => filterBy(selectedFilters.types, [content.type]));
 
   function filterBy(filter: string[], catalog: string[]) {
     return (filter.length === 0 || filter.filter(value => catalog.includes(value)).length > 0);
@@ -58,18 +59,18 @@ function getParentProduct(product: string, products: Map<string, Product> | unde
 }
 
 const getSearchTermFilteredLearnContent = (expressions: RegExp[], content: LearnContent[]): LearnContent[] => {
-    return content
-      .map(course => ({
-        course: course,
-        score: _.sumBy(
-          expressions,
-          singleExpression =>
-            scoreRegex(course.summary, singleExpression) + scoreRegex(course.title, singleExpression, 2)
-        )
-      }))
-      .filter(scouredCourse => scouredCourse.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .map(scoredCourse => scoredCourse.course);
+  return content
+    .map(course => ({
+      course: course,
+      score: _.sumBy(
+        expressions,
+        singleExpression =>
+          scoreRegex(course.summary, singleExpression) + scoreRegex(course.title, singleExpression, 2)
+      )
+    }))
+    .filter(scouredCourse => scouredCourse.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(scoredCourse => scoredCourse.course);
 }
 
 export function loadFiltersFromQueryParams(queryParams: URLSearchParams, products: Map<string, Product>): Filter{
@@ -109,10 +110,10 @@ export function getUpdatedURIfromSelectedFilters(filters: Filter, expandedProduc
     newQueryParams.append('roles', filters.roles.toString());
   }
   if(filters.types.length>0){
-      newQueryParams.append('types', filters.types.toString());
+    newQueryParams.append('types', filters.types.toString());
   }
   if(filters.levels.length>0){
-      newQueryParams.append('levels', filters.levels.toString());
+    newQueryParams.append('levels', filters.levels.toString());
   }
   if(filters.terms.length>0 && filters.terms.toString().length>0){
     newQueryParams.append('terms', filters.terms.toString());
@@ -125,49 +126,59 @@ export function getUpdatedURIfromSelectedFilters(filters: Filter, expandedProduc
 
   function getProductUri(products: Map<string, Product> | undefined, filters: string[]){
     const parentFilters = filters.filter(filter => getParentProduct(filter, products)==='')
-    const childrenToInclude = filters.filter(filter => !parentFilters.includes(getParentProduct(filter, products)));
+    const childrenToInclude = filters.filter(filter => !parentFilters.includes(filter) && !parentFilters.includes(getParentProduct(filter, products)));
     return [...parentFilters, ...childrenToInclude]
   }
 }
 
 export const getRegexs = (searchTerm: string): RegExp[] => {
-    const expressions: RegExp[] = searchTerm
-                                 .trim().replace(/\s+/g, ' ').split(' ').map(termPart => new RegExp(`.*${termPart}.*`, 'i'));
-    expressions.push(new RegExp(`.*${searchTerm}.*`, 'i'));
-    return expressions;
+  const expressions: RegExp[] = searchTerm
+                                .trim()
+                                .replace(/\s+/g, ' ')
+                                .split(' ')
+                                .map(termPart => new RegExp(`.*${termPart}.*`, 'i'));
+  expressions.push(new RegExp(`.*${searchTerm}.*`, 'i'));
+  return expressions;
 }
 
 export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 1): number => {
-    if(!testPhrase){
-        return 0;
-    }
-    return exp.test(testPhrase) ? score : 0;
+  if(!testPhrase){
+    return 0;
+  }
+  return exp.test(testPhrase) ? score : 0;
 }
 
-// const removeExtrasFromSelected = (type: FilterType, catalog: Catalog, selectedFilters: Map<FilterType, string[]>, displayFilters: Map<FilterType, string[]>, productHierarchicalMap: Map<Product, Product[]>) => {
-//   if(type===FilterType.Product){
-//         let parentProducts = [...productHierarchicalMap.keys()]; 
-//         let prevSelected = selectedFilters.get(type);
-//         let newDisplay = displayFilters.get(type);
-//         const selectedInvisibleItems = prevSelected?.filter(item => newDisplay && !newDisplay.includes(item))
-      
-//         let removeParentProducts = parentProducts?.filter(parent => selectedInvisibleItems?.includes(parent.id)).map(parent => parent.id);
-//         let removeChilrenProducts = [...catalog?.products.values()]
-//                                     .filter(product => (product.parentId && (removeParentProducts.includes(product.parentId) ||
-//                                     (!prevSelected?.includes(product.parentId) && prevSelected?.includes(product.id) && !newDisplay?.includes(product.id)))))
-//                                     .map(product => product.id);
-
-//         let removeProducts = [...removeParentProducts, ...removeChilrenProducts];
-//         let newSelected = prevSelected?.filter(item => !removeProducts.includes(item));
-//         return newSelected;
-//     }
-
-//     else{
-//       let prevSelected = selectedFilters.get(type);
-//       let newDisplay = displayFilters.get(type);
-//       if(prevSelected!==undefined && newDisplay!==undefined){
-//         return  _.intersection(prevSelected, newDisplay);
-//       }
-//     }
-// }
+// This function is not currently being used anywhere, but we may want to keep it around in case the filter functionality needs to accomodate it.
++function removeExtrasFromSelected( type: FilterType, selectedFilters: Filter, displayFilters: Filter, products: Map<string, Product>): string[] {
+  const itemsSelected = selectedFilters.get(type);
+  const itemsToDisplay = displayFilters.get(type);
     
+  if (itemsSelected.length===0) {
+    return itemsSelected;
+  }
+
+  if (type == FilterType.products) {
+    return removeExtraProductsFromSelected(itemsSelected, itemsToDisplay);
+  } else {
+    return itemsSelected.filter(item => itemsToDisplay.includes(item));
+  }
+  
+  function removeExtraProductsFromSelected(productsSelected: string[], productsToDisplay: string[]) {
+    const selectedInvisibleProducts = productsSelected.filter(item => !productsToDisplay.includes(item));
+    const isSelectedInvisible = ({ id, parentId }: Product) =>
+      selectedInvisibleProducts.includes(id) && (!parentId || !productsSelected.includes(parentId));
+
+    const parentProductsToRemove = [...products.values()].filter(product => getParentProduct(product.id, products)==='')
+                                  .filter(isSelectedInvisible)
+                                  .map(product => product.id);
+
+
+    const hasSelectedParent = ({ parentId }: Product) => parentId && parentProductsToRemove.includes(parentId);
+    const childProductsToRemove = [...products.values()]
+      .filter(product => hasSelectedParent(product) || isSelectedInvisible(product))
+      .map(product => product.id);
+
+    const productsToRemove = [...parentProductsToRemove, ...childProductsToRemove];
+    return productsSelected.filter(product => !productsToRemove.includes(product));
+  }
+}

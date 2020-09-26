@@ -40,49 +40,28 @@ export class MicrosoftLearnFilterStore extends ChildStore{
   @action
   updateExpandedProducts(action: boolean, id: string, history: H.History): void{
     action? this.expandedProducts.push(id) :
-            this.expandedProducts = this.expandedProducts.filter(pId => pId!==id);                
+      this.expandedProducts = this.expandedProducts.filter(pId => pId!==id);                
     this.updateHistory(history);
   }
   
   @action
-  addFilter(type: FilterType, filters: string[], history: H.History): void{      
-    switch(type){
-      case FilterType.products:
-        this.selectedFilter.products = [...this.selectedFilter.products, ...filters]; break;
-      case FilterType.roles:
-        this.selectedFilter.roles = [...this.selectedFilter.roles, ...filters]; break;
-      case FilterType.levels:
-        this.selectedFilter.levels = [...this.selectedFilter.levels, ...filters]; break;
-      case FilterType.types:
-        this.selectedFilter.types = [...this.selectedFilter.types, ...filters]; break;
-    }
+  addFilter(type: FilterType, filters: string[], history: H.History): void{
+    this.selectedFilter.set(type, [...this.selectedFilter.get(type), ...filters]);
     this.clone();
     this.updateHistory(history);
   }
 
   @action
   removeFilter(type: FilterType, filters: string[], history: H.History): void{
-    switch(type){
-      case FilterType.products:
-        this.selectedFilter.products = this.selectedFilter.products.filter(item => !filters.includes(item)) ; break;
-      case FilterType.roles:
-        this.selectedFilter.roles = this.selectedFilter.roles.filter(item => !filters.includes(item)); break;
-      case FilterType.levels:
-        this.selectedFilter.levels = this.selectedFilter.levels.filter(item => !filters.includes(item)); break;
-      case FilterType.types:
-        this.selectedFilter.types = this.selectedFilter.types.filter(item => !filters.includes(item)); break;
-    }
+    this.selectedFilter.set(type, this.selectedFilter.get(type).filter(item => !filters.includes(item)));
     this.clone();
     this.updateHistory(history);
   }
 
   @action
   resetFilter(history: H.History): void{
-    this.selectedFilter.products = [];
-    this.selectedFilter.roles = [];
-    this.selectedFilter.levels = [];
-    this.selectedFilter.types = [];
-    this.selectedFilter.terms = []; 
+    [FilterType.products, FilterType.roles, FilterType.types, FilterType.levels, FilterType.terms]
+      .forEach(type => this.selectedFilter.set(type, []));
     this.clone();
     this.updateHistory(history);
   }
@@ -99,7 +78,7 @@ export class MicrosoftLearnFilterStore extends ChildStore{
     this.learnFilterUriParam = getUpdatedURIfromSelectedFilters(this.selectedFilter, this.expandedProducts, this.productMap);        
     history.push({
       pathname: history.location.pathname,
-      search: '?' + this.learnFilterUriParam
+      search: this.learnFilterUriParam.length>0? '?' + this.learnFilterUriParam : ''
     });
   }     
 
