@@ -6,12 +6,11 @@
 import _ from 'lodash';
 import { action, observable } from 'mobx';
 import {
-  getfiltersToDisplay,
-  loadFiltersFromQueryParams,
+  getUpdatedURIFromSelectedFilters,
   loadExpandedProductsFromQueryParams,
-  getUpdatedURIfromSelectedFilters
+  loadFiltersFromQueryParams
 } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
-import { Catalog, LearnContent, Product } from '../Models/Learn';
+import { Catalog, Product } from '../Models/Learn';
 import { FilterType } from '../Models/Learn/FilterType.model';
 import { ChildStore } from './Core';
 import { Filter } from '../Models/Learn/Filter.model';
@@ -37,34 +36,37 @@ export class MicrosoftLearnFilterStore extends ChildStore {
     }
   }
 
+  updateExpandedProducts = (expanded: boolean) => (productId: string, history: H.History): void => {
+    expanded
+      ? this.expandedProducts.push(productId)
+      : (this.expandedProducts = this.expandedProducts.filter(expandedProductId => expandedProductId !== productId));
+    this.updateHistory(history);
+  };
+  @action expandProducts = this.updateExpandedProducts(true);
+  @action collapseProducts = this.updateExpandedProducts(false);
+
+  updateSelectedFilters(key: FilterType, value: string[], history: H.History): void {
+    const selectedFilter = _.clone(this.selectedFilter);
+    selectedFilter[key] = value;
+    this.selectedFilter = selectedFilter;
+    this.updateHistory(history);
+  }
+
   @action
   updateSearchTerm(newTerm: string, history: H.History): void {
-    this.selectedFilter.terms = newTerm.split(' ');
-    this.clone();
-    this.updateHistory(history);
+    this.updateSelectedFilters(FilterType.terms, newTerm.split(' '), history);
   }
 
   @action
-  updateExpandedProducts(action: boolean, id: string, history: H.History): void {
-    action ? this.expandedProducts.push(id) : (this.expandedProducts = this.expandedProducts.filter(pId => pId !== id));
-    this.updateHistory(history);
+  addFilter(type: FilterType, addedFilters: string[], history: H.History): void {
+    const filters = [...this.selectedFilter[type], ...addedFilters];
+    this.updateSelectedFilters(type, filters, history);
   }
 
   @action
-  addFilter(type: FilterType, filters: string[], history: H.History): void {
-    this.selectedFilter.set(type, [...this.selectedFilter.get(type), ...filters]);
-    this.clone();
-    this.updateHistory(history);
-  }
-
-  @action
-  removeFilter(type: FilterType, filters: string[], history: H.History): void {
-    this.selectedFilter.set(
-      type,
-      this.selectedFilter.get(type).filter(item => !filters.includes(item))
-    );
-    this.clone();
-    this.updateHistory(history);
+  removeFilter(type: FilterType, removedFilters: string[], history: H.History): void {
+    const filters = this.selectedFilter[type].filter(item => !removedFilters.includes(item));
+    this.updateSelectedFilters(type, filters, history);
   }
 
   @action
@@ -75,17 +77,8 @@ export class MicrosoftLearnFilterStore extends ChildStore {
     this.clone();
     this.updateHistory(history);
   }
-
-  public updateFiltersToDisplay(catalog: Catalog | null, filteredCatalogContent: LearnContent[] | null): Filter {
-    return getfiltersToDisplay(catalog, filteredCatalogContent || []);
-  }
-
-  private clone(): void {
-    this.selectedFilter = _.clone(this.selectedFilter);
-  }
-
   private updateHistory(history: H.History): void {
-    this.learnFilterUriParam = getUpdatedURIfromSelectedFilters(
+    this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(
       this.selectedFilter,
       this.expandedProducts,
       this.productMap

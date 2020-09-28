@@ -99,7 +99,7 @@ export function loadExpandedProductsFromQueryParams(queryParams: URLSearchParams
   return queryParams.get('expand')?.split(',') || [];
 }
 
-export function getUpdatedURIfromSelectedFilters(
+export function getUpdatedURIFromSelectedFilters(
   filters: Filter,
   expandedProducts: string[],
   products: Map<string, Product> | undefined
