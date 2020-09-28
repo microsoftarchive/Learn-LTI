@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 export enum FilterType {
-  products,
-  roles,
-  types,
-  levels,
-  terms
+  products = 'products',
+  roles = 'roles',
+  types = 'types',
+  levels = 'levels',
+  terms = 'terms'
 }
