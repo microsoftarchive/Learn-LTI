@@ -154,13 +154,18 @@ export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 
   return exp.test(testPhrase) ? score : 0;
 };
 
-// This function is not currently being used anywhere, but we may want to keep it around in case the filter functionality needs to accomodate it.
-
-/*function removeExtrasFromSelected( type: FilterType, selectedFilters: Filter, displayFilters: Filter, products: Map<string, Product>): string[] {
+/*
+// The below function is not currently being used anywhere, but we may want to keep it around in case the filter functionality needs to accommodate it.
+function removeExtrasFromSelected(
+  type: FilterType,
+  selectedFilters: Filter,
+  displayFilters: Filter,
+  products: Map<string, Product>
+): string[] {
   const itemsSelected = selectedFilters.get(type);
   const itemsToDisplay = displayFilters.get(type);
-    
-  if (itemsSelected.length===0) {
+
+  if (itemsSelected.length === 0) {
     return itemsSelected;
   }
 
@@ -169,18 +174,19 @@ export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 
   } else {
     return itemsSelected.filter(item => itemsToDisplay.includes(item));
   }
-  
-  function removeExtraProductsFromSelected(productsSelected: string[], productsToDisplay: string[]) {
+
+  function removeExtraProductsFromSelected(productsSelected: string[], productsToDisplay: string[]): string[] {
     const selectedInvisibleProducts = productsSelected.filter(item => !productsToDisplay.includes(item));
-    const isSelectedInvisible = ({ id, parentId }: Product) =>
+    const isSelectedInvisible = ({ id, parentId }: Product): boolean =>
       selectedInvisibleProducts.includes(id) && (!parentId || !productsSelected.includes(parentId));
 
-    const parentProductsToRemove = [...products.values()].filter(product => getParentProduct(product.id, products)==='')
-                                  .filter(isSelectedInvisible)
-                                  .map(product => product.id);
+    const parentProductsToRemove = [...products.values()]
+      .filter(product => getParentProduct(products)(product.id) === '')
+      .filter(isSelectedInvisible)
+      .map(product => product.id);
 
-
-    const hasSelectedParent = ({ parentId }: Product) => parentId && parentProductsToRemove.includes(parentId);
+    const hasSelectedParent = ({ parentId }: Product): boolean =>
+      !!parentId && parentProductsToRemove.includes(parentId);
     const childProductsToRemove = [...products.values()]
       .filter(product => hasSelectedParent(product) || isSelectedInvisible(product))
       .map(product => product.id);
@@ -188,4 +194,5 @@ export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 
     const productsToRemove = [...parentProductsToRemove, ...childProductsToRemove];
     return productsSelected.filter(product => !productsToRemove.includes(product));
   }
-}*/
+}
+*/
