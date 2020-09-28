@@ -139,7 +139,6 @@ const microsoftLearnListStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnLis
           fontWeight: FontWeights.semibold
         }
       }
-
     }
   ]
 });

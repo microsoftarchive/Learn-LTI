@@ -25,8 +25,7 @@ type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator'>;
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
   const location = useLocation();  
-  
-  let qsParams = new URLSearchParams(location.search);
+  const qsParams = new URLSearchParams(location.search);
 
   useEffect(() => {
     if (learnStore.catalog == null) {
