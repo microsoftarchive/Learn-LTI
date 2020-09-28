@@ -20,13 +20,15 @@ export class MicrosoftLearnFilterStore extends ChildStore{
 
   productMap: Map<string, Product>  = new Map<string, Product>(); 
 
-  public initializeFilters(catalog: Catalog, filterParams: URLSearchParams | undefined): void{
+  @action
+  initializeFilters(catalog: Catalog, filterParams: URLSearchParams | undefined): void{
     this.productMap = catalog.products;
     //this.getProductHierarchicalMap(catalog);
     
     if(filterParams){
       this.selectedFilter = loadFiltersFromQueryParams(filterParams, this.productMap);
       this.expandedProducts = loadExpandedProductsFromQueryParams(filterParams);
+      this.learnFilterUriParam = getUpdatedURIfromSelectedFilters(this.selectedFilter, this.expandedProducts, this.productMap);        
     }
   }
 
