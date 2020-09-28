@@ -67,40 +67,39 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
         ) : (
 
           <>
-          
-          {filteredCatalogContent && filteredCatalogContent.length>0 &&
-            (<div className={classes.contentCount}>
-            <Text variant="mediumPlus" className='contentCountText'> {filteredCatalogContent.length.toLocaleString()} results from Microsoft Learn </Text>         
-            </div>)
-          }
-          <AutoSizer>
-            {({ height, width }): JSX.Element | null => {
-              if (autoSizerWidth === 0 || Math.abs(autoSizerWidth - width) > 25) {
-                setAutoSizerWidth(width);
-              }
+            {filteredCatalogContent && filteredCatalogContent.length>0 &&
+              (<div className={classes.contentCount}>
+              <Text variant="mediumPlus" className='contentCountText'> {filteredCatalogContent.length.toLocaleString()} results from Microsoft Learn </Text>         
+              </div>)
+            }
+            <AutoSizer>
+              {({ height, width }): JSX.Element | null => {
+                if (autoSizerWidth === 0 || Math.abs(autoSizerWidth - width) > 25) {
+                  setAutoSizerWidth(width);
+                }
 
-              const numItemsPerRow = Math.floor(autoSizerWidth / FIXED_ITEM_WIDTH);
-              const rowCount = filteredCatalogContent
-                ? Math.floor(filteredCatalogContent.length / numItemsPerRow) + (filteredCatalogContent.length % numItemsPerRow ? 1 : 0)
-                : 2;
-              return (
-                <FixedSizeList
-                  style={getListStyle(isLoadingCatalog)}
-                  height={height}
-                  itemCount={rowCount}
-                  itemData={{
-                    numItemsPerRow,
-                    itemsData: filteredCatalogContent,
-                    isLoadingCatalog
-                  }}
-                  itemSize={FIXED_ITEM_HEIGHT}
-                  width={autoSizerWidth}
-                >
-                  {ListRow}
-                </FixedSizeList>
-              );
-            }}
-          </AutoSizer>
+                const numItemsPerRow = Math.floor(autoSizerWidth / FIXED_ITEM_WIDTH);
+                const rowCount = filteredCatalogContent
+                  ? Math.floor(filteredCatalogContent.length / numItemsPerRow) + (filteredCatalogContent.length % numItemsPerRow ? 1 : 0)
+                  : 2;
+                return (
+                  <FixedSizeList
+                    style={getListStyle(isLoadingCatalog)}
+                    height={height}
+                    itemCount={rowCount}
+                    itemData={{
+                      numItemsPerRow,
+                      itemsData: filteredCatalogContent,
+                      isLoadingCatalog
+                    }}
+                    itemSize={FIXED_ITEM_HEIGHT}
+                    width={autoSizerWidth}
+                  >
+                    {ListRow}
+                  </FixedSizeList>
+                );
+              }}
+            </AutoSizer>
           </>
         )}
       </div>

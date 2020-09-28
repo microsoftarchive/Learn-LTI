@@ -76,7 +76,10 @@ export class MicrosoftLearnFilterStore extends ChildStore{
 
   private updateHistory(history: H.History): void{
     this.learnFilterUriParam = getUpdatedURIfromSelectedFilters(this.selectedFilter, this.expandedProducts, this.productMap);        
-    history.push('./ms-learn' + (this.learnFilterUriParam.length>0? '?' + this.learnFilterUriParam : ''));
+    history.push({
+      pathname: history.location.pathname,
+      search: (this.learnFilterUriParam.length>0? '?' + this.learnFilterUriParam : '')
+    });
   }     
 
     // private getProductHierarchicalMap = (catalog: Catalog) => {
