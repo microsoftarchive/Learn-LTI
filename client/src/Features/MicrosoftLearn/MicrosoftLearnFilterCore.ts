@@ -7,16 +7,16 @@ import _ from "lodash";
 import { Catalog, Product, LearnContent } from "../../Models/Learn";
 import { Filter } from "../../Models/Learn/Filter.model";
 
-export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Filter): LearnContent[] {     
+export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Filter): LearnContent[] {           
   return getSearchTermFilteredLearnContent(getRegexs(selectedFilters.terms.join(' ')), [...catalog?.contents.values()])
-          .filter(content => filterBy(selectedFilters.products, content.products))
-          .filter(content => filterBy(selectedFilters.roles, content.roles))
-          .filter(content => filterBy(selectedFilters.levels, content.levels))
-          .filter(content => filterBy(selectedFilters.types, [content.type]));
+    .filter(content => filterBy(selectedFilters.products, content.products))
+    .filter(content => filterBy(selectedFilters.roles, content.roles))
+    .filter(content => filterBy(selectedFilters.levels, content.levels))
+    .filter(content => filterBy(selectedFilters.types, [content.type]));
 
-  function filterBy(filter: string[], catalog: string[]) {
-    return (filter.length === 0 || filter.filter(value => catalog.includes(value)).length > 0);
-  }
+    function filterBy(filter: string[], catalog: string[]) {
+      return (filter.length === 0 || filter.filter(value => catalog.includes(value)).length > 0);
+    }
 }
 
 export function getfiltersToDisplay (catalog: Catalog | null, filteredContent: LearnContent[]): Filter {

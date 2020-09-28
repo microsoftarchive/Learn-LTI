@@ -3,28 +3,21 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { IThemeOnlyProps, SimpleComponentStyles, IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-import { styled, SearchBox, Label, DefaultButton } from '@fluentui/react';
+import { styled, SearchBox, Label } from '@fluentui/react';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { inputLabelStyle } from '../../Core/Components/Common/Inputs/EdnaInputStyles';
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
-import { useHistory } from 'react-router-dom';
+import { createBrowserHistory } from "history";
 
-
-export type MicrosoftLearnSearchStyles = SimpleComponentStyles<'root' | 'label' | 'searchBox' | 'searchButton'>;
+export type MicrosoftLearnSearchStyles = SimpleComponentStyles<'root' | 'label' | 'searchBox'>;
 
 const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
   const { filterStore, isLoadingCatalog } = learnStore;
-  const [searchTerm, setSearchTerm] = useState(filterStore.selectedFilter.terms.join(' '));
-
-  useEffect(() => {
-    setSearchTerm(filterStore.selectedFilter.terms.join(' '));
-  }, [filterStore.selectedFilter])
-
-  let history = useHistory();
+  const history = createBrowserHistory();  
 
   const classes = themedClassNames(styles);
   return useObserver(() => {
@@ -32,18 +25,10 @@ const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchS
       <div className={classes.root}>
         <Label className={classes.label}>Search</Label>
         <SearchBox
-          onChange={(_e, newValue)=>setSearchTerm(newValue || '')}
+          onChange={(_e: any, newValue: any)=>  filterStore.updateSearchTerm(newValue || '', history)}
           className={classes.searchBox}
           disabled={!!isLoadingCatalog}
-          value={searchTerm.length? searchTerm : filterStore.selectedFilter.terms.join(' ') }
-        />
-        <DefaultButton
-        iconProps={{iconName:'Search'}}
-        text="Search"
-        className={classes.searchButton}
-        onClick={()=>{
-          filterStore.updateSearchTerm(searchTerm || '', history);
-        }}
+          value= {filterStore.selectedFilter.terms.join(' ')}
         />
       </div>
     );
@@ -63,13 +48,6 @@ const microsoftLearnSearchStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnS
     {
       width: '100%',
       marginLeft: `calc(${theme.spacing.l2}*2)`
-    }
-  ],
-  searchButton:[
-    {
-      backgroundColor: theme.palette.themeDark,
-      color:'white'
-
     }
   ]
 });

@@ -32,7 +32,7 @@ export class MicrosoftLearnFilterStore extends ChildStore{
 
   @action
   updateSearchTerm(newTerm: string, history: H.History): void{
-    this.selectedFilter.terms = newTerm.split(' ').filter(item => item.length>0);
+    this.selectedFilter.terms = newTerm.split(' ')
     this.clone();
     this.updateHistory(history);
   }
@@ -76,10 +76,7 @@ export class MicrosoftLearnFilterStore extends ChildStore{
 
   private updateHistory(history: H.History): void{
     this.learnFilterUriParam = getUpdatedURIfromSelectedFilters(this.selectedFilter, this.expandedProducts, this.productMap);        
-    history.push({
-      pathname: history.location.pathname,
-      search: this.learnFilterUriParam.length>0? '?' + this.learnFilterUriParam : ''
-    });
+    history.push('./ms-learn' + (this.learnFilterUriParam.length>0? '?' + this.learnFilterUriParam : ''));
   }     
 
     // private getProductHierarchicalMap = (catalog: Catalog) => {
