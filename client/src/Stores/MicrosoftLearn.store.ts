@@ -15,7 +15,7 @@ import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.
 import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
 import { debounceTime, map, filter, switchMap } from 'rxjs/operators';
 import { applySelectedFilter } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
-import { Filter } from "../Models/Learn/Filter.model";
+import { Filter } from '../Models/Learn/Filter.model';
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -31,10 +31,12 @@ export class MicrosoftLearnStore extends ChildStore {
         debounceTime(250),
         filter(() => !!this.catalog)
       )
-     .subscribe((filter: Filter) => this.filteredCatalogContent = applySelectedFilter(this.catalog, filter))
-      
-    toObservable(() => this.filteredCatalogContent)
-      .subscribe((filteredCatalogContent: LearnContent[] | null) => this.filterStore.displayFilter = this.filterStore.updateFiltersToDisplay(this.catalog, filteredCatalogContent))
+      .subscribe((filter: Filter) => (this.filteredCatalogContent = applySelectedFilter(this.catalog, filter)));
+
+    toObservable(() => this.filteredCatalogContent).subscribe(
+      (filteredCatalogContent: LearnContent[] | null) =>
+        (this.filterStore.displayFilter = this.filterStore.updateFiltersToDisplay(this.catalog, filteredCatalogContent))
+    );
 
     toObservable(() => this.root.assignmentStore.assignment)
       .pipe(
@@ -44,7 +46,7 @@ export class MicrosoftLearnStore extends ChildStore {
         filter(assignmentLearnContent => !assignmentLearnContent.error),
         map(assignmentLearnContent => assignmentLearnContent as AssignmentLearnContentDto[])
       )
-      .subscribe(selectedItems => (this.selectedItems = selectedItems));         
+      .subscribe(selectedItems => (this.selectedItems = selectedItems));
   }
 
   @action
@@ -130,5 +132,5 @@ export class MicrosoftLearnStore extends ChildStore {
     });
 
     return productsMap;
-  }
+  };
 }

@@ -3,50 +3,55 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { FilterType } from "./FilterType.model";
+import { FilterType } from './FilterType.model';
 
 export class Filter {
-    products: string[];
-    roles: string[];
-    types: string[];
-    levels: string[];
-    terms: string[];
+  products: string[];
+  roles: string[];
+  types: string[];
+  levels: string[];
+  terms: string[];
 
-    constructor(){
-        this.products=[];
-        this.roles=[];
-        this.types=[];
-        this.levels=[];
-        this.terms=[];
-    }
+  constructor() {
+    this.products = [];
+    this.roles = [];
+    this.types = [];
+    this.levels = [];
+    this.terms = [];
+  }
 
-    public get(type: FilterType): string[] {
-        switch(type){
-            case FilterType.products:
-                return this.products;
-            case FilterType.roles:
-                return this.roles;
-            case FilterType.levels:
-                return this.levels;
-            case FilterType.types:
-                return this.types;
-            case FilterType.terms:
-                return this.terms;
-        }
+  public get(type: FilterType): string[] {
+    switch (type) {
+      case FilterType.products:
+        return this.products;
+      case FilterType.roles:
+        return this.roles;
+      case FilterType.levels:
+        return this.levels;
+      case FilterType.types:
+        return this.types;
+      case FilterType.terms:
+        return this.terms;
     }
+  }
 
-    public set(type: FilterType, newValue: string[]): void {
-        switch(type){
-            case FilterType.products:
-                this.products = newValue; break;
-            case FilterType.roles:
-                this.roles = newValue; break;
-            case FilterType.levels:
-                this.levels = newValue; break;
-            case FilterType.types:
-                this.types = newValue; break;
-            case FilterType.terms:
-                this.terms = newValue; break;
-        }
+  public set(type: FilterType, newValue: string[]): void {
+    switch (type) {
+      case FilterType.products:
+        this.products = newValue;
+        break;
+      case FilterType.roles:
+        this.roles = newValue;
+        break;
+      case FilterType.levels:
+        this.levels = newValue;
+        break;
+      case FilterType.types:
+        this.types = newValue;
+        break;
+      case FilterType.terms:
+        this.terms = newValue;
+        break;
     }
+  }
 }
