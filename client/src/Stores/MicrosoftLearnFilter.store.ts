@@ -17,8 +17,8 @@ import { Filter } from '../Models/Learn/Filter.model';
 import * as H from 'history';
 
 export class MicrosoftLearnFilterStore extends ChildStore {
-  @observable displayFilter: Filter = new Filter();
-  @observable selectedFilter: Filter = new Filter();
+  @observable displayFilter: Filter = new Filter({});
+  @observable selectedFilter: Filter = new Filter({});
   @observable learnFilterUriParam = '';
   @observable expandedProducts: string[] = [];
 
@@ -71,10 +71,7 @@ export class MicrosoftLearnFilterStore extends ChildStore {
 
   @action
   resetFilter(history: H.History): void {
-    [FilterType.products, FilterType.roles, FilterType.types, FilterType.levels, FilterType.terms].forEach(type =>
-      this.selectedFilter.set(type, [])
-    );
-    this.clone();
+    this.selectedFilter = new Filter({});
     this.updateHistory(history);
   }
   private updateHistory(history: H.History): void {

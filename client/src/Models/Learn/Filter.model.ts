@@ -3,7 +3,13 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { FilterType } from './FilterType.model';
+interface FilterModel {
+  products?: string[];
+  roles?: string[];
+  types?: string[];
+  levels?: string[];
+  terms?: string[];
+}
 
 export class Filter {
   products: string[];
@@ -12,19 +18,11 @@ export class Filter {
   levels: string[];
   terms: string[];
 
-  constructor() {
-    this.products = [];
-    this.roles = [];
-    this.types = [];
-    this.levels = [];
-    this.terms = [];
-  }
-
-  get(type: FilterType): string[] {
-    return this[type];
-  }
-
-  set(type: FilterType, newValue: string[]): void {
-    this[type] = newValue;
+  constructor({ products = [], roles = [], types = [], levels = [], terms = [] }: FilterModel) {
+    this.products = products;
+    this.roles = roles;
+    this.types = types;
+    this.levels = levels;
+    this.terms = terms;
   }
 }

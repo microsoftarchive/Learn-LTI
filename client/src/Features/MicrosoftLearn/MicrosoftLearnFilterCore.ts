@@ -4,8 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import _ from 'lodash';
-import { Catalog, Product, LearnContent } from '../../Models/Learn';
+import { Catalog, LearnContent, Product } from '../../Models/Learn';
 import { Filter } from '../../Models/Learn/Filter.model';
+import { FilterType } from '../../Models/Learn/FilterType.model';
 
 export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Filter): LearnContent[] {
   return getSearchTermFilteredLearnContent(getRegexs(selectedFilters.terms.join(' ')), [...catalog?.contents.values()])
@@ -19,84 +20,91 @@ export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Fi
   }
 }
 
-export function getfiltersToDisplay(catalog: Catalog | null, filteredContent: LearnContent[]): Filter {
-  const newDisplayFilter = new Filter();
+export function getFiltersToDisplay(catalog: Catalog | null, filteredContent: LearnContent[]): Filter {
+  const getFiltered = filteredContent?.flatMap;
 
   const filteredProducts = new Set(getFilteredProducts());
   const filteredRoles = new Set(getFiltered(content => content.roles));
   const filteredTypes = new Set(getFiltered(content => [content.type]));
   const filteredLevels = new Set(getFiltered(content => content.levels));
 
-  newDisplayFilter.products = [...filteredProducts];
-  newDisplayFilter.roles = [...filteredRoles];
-  newDisplayFilter.levels = [...filteredLevels];
-  newDisplayFilter.types = [...filteredTypes];
-
-  return newDisplayFilter;
-
-  function getFiltered(transform: (value: LearnContent) => string[]): string[] {
-    return filteredContent?.map(transform).flat(1);
-  }
+  return new Filter({
+    products: [...filteredProducts],
+    roles: [...filteredRoles],
+    levels: [...filteredLevels],
+    types: [...filteredTypes]
+  });
 
   function getFilteredProducts(): string[] {
     const children = getFiltered(content => content.products);
-    const parents = children
-      .map(childProduct => getParentProduct(childProduct, catalog?.products))
-      .filter(pId => !!pId);
+    const parents = children.map(getParentProduct(catalog?.products)).filter(pId => !!pId);
     return [...parents, ...children];
   }
 }
 
-function getParentProduct(product: string, products: Map<string, Product> | undefined): string {
-  const productDetails = products?.get(product);
-  if (productDetails) {
-    const { id, parentId } = productDetails;
-    if (parentId && parentId !== id) {
-      return parentId;
+function getParentProduct(products: Map<string, Product> | undefined) {
+  return function getProduct(product: string): string {
+    const productDetails = products?.get(product);
+    if (productDetails) {
+      const { id, parentId } = productDetails;
+      if (parentId && parentId !== id) {
+        return parentId;
+      }
     }
-  }
-  return '';
+    return '';
+  };
 }
 
-const getSearchTermFilteredLearnContent = (expressions: RegExp[], content: LearnContent[]): LearnContent[] => {
+function getSearchTermFilteredLearnContent(expressions: RegExp[], content: LearnContent[]): LearnContent[] {
+  type ScoredCourse = { course: LearnContent; score: number };
   return content
-    .map(course => ({
-      course: course,
-      score: _.sumBy(
-        expressions,
-        singleExpression => scoreRegex(course.summary, singleExpression) + scoreRegex(course.title, singleExpression, 2)
-      )
-    }))
+    .map(createScoredCourseFromCourse)
     .filter(scouredCourse => scouredCourse.score > 0)
-    .sort((a, b) => b.score - a.score)
+    .sort(sortByScoreAsc)
     .map(scoredCourse => scoredCourse.course);
-};
 
-export function loadFiltersFromQueryParams(queryParams: URLSearchParams, products: Map<string, Product>): Filter {
-  const filterFromQS = new Filter();
-  filterFromQS.products = parseQSValues(queryParams.get('products'));
-  filterFromQS.products = [...filterFromQS.products, ...addChildrenProducts(filterFromQS.products, products)];
-
-  filterFromQS.roles = parseQSValues(queryParams.get('roles'));
-  filterFromQS.levels = parseQSValues(queryParams.get('levels'));
-  filterFromQS.types = parseQSValues(queryParams.get('types'));
-  filterFromQS.terms = parseQSValues(queryParams.get('terms'));
-
-  return filterFromQS;
-
-  function parseQSValues(value: string | null, separator = ','): string[] {
-    return value ? value.split(separator) : [];
+  function createScoredCourseFromCourse(course: LearnContent): ScoredCourse {
+    return { course: course, score: _.sumBy(expressions, computeScoreFor(course)) };
   }
 
-  function addChildrenProducts(filters: string[], products: Map<string, Product>): string[] {
+  function computeScoreFor(course: LearnContent) {
+    return function scoreForTerm(term: RegExp) {
+      return scoreRegex(course.summary, term) + scoreRegex(course.title, term, 2);
+    };
+  }
+
+  function sortByScoreAsc(course1: ScoredCourse, course2: ScoredCourse): number {
+    return course1.score - course2.score;
+  }
+}
+
+function parseAsArray(value: string | null): string[] {
+  return value ? value.split(',') : [];
+}
+
+export function loadFiltersFromQueryParams(queryParams: URLSearchParams, products: Map<string, Product>): Filter {
+  return new Filter({
+    products: parseProductsFromParams(queryParams),
+    roles: parseAsArray(queryParams.get('roles')),
+    levels: parseAsArray(queryParams.get('levels')),
+    types: parseAsArray(queryParams.get('types')),
+    terms: parseAsArray(queryParams.get('terms'))
+  });
+
+  function parseProductsFromParams(queryParams: URLSearchParams): string[] {
+    const parents = parseAsArray(queryParams.get('products'));
+    return [...parents, ...addChildrenProducts(parents, products)];
+  }
+
+  function addChildrenProducts(selectedProducts: string[], products: Map<string, Product>): string[] {
     return [...products.values()]
-      .filter(product => product.parentId && product.parentId !== product.id && filters.includes(product.parentId))
+      .filter(({ parentId, id }) => parentId && parentId !== id && selectedProducts.includes(parentId))
       .map(product => product.id);
   }
 }
 
 export function loadExpandedProductsFromQueryParams(queryParams: URLSearchParams): string[] {
-  return queryParams.get('expand')?.split(',') || [];
+  return parseAsArray(queryParams.get('expand'));
 }
 
 export function getUpdatedURIFromSelectedFilters(
@@ -105,35 +113,40 @@ export function getUpdatedURIFromSelectedFilters(
   products: Map<string, Product> | undefined
 ): string {
   const newQueryParams = new URLSearchParams();
-
-  const productUriFilters = getProductUri(products, filters.products);
-  if (productUriFilters.length > 0) {
-    newQueryParams.append('products', productUriFilters.toString());
-  }
-  if (filters.roles.length > 0) {
-    newQueryParams.append('roles', filters.roles.toString());
-  }
-  if (filters.types.length > 0) {
-    newQueryParams.append('types', filters.types.toString());
-  }
-  if (filters.levels.length > 0) {
-    newQueryParams.append('levels', filters.levels.toString());
-  }
-  if (filters.terms.length > 0 && filters.terms.toString().length > 0) {
-    newQueryParams.append('terms', filters.terms.toString());
-  }
-  if (expandedProducts.length > 0) {
-    newQueryParams.append('expanded', expandedProducts.toString());
-  }
-
+  addFilteredProductsToQueryParam(newQueryParams);
+  addFiltersToQueryParam(FilterType.roles, newQueryParams);
+  addFiltersToQueryParam(FilterType.types, newQueryParams);
+  addFiltersToQueryParam(FilterType.levels, newQueryParams);
+  addFiltersToQueryParam(FilterType.terms, newQueryParams);
+  addExpandedProductsToQueryParam(newQueryParams);
   return newQueryParams.toString();
 
-  function getProductUri(products: Map<string, Product> | undefined, filters: string[]): string[] {
-    const parentFilters = filters.filter(filter => getParentProduct(filter, products) === '');
-    const childrenToInclude = filters.filter(
-      filter => !parentFilters.includes(filter) && !parentFilters.includes(getParentProduct(filter, products))
+  function addFilteredProductsToQueryParam(queryParams: URLSearchParams): void {
+    const allSelected = getAllProducts(products, filters.products);
+    if (allSelected.length > 0) {
+      queryParams.append('products', allSelected.toString());
+    }
+  }
+
+  function addFiltersToQueryParam(filterName: FilterType, queryParams: URLSearchParams): void {
+    if (filters[filterName].length > 0) {
+      queryParams.append(filterName, filters[filterName].toString());
+    }
+  }
+
+  function addExpandedProductsToQueryParam(queryParams: URLSearchParams): void {
+    if (expandedProducts.length > 0) {
+      queryParams.append('expanded', expandedProducts.toString());
+    }
+  }
+
+  function getAllProducts(products: Map<string, Product> | undefined, filteredProducts: string[]): string[] {
+    const getParent = getParentProduct(products);
+    const parents = filteredProducts.filter(product => getParent(product) === '');
+    const childrenToInclude = filteredProducts.filter(
+      product => !parents.includes(product) && !parents.includes(getParent(product))
     );
-    return [...parentFilters, ...childrenToInclude];
+    return [...parents, ...childrenToInclude];
   }
 }
 
@@ -147,12 +160,9 @@ export const getRegexs = (searchTerm: string): RegExp[] => {
   return expressions;
 };
 
-export const scoreRegex = (testPhrase: string | undefined, exp: RegExp, score = 1): number => {
-  if (!testPhrase) {
-    return 0;
-  }
-  return exp.test(testPhrase) ? score : 0;
-};
+export function scoreRegex(testPhrase: string | undefined, exp: RegExp, score = 1): number {
+  return testPhrase && exp.test(testPhrase) ? score : 0;
+}
 
 /*
 // The below function is not currently being used anywhere, but we may want to keep it around in case the filter functionality needs to accommodate it.
