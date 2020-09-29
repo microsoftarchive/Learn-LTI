@@ -10,14 +10,12 @@ import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { inputLabelStyle } from '../../Core/Components/Common/Inputs/EdnaInputStyles';
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
-import { createBrowserHistory } from "history";
 
 export type MicrosoftLearnSearchStyles = SimpleComponentStyles<'root' | 'label' | 'searchBox'>;
 
 const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
   const { filterStore, isLoadingCatalog } = learnStore;
-  const history = createBrowserHistory();  
 
   const classes = themedClassNames(styles);
   return useObserver(() => {
@@ -25,7 +23,7 @@ const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchS
       <div className={classes.root}>
         <Label className={classes.label}>Search</Label>
         <SearchBox
-          onChange={(_e: React.ChangeEvent<HTMLElement> | undefined, newValue: string | undefined)=>  filterStore.updateSearchTerm(newValue || '', history)}
+          onChange={(_e: React.ChangeEvent<HTMLElement> | undefined, newValue: string | undefined) => filterStore.updateSearchTerm(newValue || '')}
           className={classes.searchBox}
           disabled={!!isLoadingCatalog}
           value= {filterStore.selectedFilter.terms.join(' ') || ''}

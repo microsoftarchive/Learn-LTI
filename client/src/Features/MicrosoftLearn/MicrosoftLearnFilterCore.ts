@@ -21,11 +21,6 @@ export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Fi
 }
 
 export function getFiltersToDisplay(catalog: Catalog | null, filteredContent: LearnContent[]): Filter {
-
-  function getFiltered(transform: (value: LearnContent) => string[]): string[] {	
-    return filteredContent?.map(transform).flat(1);	
-  }
-
   const filteredProducts = new Set(getFilteredProducts());
   const filteredRoles = new Set(getFiltered(content => content.roles));
   const filteredTypes = new Set(getFiltered(content => [content.type]));
@@ -37,6 +32,10 @@ export function getFiltersToDisplay(catalog: Catalog | null, filteredContent: Le
     levels: [...filteredLevels],
     types: [...filteredTypes]
   });
+
+  function getFiltered(transform: (value: LearnContent) => string[]): string[] {	
+    return filteredContent?.map(transform).flat(1);	
+  }
 
   function getFilteredProducts(): string[] {
     const children = getFiltered(content => content.products);

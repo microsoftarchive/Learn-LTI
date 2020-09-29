@@ -23,6 +23,9 @@ export class MicrosoftLearnFilterStore extends ChildStore {
   @observable expandedProducts: string[] = [];
   productMap: Map<string, Product> = new Map<string, Product>();
 
+  // We use H.createBrowserHistory() over useHistory() in order to avoid page reloads on URI updation. 
+  history: H.History = H.createBrowserHistory();
+
   @action
   public initializeFilters(catalog: Catalog, filterParams: URLSearchParams | undefined): void {
     this.productMap = catalog.products;
@@ -35,53 +38,57 @@ export class MicrosoftLearnFilterStore extends ChildStore {
     }
   }
 
-  updateExpandedProducts = (expanded: boolean) => (productId: string, history: H.History): void => {
+  updateExpandedProducts = (expanded: boolean) => (productId: string): void => {
     expanded
       ? this.expandedProducts.push(productId)
       : (this.expandedProducts = this.expandedProducts.filter(expandedProductId => expandedProductId !== productId));
-    this.updateHistory(history);
+    this.updateHistory();
   };
   @action expandProducts = this.updateExpandedProducts(true);
   @action collapseProducts = this.updateExpandedProducts(false);
 
-  updateSelectedFilters(key: FilterType, value: string[], history: H.History): void {
+  updateSelectedFilters(key: FilterType, value: string[]): void {
     const selectedFilter = _.clone(this.selectedFilter);
     selectedFilter[key] = value;
     this.selectedFilter = selectedFilter;
-    this.updateHistory(history);
+    this.updateHistory();
   }
 
   @action
-  updateSearchTerm(newTerm: string, history: H.History): void {
-    this.updateSelectedFilters(FilterType.terms, newTerm.split(' '), history);
+  updateSearchTerm(newTerm: string): void {
+    this.updateSelectedFilters(FilterType.terms, newTerm.split(' '));
   }
 
   @action
-  addFilter(type: FilterType, addedFilters: string[], history: H.History): void {
+  addFilter(type: FilterType, addedFilters: string[]): void {
     const filters = [...this.selectedFilter[type], ...addedFilters];
-    this.updateSelectedFilters(type, filters, history);
+    this.updateSelectedFilters(type, filters);
   }
 
   @action
-  removeFilter(type: FilterType, removedFilters: string[], history: H.History): void {
+  removeFilter(type: FilterType, removedFilters: string[]): void {
     const filters = this.selectedFilter[type].filter(item => !removedFilters.includes(item));
-    this.updateSelectedFilters(type, filters, history);
+    this.updateSelectedFilters(type, filters);
   }
 
   @action
-  resetFilter(history: H.History): void {
+  resetFilter(): void {
     this.selectedFilter = new Filter({});
-    this.updateHistory(history);
+    this.updateHistory();
   }
 
-  private updateHistory(history: H.History): void {
+  private updateHistory(): void {
     this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(
       this.selectedFilter,
       this.expandedProducts,
       this.productMap
     );
-    history.push({
-      pathname: history.location.pathname,
+
+    // Use of H.createBrowserHistory() prevents us from directly updating filters in the URL itself,
+    // and let the remaining workflow (via page reload, and the hook in MSLearnPage.tsx) take care of content and UI updation.
+    // This can be handled of in future stories.
+    this.history.push({
+      pathname: this.history.location.pathname,
       search: this.learnFilterUriParam.length > 0 ? '?' + this.learnFilterUriParam : ''
     });
   }

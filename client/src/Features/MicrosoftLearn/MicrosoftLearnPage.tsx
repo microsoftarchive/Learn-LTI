@@ -19,7 +19,6 @@ import {
 import { getCommonSpacingStyle } from './MicrosoftLearnStyles';
 import { pagesDisplayNames } from '../../Router/Consts';
 import { useLocation } from 'react-router-dom';
-import { loadFiltersFromQueryParams } from './MicrosoftLearnFilterCore';
 
 type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator'>;
 
@@ -35,12 +34,15 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
     }
   }, [learnStore, qsParams]);
 
+  // The following hook is called whenever location updates (eg: through browser back button).
+  // Filters are re-initialized based on the search params present in the location object, and the content gets updated accordingly.
+  // [Note]- This does not get called when filterStore.updateHistory is trigerred because we use H.createBrowserHistory to update the URL.
+  //       URL updation using it does not cause the current page to reload. 
   useEffect(() => {
-      if(!learnStore.isLoadingCatalog && (location.search!=='?'+learnFilterUriParam || location.search!==learnFilterUriParam)){
-        learnStore.filterStore.selectedFilter = loadFiltersFromQueryParams(qsParams, productMap)
-        learnStore.filterStore.initializeFilters(learnStore.catalog!!, qsParams);
-      }
-  })
+    if(!learnStore.isLoadingCatalog && (location.search!=='?'+learnFilterUriParam || location.search!==learnFilterUriParam)){
+      learnStore.filterStore.initializeFilters(learnStore.catalog!!, qsParams);
+    }
+  }, [location])
 
   const classes = themedClassNames(styles);
   return useObserver(() => {
