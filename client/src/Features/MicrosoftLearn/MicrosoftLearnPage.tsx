@@ -24,7 +24,7 @@ type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator'>;
 
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
-  let { learnFilterUriParam, productMap } = learnStore.filterStore
+  let { learnFilterUriParam } = learnStore.filterStore
   const location = useLocation();  
   const qsParams = new URLSearchParams(location.search);
 
@@ -42,7 +42,7 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
     if(!learnStore.isLoadingCatalog && (location.search!=='?'+learnFilterUriParam || location.search!==learnFilterUriParam)){
       learnStore.filterStore.initializeFilters(learnStore.catalog!!, qsParams);
     }
-  }, [location])
+  }, [learnStore, learnFilterUriParam, qsParams, location])
 
   const classes = themedClassNames(styles);
   return useObserver(() => {
