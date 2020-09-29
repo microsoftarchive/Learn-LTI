@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import React from 'react';
 import { styled, FontSizes, FontWeights, Text } from '@fluentui/react';
 import { IStylesOnly, IThemeOnlyProps, SimpleComponentStyles } from '../../Utils/FluentUI/typings.fluent-ui';

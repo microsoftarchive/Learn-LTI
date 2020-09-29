@@ -1,3 +1,8 @@
+// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -106,7 +111,7 @@ namespace Edna.AssignmentLinks
             [Table(AssignmentLinksTableName, "{assignmentId}", "{linkId}")] AssignmentLinkEntity entityToDelete)
         {
             if (entityToDelete == null)
-                return new OkResult();
+                return new NoContentResult();
 
             TableOperation deleteTable = TableOperation.Delete(entityToDelete);
             TableResult deleteResult = await assignmentLinksTable.ExecuteAsync(deleteTable);
