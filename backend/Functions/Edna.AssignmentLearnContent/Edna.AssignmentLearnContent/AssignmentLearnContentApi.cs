@@ -86,6 +86,9 @@ namespace Edna.AssignmentLearnContent
             string assignmentId,
             string contentUid)
         {
+            if (assignmentLearnContentEntityToDelete == null)
+                return new NoContentResult();
+
             _logger.LogInformation($"Removing assignment learn content with uid [{contentUid}] from assignment {assignmentId}");
 
             TableOperation deleteOperation = TableOperation.Delete(assignmentLearnContentEntityToDelete);
@@ -103,9 +106,13 @@ namespace Edna.AssignmentLearnContent
             [Table(AssignmentLearnContentTableName)] CloudTable assignmentLearnContentTable,
             string assignmentId)
         {
+            List<AssignmentLearnContentEntity> assignmentLearnContentEntities = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
+
+            if (assignmentLearnContentEntities.Count == 0)
+                return new NoContentResult();
+
             _logger.LogInformation($"Removing all assignment learn content from assignment {assignmentId}");
 
-            List<AssignmentLearnContentEntity> assignmentLearnContentEntities = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
             TableBatchOperation deleteBatchOperations = new TableBatchOperation();
             assignmentLearnContentEntities
                 .Select(TableOperation.Delete)
