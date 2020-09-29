@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import { ChildStore } from './Core';
 import { observable, action } from 'mobx';
 import { Catalog, Product, LearnContent } from '../Models/Learn';
