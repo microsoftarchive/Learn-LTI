@@ -103,7 +103,7 @@ export class MicrosoftLearnStore extends ChildStore {
     const items = toMap(allItems, item => item.uid);
     this.catalog = { contents: items, products, roles, levels };
     this.isLoadingCatalog = false;
-    this.filteredCatalogContent = [...this.catalog.contents.values()];
+    this.filteredCatalogContent = allItems;
 
     this.filterStore.initializeFilters(this.catalog, searchParams);
   }

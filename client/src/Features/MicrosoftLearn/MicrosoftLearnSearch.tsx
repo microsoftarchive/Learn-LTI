@@ -25,10 +25,10 @@ const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchS
       <div className={classes.root}>
         <Label className={classes.label}>Search</Label>
         <SearchBox
-          onChange={(_e: any, newValue: any)=>  filterStore.updateSearchTerm(newValue || '', history)}
+          onChange={(_e: React.ChangeEvent<HTMLElement> | undefined, newValue: string | undefined)=>  filterStore.updateSearchTerm(newValue || '', history)}
           className={classes.searchBox}
           disabled={!!isLoadingCatalog}
-          value= {filterStore.selectedFilter.terms.join(' ')}
+          value= {filterStore.selectedFilter.terms.join(' ') || ''}
         />
       </div>
     );

@@ -19,11 +19,13 @@ import {
 import { getCommonSpacingStyle } from './MicrosoftLearnStyles';
 import { pagesDisplayNames } from '../../Router/Consts';
 import { useLocation } from 'react-router-dom';
+import { loadFiltersFromQueryParams } from './MicrosoftLearnFilterCore';
 
 type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator'>;
 
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
+  let { learnFilterUriParam, productMap } = learnStore.filterStore
   const location = useLocation();  
   const qsParams = new URLSearchParams(location.search);
 
@@ -32,6 +34,13 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
       learnStore.initializeCatalog(qsParams);
     }
   }, [learnStore, qsParams]);
+
+  useEffect(() => {
+      if(!learnStore.isLoadingCatalog && (location.search!=='?'+learnFilterUriParam || location.search!==learnFilterUriParam)){
+        learnStore.filterStore.selectedFilter = loadFiltersFromQueryParams(qsParams, productMap)
+        learnStore.filterStore.initializeFilters(learnStore.catalog!!, qsParams);
+      }
+  })
 
   const classes = themedClassNames(styles);
   return useObserver(() => {

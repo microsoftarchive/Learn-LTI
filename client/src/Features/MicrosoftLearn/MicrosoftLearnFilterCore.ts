@@ -21,7 +21,10 @@ export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Fi
 }
 
 export function getFiltersToDisplay(catalog: Catalog | null, filteredContent: LearnContent[]): Filter {
-  const getFiltered = filteredContent?.flatMap;
+
+  function getFiltered(transform: (value: LearnContent) => string[]): string[] {	
+    return filteredContent?.map(transform).flat(1);	
+  }
 
   const filteredProducts = new Set(getFilteredProducts());
   const filteredRoles = new Set(getFiltered(content => content.roles));
@@ -85,14 +88,14 @@ function parseAsArray(value: string | null): string[] {
 export function loadFiltersFromQueryParams(queryParams: URLSearchParams, products: Map<string, Product>): Filter {
   return new Filter({
     products: parseProductsFromParams(queryParams),
-    roles: parseAsArray(queryParams.get('roles')),
-    levels: parseAsArray(queryParams.get('levels')),
-    types: parseAsArray(queryParams.get('types')),
-    terms: parseAsArray(queryParams.get('terms'))
+    roles: parseAsArray(queryParams.get(FilterType.roles)),
+    levels: parseAsArray(queryParams.get(FilterType.levels)),
+    types: parseAsArray(queryParams.get(FilterType.types)),
+    terms: parseAsArray(queryParams.get(FilterType.terms))
   });
 
   function parseProductsFromParams(queryParams: URLSearchParams): string[] {
-    const parents = parseAsArray(queryParams.get('products'));
+    const parents = parseAsArray(queryParams.get(FilterType.products));
     return [...parents, ...addChildrenProducts(parents, products)];
   }
 
@@ -122,15 +125,15 @@ export function getUpdatedURIFromSelectedFilters(
   return newQueryParams.toString();
 
   function addFilteredProductsToQueryParam(queryParams: URLSearchParams): void {
-    const allSelected = getAllProducts(products, filters.products);
+    const allSelected = getAllProducts(products, filters[FilterType.products]);
     if (allSelected.length > 0) {
-      queryParams.append('products', allSelected.toString());
+      queryParams.append(FilterType.products, allSelected.toString());
     }
   }
 
   function addFiltersToQueryParam(filterName: FilterType, queryParams: URLSearchParams): void {
-    if (filters[filterName].length > 0) {
-      queryParams.append(filterName, filters[filterName].toString());
+    if (filters[filterName].filter(item => item!=='').length > 0) {
+      queryParams.append(filterName, filters[filterName].filter(item => item!=='').toString());
     }
   }
 

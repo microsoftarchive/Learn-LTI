@@ -21,7 +21,6 @@ export class MicrosoftLearnFilterStore extends ChildStore {
   @observable selectedFilter: Filter = new Filter({});
   @observable learnFilterUriParam = '';
   @observable expandedProducts: string[] = [];
-
   productMap: Map<string, Product> = new Map<string, Product>();
 
   @action
@@ -32,7 +31,7 @@ export class MicrosoftLearnFilterStore extends ChildStore {
     if (filterParams) {
       this.selectedFilter = loadFiltersFromQueryParams(filterParams, this.productMap);
       this.expandedProducts = loadExpandedProductsFromQueryParams(filterParams);
-      this.learnFilterUriParam = getUpdatedURIfromSelectedFilters(this.selectedFilter, this.expandedProducts, this.productMap);        
+      this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(this.selectedFilter, this.expandedProducts, this.productMap);        
     }
   }
 
@@ -74,6 +73,7 @@ export class MicrosoftLearnFilterStore extends ChildStore {
     this.selectedFilter = new Filter({});
     this.updateHistory(history);
   }
+
   private updateHistory(history: H.History): void {
     this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(
       this.selectedFilter,
