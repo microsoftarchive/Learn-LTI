@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT license.
+# --------------------------------------------------------------------------------------------
+
 [System.IO.FileInfo]$Script:LTI_LOG_FILE = $null
 
 function Write-LogInternal {
