@@ -137,14 +137,14 @@ process {
     if ($LASTEXITCODE -ne 0) {
         throw "Unable to remove Identity [ $IdentityName ] as Contributor"
     }
-    Write-Host 'Identity as Contributor from Subscription Removed Successfully';
+    Write-Host 'Identity as Contributor from Subscription Removed Successfully'
     
     Write-Title 'STEP #4 - Delete Managed Identity'
     az identity delete --name $IdentityName --resource-group $ResourceGroupName
     if ($LASTEXITCODE -ne 0) {
         throw "Unable to delete Managed Identity [ $IdentityName ]"
     }
-    Write-Host 'Managed Identity Deleted Successfully';
+    Write-Host 'Managed Identity Deleted Successfully'
     #endregion
     
     #region Delete Resource Group, if Exists
@@ -153,7 +153,7 @@ process {
     if ($LASTEXITCODE -ne 0) {
         throw "Unable to delete Resource Group [ $ResourceGroupName ] and its Child Resources"
     }
-    Write-Host 'Resource Group Deleted Successfully';
+    Write-Host 'Resource Group Deleted Successfully'
     #endregion
 
     #region Delete App Registration, if Exists
@@ -166,6 +166,6 @@ process {
     if ($LASTEXITCODE -ne 0) {
         throw "Unable to delete AAD App [ $AppName ]"
     }
-    Write-Host 'App Registration Deleted Successfully';
+    Write-Host 'App Registration Deleted Successfully'
     #endregion
 }
