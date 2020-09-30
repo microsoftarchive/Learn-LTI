@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import { ChildStore } from './Core';
 import { observable, action } from 'mobx';
 import { Catalog, LearnContent, Product } from '../Models/Learn';
@@ -13,8 +8,8 @@ import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
 import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
-import { debounceTime, map, filter, switchMap } from 'rxjs/operators';
-import { applySelectedFilter, getFiltersToDisplay } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
+import { debounceTime, map, filter, tap, switchMap } from 'rxjs/operators';
+import { getRegexs, filterLearnContent } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -22,24 +17,47 @@ export class MicrosoftLearnStore extends ChildStore {
   @observable selectedItems: AssignmentLearnContent[] | null = null;
   @observable filteredCatalogContent: LearnContent[] | null = null;
 
-  filterStore = new MicrosoftLearnFilterStore();
+  microsoftLearnFilterStore = new MicrosoftLearnFilterStore();
 
   initialize(): void {
-    const filteredContentObservable = toObservable(() => this.filterStore.selectedFilter).pipe(
-      debounceTime(250),
-      filter(() => !!this.catalog),
-      map(filter => applySelectedFilter(this.catalog, filter))
-    );
+    toObservable(() => this.microsoftLearnFilterStore.searchTerm)
+      .pipe(
+        debounceTime(250),
+        tap(() => (this.filteredCatalogContent = [])),
+        map(searchTerm => getRegexs(searchTerm)),
+        filter(() => !!this.catalog),
+        map(expressions => filterLearnContent(this.catalog, this.microsoftLearnFilterStore.selectedFilters,
+                                              this.microsoftLearnFilterStore.searchTerm, this.microsoftLearnFilterStore.productMap, 
+                                              this.microsoftLearnFilterStore.expandedProducts, expressions))
+      )
+      .subscribe((response) => {
+        if(response){
+          this.filteredCatalogContent = response.filteredCatalogContent;
+          this.microsoftLearnFilterStore.displayFilters = response.displayFilters;
+          this.microsoftLearnFilterStore.learnFilterUriParam = response.uri;
+        }
+      })
 
-    filteredContentObservable.subscribe(filteredContent => {
-      this.filteredCatalogContent = filteredContent;
-    });
-
-    filteredContentObservable
-      .pipe(map(filteredContent => getFiltersToDisplay(this.catalog, filteredContent)))
-      .subscribe(filtersToDisplay => {
-        this.filterStore.displayFilter = filtersToDisplay;
-      });
+    toObservable(() => this.microsoftLearnFilterStore.selectedFilters)
+      .pipe(
+        debounceTime(250),
+        tap(() => (this.filteredCatalogContent = [])),
+        filter(() => !!this.catalog),
+        map(selectedFilters => filterLearnContent(this.catalog, selectedFilters, this.microsoftLearnFilterStore.searchTerm,
+          this.microsoftLearnFilterStore.productMap, this.microsoftLearnFilterStore.expandedProducts))
+      )
+      .subscribe((response) => {
+        if(response){
+          this.filteredCatalogContent = response.filteredCatalogContent;
+          this.microsoftLearnFilterStore.displayFilters = response.displayFilters;
+          this.microsoftLearnFilterStore.learnFilterUriParam = response.uri;
+          if(response.newSelectedFilters){
+            [...response.newSelectedFilters].forEach(item => {
+              this.microsoftLearnFilterStore.selectedFilters.set(...item);
+            }) 
+          }          
+        }
+      })
 
     toObservable(() => this.root.assignmentStore.assignment)
       .pipe(
@@ -49,9 +67,7 @@ export class MicrosoftLearnStore extends ChildStore {
         filter(assignmentLearnContent => !assignmentLearnContent.error),
         map(assignmentLearnContent => assignmentLearnContent as AssignmentLearnContentDto[])
       )
-      .subscribe(selectedItems => {
-        this.selectedItems = selectedItems;
-      });
+      .subscribe(selectedItems => (this.selectedItems = selectedItems));         
   }
 
   @action
@@ -87,7 +103,7 @@ export class MicrosoftLearnStore extends ChildStore {
   }
 
   @action
-  async initializeCatalog(searchParams?: URLSearchParams): Promise<void> {
+  async initializeCatalog(): Promise<void> {
     this.isLoadingCatalog = true;
     const catalog = await MicrosoftLearnService.getCatalog();
     if (catalog.error) {
@@ -103,9 +119,9 @@ export class MicrosoftLearnStore extends ChildStore {
     const items = toMap(allItems, item => item.uid);
     this.catalog = { contents: items, products, roles, levels };
     this.isLoadingCatalog = false;
-    this.filteredCatalogContent = allItems;
+    this.filteredCatalogContent = [...this.catalog.contents.values()];
 
-    this.filterStore.initializeFilters(this.catalog, searchParams);
+    this.microsoftLearnFilterStore.initializeFilters(this.catalog);
   }
 
   private getItemIndexInSelectedList = (learnContentUid: string): number | void => {
@@ -137,5 +153,5 @@ export class MicrosoftLearnStore extends ChildStore {
     });
 
     return productsMap;
-  };
+  }
 }

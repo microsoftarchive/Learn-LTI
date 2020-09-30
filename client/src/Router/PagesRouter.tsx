@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import React from 'react';
 import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
 import _ from 'lodash';

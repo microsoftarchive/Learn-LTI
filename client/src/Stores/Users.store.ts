@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import { action, observable } from 'mobx';
 import { ChildStore } from './Core';
 import { UsersService } from '../Services/Users.service';

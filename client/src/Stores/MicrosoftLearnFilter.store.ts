@@ -1,108 +1,89 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
+import _ from "lodash";
+import { action, observable } from "mobx";
+import { setDisplayFilters, loadFiltersFromPath, updateURI } from "../Features/MicrosoftLearn/MicrosoftLearnFilterCore";
+import { Catalog, Product } from "../Models/Learn";
+import { FilterType } from "../Models/Learn/FilterType.model";
+import { ChildStore } from "./Core";
 
-import _ from 'lodash';
-import { action, observable } from 'mobx';
-import {
-  getUpdatedURIFromSelectedFilters,
-  loadExpandedProductsFromQueryParams,
-  loadFiltersFromQueryParams
-} from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
-import { Catalog, Product } from '../Models/Learn';
-import { FilterType } from '../Models/Learn/FilterType.model';
-import { ChildStore } from './Core';
-import { Filter } from '../Models/Learn/Filter.model';
-import * as H from 'history';
+export class MicrosoftLearnFilterStore extends ChildStore{
+    @observable displayFilters: Map<FilterType, string[]> = new Map([
+        [FilterType.Product, []],
+        [FilterType.Role, []],
+        [FilterType.Level, []],
+        [FilterType.Type, []]]);
 
-export class MicrosoftLearnFilterStore extends ChildStore {
-  @observable displayFilter: Filter = new Filter({});
-  @observable selectedFilter: Filter = new Filter({});
-  @observable learnFilterUriParam = '';
-  @observable expandedProducts: string[] = [];
-  productMap: Map<string, Product> = new Map<string, Product>();
+    @observable selectedFilters: Map<FilterType, string[]> = new Map([
+        [FilterType.Product, []],
+        [FilterType.Role, []],
+        [FilterType.Level, []],
+        [FilterType.Type, []]]);  
 
-  // We use H.createBrowserHistory() over useHistory() in order to avoid page reloads on URI updation. 
-  history: H.History = H.createBrowserHistory();
+    @observable searchTerm: string = '';
+    @observable learnFilterUriParam: string = '';
+    @observable expandedProducts: string[]=[];
+    productMap: Map<Product, Product[]>  = new Map<Product, Product[]>(); 
 
-  @action
-  public initializeFilters(catalog: Catalog, filterParams: URLSearchParams | undefined): void {
-    this.productMap = catalog.products;
-    //this.getProductHierarchicalMap(catalog);
+    public initializeFilters(catalog: Catalog){
+        this.productMap = this.getProductHierarchicalMap(catalog);
+        this.displayFilters = setDisplayFilters(catalog, [...catalog.contents.values()]);
+        let response = loadFiltersFromPath(catalog, this.productMap);
 
-    if (filterParams) {
-      this.selectedFilter = loadFiltersFromQueryParams(filterParams, this.productMap);
-      this.expandedProducts = loadExpandedProductsFromQueryParams(filterParams);
-      this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(this.selectedFilter, this.expandedProducts, this.productMap);        
+        if(response){
+          this.expandedProducts = response?.expandedProducts;
+          this.selectedFilters = _.cloneDeep(response?.selectedFilters);
+          this.searchTerm = response?.searchTerm;
+        }
     }
-  }
 
-  updateExpandedProducts = (expanded: boolean) => (productId: string): void => {
-    expanded
-      ? this.expandedProducts.push(productId)
-      : (this.expandedProducts = this.expandedProducts.filter(expandedProductId => expandedProductId !== productId));
-    this.updateHistory();
-  };
-  @action expandProducts = this.updateExpandedProducts(true);
-  @action collapseProducts = this.updateExpandedProducts(false);
+    @action
+    updateSearchTerm(newTerm: string){
+        this.searchTerm = newTerm;
+    }
 
-  updateSelectedFilters(key: FilterType, value: string[]): void {
-    const selectedFilter = _.clone(this.selectedFilter);
-    selectedFilter[key] = value;
-    this.selectedFilter = selectedFilter;
-    this.updateHistory();
-  }
+    @action
+    updateExpandedProducts(action: boolean, id: string){
+        action? this.expandedProducts.push(id) :
+                this.expandedProducts = this.expandedProducts.filter(pId => pId!==id);
+        this.learnFilterUriParam = updateURI(this.selectedFilters, this.searchTerm, this.expandedProducts, this.productMap);
+    }
+    
+    @action
+    addFilter(type: FilterType, filters: string[]){
+      let currentFilters = this.selectedFilters.get(type);
+        if(currentFilters){
+          this.selectedFilters.set(type, [...currentFilters, ...filters]);
+          this.selectedFilters = _.cloneDeep(this.selectedFilters);
+        }
+    }
 
-  @action
-  updateSearchTerm(newTerm: string): void {
-    this.updateSelectedFilters(FilterType.terms, newTerm.split(' '));
-  }
+    @action
+    removeFilter(type: FilterType, filters: string[]){
+      let currentFilters = this.selectedFilters.get(type);
+        if(currentFilters){
+          this.selectedFilters.set(type, currentFilters?.filter(item => !filters.includes(item)));
+          this.selectedFilters = _.cloneDeep(this.selectedFilters);
+        }
+    }
 
-  @action
-  addFilter(type: FilterType, addedFilters: string[]): void {
-    const filters = [...this.selectedFilter[type], ...addedFilters];
-    this.updateSelectedFilters(type, filters);
-  }
-
-  @action
-  removeFilter(type: FilterType, removedFilters: string[]): void {
-    const filters = this.selectedFilter[type].filter(item => !removedFilters.includes(item));
-    this.updateSelectedFilters(type, filters);
-  }
-
-  @action
-  resetFilter(): void {
-    this.selectedFilter = new Filter({});
-    this.updateHistory();
-  }
-
-  private updateHistory(): void {
-    this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(
-      this.selectedFilter,
-      this.expandedProducts,
-      this.productMap
-    );
-
-    // Use of H.createBrowserHistory() prevents us from directly updating filters in the URL itself,
-    // and let the remaining workflow (via page reload, and the hook in MSLearnPage.tsx) take care of content and UI updation.
-    // This can be handled of in future stories.
-    this.history.push({
-      pathname: this.history.location.pathname,
-      search: this.learnFilterUriParam.length > 0 ? '?' + this.learnFilterUriParam : ''
-    });
-  }
-
-  // private getProductHierarchicalMap = (catalog: Catalog) => {
-  //   let productParentChildMap = new Map<Product, Product[]>();
-  //   let productMap = catalog?.products;
-  //   if(productMap!=null){
-  //     [...productMap.values()].filter(item => item?.parentId==null)
-  //       .forEach((k)=>{
-  //         let children = [...productMap?.values()].filter(product => product.parentId!==null && product.parentId===k.id)
-  //         productParentChildMap.set(k, children);
-  //       });
-  //   }
-  //   return productParentChildMap
-  // }
+    @action
+    resetFilter(){
+        this.selectedFilters.set(FilterType.Product, []);
+        this.selectedFilters.set(FilterType.Role, []);
+        this.selectedFilters.set(FilterType.Type, []);
+        this.selectedFilters.set(FilterType.Level, []);     
+        this.selectedFilters = _.cloneDeep(this.selectedFilters);
+    }
+    
+    private getProductHierarchicalMap = (catalog: Catalog) => {
+      let productParentChildMap = new Map<Product, Product[]>();
+      let productMap = catalog?.products;
+      if(productMap!=null){        
+        [...productMap.values()].filter(item => item?.parentId==null)
+          .forEach((k)=>{
+            let children = [...productMap?.values()].filter(product => product.parentId!==null && product.parentId===k.id)
+            productParentChildMap.set(k, children);
+          });
+      }
+      return productParentChildMap
+    }
 }

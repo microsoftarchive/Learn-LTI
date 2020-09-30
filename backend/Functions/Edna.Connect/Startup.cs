@@ -1,9 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT license.
-// --------------------------------------------------------------------------------------------
-
-using Edna.Bindings.Assignment;
+﻿using Edna.Bindings.Assignment;
 using Edna.Bindings.LtiAdvantage;
 using Edna.Bindings.Platform;
 using Edna.Connect;

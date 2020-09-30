@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import { ITheme, IStyle } from '@fluentui/react';
 
 export const FIXED_ITEM_WIDTH = 380;

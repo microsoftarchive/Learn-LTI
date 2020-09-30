@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import { classNamesFunction, IStyleFunctionOrObject, IStyleSet, IProcessedStyleSet, getTheme } from '@fluentui/react';
 import { IThemeOnlyProps } from './typings.fluent-ui';
 

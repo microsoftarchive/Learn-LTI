@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import React, { useState } from 'react';
 import { AssignmentLink } from '../../Models/AssignmentLink.model';
 import { AssignmentLinkDisplayItem } from './AssignmentLinkDisplayItem';

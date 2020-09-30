@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import { UserDto } from '../Dtos/User.dto';
 import axios from 'axios';
 import { safeData, WithError } from '../Core/Utils/Axios/safeData';

@@ -1,9 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT license.
-// --------------------------------------------------------------------------------------------
-
-namespace Edna.AssignmentLearnContent
+﻿namespace Edna.AssignmentLearnContent
 {
     public class AssignmentLearnContentDto
     {

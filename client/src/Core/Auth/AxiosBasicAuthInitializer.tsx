@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import React, { PropsWithChildren, useState, useEffect } from 'react';
 import axios from 'axios';
 import { AppAuthConfig } from './AppAuthConfig';

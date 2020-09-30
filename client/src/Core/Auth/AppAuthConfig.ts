@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import { MsalAuthProvider, LoginType, IMsalAuthProviderConfig } from 'react-aad-msal';
 import { Configuration, Logger, LogLevel, AuthenticationParameters } from 'msal';
 

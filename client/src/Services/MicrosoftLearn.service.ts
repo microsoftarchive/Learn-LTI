@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import { CatalogDto } from '../Dtos/Learn/Catalog.dto';
 import axios from 'axios';
 import { safeData, WithError } from '../Core/Utils/Axios/safeData';

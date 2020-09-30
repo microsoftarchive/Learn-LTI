@@ -1,9 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT license.
-// --------------------------------------------------------------------------------------------
-
-using Edna.Utils.Http;
+﻿using Edna.Utils.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 

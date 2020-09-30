@@ -1,9 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT license.
-// --------------------------------------------------------------------------------------------
-
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using IdentityModel.Jwk;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;

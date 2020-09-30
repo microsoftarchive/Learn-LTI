@@ -1,9 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT license.
-// --------------------------------------------------------------------------------------------
-
-using Microsoft.Azure.WebJobs.Host.Config;
+﻿using Microsoft.Azure.WebJobs.Host.Config;
 
 namespace Edna.Bindings.Lti1
 {

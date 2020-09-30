@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License.
- *--------------------------------------------------------------------------------------------*/
-
 import { routesConstants, pagesDisplayNames } from './Consts';
 import React from 'react';
 import { GeneralPage } from '../Features/GeneralPage/GeneralPage';
