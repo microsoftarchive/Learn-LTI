@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT license.
+# --------------------------------------------------------------------------------------------
+
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 $ExecutionStartTime = $(get-date -f dd-MM-yyyy-HH-mm-ss)
 $LogRoot = Join-Path $scriptPath "Log"

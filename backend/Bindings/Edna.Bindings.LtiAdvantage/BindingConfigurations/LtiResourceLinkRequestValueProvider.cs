@@ -1,4 +1,9 @@
-﻿using System;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.Threading.Tasks;
 using Edna.Bindings.LtiAdvantage.Services;
 using LtiAdvantage.Lti;

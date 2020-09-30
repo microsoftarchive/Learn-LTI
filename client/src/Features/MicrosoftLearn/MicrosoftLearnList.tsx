@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { CSSProperties, useState } from 'react';
 import { SimpleComponentStyles, IStylesOnly, IThemeOnlyProps } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { FontWeights, styled, Text } from '@fluentui/react';
@@ -52,8 +57,8 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
 
   return useObserver(() => {
     const isLoadingCatalog = !!learnStore.isLoadingCatalog;
-    const catalogContent = learnStore.filteredCatalogContent;
-    const noVisibleItems = !isLoadingCatalog && catalogContent?.length === 0;
+    const { filteredCatalogContent } = learnStore;
+    const noVisibleItems = !isLoadingCatalog && filteredCatalogContent?.length === 0;
 
     return (
       <div className={classes.root}>
@@ -62,40 +67,39 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
         ) : (
 
           <>
-          <div className={classes.contentCount}>
-          {learnStore.filteredCatalogContent && learnStore.filteredCatalogContent?.length>0?
-            <Text variant="mediumPlus" className='contentCountText'> {learnStore.filteredCatalogContent?.length.toLocaleString()} results from Microsoft Learn </Text>:
-            <Text> </Text>            
-          }
-          </div>
-          <AutoSizer>
-            {({ height, width }): JSX.Element | null => {
-              if (autoSizerWidth === 0 || Math.abs(autoSizerWidth - width) > 25) {
-                setAutoSizerWidth(width);
-              }
+            {filteredCatalogContent && filteredCatalogContent.length>0 &&
+              (<div className={classes.contentCount}>
+              <Text variant="mediumPlus" className='contentCountText'> {filteredCatalogContent.length.toLocaleString()} results from Microsoft Learn </Text>         
+              </div>)
+            }
+            <AutoSizer>
+              {({ height, width }): JSX.Element | null => {
+                if (autoSizerWidth === 0 || Math.abs(autoSizerWidth - width) > 25) {
+                  setAutoSizerWidth(width);
+                }
 
-              const numItemsPerRow = Math.floor(autoSizerWidth / FIXED_ITEM_WIDTH);
-              const rowCount = catalogContent
-                ? Math.floor(catalogContent.length / numItemsPerRow) + (catalogContent.length % numItemsPerRow ? 1 : 0)
-                : 2;
-              return (
-                <FixedSizeList
-                  style={getListStyle(isLoadingCatalog)}
-                  height={height}
-                  itemCount={rowCount}
-                  itemData={{
-                    numItemsPerRow,
-                    itemsData: catalogContent,
-                    isLoadingCatalog
-                  }}
-                  itemSize={FIXED_ITEM_HEIGHT}
-                  width={autoSizerWidth}
-                >
-                  {ListRow}
-                </FixedSizeList>
-              );
-            }}
-          </AutoSizer>
+                const numItemsPerRow = Math.floor(autoSizerWidth / FIXED_ITEM_WIDTH);
+                const rowCount = filteredCatalogContent
+                  ? Math.floor(filteredCatalogContent.length / numItemsPerRow) + (filteredCatalogContent.length % numItemsPerRow ? 1 : 0)
+                  : 2;
+                return (
+                  <FixedSizeList
+                    style={getListStyle(isLoadingCatalog)}
+                    height={height}
+                    itemCount={rowCount}
+                    itemData={{
+                      numItemsPerRow,
+                      itemsData: filteredCatalogContent,
+                      isLoadingCatalog
+                    }}
+                    itemSize={FIXED_ITEM_HEIGHT}
+                    width={autoSizerWidth}
+                  >
+                    {ListRow}
+                  </FixedSizeList>
+                );
+              }}
+            </AutoSizer>
           </>
         )}
       </div>
@@ -135,7 +139,6 @@ const microsoftLearnListStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnLis
           fontWeight: FontWeights.semibold
         }
       }
-
     }
   ]
 });
