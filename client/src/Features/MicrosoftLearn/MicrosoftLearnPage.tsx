@@ -24,8 +24,8 @@ type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator'>;
 
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
-  let { learnFilterUriParam } = learnStore.filterStore
-  const location = useLocation();  
+  let { learnFilterUriParam } = learnStore.filterStore;
+  const location = useLocation();
   const qsParams = new URLSearchParams(location.search);
 
   useEffect(() => {
@@ -34,15 +34,17 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
     }
   }, [learnStore, qsParams]);
 
-  // The following hook is called whenever location updates (eg: through browser back button).
-  // Filters are re-initialized based on the search params present in the location object, and the content gets updated accordingly.
+  // Filters are re-initialized based on the search params present in the location object (on browser back/forward), and the content gets updated accordingly.
   // [Note]- This does not get called when filterStore.updateHistory is trigerred because we use H.createBrowserHistory to update the URL.
-  //       URL updation using it does not cause the current page to reload. 
-  useEffect(() => {
-    if(!learnStore.isLoadingCatalog && (location.search!=='?'+learnFilterUriParam || location.search!==learnFilterUriParam)){
-      learnStore.filterStore.initializeFilters(learnStore.catalog!!, qsParams);
-    }
-  }, [learnStore, learnFilterUriParam, qsParams, location])
+  //       URL updation using it does not cause the current page to reload.
+
+  // TODO: Refactor the logic to start using useHistory hook for history management with proper UI update
+  if (
+    learnStore.catalog !== null &&
+    (location.search !== '?' + learnFilterUriParam || location.search !== learnFilterUriParam)
+  ) {
+    learnStore.filterStore.initializeFilters(learnStore.catalog!!, qsParams);
+  }
 
   const classes = themedClassNames(styles);
   return useObserver(() => {
