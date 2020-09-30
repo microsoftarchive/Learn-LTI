@@ -106,7 +106,7 @@ namespace Edna.AssignmentLinks
             [Table(AssignmentLinksTableName, "{assignmentId}", "{linkId}")] AssignmentLinkEntity entityToDelete)
         {
             if (entityToDelete == null)
-                return new OkResult();
+                return new NoContentResult();
 
             TableOperation deleteTable = TableOperation.Delete(entityToDelete);
             TableResult deleteResult = await assignmentLinksTable.ExecuteAsync(deleteTable);

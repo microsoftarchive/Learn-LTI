@@ -198,7 +198,7 @@ try {
         throw "Encountered an Error while creating Role Assignment"
     }
 
-    Write-Host 'Role Assignment Created Successfully';
+    Write-Host 'Role Assignment Created Successfully'
 
     Write-Title 'STEP #8 - Creating Resources in Azure'
 
