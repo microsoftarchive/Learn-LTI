@@ -20,7 +20,6 @@ import { getCommonSpacingStyle } from './MicrosoftLearnStyles';
 import { MicrosoftLearnFilterPane } from './MicrosoftLearnFilterPane';
 import { debounce } from 'lodash';
 import { MicrosoftLearnFilterTags } from './MicrosoftLearnFilterTags';
-import { pagesDisplayNames } from '../../Router/Consts';
 import { useLocation } from 'react-router-dom';
 
 type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator' | 'wrapper'>;
