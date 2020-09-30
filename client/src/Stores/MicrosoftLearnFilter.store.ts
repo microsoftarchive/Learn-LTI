@@ -23,18 +23,21 @@ export class MicrosoftLearnFilterStore extends ChildStore {
   @observable expandedProducts: string[] = [];
   productMap: Map<string, Product> = new Map<string, Product>();
 
-  // We use H.createBrowserHistory() over useHistory() in order to avoid page reloads on URI updation. 
+  // We use H.createBrowserHistory() over useHistory() in order to avoid page reloads on URI updation.
   history: H.History = H.createBrowserHistory();
 
   @action
   public initializeFilters(catalog: Catalog, filterParams: URLSearchParams | undefined): void {
     this.productMap = catalog.products;
-    //this.getProductHierarchicalMap(catalog);
 
     if (filterParams) {
       this.selectedFilter = loadFiltersFromQueryParams(filterParams, this.productMap);
       this.expandedProducts = loadExpandedProductsFromQueryParams(filterParams);
-      this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(this.selectedFilter, this.expandedProducts, this.productMap);        
+      this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(
+        this.selectedFilter,
+        this.expandedProducts,
+        this.productMap
+      );
     }
   }
 
@@ -92,17 +95,4 @@ export class MicrosoftLearnFilterStore extends ChildStore {
       search: this.learnFilterUriParam.length > 0 ? '?' + this.learnFilterUriParam : ''
     });
   }
-
-  // private getProductHierarchicalMap = (catalog: Catalog) => {
-  //   let productParentChildMap = new Map<Product, Product[]>();
-  //   let productMap = catalog?.products;
-  //   if(productMap!=null){
-  //     [...productMap.values()].filter(item => item?.parentId==null)
-  //       .forEach((k)=>{
-  //         let children = [...productMap?.values()].filter(product => product.parentId!==null && product.parentId===k.id)
-  //         productParentChildMap.set(k, children);
-  //       });
-  //   }
-  //   return productParentChildMap
-  // }
 }
