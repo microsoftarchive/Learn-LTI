@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import React from 'react';
 import { IThemeOnlyProps, SimpleComponentStyles, IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { styled, SearchBox, Label } from '@fluentui/react';
@@ -10,6 +15,7 @@ export type MicrosoftLearnSearchStyles = SimpleComponentStyles<'root' | 'label' 
 
 const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
+  const { filterStore, isLoadingCatalog } = learnStore;
 
   const classes = themedClassNames(styles);
   return useObserver(() => {
@@ -17,10 +23,10 @@ const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchS
       <div className={classes.root}>
         <Label className={classes.label}>Search</Label>
         <SearchBox
-          onChange={(_e, newValue) => learnStore.microsoftLearnFilterStore.updateSearchTerm(newValue || '')}
+          onChange={(_e: React.ChangeEvent<HTMLElement> | undefined, newValue: string | undefined) => filterStore.updateSearchTerm(newValue || '')}
           className={classes.searchBox}
-          disabled={!!learnStore.isLoadingCatalog}
-          value={learnStore.microsoftLearnFilterStore.searchTerm}
+          disabled={!!isLoadingCatalog}
+          value= {filterStore.selectedFilter.terms.join(' ') || ''}
         />
       </div>
     );

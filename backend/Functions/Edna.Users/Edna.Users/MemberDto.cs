@@ -1,4 +1,9 @@
-﻿namespace Edna.Users
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+namespace Edna.Users
 {
     public class MemberDto
     {

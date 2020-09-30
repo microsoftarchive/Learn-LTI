@@ -1,4 +1,9 @@
-﻿namespace Edna.Bindings.Platform.Models
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+namespace Edna.Bindings.Platform.Models
 {
     public class Platform
     {

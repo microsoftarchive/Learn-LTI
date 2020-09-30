@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { MouseEvent } from 'react';
 import { Nav, INavLinkGroup, INavLink, INavStyles } from 'office-ui-fabric-react/lib/Nav';
 import { useObserver } from 'mobx-react-lite';
@@ -28,7 +33,7 @@ const removeSlashFromStringEnd = (initialString: string): string => initialStrin
 
 const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null => {
   const assignmentStore = useStore('assignmentStore');
-  const learnStore = useStore('microsoftLearnStore');
+  const { filterStore } = useStore('microsoftLearnStore');
   const history = useHistory();
   const location = useLocation();
 
@@ -52,7 +57,7 @@ const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null =>
     if(item && item.url?.indexOf('ms-learn')>0){
       history.push({
         pathname: item.url,
-        search: '?'+learnStore.microsoftLearnFilterStore.learnFilterUriParam
+        search: '?'+filterStore.learnFilterUriParam
       })
     }
     else if (item) {

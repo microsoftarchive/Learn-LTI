@@ -1,4 +1,9 @@
-﻿using AutoMapper;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+using AutoMapper;
 using Edna.Bindings.Assignment;
 using Edna.Bindings.Lti1;
 using Edna.Bindings.LtiAdvantage;

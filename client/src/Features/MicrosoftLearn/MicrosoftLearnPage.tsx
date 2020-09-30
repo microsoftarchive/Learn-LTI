@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { useEffect, useState } from 'react';
 import { useObserver } from 'mobx-react-lite';
 import { useStore } from '../../Stores/Core';
@@ -15,19 +20,33 @@ import { getCommonSpacingStyle } from './MicrosoftLearnStyles';
 import { MicrosoftLearnFilterPane } from './MicrosoftLearnFilterPane';
 import { debounce } from 'lodash';
 import { MicrosoftLearnFilterTags } from './MicrosoftLearnFilterTags';
+import { pagesDisplayNames } from '../../Router/Consts';
+import { useLocation } from 'react-router-dom';
 
 
 type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator' | 'wrapper'>;
 
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
-  // const learnFilterStore = useStore('microsoftLearnFilterStore');
+  let { learnFilterUriParam } = learnStore.filterStore
+  const location = useLocation();  
+  const qsParams = new URLSearchParams(location.search);
 
   useEffect(() => {
     if (learnStore.catalog == null) {
-      learnStore.initializeCatalog()
+      learnStore.initializeCatalog(qsParams);
     }
-  }, [learnStore]);
+  }, [learnStore, qsParams]);
+
+  // The following hook is called whenever location updates (eg: through browser back button).
+  // Filters are re-initialized based on the search params present in the location object, and the content gets updated accordingly.
+  // [Note]- This does not get called when filterStore.updateHistory is trigerred because we use H.createBrowserHistory to update the URL.
+  //       URL updation using it does not cause the current page to reload. 
+  useEffect(() => {
+    if(!learnStore.isLoadingCatalog && (location.search!=='?'+learnFilterUriParam || location.search!==learnFilterUriParam)){
+      learnStore.filterStore.initializeFilters(learnStore.catalog!!, qsParams);
+    }
+  }, [learnStore, learnFilterUriParam, qsParams, location])
 
   const classes = themedClassNames(styles);
   const [width, setWidth] = useState(window.innerWidth);

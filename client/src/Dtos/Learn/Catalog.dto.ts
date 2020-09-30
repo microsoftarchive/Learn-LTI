@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import { ModuleDto } from './Module.dto';
 import { LearningPathDto } from './LearningPath.dto';
 import { LevelDto } from './Level.dto';
