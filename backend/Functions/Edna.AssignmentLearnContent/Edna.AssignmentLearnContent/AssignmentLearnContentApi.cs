@@ -148,13 +148,17 @@ namespace Edna.AssignmentLearnContent
             [LtiAdvantage] INrpsClient nrpsClient,
             [Lti1] Lti1MembershipClient membershipClient)
         {
+            List<AssignmentLearnContentEntity> assignmentLearnContentEntities = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
+
+            if (assignmentLearnContentEntities.Count == 0)
+                return new NoContentResult();
+
             IActionResult res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
             if (res.GetType() != typeof(OkResult))
                 return res;
 
             _logger.LogInformation($"Removing all assignment learn content from assignment {assignmentId}");
 
-            List<AssignmentLearnContentEntity> assignmentLearnContentEntities = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
             TableBatchOperation deleteBatchOperations = new TableBatchOperation();
             assignmentLearnContentEntities
                 .Select(TableOperation.Delete)
