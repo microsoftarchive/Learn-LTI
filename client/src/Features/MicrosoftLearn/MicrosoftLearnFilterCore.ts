@@ -33,8 +33,8 @@ export function getFiltersToDisplay(catalog: Catalog | null, filteredContent: Le
     types: [...filteredTypes]
   });
 
-  function getFiltered(transform: (value: LearnContent) => string[]): string[] {	
-    return filteredContent?.map(transform).flat(1);	
+  function getFiltered(transform: (value: LearnContent) => string[]): string[] {
+    return filteredContent?.map(transform).flat(1);
   }
 
   function getFilteredProducts(): string[] {
@@ -131,8 +131,8 @@ export function getUpdatedURIFromSelectedFilters(
   }
 
   function addFiltersToQueryParam(filterName: FilterType, queryParams: URLSearchParams): void {
-    if (filters[filterName].filter(item => item!=='').length > 0) {
-      queryParams.append(filterName, filters[filterName].filter(item => item!=='').toString());
+    if (filters[filterName].filter(item => item !== '').length > 0) {
+      queryParams.append(filterName, filters[filterName].filter(item => item !== '').toString());
     }
   }
 
