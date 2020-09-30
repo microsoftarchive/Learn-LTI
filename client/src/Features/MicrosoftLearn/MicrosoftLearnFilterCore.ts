@@ -44,7 +44,7 @@ export function getFiltersToDisplay(catalog: Catalog | null, filteredContent: Le
   }
 }
 
-function getParentProduct(products: Map<string, Product> | undefined) {
+export function getParentProduct(products: Map<string, Product> | undefined) {
   return function getProduct(product: string): string {
     const productDetails = products?.get(product);
     if (productDetails) {
