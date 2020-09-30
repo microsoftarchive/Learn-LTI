@@ -23,13 +23,12 @@ import { MicrosoftLearnFilterTags } from './MicrosoftLearnFilterTags';
 import { pagesDisplayNames } from '../../Router/Consts';
 import { useLocation } from 'react-router-dom';
 
-
 type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator' | 'wrapper'>;
 
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
-  let { learnFilterUriParam } = learnStore.filterStore
-  const location = useLocation();  
+  let { learnFilterUriParam } = learnStore.filterStore;
+  const location = useLocation();
   const qsParams = new URLSearchParams(location.search);
 
   useEffect(() => {
@@ -41,57 +40,56 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
   // The following hook is called whenever location updates (eg: through browser back button).
   // Filters are re-initialized based on the search params present in the location object, and the content gets updated accordingly.
   // [Note]- This does not get called when filterStore.updateHistory is trigerred because we use H.createBrowserHistory to update the URL.
-  //       URL updation using it does not cause the current page to reload. 
+  //       URL updation using it does not cause the current page to reload.
   useEffect(() => {
-    if(!learnStore.isLoadingCatalog && (location.search!=='?'+learnFilterUriParam || location.search!==learnFilterUriParam)){
+    if (
+      !learnStore.isLoadingCatalog &&
+      (location.search !== '?' + learnFilterUriParam || location.search !== learnFilterUriParam)
+    ) {
       learnStore.filterStore.initializeFilters(learnStore.catalog!!, qsParams);
     }
-  }, [learnStore, learnFilterUriParam, qsParams, location])
+  }, [learnStore, learnFilterUriParam, qsParams, location]);
 
   const classes = themedClassNames(styles);
   const [width, setWidth] = useState(window.innerWidth);
 
   useEffect(() => {
-      const debouncedHandleResize = debounce(function handleResize() {
-          setWidth(window.innerWidth)
-      }, 500)
-      window.addEventListener('resize', debouncedHandleResize)
-      return () => {
-          window.removeEventListener('resize', debouncedHandleResize)        
-      }
-  })
-
+    const debouncedHandleResize = debounce(function handleResize() {
+      setWidth(window.innerWidth);
+    }, 500);
+    window.addEventListener('resize', debouncedHandleResize);
+    return () => {
+      window.removeEventListener('resize', debouncedHandleResize);
+    };
+  });
 
   return useObserver(() => {
-
-    if(width>768){
+    if (width > 768) {
       return (
         <div className={classes.wrapper}>
-          <MicrosoftLearnFilterPane /> 
+          <MicrosoftLearnFilterPane />
           <div className={classes.root}>
-          <MicrosoftLearnSearch styles={themedClassNames(microsoftLearnSearchStyles)} />
-          <MicrosoftLearnSelectedItemsList styles={themedClassNames(microsoftLearnSelectedItemsStyles)} />
-          <Separator className={classes.separator} />
-          <MicrosoftLearnFilterTags />
-          <MicrosoftLearnList />
+            <MicrosoftLearnSearch styles={themedClassNames(microsoftLearnSearchStyles)} />
+            <MicrosoftLearnSelectedItemsList styles={themedClassNames(microsoftLearnSelectedItemsStyles)} />
+            <Separator className={classes.separator} />
+            <MicrosoftLearnFilterTags />
+            <MicrosoftLearnList />
+          </div>
         </div>
-        </div>
-      )
-    }
-
-    else{
-      return(
+      );
+    } else {
+      return (
         <div className={classes.wrapper}>
-        <div className={classes.root}>
-        <MicrosoftLearnSearch styles={themedClassNames(microsoftLearnSearchStyles)} />
-        <MicrosoftLearnSelectedItemsList styles={themedClassNames(microsoftLearnSelectedItemsStyles)} />
-        <Separator className={classes.separator} />
-        <MicrosoftLearnFilterPane />         
-        <MicrosoftLearnFilterTags />
-        <MicrosoftLearnList />
-      </div>
-      </div>
-      )
+          <div className={classes.root}>
+            <MicrosoftLearnSearch styles={themedClassNames(microsoftLearnSearchStyles)} />
+            <MicrosoftLearnSelectedItemsList styles={themedClassNames(microsoftLearnSelectedItemsStyles)} />
+            <Separator className={classes.separator} />
+            <MicrosoftLearnFilterPane />
+            <MicrosoftLearnFilterTags />
+            <MicrosoftLearnList />
+          </div>
+        </div>
+      );
     }
   });
 };
@@ -119,7 +117,7 @@ const microsoftLearnPageStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnPag
   ],
   wrapper: [
     {
-      display:'flex', 
+      display: 'flex',
       flexDirection: 'row',
       marginTop: theme.spacing.l1
     }
@@ -135,5 +133,3 @@ const microsoftLearnSelectedItemsStyles = ({
   header: [getCommonSpacingStyle(theme)]
 });
 export const MicrosoftLearnPage = styled(MicrosoftLearnPageInner, microsoftLearnPageStyles);
-
-
