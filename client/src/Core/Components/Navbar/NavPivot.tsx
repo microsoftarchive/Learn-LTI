@@ -11,6 +11,7 @@ import { Assignment } from '../../../Models/Assignment.model';
 import { PublishControlArea } from '../../../Features/PublishAssignment/PublishControlArea';
 import { themedClassNames } from '../../Utils/FluentUI';
 import { AutohideMessageBar } from '../AutohideMessageBar';
+import { pagesDisplayNames } from '../../../Router/Consts';
 
 type NavWrapperStyles = SimpleComponentStyles<'root'  | 'navArea' | 'messageBar' | 'separator'>;
 
@@ -27,7 +28,11 @@ const NavPivotInner = ({ styles }: IStylesOnly<NavWrapperStyles>): JSX.Element |
   const history = useHistory();
   const assignmentStore = useStore('assignmentStore');
   const location = useLocation();
-
+  
+  // The following map can be extended to include other searchParams as well in future in case need be
+  let uriSearchParamsMap = new Map<string, string>();
+  uriSearchParamsMap.set(pagesDisplayNames.MSLEARN, ''); // replace empty string with store state
+  
   const handleLinkClick = (item?: PivotItem, event?: MouseEvent): void => {
     event?.preventDefault();
     if (item && item.props.itemKey) {
@@ -42,7 +47,8 @@ const NavPivotInner = ({ styles }: IStylesOnly<NavWrapperStyles>): JSX.Element |
     return {...link,
       url: url,
       key: url,
-      title: ''
+      title: '',
+      search: uriSearchParamsMap.get(link.name)
     }
   });
 
@@ -62,11 +68,13 @@ const NavPivotInner = ({ styles }: IStylesOnly<NavWrapperStyles>): JSX.Element |
               styles={themedClassNames(navStyles)}
             >
               {_.map(getMappedLinks(assignmentStore.assignment), link=>{
+                let urlWithSearchParams = link.url + 
+                  (link.search!==undefined && link.search.length>0 ? '?'+link.search : '')
                 return(            
                   <PivotItem
                     headerText={link.name}
                     itemIcon={link.icon}    
-                    itemKey={link.url} 
+                    itemKey={urlWithSearchParams} 
                     headerButtonProps={{disabled:link.disabled?link.disabled: false}}
                 />)
               })}

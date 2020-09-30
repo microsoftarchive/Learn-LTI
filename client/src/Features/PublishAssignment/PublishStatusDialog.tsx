@@ -64,24 +64,14 @@ export const PublishStatusDialog = ({
           onClick={onClickApprove}
           disabled={assignmentStore.isChangingPublishState?assignmentStore.isChangingPublishState:false}
           >
-          {assignmentStore.isChangingPublishState?
-          (<>
-          <Spinner className='stateChangeSpinner' size={SpinnerSize.xSmall}/>
-          {approveButtonText}
-          </>):
-          (<>
+            {assignmentStore.isChangingPublishState && <Spinner className='stateChangeSpinner' size={SpinnerSize.xSmall}/>}
             {approveButtonText}
-          </>)
-          }
           </PrimaryButton>
           <DefaultButton 
             onClick={onDismiss} 
-            disabled={assignmentStore.isChangingPublishState?assignmentStore.isChangingPublishState:false}
-          >
-            <>
-            Cancel
-            </>
-          </DefaultButton>
+            disabled={assignmentStore.isChangingPublishState? assignmentStore.isChangingPublishState : false}
+            text="Cancel"
+          />
         </DialogFooter>
       </Dialog>
     );
