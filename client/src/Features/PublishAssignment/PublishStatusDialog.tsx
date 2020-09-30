@@ -7,9 +7,7 @@ import {
   DefaultButton,
   IModalProps,
   IModalStyles,
-  IDialogStyles,
-  Spinner,
-  SpinnerSize
+  IDialogStyles, Spinner, SpinnerSize
 } from '@fluentui/react';
 import { DIALOG_MIN_WIDTH, commonDialogContentProps } from '../../Core/Components/Common/Dialog/EdnaDialogStyles';
 import { useStore } from '../../Stores/Core';
@@ -62,18 +60,16 @@ export const PublishStatusDialog = ({
         subText={subText}
       >
         <DialogFooter>
-          <PrimaryButton
-            onClick={onClickApprove}
-            disabled={assignmentStore.isChangingPublishState ? assignmentStore.isChangingPublishState : false}
+          <PrimaryButton 
+          onClick={onClickApprove}
+          disabled={assignmentStore.isChangingPublishState?assignmentStore.isChangingPublishState:false}
           >
-            {assignmentStore.isChangingPublishState && (
-              <Spinner className="stateChangeSpinner" size={SpinnerSize.xSmall} />
-            )}
+            {assignmentStore.isChangingPublishState && <Spinner className='stateChangeSpinner' size={SpinnerSize.xSmall}/>}
             {approveButtonText}
           </PrimaryButton>
-          <DefaultButton
-            onClick={onDismiss}
-            disabled={assignmentStore.isChangingPublishState ? assignmentStore.isChangingPublishState : false}
+          <DefaultButton 
+            onClick={onDismiss} 
+            disabled={assignmentStore.isChangingPublishState? assignmentStore.isChangingPublishState : false}
             text="Cancel"
           />
         </DialogFooter>
@@ -87,7 +83,7 @@ const modalStyle = (isDialogWindowVisible: boolean): Partial<IModalStyles> => ({
     {
       display: isDialogWindowVisible ? 'flex' : 'none',
       selectors: {
-        '.stateChangeSpinner': {
+        '.stateChangeSpinner':{
           marginLeft: '4px',
           marginRight: '20px'
         }
