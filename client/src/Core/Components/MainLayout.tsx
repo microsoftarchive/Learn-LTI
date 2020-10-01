@@ -1,6 +1,6 @@
 import React from 'react';
 import { Header } from './Header';
-import { styled, Spinner, SpinnerSize, FontSizes, FontWeights, Text, Separator, NavBase } from '@fluentui/react';
+import { styled, Spinner, SpinnerSize, FontSizes, FontWeights, Text, Separator } from '@fluentui/react';
 import { SimpleComponentStyles, IThemeOnlyProps, IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
 import { PagesRouter } from '../../Router/PagesRouter';
 import { useObserver } from 'mobx-react-lite';

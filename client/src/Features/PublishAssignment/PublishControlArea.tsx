@@ -1,6 +1,6 @@
 import React from 'react';
 import { IThemeOnlyProps, SimpleComponentStyles, IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-import { styled, mergeStyles, AnimationClassNames } from '@fluentui/react';
+import { styled } from '@fluentui/react';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { PublishStatusIndicator } from './PublishStatusIndicator';
 import { PublishActionButtons } from './PublishActionButtons';

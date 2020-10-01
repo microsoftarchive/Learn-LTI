@@ -42,12 +42,12 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
 
   return useObserver(() => {
     const editButtonClassNames = classNamesFunction<EditButtonStyleProps, IButtonStyles>()(editButtonStyle, {
-      isPublished: assignmentStore?.assignment?.publishStatus === 'Published',
+      isPublished: assignmentStore.assignment?.publishStatus === 'Published',
       theme: getTheme()
     });
 
     const publishButtonClassNames = classNamesFunction<PublishButtonStyleProps, IButtonStyles>()(publishButtonStyle, {
-      isPublished: assignmentStore?.assignment?.publishStatus === 'Published',
+      isPublished: assignmentStore.assignment?.publishStatus === 'Published',
       theme: getTheme()
     })
 

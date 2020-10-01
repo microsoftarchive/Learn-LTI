@@ -14,7 +14,6 @@ type PublishStatusIndicatorStyles = SimpleComponentStyles<'root' | 'text' | 'pub
 
 const PublishStatusIndicatorInner = ({ styles }: IStylesOnly<PublishStatusIndicatorStyles>): JSX.Element | null => {
   const assignmentStore = useStore('assignmentStore');
-
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
