@@ -20,7 +20,7 @@ export const configurationRoutes: RouteProps[] = [
   {
     name: pagesDisplayNames.MSLEARN,
     url: routesConstants.MSLEARN,
-    icon: 'LearningTools',
+    icon: 'D365TalentLearn',
     component: MicrosoftLearnPage
   }
 ];

@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { useState, useEffect } from 'react';
 import { IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import {
@@ -7,7 +12,7 @@ import {
   DefaultButton,
   IModalProps,
   IModalStyles,
-  IDialogStyles, Spinner, SpinnerSize
+  IDialogStyles
 } from '@fluentui/react';
 import { DIALOG_MIN_WIDTH, commonDialogContentProps } from '../../Core/Components/Common/Dialog/EdnaDialogStyles';
 import { useStore } from '../../Stores/Core';
@@ -40,6 +45,7 @@ export const PublishStatusDialog = ({
   }, [isOpen]);
 
   const onClickApprove = (): void => {
+    setIsDialogWindowVisible(false);
     onApprove();
   };
 
@@ -60,18 +66,8 @@ export const PublishStatusDialog = ({
         subText={subText}
       >
         <DialogFooter>
-          <PrimaryButton 
-          onClick={onClickApprove}
-          disabled={assignmentStore.isChangingPublishState?assignmentStore.isChangingPublishState:false}
-          >
-            {assignmentStore.isChangingPublishState && <Spinner className='stateChangeSpinner' size={SpinnerSize.xSmall}/>}
-            {approveButtonText}
-          </PrimaryButton>
-          <DefaultButton 
-            onClick={onDismiss} 
-            disabled={assignmentStore.isChangingPublishState? assignmentStore.isChangingPublishState : false}
-            text="Cancel"
-          />
+          <PrimaryButton onClick={onClickApprove} text={approveButtonText} />
+          <DefaultButton onClick={onDismiss} text="Cancel" />
         </DialogFooter>
       </Dialog>
     );
@@ -81,13 +77,7 @@ export const PublishStatusDialog = ({
 const modalStyle = (isDialogWindowVisible: boolean): Partial<IModalStyles> => ({
   main: [
     {
-      display: isDialogWindowVisible ? 'flex' : 'none',
-      selectors: {
-        '.stateChangeSpinner':{
-          marginLeft: '4px',
-          marginRight: '20px'
-        }
-      }
+      display: isDialogWindowVisible ? 'flex' : 'none'
     }
   ]
 });

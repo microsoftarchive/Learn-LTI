@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import React from 'react';
 import { IStylesOnly, IThemeOnlyProps, SimpleComponentStyles } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { FontIcon, FontSizes, IStyle, mergeStyles, Spinner, styled, Text } from '@fluentui/react';
@@ -19,7 +24,10 @@ const PublishStatusIndicatorInner = ({ styles }: IStylesOnly<PublishStatusIndica
     if (assignmentStore.isChangingPublishState) {
       return (
         <div className={classes.root}>
-          <Spinner className='stateChangeSpinner' />
+          <Spinner />
+          <Text variant="medium" className={classes.text}>
+            {assignmentStore.assignment.publishStatus === 'Published' ? 'Switching to edit mode...' : 'Publishing...'}
+          </Text>
         </div>
       );
     }
@@ -48,20 +56,13 @@ const publishStatusIndicatorStyles = ({ theme }: IThemeOnlyProps): PublishStatus
   root: [
     {
       display: 'flex',
-      alignItems: 'center',
-      paddingTop: theme.spacing.s1,
-      selectors: {
-        '.stateChangeSpinner':{
-          marginLeft: theme.spacing.s1,
-          marginRight: theme.spacing.l1
-        }
-      }
+      alignItems: 'center'
     }
   ],
   text: [
     mergeStyles(textIconStyle, {
       marginLeft: theme.spacing.s1,
-      marginRight: theme.spacing.l1
+      marginRight: theme.spacing.s1
     })
   ],
   publishedIcon: [

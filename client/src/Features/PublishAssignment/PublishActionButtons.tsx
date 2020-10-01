@@ -25,6 +25,8 @@ interface EditButtonStyleProps {
   theme: ITheme;
 }
 
+interface PublishButtonStyleProps extends EditButtonStyleProps {}; 
+
 const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsStyles>): JSX.Element => {
   const assignmentStore = useStore('assignmentStore');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
@@ -44,7 +46,7 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
       theme: getTheme()
     });
 
-    const publishButtonClassNames = classNamesFunction<EditButtonStyleProps, IButtonStyles>()(publishButtonStyle, {
+    const publishButtonClassNames = classNamesFunction<PublishButtonStyleProps, IButtonStyles>()(publishButtonStyle, {
       isPublished: assignmentStore?.assignment?.publishStatus === 'Published',
       theme: getTheme()
     })
@@ -134,7 +136,7 @@ const editButtonStyle = ({ theme, isPublished }: EditButtonStyleProps): Partial<
     ]
   });
 
-const publishButtonStyle = ({ theme, isPublished }: EditButtonStyleProps): Partial<IButtonStyles> =>
+const publishButtonStyle = ({ theme, isPublished }: PublishButtonStyleProps): Partial<IButtonStyles> =>
   mergeStyleSets(commonButtonStyle, {
     root: [
       {

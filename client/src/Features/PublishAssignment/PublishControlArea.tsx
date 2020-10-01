@@ -6,16 +6,18 @@ import { PublishStatusIndicator } from './PublishStatusIndicator';
 import { PublishActionButtons } from './PublishActionButtons';
 import { useObserver } from 'mobx-react-lite';
 
-export type PublishControlAreaStyles = SimpleComponentStyles<'root' | 'messageBar'>;
+export type PublishControlAreaStyles = SimpleComponentStyles<'root'>;
 
 const PublishControlAreaInner = ({ styles }: IStylesOnly<PublishControlAreaStyles>): JSX.Element => {
   const classes = themedClassNames(styles);
 
   return useObserver(() => (
+    <>
     <div className={classes.root}>
       <PublishStatusIndicator />
       <PublishActionButtons />
     </div>
+  </>
   ));
 };
 
@@ -28,13 +30,6 @@ const publishControlAreaStyles = ({ theme }: IThemeOnlyProps): PublishControlAre
       flexDirection: 'row',
       width: 'max-content'
     }
-  ],
-  messageBar: [
-    mergeStyles(AnimationClassNames.fadeIn200, {
-      height: theme.spacing.l2,
-      width: 'auto',
-      marginLeft: 'auto'
-    })
   ]
 });
 
