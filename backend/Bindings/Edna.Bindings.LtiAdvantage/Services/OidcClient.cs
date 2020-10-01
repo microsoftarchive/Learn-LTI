@@ -1,4 +1,9 @@
-﻿using System.Collections.Specialized;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+using System.Collections.Specialized;
 using System.Web;
 using Edna.Bindings.LtiAdvantage.Models;
 

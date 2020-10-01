@@ -1,4 +1,9 @@
-﻿using System.Net.Http;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+using System.Net.Http;
 using System.Threading.Tasks;
 using Edna.Bindings.Platform.Attributes;
 using Microsoft.Azure.WebJobs.Host.Bindings;

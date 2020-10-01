@@ -1,4 +1,9 @@
-﻿namespace Edna.AssignmentLinks
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+namespace Edna.AssignmentLinks
 {
     public class Profile : AutoMapper.Profile
     {

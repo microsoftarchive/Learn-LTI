@@ -1,4 +1,9 @@
-﻿using AutoMapper;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+using AutoMapper;
 using Edna.Assignments;
 using Edna.Bindings.Platform;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;

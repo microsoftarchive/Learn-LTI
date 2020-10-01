@@ -1,4 +1,9 @@
-﻿namespace Edna.Bindings.LtiAdvantage.Models
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+namespace Edna.Bindings.LtiAdvantage.Models
 {
     public class LoginParams
     {

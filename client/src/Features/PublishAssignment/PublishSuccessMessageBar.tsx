@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import React, { useState, useEffect, useRef } from 'react';
 import { IThemeOnlyProps, IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { styled, MessageBar, MessageBarType, IMessageBarStyles, mergeStyles, AnimationClassNames } from '@fluentui/react';
