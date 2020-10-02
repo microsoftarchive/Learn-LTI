@@ -5,7 +5,14 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { IThemeOnlyProps, IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-import { styled, MessageBar, MessageBarType, IMessageBarStyles, mergeStyles, AnimationClassNames } from '@fluentui/react';
+import {
+  styled,
+  MessageBar,
+  MessageBarType,
+  IMessageBarStyles,
+  mergeStyles,
+  AnimationClassNames
+} from '@fluentui/react';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 
 interface PublishSuccessMessageBarProps {
@@ -50,11 +57,7 @@ const PublishSuccessMessageBarInner = ({
 
   if (isShown) {
     return (
-      <MessageBar 
-        messageBarType={MessageBarType.success} 
-        isMultiline={false} 
-        styles={themedClassNames(styles)}
-      >
+      <MessageBar messageBarType={MessageBarType.success} isMultiline={false} styles={themedClassNames(styles)}>
         Your assignment was published successfully
       </MessageBar>
     );
@@ -62,17 +65,16 @@ const PublishSuccessMessageBarInner = ({
   return null;
 };
 
-const publishSuccessMessageBarStyles = ({ theme: _theme }: IThemeOnlyProps): PublishSuccessMessageBarStyles => ({
+const publishSuccessMessageBarStyles = ({ theme: theme }: IThemeOnlyProps): PublishSuccessMessageBarStyles => ({
   root: [
     mergeStyles(AnimationClassNames.fadeIn200, {
-      height: _theme.spacing.l2,
+      height: theme.spacing.l2,
       width: 'auto',
       marginLeft: '32px',
       marginRight: '32px',
-      marginTop: `calc(${_theme.spacing.s1}*1.6)`
+      marginTop: `calc(${theme.spacing.s1}*1.6)`
     })
   ]
-  
 });
 
 export const PublishSuccessMessageBar = styled(PublishSuccessMessageBarInner, publishSuccessMessageBarStyles);

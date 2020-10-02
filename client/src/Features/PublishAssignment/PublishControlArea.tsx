@@ -17,19 +17,17 @@ const PublishControlAreaInner = ({ styles }: IStylesOnly<PublishControlAreaStyle
   const classes = themedClassNames(styles);
 
   return useObserver(() => (
-    <>
     <div className={classes.root}>
       <PublishStatusIndicator />
       <PublishActionButtons />
     </div>
-  </>
   ));
 };
 
 const publishControlAreaStyles = ({ theme }: IThemeOnlyProps): PublishControlAreaStyles => ({
   root: [
     {
-      position:"relative",
+      position:'relative',
       padding: `calc(${theme.spacing.l1}*0.75) 0`,
       display: 'flex',
       flexDirection: 'row',

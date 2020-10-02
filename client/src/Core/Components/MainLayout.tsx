@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Header } from './Header';
-import { styled, Spinner, SpinnerSize, FontSizes, FontWeights, Text, Separator } from '@fluentui/react';
+import { styled, Spinner, SpinnerSize, FontSizes, FontWeights, Text, mergeStyles } from '@fluentui/react';
 import { SimpleComponentStyles, IThemeOnlyProps, IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
 import { PagesRouter } from '../../Router/PagesRouter';
 import { useObserver } from 'mobx-react-lite';
@@ -16,11 +16,12 @@ import { StudentPage } from '../../Features/StudentView/StudentPage';
 import learnLogo from '../../Assets/icon_learn_062020.png';
 import { useQueryValue } from '../Hooks';
 import { ErrorPage } from './ErrorsPage';
-import { PublishControlArea } from '../../Features/PublishAssignment/PublishControlArea';
+import { PublishControlArea, PublishControlAreaStyles } from '../../Features/PublishAssignment/PublishControlArea';
 import { PublishSuccessMessageBar } from '../../Features/PublishAssignment/PublishSuccessMessageBar';
 import * as NavBarBase from './Navbar'
+import { stickyHeaderStyle } from './Common/StickyHeaderStyle';
 
-type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content' | 'assignmentTitle' | 'navAndControlArea' | 'separator'>;
+type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content' | 'assignmentTitle' | 'navAndControlArea'>;
 
 const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element => {
   useAssignmentInitializer();
@@ -59,10 +60,9 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
               </Text>
               <div className={classes.navAndControlArea}>
                 <NavBarBase.NavbarTop />                  
-                <PublishControlArea/>
+                <PublishControlArea  />
               </div>
-              <Separator className={classes.separator} />
-              <PublishSuccessMessageBar isPublished={assignmentStore.assignment.publishStatus === 'Published'}/>
+              <PublishSuccessMessageBar isPublished={assignmentStore.assignment.publishStatus === 'Published'} />
               <PagesRouter />
             </>
           ) : (
@@ -116,22 +116,15 @@ const mainLayoutStyle = ({ theme }: IThemeOnlyProps): MainLayoutStyles => {
       }
     ],
     navAndControlArea: [
-      {
+      mergeStyles(stickyHeaderStyle(theme), { 
         display: 'flex',
         backgroundColor: theme.palette.neutralLighterAlt,
-        paddingLeft: `calc(${theme.spacing.l1} * 1.6)`,
-        paddingRight: `calc(${theme.spacing.l1} * 1.6)`,     
+        marginLeft: `calc(${theme.spacing.l1} * 1.6)`,
+        marginRight: `calc(${theme.spacing.l1} * 1.6)`,
         height:`calc(${theme.spacing.l1} * 2.7)`,
         flexDirection: 'row',
         justifyContent: 'space-between',  
-      }
-    ],
-    separator: [
-      {
-        height: '1px',
-        backgroundColor: '#E1DFDD',
-        padding: `0px 0px`
-      }
+      })
     ]
   };
 };
