@@ -16,7 +16,7 @@ import { StudentPage } from '../../Features/StudentView/StudentPage';
 import learnLogo from '../../Assets/icon_learn_062020.png';
 import { useQueryValue } from '../Hooks';
 import { ErrorPage } from './ErrorsPage';
-import { PublishControlArea, PublishControlAreaStyles } from '../../Features/PublishAssignment/PublishControlArea';
+import { PublishControlArea } from '../../Features/PublishAssignment/PublishControlArea';
 import { PublishSuccessMessageBar } from '../../Features/PublishAssignment/PublishSuccessMessageBar';
 import * as NavBarBase from './Navbar'
 import { stickyHeaderStyle } from './Common/StickyHeaderStyle';

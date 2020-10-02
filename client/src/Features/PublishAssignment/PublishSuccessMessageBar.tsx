@@ -65,7 +65,7 @@ const PublishSuccessMessageBarInner = ({
   return null;
 };
 
-const publishSuccessMessageBarStyles = ({ theme: theme }: IThemeOnlyProps): PublishSuccessMessageBarStyles => ({
+const publishSuccessMessageBarStyles = ({ theme }: IThemeOnlyProps): PublishSuccessMessageBarStyles => ({
   root: [
     mergeStyles(AnimationClassNames.fadeIn200, {
       height: theme.spacing.l2,
