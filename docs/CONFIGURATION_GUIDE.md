@@ -38,9 +38,8 @@ The following steps show how to configure an LTI tool on a Moodle LMS.
  * **Tool name**: give the tool a name of your choice. For example: "Microsoft Learn".
  * **Tool URL**: https://[lti-domain-url]/api/launch-lti1 where [lti-domain-url] is the Domain URL field from Microsoft Learn LTI application’s registration page. 
  * **LTI version**: LTI 1.0/1.1
- * **Consumer key**: key
- * **Shared secret**: secret
- * For LTI1.1, the current values for Consumer Key and Shared Secret are literal values key and secret. 
+ * **Consumer key**: LearnLTI
+ * **Shared secret**: LearnLTI
  * **Default launch container**: New window
 7. Under **Services**, **IMS LTI Names and Role Provisioning**: select **Use this service to retrieve members’ information as per privacy settings**.
 8. Under **Privacy**, select the following options:
