@@ -57,6 +57,7 @@ const NavPivotInner = ({ styles }: IStylesOnly<NavWrapperStyles>): JSX.Element |
 
   const selectedNavKey = removeSlashFromStringEnd(location.pathname);
   const classes = themedClassNames(styles);
+
     return useObserver(() => {
       if (!assignmentStore.assignment) {
         return null;
@@ -111,13 +112,18 @@ const navStyles = ({ theme }: IThemeOnlyProps): Partial<IPivotStyles> => ({
       '.is-selected':{
         fontSize: '16px',
         fontWeight: FontWeights.semibold
+      },
+      '.ms-Pivot-icon  i, ':{
+        fontFamily: 'FabricMDL2Icons, FabricMDL2Icons-1, FabricMDL2Icons-2',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
       }
     }
   },
   link:{
     padding: '0px',
     marginRight: `calc(${theme.spacing.s1}*2)`,
-    fontSize: '16px',    
+    fontSize: '16px'    
   }
 })
 
