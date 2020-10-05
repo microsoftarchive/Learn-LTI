@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Header } from './Header';
-import { styled, Spinner, SpinnerSize, FontSizes, FontWeights, Text, mergeStyles } from '@fluentui/react';
+import { styled, Spinner, SpinnerSize, FontSizes, FontWeights, mergeStyles } from '@fluentui/react';
 import { SimpleComponentStyles, IThemeOnlyProps, IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
 import { PagesRouter } from '../../Router/PagesRouter';
 import { useObserver } from 'mobx-react-lite';
@@ -16,9 +16,6 @@ import { StudentPage } from '../../Features/StudentView/StudentPage';
 import learnLogo from '../../Assets/icon_learn_062020.png';
 import { useQueryValue } from '../Hooks';
 import { ErrorPage } from './ErrorsPage';
-import { PublishControlArea } from '../../Features/PublishAssignment/PublishControlArea';
-import { PublishSuccessMessageBar } from '../../Features/PublishAssignment/PublishSuccessMessageBar';
-import * as NavBarBase from './Navbar'
 import { stickyHeaderStyle } from './Common/StickyHeaderStyle';
 import { NavigationControlHeader } from './NavigationControlHeader';
 
