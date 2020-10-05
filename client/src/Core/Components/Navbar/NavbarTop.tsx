@@ -16,7 +16,7 @@ import { Assignment } from '../../../Models/Assignment.model';
 import { themedClassNames } from '../../Utils/FluentUI';
 import { pagesDisplayNames } from '../../../Router/Consts';
 
-type NavWrapperStyles = SimpleComponentStyles<'root'>;
+type NavbarTopStyles = SimpleComponentStyles<'root'>;
 
 const getNavLinks = (assignment: Assignment): INavLink[] => [
   ...(assignment.publishStatus === 'Published' ? 
@@ -27,7 +27,7 @@ const getNavLinks = (assignment: Assignment): INavLink[] => [
 
 const removeSlashFromStringEnd = (initialString: string): string => initialString.replace(/\/$/, '');
 
-const NavPivotInner = ({ styles }: IStylesOnly<NavWrapperStyles>): JSX.Element | null => {
+const NavbarTopInner = ({ styles }: IStylesOnly<NavbarTopStyles>): JSX.Element | null => {
   const history = useHistory();
   const assignmentStore = useStore('assignmentStore');
   const location = useLocation();
@@ -88,7 +88,7 @@ const NavPivotInner = ({ styles }: IStylesOnly<NavWrapperStyles>): JSX.Element |
   )
 }
 
-const NavWrapperStyles = ({ theme }: IThemeOnlyProps): NavWrapperStyles => ({
+const NavbarTopStyles = ({ theme }: IThemeOnlyProps): NavbarTopStyles => ({
   root: [
     {
       display: 'flex',
@@ -127,4 +127,4 @@ const navStyles = ({ theme }: IThemeOnlyProps): Partial<IPivotStyles> => ({
   }
 })
 
-export const NavbarTop = styled(NavPivotInner, NavWrapperStyles);
+export const NavbarTop = styled(NavbarTopInner, NavbarTopStyles);

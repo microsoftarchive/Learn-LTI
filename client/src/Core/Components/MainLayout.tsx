@@ -20,6 +20,7 @@ import { PublishControlArea } from '../../Features/PublishAssignment/PublishCont
 import { PublishSuccessMessageBar } from '../../Features/PublishAssignment/PublishSuccessMessageBar';
 import * as NavBarBase from './Navbar'
 import { stickyHeaderStyle } from './Common/StickyHeaderStyle';
+import { NavigationControlHeader } from './NavigationControlHeader';
 
 type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content' | 'assignmentTitle' | 'navAndControlArea'>;
 
@@ -55,14 +56,7 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         <div className={classes.content}>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
-              <Text variant="xLargePlus" className={classes.assignmentTitle}>
-                {assignmentStore.assignment.name}
-              </Text>
-              <div className={classes.navAndControlArea}>
-                <NavBarBase.NavbarTop />                  
-                <PublishControlArea  />
-              </div>
-              <PublishSuccessMessageBar isPublished={assignmentStore.assignment.publishStatus === 'Published' && assignmentStore.isChangingPublishState === false} />
+              <NavigationControlHeader/>
               <PagesRouter />
             </>
           ) : (
