@@ -62,7 +62,7 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
                 <NavBarBase.NavbarTop />                  
                 <PublishControlArea  />
               </div>
-              <PublishSuccessMessageBar isPublished={assignmentStore.assignment.publishStatus === 'Published'} />
+              <PublishSuccessMessageBar isPublished={assignmentStore.assignment.publishStatus === 'Published' && assignmentStore.isChangingPublishState === false} />
               <PagesRouter />
             </>
           ) : (
