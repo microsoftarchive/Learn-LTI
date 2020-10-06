@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// --------------------------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+// --------------------------------------------------------------------------------------------
+
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Edna.Utils.Http;
-using LtiAdvantage.NamesRoleProvisioningService;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Edna.Bindings.User
