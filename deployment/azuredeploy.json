@@ -168,7 +168,7 @@
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
                 "AssignmentsServiceUrl": "[concat('https://', 'assignments' , variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "Lti1Secret": "secret",
+                "Lti1Secret": "LearnLTI",
                 "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
                 "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
@@ -194,7 +194,7 @@
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
                 "AssignmentsServiceUrl": "[concat('https://', 'assignments', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "Lti1Secret": "secret",
+                "Lti1Secret": "LearnLTI",
                 "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
                 "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
