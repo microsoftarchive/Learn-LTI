@@ -44,9 +44,9 @@ const navigationControlHeaderStyle = ({ theme }: IThemeOnlyProps): NavigationCon
         color: theme.palette.neutralPrimary,
         backgroundColor: theme.palette.neutralLighterAlt,
         lineHeight: FontSizes.xxLarge,
-        paddingLeft: `calc(${theme.spacing.l1}*1.6)`,
-        paddingBottom: `calc(${theme.spacing.l1}*0.5)`,
-        paddingTop: `calc(${theme.spacing.l1}*1.5)`
+        paddingLeft: `calc(${theme.spacing.l1} * 1.6)`,
+        paddingBottom: `calc(${theme.spacing.l1} * 0.5)`,
+        paddingTop: `calc(${theme.spacing.l1} * 1.5)`
       }
     ],
 

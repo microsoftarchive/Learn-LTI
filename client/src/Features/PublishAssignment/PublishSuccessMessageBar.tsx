@@ -70,9 +70,9 @@ const publishSuccessMessageBarStyles = ({ theme }: IThemeOnlyProps): PublishSucc
     mergeStyles(AnimationClassNames.fadeIn200, {
       height: theme.spacing.l2,
       width: 'auto',
-      marginLeft: '32px',
-      marginRight: '32px',
-      marginTop: `calc(${theme.spacing.s1}*1.6)`
+      marginLeft: theme.spacing.l2,
+      marginRight: theme.spacing.l2, 
+      marginTop: `calc(${theme.spacing.s1} * 1.6)`
     })
   ]
 });

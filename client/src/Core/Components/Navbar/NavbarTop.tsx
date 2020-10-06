@@ -15,6 +15,7 @@ import { IThemeOnlyProps, IStylesOnly, SimpleComponentStyles } from '../../Utils
 import { Assignment } from '../../../Models/Assignment.model';
 import { themedClassNames } from '../../Utils/FluentUI';
 import { pagesDisplayNames } from '../../../Router/Consts';
+import { FontSizes } from '@uifabric/fluent-theme';
 
 type NavbarTopStyles = SimpleComponentStyles<'root'>;
 
@@ -104,13 +105,13 @@ const navStyles = ({ theme }: IThemeOnlyProps): Partial<IPivotStyles> => ({
     width: `calc(${theme.spacing.l1} * 20.4)`,
     height:`calc(${theme.spacing.l1} * 2.6)`,
     backgroundColor: theme.palette.neutralLighterAlt,
-    paddingTop: '10px',
+    paddingTop: `calc(${theme.spacing.s1} * 1.25)`,
     selectors: {
       '.is-disabled':{
         color: theme.semanticColors.disabledText
       },
       '.is-selected':{
-        fontSize: '16px',
+        fontSize: FontSizes.size16,
         fontWeight: FontWeights.semibold
       },
       '.ms-Pivot-icon  i, ':{
@@ -122,8 +123,8 @@ const navStyles = ({ theme }: IThemeOnlyProps): Partial<IPivotStyles> => ({
   },
   link:{
     padding: '0px',
-    marginRight: `calc(${theme.spacing.s1}*2)`,
-    fontSize: '16px'    
+    marginRight: `calc(${theme.spacing.s1} * 2)`,
+    fontSize: FontSizes.size16    
   }
 })
 

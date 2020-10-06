@@ -31,7 +31,7 @@ const getNavLinkGroups = (assignment: Assignment): INavLinkGroup[] => [
 
 const removeSlashFromStringEnd = (initialString: string): string => initialString.replace(/\/$/, '');
 
-const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null => {
+const NavbarLHPInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null => {
   const assignmentStore = useStore('assignmentStore');
   const history = useHistory();
   const location = useLocation();
@@ -77,7 +77,7 @@ const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null =>
   });
 };
 
-const navStyles = ({ theme }: IThemeOnlyProps): Partial<INavStyles> => ({
+const navbarLHPStyles = ({ theme }: IThemeOnlyProps): Partial<INavStyles> => ({
   root: {
     width: `calc(${theme.spacing.l1} * 11)`,
     backgroundColor: theme.palette.neutralLighter,
@@ -139,4 +139,4 @@ const navStyles = ({ theme }: IThemeOnlyProps): Partial<INavStyles> => ({
   }
 });
 
-export const NavbarLHP = styled(NavbarInner, navStyles);
+export const NavbarLHP = styled(NavbarLHPInner, navbarLHPStyles);
