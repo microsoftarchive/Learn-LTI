@@ -9,7 +9,6 @@
         "appRegistrationApiURI": {
             "type": "string",
             "defaultValue": "api://10ef1e6b-1171-4888-92d5-c661b428796b"
-
         },
         "utcValue": {
             "type": "string",
@@ -27,11 +26,8 @@
             "type": "string",
             "defaultValue": ""
         }
-
-
     },
     "variables": {
-
         "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id),0,9)]",
         "functionList": [
             "connect",
@@ -58,7 +54,16 @@
         "cliArg": "[concat(variables('keyVaultName'), ' ', variables('staticWebsite'), ' ',variables('location'), ' ',variables('ProjectNameSuffix'), ' ',variables('keyName'),' ',variables('resourceGroupName'))]",
         "contributorRoleAssignmentId": "[guid(concat(resourceGroup().id, 'contributor'))]",
         "contributorRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-        "readerRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]"
+        "readerRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+        "keyPermissions": [
+            "encrypt",
+            "decrypt",
+            "wrapKey",
+            "unwrapKey",
+            "sign",
+            "verify",
+            "get"
+        ]
     },
     "resources": [
         {
@@ -102,7 +107,6 @@
                             "name": "WEBSITE_CONTENTSHARE",
                             "value": "[toLower(concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')))]"
                         },
-
                         {
                             "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
                             "value": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]"
@@ -188,7 +192,7 @@
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat('connect', variables('ProjectNameSuffix')))]",
+                "[resourceId('Microsoft.Web/sites', concat('users', variables('ProjectNameSuffix')))]",
                 "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
             ],
             "properties": {
@@ -325,7 +329,7 @@
                 "enabledForDiskEncryption": "[variables('enabledForDiskEncryption')]",
                 "enabledForTemplateDeployment": "[variables('enabledForTemplateDeployment')]",
                 "tenantId": "[variables('tenantId')]",
-                "accessPolicies": [ 
+                "accessPolicies": [
                     {
                         "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
                         "tenantId": "[variables('tenantId')]",
@@ -371,45 +375,21 @@
                         "tenantId": "[variables('tenantId')]",
                         "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('connect' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
-                            "keys": [
-                                "encrypt",
-                                "decrypt",
-                                "wrapKey",
-                                "unwrapKey",
-                                "sign",
-                                "verify",
-                                "get"
-                            ]
+                            "keys": "[variables('keyPermissions')]"
                         }
                     },
                     {
                         "tenantId": "[variables('tenantId')]",
                         "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('users' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
-                            "keys": [
-                                "encrypt",
-                                "decrypt",
-                                "wrapKey",
-                                "unwrapKey",
-                                "sign",
-                                "verify",
-                                "get"
-                            ]
+                            "keys": "[variables('keyPermissions')]"
                         }
                     },
                     {
                         "tenantId": "[variables('tenantId')]",
                         "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('platforms' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
-                            "keys": [
-                                "encrypt",
-                                "decrypt",
-                                "wrapKey",
-                                "unwrapKey",
-                                "sign",
-                                "verify",
-                                "get"
-                            ]
+                            "keys": "[variables('keyPermissions')]"
                         }
                     }
                 ]
