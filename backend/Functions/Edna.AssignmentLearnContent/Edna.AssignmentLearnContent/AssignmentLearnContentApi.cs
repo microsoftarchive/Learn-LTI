@@ -15,19 +15,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Edna.Bindings.Lti1;
-using Edna.Bindings.LtiAdvantage.Attributes;
-using Edna.Bindings.LtiAdvantage.Services;
-using Edna.Bindings.Platform;
-using Edna.Bindings.Platform.Attributes;
-using Edna.Bindings.Platform.Models;
 using Edna.Utils.Http;
-using LtiLibrary.NetCore.Lis.v2;
-using LtiAdvantage.NamesRoleProvisioningService;
-using LtiAdvantage.Lti;
-using Edna.Bindings.Assignment.Attributes;
-using Edna.Bindings.Assignment.Models;
-using LtiLibrary.NetCore.Lis.v1;
+using Edna.Bindings.User.Attributes;
+using Edna.Bindings.User;
+using Edna.Bindings.User.Models;
 
 namespace Edna.AssignmentLearnContent
 {
@@ -86,14 +77,23 @@ namespace Edna.AssignmentLearnContent
             [Table(AssignmentLearnContentTableName)] IAsyncCollector<AssignmentLearnContentEntity> linksCollector,
             string assignmentId,
             string contentUid,
-            [Assignment(AssignmentId = "{assignmentId}")] Assignment assignment,
-            [Platform] PlatformsClient platformsClient,
-            [LtiAdvantage] INrpsClient nrpsClient,
-            [Lti1] Lti1MembershipClient membershipClient)
+            [User] UsersClient usersClient)
         {
-            IActionResult res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
-            if (res.GetType() != typeof(OkResult))
-                return res;
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allMembers = await usersClient.GetAllUsers(assignmentId);
+                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (!memberDto.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
 
             _logger.LogInformation($"Saving assignment learn content with uid [{contentUid}] to assignment {assignmentId}");
 
@@ -115,17 +115,26 @@ namespace Edna.AssignmentLearnContent
             [Table(AssignmentLearnContentTableName, "{assignmentId}", "{contentUid}")] AssignmentLearnContentEntity assignmentLearnContentEntityToDelete,
             string assignmentId,
             string contentUid,
-            [Assignment(AssignmentId = "{assignmentId}")] Assignment assignment,
-            [Platform] PlatformsClient platformsClient,
-            [LtiAdvantage] INrpsClient nrpsClient,
-            [Lti1] Lti1MembershipClient membershipClient)
+            [User] UsersClient usersClient)
         {
             if (assignmentLearnContentEntityToDelete == null)
                 return new NoContentResult();
 
-            IActionResult res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
-            if (res.GetType() != typeof(OkResult))
-                return res;
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allMembers = await usersClient.GetAllUsers(assignmentId);
+                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (!memberDto.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
 
             _logger.LogInformation($"Removing assignment learn content with uid [{contentUid}] from assignment {assignmentId}");
 
@@ -143,19 +152,29 @@ namespace Edna.AssignmentLearnContent
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "assignments/{assignmentId}/learn-content")] HttpRequest req,
             [Table(AssignmentLearnContentTableName)] CloudTable assignmentLearnContentTable,
             string assignmentId,
-            [Assignment(AssignmentId = "{assignmentId}")] Assignment assignment,
-            [Platform] PlatformsClient platformsClient,
-            [LtiAdvantage] INrpsClient nrpsClient,
-            [Lti1] Lti1MembershipClient membershipClient)
+            [User] UsersClient usersClient)
         {
             List<AssignmentLearnContentEntity> assignmentLearnContentEntities = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
 
             if (assignmentLearnContentEntities.Count == 0)
                 return new NoContentResult();
 
-            IActionResult res = await ValidateUser(req, assignment, platformsClient, nrpsClient, membershipClient);
-            if (res.GetType() != typeof(OkResult))
-                return res;
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allMembers = await usersClient.GetAllUsers(assignmentId);
+                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+
+                if (!memberDto.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
 
             _logger.LogInformation($"Removing all assignment learn content from assignment {assignmentId}");
 
@@ -204,56 +223,6 @@ namespace Edna.AssignmentLearnContent
             UriBuilder newUriBuilder = new UriBuilder(url) { Query = queryParams.ToString() };
 
             contentJToken["url"] = newUriBuilder.Uri.ToString();
-        }
-
-        private async Task<IActionResult> ValidateUser(HttpRequest req, Assignment assignment, PlatformsClient platformsClient, INrpsClient nrpsClient, Lti1MembershipClient membershipClient)
-        {
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
-            {
-                _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Could not get user email.");
-            }
-
-            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
-            if (userEmails.Count > 0)
-                return await ValidateUserEmails(assignment, platformsClient, nrpsClient, membershipClient, userEmails);
-
-            return new OkResult();
-        }
-
-        private async Task<IActionResult> ValidateUserEmails(Assignment assignment, PlatformsClient platformsClient, INrpsClient nrpsClient, Lti1MembershipClient membershipClient, List<string> userEmails)
-        {
-            if (assignment.LtiVersion != LtiAdvantageVersionString)
-            {
-                Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
-                if (userMembership == null)
-                {
-                    _logger.LogError("no members with the given user emails");
-                    return new BadRequestErrorMessageResult("Invalid User");
-                }
-                if (userMembership.Role.Equals(ContextRole.Learner))
-                {
-                    _logger.LogError("Students cannot update an assignment");
-                    return new UnauthorizedResult();
-                }
-            }
-            else
-            {
-                Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
-                Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
-                if (member == null)
-                {
-                    _logger.LogError("no members with the given user emails");
-                    return new BadRequestErrorMessageResult("Invalid User");
-                }
-                if (member.Roles.Contains(Role.ContextLearner) || member.Roles.Contains(Role.InstitutionLearner))
-                {
-                    _logger.LogError("Students cannot update an assignment");
-                    return new UnauthorizedResult();
-                }
-            }
-            return new OkResult();
         }
     }
 }

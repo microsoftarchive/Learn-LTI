@@ -224,7 +224,7 @@
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
                 "PlatformsServiceUrl": "[concat('https://','platforms' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
-                "Lti1Secret": "secret",
+                "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('assignments' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('assignments' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
@@ -271,9 +271,7 @@
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "AssignmentsServiceUrl": "[concat('https://', 'assignments' , variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "Lti1Secret": "secret",
+                "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('links' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('links' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
@@ -296,9 +294,7 @@
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "AssignmentsServiceUrl": "[concat('https://', 'assignments' , variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "Lti1Secret": "secret",
+                "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('learncontent' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('learncontent' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
@@ -439,27 +435,6 @@
                     {
                         "tenantId": "[variables('tenantId')]",
                         "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('platforms' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
-                        "permissions": {
-                            "keys": "[variables('keyPermissions')]"
-                        }
-                    },
-                    {
-                        "tenantId": "[variables('tenantId')]",
-                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('assignments' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
-                        "permissions": {
-                            "keys": "[variables('keyPermissions')]"
-                        }
-                    },
-                    {
-                        "tenantId": "[variables('tenantId')]",
-                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('learncontent' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
-                        "permissions": {
-                            "keys": "[variables('keyPermissions')]"
-                        }
-                    },
-                    {
-                        "tenantId": "[variables('tenantId')]",
-                        "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('links' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
                             "keys": "[variables('keyPermissions')]"
                         }

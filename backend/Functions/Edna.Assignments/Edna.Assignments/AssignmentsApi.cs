@@ -1,9 +1,6 @@
 using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
-using Edna.Bindings.Lti1;
-using Edna.Bindings.LtiAdvantage.Attributes;
-using Edna.Bindings.LtiAdvantage.Services;
 using Edna.Bindings.Platform;
 using Edna.Bindings.Platform.Attributes;
 using Edna.Bindings.Platform.Models;
@@ -16,12 +13,11 @@ using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using Edna.Utils.Http;
 using System.Collections.Generic;
-using LtiLibrary.NetCore.Lis.v2;
-using LtiLibrary.NetCore.Lis.v1;
-using LtiAdvantage.NamesRoleProvisioningService;
-using LtiAdvantage.Lti;
 using System.Linq;
 using System;
+using Edna.Bindings.User.Attributes;
+using Edna.Bindings.User;
+using Edna.Bindings.User.Models;
 
 namespace Edna.Assignments
 {
@@ -44,9 +40,7 @@ namespace Edna.Assignments
         public async Task<IActionResult> CreateOrUpdateAssignment(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = AssignmentsRoutePath)] HttpRequest req,
             [Table(AssignmentsTableName)] CloudTable assignmentsTable,
-            [Platform] PlatformsClient platformsClient,
-            [LtiAdvantage] INrpsClient nrpsClient,
-            [Lti1] Lti1MembershipClient membershipClient)
+            [User] UsersClient usersClient)
         {
             string result = await req.ReadAsStringAsync();
 
@@ -54,10 +48,22 @@ namespace Edna.Assignments
             AssignmentEntity assignmentEntity = _mapper.Map<AssignmentEntity>(assignmentDto);
             assignmentEntity.ETag = "*";
 
-            IActionResult res = await ValidateUser(req, assignmentDto, platformsClient, nrpsClient, membershipClient);
-            if(res.GetType() != typeof(OkResult))
-                return res;
-            
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allMembers = await usersClient.GetAllUsers(assignmentDto.Id);
+                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (!memberDto.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
+
             TableOperation insertOrMergeAssignment = TableOperation.InsertOrMerge(assignmentEntity);
             TableResult insertOrMergeResult = await assignmentsTable.ExecuteAsync(insertOrMergeAssignment);
             if (insertOrMergeResult.HttpStatusCode < 200 || insertOrMergeResult.HttpStatusCode >= 300)
@@ -102,11 +108,9 @@ namespace Edna.Assignments
             [Table(AssignmentsTableName)] CloudTable table,
             [Table(AssignmentsTableName)] IAsyncCollector<AssignmentEntity> assignmentEntityCollector,
             string assignmentId,
-            [Platform] PlatformsClient platformsClient,
-            [LtiAdvantage] INrpsClient nrpsClient,
-            [Lti1] Lti1MembershipClient membershipClient)
+            [User] UsersClient usersClient)
         {
-            return await ChangePublishStatus(req, table, assignmentEntityCollector, assignmentId, platformsClient, nrpsClient, membershipClient, PublishStatus.Published);
+            return await ChangePublishStatus(req, table, assignmentEntityCollector, assignmentId, usersClient, PublishStatus.Published);
         }
 
         [FunctionName(nameof(UnpublishAssignment))]
@@ -115,11 +119,9 @@ namespace Edna.Assignments
             [Table(AssignmentsTableName)] CloudTable table,
             [Table(AssignmentsTableName)] IAsyncCollector<AssignmentEntity> assignmentEntityCollector,
             string assignmentId,
-            [Platform] PlatformsClient platformsClient,
-            [LtiAdvantage] INrpsClient nrpsClient,
-            [Lti1] Lti1MembershipClient membershipClient)
+            [User] UsersClient usersClient)
         {
-            return await ChangePublishStatus(req, table, assignmentEntityCollector, assignmentId, platformsClient, nrpsClient, membershipClient, PublishStatus.NotPublished);
+            return await ChangePublishStatus(req, table, assignmentEntityCollector, assignmentId, usersClient, PublishStatus.NotPublished);
         }
 
         private async Task<AssignmentEntity> FetchAssignment(CloudTable table, string assignmentId)
@@ -136,7 +138,7 @@ namespace Edna.Assignments
             return assignmentEntity;
         }
 
-        private async Task<IActionResult> ChangePublishStatus(HttpRequest req, CloudTable table, IAsyncCollector<AssignmentEntity> assignmentEntityCollector, string assignmentId, PlatformsClient platformsClient, INrpsClient nrpsClient, Lti1MembershipClient membershipClient, PublishStatus newPublishStatus)
+        private async Task<IActionResult> ChangePublishStatus(HttpRequest req, CloudTable table, IAsyncCollector<AssignmentEntity> assignmentEntityCollector, string assignmentId, UsersClient usersClient, PublishStatus newPublishStatus)
         {
             AssignmentEntity assignmentEntity = await FetchAssignment(table, assignmentId);
             if (assignmentEntity == null)
@@ -144,21 +146,6 @@ namespace Edna.Assignments
 
             AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
 
-            IActionResult res = await ValidateUser(req, assignmentDto, platformsClient, nrpsClient, membershipClient);
-            if (res.GetType() != typeof(OkResult))
-                return res;
-
-            assignmentEntity.PublishStatus = newPublishStatus.ToString();
-            assignmentEntity.ETag = "*";
-
-            await assignmentEntityCollector.AddAsync(assignmentEntity);
-            await assignmentEntityCollector.FlushAsync();
-
-            return new OkResult();
-        }
-    
-        private async Task<IActionResult> ValidateUser(HttpRequest req, AssignmentDto assignmentDto, PlatformsClient platformsClient, INrpsClient nrpsClient, Lti1MembershipClient membershipClient)
-        {
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
             {
                 _logger.LogError("Could not get user email.");
@@ -168,42 +155,19 @@ namespace Edna.Assignments
             _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
             if (userEmails.Count > 0)
-                return await ValidateUserEmails(assignmentDto, platformsClient, nrpsClient, membershipClient, userEmails);
-
-            return new OkResult();
-        }
-
-        private async Task<IActionResult> ValidateUserEmails(AssignmentDto assignmentDto, PlatformsClient platformsClient, INrpsClient nrpsClient, Lti1MembershipClient membershipClient, List<string> userEmails)
-        {
-            if (assignmentDto.LtiVersion != LtiAdvantageVersionString)
             {
-                Membership userMembership = await membershipClient.GetMemberByEmail(assignmentDto.ContextMembershipsUrl, assignmentDto.OAuthConsumerKey, assignmentDto.ResourceLinkId, userEmails);
-                if (userMembership == null)
-                {
-                    _logger.LogError("no members with the given user emails");
-                    return new BadRequestErrorMessageResult("Invalid User");
-                }
-                if (userMembership.Role.Equals(ContextRole.Learner))
-                {
-                    _logger.LogError("Students cannot update an assignment");
+                User[] allMembers = await usersClient.GetAllUsers(assignmentId);
+                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (!memberDto.Role.Equals("teacher"))
                     return new UnauthorizedResult();
-                }
             }
-            else
-            {
-                Platform platform = await platformsClient.GetPlatform(assignmentDto.PlatformId);
-                Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignmentDto.ContextMembershipsUrl, userEmails);
-                if (member == null)
-                {
-                    _logger.LogError("no members with the given user emails");
-                    return new BadRequestErrorMessageResult("Invalid User");
-                }
-                if (member.Roles.Contains(Role.ContextLearner) || member.Roles.Contains(Role.InstitutionLearner))
-                {
-                    _logger.LogError("Students cannot update an assignment");
-                    return new UnauthorizedResult();
-                }
-            }
+
+            assignmentEntity.PublishStatus = newPublishStatus.ToString();
+            assignmentEntity.ETag = "*";
+
+            await assignmentEntityCollector.AddAsync(assignmentEntity);
+            await assignmentEntityCollector.FlushAsync();
+
             return new OkResult();
         }
     }
