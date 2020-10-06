@@ -39,7 +39,7 @@ const navigationControlHeaderStyle = ({ theme }: IThemeOnlyProps): NavigationCon
   return {
     assignmentTitle: [
       {
-        fontSize: FontSizes.xLarge,
+        fontSize: FontSizes.xLargePlus,
         fontWeight: FontWeights.semibold,
         color: theme.palette.neutralPrimary,
         backgroundColor: theme.palette.neutralLighterAlt,

@@ -19,7 +19,7 @@ import { ErrorPage } from './ErrorsPage';
 import { stickyHeaderStyle } from './Common/StickyHeaderStyle';
 import { NavigationControlHeader } from './NavigationControlHeader';
 
-type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content' | 'assignmentTitle' | 'navAndControlArea'>;
+type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content'>;
 
 const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element => {
   useAssignmentInitializer();
@@ -95,27 +95,6 @@ const mainLayoutStyle = ({ theme }: IThemeOnlyProps): MainLayoutStyles => {
         height: '100%',
         flexDirection:'column'
       }
-    ],
-    assignmentTitle: [
-      {
-        color: theme.palette.neutralPrimary,
-        backgroundColor: theme.palette.neutralLighterAlt,
-        lineHeight: FontSizes.xxLarge,
-        paddingLeft: `calc(${theme.spacing.l1}*1.6)`,
-        paddingBottom: `calc(${theme.spacing.l1}*0.5)`,
-        paddingTop:`calc(${theme.spacing.l1}*1.5)`,
-      }
-    ],
-    navAndControlArea: [
-      mergeStyles(stickyHeaderStyle(theme), { 
-        display: 'flex',
-        backgroundColor: theme.palette.neutralLighterAlt,
-        marginLeft: `calc(${theme.spacing.l1} * 1.6)`,
-        marginRight: `calc(${theme.spacing.l1} * 1.6)`,
-        height:`calc(${theme.spacing.l1} * 2.7)`,
-        flexDirection: 'row',
-        justifyContent: 'space-between',  
-      })
     ]
   };
 };
