@@ -24,7 +24,6 @@ namespace Edna.AssignmentLinks
         private readonly ILogger<AssignmentLinksApi> _logger;
         private readonly IMapper _mapper;
         private const string AssignmentLinksTableName = "Links";
-        private const string LtiAdvantageVersionString = "1.3.0";
 
         public AssignmentLinksApi(ILogger<AssignmentLinksApi> logger, IMapper mapper)
         {
@@ -98,10 +97,9 @@ namespace Edna.AssignmentLinks
 
             if (userEmails.Count > 0)
             {
-                User[] allMembers = await usersClient.GetAllUsers(assignmentId);
-                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
-
-                if (!memberDto.Role.Equals("teacher"))
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
 
@@ -141,10 +139,9 @@ namespace Edna.AssignmentLinks
 
             if (userEmails.Count > 0)
             {
-                User[] allMembers = await usersClient.GetAllUsers(assignmentId);
-                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
-
-                if (!memberDto.Role.Equals("teacher"))
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
 

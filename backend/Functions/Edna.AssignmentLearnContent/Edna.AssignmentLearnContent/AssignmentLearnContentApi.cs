@@ -27,7 +27,6 @@ namespace Edna.AssignmentLearnContent
         private const string AssignmentLearnContentTableName = "AssignmentLearnContent";
         private const string LearnContentUrlIdentifierKey = "WT.mc_id";
         private const string LearnContentUrlIdentifierValue = "Edna";
-        private const string LtiAdvantageVersionString = "1.3.0";
 
         private readonly ILogger<AssignmentLearnContentApi> _logger;
         private readonly IMapper _mapper;
@@ -89,9 +88,9 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
-                User[] allMembers = await usersClient.GetAllUsers(assignmentId);
-                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
-                if (!memberDto.Role.Equals("teacher"))
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if(user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
 
@@ -130,9 +129,9 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
-                User[] allMembers = await usersClient.GetAllUsers(assignmentId);
-                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
-                if (!memberDto.Role.Equals("teacher"))
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
 
@@ -169,10 +168,9 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
-                User[] allMembers = await usersClient.GetAllUsers(assignmentId);
-                User memberDto = allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
-
-                if (!memberDto.Role.Equals("teacher"))
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
 
