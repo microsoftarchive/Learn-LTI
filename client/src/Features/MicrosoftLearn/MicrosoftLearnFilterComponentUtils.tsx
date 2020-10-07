@@ -21,7 +21,6 @@ type FilterComponentTypes = FilterType.products | FilterType.roles | FilterType.
 
 export const FilterComponent = (props: { type: FilterComponentTypes; name: string }) => {
   const { filterStore, catalog } = useStore('microsoftLearnStore');
-  console.log(filterStore.selectedFilter);
   return useObserver(() => {
     const displayOptions =
       props.type === FilterType.products
