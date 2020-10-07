@@ -153,13 +153,20 @@ export function getUpdatedURIFromSelectedFilters(
 }
 
 export const getRegexs = (searchTerm: string): RegExp[] => {
-  const expressions: RegExp[] = searchTerm
+  searchTerm = searchTerm.replace(/\W/gi, '');
+  if (searchTerm === '') {
+    return [new RegExp(`.*`)];
+  }
+  const wordExpressions: RegExp[] = searchTerm
     .trim()
     .replace(/\s+/g, ' ')
     .split(' ')
+    .flatMap(termPart => termPart.match(/.{1,20000}/g)) // using 20000 as the max length of a regexp
     .map(termPart => new RegExp(`.*${termPart}.*`, 'i'));
-  expressions.push(new RegExp(`.*${searchTerm}.*`, 'i'));
-  return expressions;
+
+  const fullTermExpressions: RegExp[] =
+    searchTerm.match(/.{1,20000}/g)?.map(termPart => new RegExp(`.*${termPart}.*`, 'i')) || [];
+  return [...wordExpressions, ...fullTermExpressions];
 };
 
 export function scoreRegex(testPhrase: string | undefined, exp: RegExp, score = 1): number {
