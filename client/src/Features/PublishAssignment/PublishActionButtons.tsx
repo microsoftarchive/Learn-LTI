@@ -30,6 +30,8 @@ interface EditButtonStyleProps {
   theme: ITheme;
 }
 
+interface PublishButtonStyleProps extends EditButtonStyleProps {}; 
+
 const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsStyles>): JSX.Element => {
   const assignmentStore = useStore('assignmentStore');
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
@@ -45,9 +47,14 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
 
   return useObserver(() => {
     const editButtonClassNames = classNamesFunction<EditButtonStyleProps, IButtonStyles>()(editButtonStyle, {
-      isPublished: assignmentStore?.assignment?.publishStatus === 'Published',
+      isPublished: assignmentStore.assignment?.publishStatus === 'Published',
       theme: getTheme()
     });
+
+    const publishButtonClassNames = classNamesFunction<PublishButtonStyleProps, IButtonStyles>()(publishButtonStyle, {
+      isPublished: assignmentStore.assignment?.publishStatus === 'Published',
+      theme: getTheme()
+    })
 
     return (
       <div className={classes.root}>
@@ -72,7 +79,7 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
 
         <PrimaryButton
           text="Publish"
-          styles={themedClassNames(publishButtonStyle)}
+          styles={publishButtonClassNames}
           disabled={
             !assignmentStore ||
             !assignmentStore.assignment ||
@@ -123,6 +130,7 @@ const editButtonStyle = ({ theme, isPublished }: EditButtonStyleProps): Partial<
         marginRight: `calc(${theme.spacing.s1} + ${theme.spacing.s2})`,
         color: theme.palette.themePrimary,
         borderColor: theme.palette.themePrimary,
+        width:`calc(${theme.spacing.l1}*4)`,
         display: isPublished ? 'block' : 'none'
       }
     ],
@@ -133,11 +141,13 @@ const editButtonStyle = ({ theme, isPublished }: EditButtonStyleProps): Partial<
     ]
   });
 
-const publishButtonStyle = ({ theme }: IThemeOnlyProps): Partial<IButtonStyles> =>
+const publishButtonStyle = ({ theme, isPublished }: PublishButtonStyleProps): Partial<IButtonStyles> =>
   mergeStyleSets(commonButtonStyle, {
     root: [
       {
-        backgroundColor: theme.palette.themeDark
+        backgroundColor: theme.palette.themeDark,
+        width:`calc(${theme.spacing.l1}*4.35)`,
+        display: isPublished ? 'none' : 'block'
       }
     ]
   });
