@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
@@ -22,14 +27,21 @@ type FilterComponentTypes = FilterType.products | FilterType.roles | FilterType.
 export const FilterComponent = (props: { type: FilterComponentTypes; name: string }) => {
   const { filterStore, catalog } = useStore('microsoftLearnStore');
   return useObserver(() => {
-    const displayOptions =
-      props.type === FilterType.products
-        ? getProductsToDisplay(filterStore.displayFilter[FilterType.products], catalog?.products)
-        : props.type === FilterType.levels
-        ? getLevelsToDisplay(filterStore.displayFilter[props.type], catalog?.levels)
-        : props.type === FilterType.roles
-        ? getRolesToDisplay(filterStore.displayFilter[props.type], catalog?.roles)
-        : getTypesToDisplay(filterStore.displayFilter[props.type]);
+    
+    const getDisplayOptions = () => {
+      switch (props.type) {
+        case FilterType.products:
+          return getProductsToDisplay(filterStore.displayFilter[props.type], catalog?.products);
+        case FilterType.roles:
+          return getRolesToDisplay(filterStore.displayFilter[props.type], catalog?.roles);
+        case FilterType.levels:
+          return getLevelsToDisplay(filterStore.displayFilter[props.type], catalog?.levels);
+        case FilterType.types:
+          return getTypesToDisplay(filterStore.displayFilter[props.type]);
+      }
+    };
+
+    const displayOptions = getDisplayOptions();
     if (props.type === FilterType.products) {
       return (
         <>
@@ -65,7 +77,7 @@ export const FilterComponent = (props: { type: FilterComponentTypes; name: strin
         </>
       );
     } else {
-    return (
+      return (
         <>
           <MicrosoftLearnFilterComponent
             styles={themedClassNames(FilterComponentStyles)}

@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import { Product, Role, Level, Catalog } from '../../Models/Learn';
 import { FilterType } from '../../Models/Learn/FilterType.model';
 import { LearnTypeFilterOption, FilterOption } from './MicrosoftLearnFilterComponentProps';

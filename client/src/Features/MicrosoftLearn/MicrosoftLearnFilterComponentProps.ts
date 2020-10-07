@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import { Product, LearnType, Level, Role } from '../../Models/Learn';
 import { FilterType } from '../../Models/Learn/FilterType.model';
 import { FormEvent } from 'react';

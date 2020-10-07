@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from 'react';
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
+ import React, { useEffect, useState } from 'react';
 import {
   ActionButton,
   DefaultButton,
