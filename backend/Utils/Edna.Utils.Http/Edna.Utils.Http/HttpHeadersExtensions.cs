@@ -4,18 +4,15 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace Edna.Utils.Http
 {
     public static class HttpHeadersExtensions
     {
-        private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
         private static readonly JwtSecurityTokenHandler JwtSecurityTokenHandler = new JwtSecurityTokenHandler();
 
         public static bool TryGetTokenClaims(this IHeaderDictionary headers, out Claim[] claims, Action<string> logAction = null)
