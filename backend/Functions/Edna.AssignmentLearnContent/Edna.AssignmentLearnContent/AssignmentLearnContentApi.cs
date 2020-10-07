@@ -121,9 +121,6 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
-            if (assignmentLearnContentEntityToDelete == null)
-                return new NoContentResult();
-
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
             {
                 _logger.LogError("Could not get user email.");
@@ -139,6 +136,9 @@ namespace Edna.AssignmentLearnContent
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
+
+            if (assignmentLearnContentEntityToDelete == null)
+                return new NoContentResult();
 
             _logger.LogInformation($"Removing assignment learn content with uid [{contentUid}] from assignment {assignmentId}");
 
@@ -158,11 +158,6 @@ namespace Edna.AssignmentLearnContent
             string assignmentId,
             [User] UsersClient usersClient)
         {
-            List<AssignmentLearnContentEntity> assignmentLearnContentEntities = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
-
-            if (assignmentLearnContentEntities.Count == 0)
-                return new NoContentResult();
-
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
             {
                 _logger.LogError("Could not get user email.");
@@ -178,6 +173,11 @@ namespace Edna.AssignmentLearnContent
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
+
+            List<AssignmentLearnContentEntity> assignmentLearnContentEntities = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
+
+            if (assignmentLearnContentEntities.Count == 0)
+                return new NoContentResult();
 
             _logger.LogInformation($"Removing all assignment learn content from assignment {assignmentId}");
 

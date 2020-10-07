@@ -131,9 +131,6 @@ namespace Edna.AssignmentLinks
             string assignmentId,
             [User] UsersClient usersClient)
         {
-            if (entityToDelete == null)
-                return new NoContentResult();
-
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
             {
                 _logger.LogError("Could not get user email.");
@@ -149,6 +146,9 @@ namespace Edna.AssignmentLinks
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
+
+            if (entityToDelete == null)
+                return new NoContentResult();
 
             TableOperation deleteTable = TableOperation.Delete(entityToDelete);
             TableResult deleteResult = await assignmentLinksTable.ExecuteAsync(deleteTable);
