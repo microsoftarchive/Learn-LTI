@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT license.
+# --------------------------------------------------------------------------------------------
+
 # List of known Azure Functions to Install / Publish.
 # Update this list on adding / updating any Function. 
 enum VALID_FUNCTIONS {

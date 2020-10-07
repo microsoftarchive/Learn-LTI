@@ -1,3 +1,8 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT license.
+# --------------------------------------------------------------------------------------------
+
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 $ExecutionStartTime = $(get-date -f dd-MM-yyyy-HH-mm-ss)
 $LogRoot = Join-Path $scriptPath "Log"
@@ -198,7 +203,7 @@ try {
         throw "Encountered an Error while creating Role Assignment"
     }
 
-    Write-Host 'Role Assignment Created Successfully';
+    Write-Host 'Role Assignment Created Successfully'
 
     Write-Title 'STEP #8 - Creating Resources in Azure'
 

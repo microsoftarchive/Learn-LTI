@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License.
+ *--------------------------------------------------------------------------------------------*/
+
 import { ChildStore } from './Core/ChildStore';
 import { AssignmentStore } from './Assignment.store';
 import { UsersStore } from './Users.store';
