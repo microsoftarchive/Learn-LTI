@@ -3,14 +3,11 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
-using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Edna.Bindings.User.Attributes;
-using LtiAdvantage.NamesRoleProvisioningService;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Config;
-using Microsoft.Extensions.Logging;
 
 namespace Edna.Bindings.User
 {
