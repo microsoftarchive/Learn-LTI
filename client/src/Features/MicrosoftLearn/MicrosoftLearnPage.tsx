@@ -49,7 +49,7 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
     ) {
       filterStore.initializeFilters(catalog!!, new URLSearchParams(location.search));
     }  
-  })
+  }, [location]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const classes = themedClassNames(styles);
   const [width, setWidth] = useState(window.innerWidth);

@@ -105,7 +105,9 @@ export class MicrosoftLearnStore extends ChildStore {
     this.isLoadingCatalog = false;
     this.filteredCatalogContent = allItems;
 
-    this.filterStore.initializeFilters(this.catalog, searchParams);
+    if(searchParams){
+      this.filterStore.initializeFilters(this.catalog, searchParams);
+    }
   }
 
   private getItemIndexInSelectedList = (learnContentUid: string): number | void => {

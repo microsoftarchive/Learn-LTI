@@ -24,21 +24,19 @@ export class MicrosoftLearnFilterStore extends ChildStore {
   productMap: Map<string, Product> = new Map<string, Product>();
 
   // We use H.createBrowserHistory() over useHistory() in order to avoid page reloads on URI updation.
-  history: H.History = H.createBrowserHistory();
+  history: H.History | null = null; 
 
   @action
-  public initializeFilters(catalog: Catalog, filterParams: URLSearchParams | undefined): void {
+  public initializeFilters(catalog: Catalog, filterParams: URLSearchParams): void {
     this.productMap = catalog.products;
-
-    if (filterParams) {
-      this.selectedFilter = loadFiltersFromQueryParams(filterParams, this.productMap);
-      this.expandedProducts = loadExpandedProductsFromQueryParams(filterParams);
-      this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(
-        this.selectedFilter,
-        this.expandedProducts,
-        this.productMap
-      );
-    }
+    this.history = H.createBrowserHistory();
+    this.selectedFilter = loadFiltersFromQueryParams(filterParams, this.productMap);
+    this.expandedProducts = loadExpandedProductsFromQueryParams(filterParams);
+    this.learnFilterUriParam = getUpdatedURIFromSelectedFilters(
+      this.selectedFilter,
+      this.expandedProducts,
+      this.productMap
+    );
   }
 
   updateExpandedProducts = (expanded: boolean) => (productId: string): void => {
@@ -90,7 +88,7 @@ export class MicrosoftLearnFilterStore extends ChildStore {
     // Use of H.createBrowserHistory() prevents us from directly updating filters in the URL itself,
     // and let the remaining workflow (via page reload, and the hook in MSLearnPage.tsx) take care of content and UI updation.
     // This can be handled of in future stories.
-    this.history.push({
+    this.history?.push({
       pathname: this.history.location.pathname,
       search: this.learnFilterUriParam.length > 0 ? '?' + this.learnFilterUriParam : ''
     });
