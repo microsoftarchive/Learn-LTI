@@ -12,12 +12,7 @@ import {
 } from '@fluentui/react';
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
-import {
-  ProductFilterComponent,
-  RoleFilterComponent,
-  TypeFilterComponent,
-  LevelFilterComponent
-} from './MicrosoftLearnFilterComponentUtils';
+import { FilterComponent } from './MicrosoftLearnFilterComponentUtils';
 import { debounce } from 'lodash';
 import { IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
@@ -38,23 +33,25 @@ const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
     );
   };
 
-  return (
-    <div>
-      <ActionButton
-        onClick={() => filterStore.resetFilter()}
-        style={{ display: noFiltersExist() ? 'none' : 'block' }}
-        className={classes.clearAll}
-        text="Clear all filters"
-      />
-      <ProductFilterComponent />
-      <Separator />
-      <RoleFilterComponent />
-      <Separator />
-      <LevelFilterComponent />
-      <Separator />
-      <TypeFilterComponent />
-    </div>
-  );
+  return useObserver(()=>{
+    return (
+      <div>
+        <ActionButton
+          onClick={() => filterStore.resetFilter()}
+          style={{ display: noFiltersExist() ? 'none' : 'block' }}
+          className={classes.clearAll}
+          text="Clear all filters"
+        />
+        <FilterComponent type={FilterType.products} name='Products'/>
+        <Separator />
+        <FilterComponent type={FilterType.roles} name='Roles'/>
+        <Separator />
+        <FilterComponent type={FilterType.levels} name='Levels'/>
+        <Separator />
+        <FilterComponent type={FilterType.types} name='Types'/>
+      </div>
+    );
+  })
 };
 
 const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
@@ -124,6 +121,7 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
     );
   };
 
+  return useObserver(()=>{
   return (
     <>
       <DefaultButton
@@ -183,19 +181,20 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
               </ActionButton>
             </>
           ) : productIsOpen ? (
-            <ProductFilterComponent />
+            <FilterComponent type={FilterType.products} name='Products'/>                  
           ) : roleIsOpen ? (
-            <RoleFilterComponent />
+            <FilterComponent type={FilterType.roles} name='Roles'/>
           ) : levelIsOpen ? (
-            <LevelFilterComponent />
+            <FilterComponent type={FilterType.levels} name='Levels'/>
           ) : (
-            <TypeFilterComponent />
+            <FilterComponent type={FilterType.types} name='Types'/>
           )}
         </>
         {PanelFooterContent(filteredCatalogContent?.length)}
       </Panel>
     </>
   );
+})
 };
 
 const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {

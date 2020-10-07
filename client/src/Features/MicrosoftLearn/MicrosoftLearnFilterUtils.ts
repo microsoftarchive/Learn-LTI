@@ -75,9 +75,6 @@ export const getDisplayFilterTags = (
       let parentTags = intersect.filter(item => getParentProductMapping(item) === '');
       let childTags = intersect.filter(item => !parentTags.includes(getParentProductMapping(item)));
       return [...parentTags, ...childTags];
-      // let parentTags = [...productsMap.keys()].filter(key => intersect?.includes(key.id));
-      // let childrenTags = _.flatten(parentTags.map(parent => productsMap.get(parent))).map(child => child?.id);
-      // intersect = intersect?.filter(item => !childrenTags.includes(item));
     }
     return intersect;
   };

@@ -26,12 +26,13 @@ type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator' | 'wr
 
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
-  let { learnFilterUriParam } = learnStore.filterStore;
+  const { filterStore, catalog } = learnStore
+  let { learnFilterUriParam } = filterStore;
   const location = useLocation();
   const qsParams = new URLSearchParams(location.search);
 
   useEffect(() => {
-    if (learnStore.catalog == null) {
+    if (catalog == null) {
       learnStore.initializeCatalog(qsParams);
     }
   }, [learnStore, qsParams]);
@@ -41,12 +42,16 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
   //       URL updation using it does not cause the current page to reload.
 
   // TODO: Refactor the logic to start using useHistory hook for history management with proper UI update
-  if (
-    learnStore.catalog !== null &&
-    (location.search !== '?' + learnFilterUriParam || location.search !== learnFilterUriParam)
-  ) {
-    learnStore.filterStore.initializeFilters(learnStore.catalog!!, qsParams);
-  }
+
+  useEffect(() => {
+    if (
+      catalog !== null &&
+      location.search !== '?' + learnFilterUriParam && location.search !== learnFilterUriParam
+    ) {
+      console.log('initialinzing!', location.search, learnFilterUriParam)
+      filterStore.initializeFilters(catalog!!, qsParams);
+    }  
+  }, [location])
 
   const classes = themedClassNames(styles);
   const [width, setWidth] = useState(window.innerWidth);
@@ -62,33 +67,20 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
   });
 
   return useObserver(() => {
-    if (width > 768) {
+
       return (
         <div className={classes.wrapper}>
-          <MicrosoftLearnFilterPane />
+          {width > 768 && <MicrosoftLearnFilterPane />}
           <div className={classes.root}>
             <MicrosoftLearnSearch styles={themedClassNames(microsoftLearnSearchStyles)} />
             <MicrosoftLearnSelectedItemsList styles={themedClassNames(microsoftLearnSelectedItemsStyles)} />
             <Separator className={classes.separator} />
+            {width <= 768 && <MicrosoftLearnFilterPane />}
             <MicrosoftLearnFilterTags />
             <MicrosoftLearnList />
           </div>
         </div>
       );
-    } else {
-      return (
-        <div className={classes.wrapper}>
-          <div className={classes.root}>
-            <MicrosoftLearnSearch styles={themedClassNames(microsoftLearnSearchStyles)} />
-            <MicrosoftLearnSelectedItemsList styles={themedClassNames(microsoftLearnSelectedItemsStyles)} />
-            <Separator className={classes.separator} />
-            <MicrosoftLearnFilterPane />
-            <MicrosoftLearnFilterTags />
-            <MicrosoftLearnList />
-          </div>
-        </div>
-      );
-    }
   });
 };
 

@@ -3,9 +3,9 @@ import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import {
   getProductsToDisplay,
-  getRolesToDisplay,
+  getTypesToDisplay,
   getLevelsToDisplay,
-  getTypesToDisplay
+  getRolesToDisplay
 } from './MicrosoftLearnFilterUtils';
 import { FilterType } from '../../Models/Learn/FilterType.model';
 import { MicrosoftLearnFilterComponent } from './MicrosoftLearnFilterComponent';
@@ -17,132 +17,76 @@ export type FilterComponentStyles = SimpleComponentStyles<
   'root' | 'title' | 'search' | 'optionsList' | 'subOptionsList' | 'filterItem'
 >;
 
-export const ProductFilterComponent = () => {
-  const { filterStore, catalog } = useStore('microsoftLearnStore');
+type FilterComponentTypes = FilterType.products | FilterType.roles | FilterType.levels | FilterType.types;
 
+export const FilterComponent = (props: { type: FilterComponentTypes; name: string }) => {
+  const { filterStore, catalog } = useStore('microsoftLearnStore');
+  console.log(filterStore.selectedFilter);
   return useObserver(() => {
-    const displayProducts = getProductsToDisplay(filterStore.displayFilter[FilterType.products], catalog?.products);
-    return (
-      <>
-        <MicrosoftLearnFilterComponent
-          styles={themedClassNames(FilterComponentStyles)}
-          filterType={FilterType.products}
-          filterName="Products"
-          filterOption={displayProducts}
-          search={true}
-          mainItemClickHandler={event => {
-            let target = event?.target as HTMLInputElement;
-            let value = target.getAttribute('aria-describedby');
-            if (value) {
-              let subItems: string[] = [...catalog?.products.values()]
-                .filter(product => product.parentId && product.parentId === value)
-                .map(product => product.id);
+    const displayOptions =
+      props.type === FilterType.products
+        ? getProductsToDisplay(filterStore.displayFilter[FilterType.products], catalog?.products)
+        : props.type === FilterType.levels
+        ? getLevelsToDisplay(filterStore.displayFilter[props.type], catalog?.levels)
+        : props.type === FilterType.roles
+        ? getRolesToDisplay(filterStore.displayFilter[props.type], catalog?.roles)
+        : getTypesToDisplay(filterStore.displayFilter[props.type]);
+    if (props.type === FilterType.products) {
+      return (
+        <>
+          <MicrosoftLearnFilterComponent
+            styles={themedClassNames(FilterComponentStyles)}
+            filterType={props.type}
+            filterName={props.name}
+            filterOption={displayOptions}
+            search={true}
+            mainItemClickHandler={event => {
+              let target = event?.target as HTMLInputElement;
+              let value = target.getAttribute('aria-describedby');
+              if (value) {
+                let subItems: string[] = [...catalog?.products.values()]
+                  .filter(product => product.parentId && product.parentId === value)
+                  .map(product => product.id);
+                target.checked
+                  ? filterStore.addFilter(props.type, [...subItems, value])
+                  : filterStore.removeFilter(props.type, [...subItems, value]);
+              }
+            }}
+            subItemClickHandler={event => {
+              let target = event?.target as HTMLInputElement;
               let type = FilterType.products;
-              target.checked
-                ? filterStore.addFilter(type, [...subItems, value])
-                : filterStore.removeFilter(type, [...subItems, value]);
-            }
-          }}
-          subItemClickHandler={event => {
-            let target = event?.target as HTMLInputElement;
-            let type = FilterType.products;
-            let value = target.getAttribute('aria-describedby');
-            if (target.checked && value) {
-              filterStore.addFilter(type, [value]);
-            } else if (!target.checked && value) {
-              filterStore.removeFilter(type, [value]);
-            }
-          }}
-        />
-      </>
-    );
-  });
-};
-
-export const RoleFilterComponent = () => {
-  const { filterStore, catalog } = useStore('microsoftLearnStore');
-
-  return useObserver(() => {
-    const displayRoles = getRolesToDisplay(filterStore.displayFilter[FilterType.roles], catalog?.roles);
+              let value = target.getAttribute('aria-describedby');
+              if (target.checked && value) {
+                filterStore.addFilter(type, [value]);
+              } else if (!target.checked && value) {
+                filterStore.removeFilter(type, [value]);
+              }
+            }}
+          />
+        </>
+      );
+    } else {
     return (
-      <>
-        <MicrosoftLearnFilterComponent
-          styles={themedClassNames(FilterComponentStyles)}
-          filterType={FilterType.roles}
-          filterName="Roles"
-          filterOption={displayRoles}
-          search={true}
-          mainItemClickHandler={event => {
-            let target = event?.target as HTMLInputElement;
-            let type = FilterType.roles;
-            let value = target.getAttribute('aria-describedby');
-            if (target.checked && value) {
-              filterStore.addFilter(type, [value]);
-            } else if (!target.checked && value) {
-              filterStore.removeFilter(type, [value]);
-            }
-          }}
-        />
-      </>
-    );
-  });
-};
-
-export const LevelFilterComponent = () => {
-  const { filterStore, catalog } = useStore('microsoftLearnStore');
-
-  return useObserver(() => {
-    const displayLevels = getLevelsToDisplay(filterStore.displayFilter[FilterType.levels], catalog?.levels);
-    return (
-      <>
-        <MicrosoftLearnFilterComponent
-          styles={themedClassNames(FilterComponentStyles)}
-          filterType={FilterType.levels}
-          filterName="Levels"
-          filterOption={displayLevels}
-          search={false}
-          mainItemClickHandler={event => {
-            let target = event?.target as HTMLInputElement;
-            let type = FilterType.levels;
-            let value = target.getAttribute('aria-describedby');
-            if (target.checked && value) {
-              filterStore.addFilter(type, [value]);
-            } else if (!target.checked && value) {
-              filterStore.removeFilter(type, [value]);
-            }
-          }}
-        />
-      </>
-    );
-  });
-};
-
-export const TypeFilterComponent = () => {
-  const { filterStore } = useStore('microsoftLearnStore');
-
-  return useObserver(() => {
-    const displayTypes = getTypesToDisplay(filterStore.displayFilter[FilterType.types]);
-    return (
-      <>
-        <MicrosoftLearnFilterComponent
-          styles={themedClassNames(FilterComponentStyles)}
-          filterType={FilterType.types}
-          filterName="Types"
-          filterOption={displayTypes}
-          search={false}
-          mainItemClickHandler={event => {
-            let target = event?.target as HTMLInputElement;
-            let type = FilterType.types;
-            let value = target.getAttribute('aria-describedby');
-            if (target.checked && value) {
-              filterStore.addFilter(type, [value]);
-            } else if (!target.checked && value) {
-              filterStore.removeFilter(type, [value]);
-            }
-          }}
-        />
-      </>
-    );
+        <>
+          <MicrosoftLearnFilterComponent
+            styles={themedClassNames(FilterComponentStyles)}
+            filterType={props.type}
+            filterName={props.name}
+            filterOption={displayOptions}
+            search={props.type === FilterType.roles ? true : false}
+            mainItemClickHandler={event => {
+              let target = event?.target as HTMLInputElement;
+              let value = target.getAttribute('aria-describedby');
+              if (target.checked && value) {
+                filterStore.addFilter(props.type, [value]);
+              } else if (!target.checked && value) {
+                filterStore.removeFilter(props.type, [value]);
+              }
+            }}
+          />
+        </>
+      );
+    }
   });
 };
 
