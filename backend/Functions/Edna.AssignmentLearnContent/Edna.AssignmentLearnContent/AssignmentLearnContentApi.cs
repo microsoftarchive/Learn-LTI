@@ -73,7 +73,7 @@ namespace Edna.AssignmentLearnContent
         [FunctionName(nameof(SaveAssignmentLearnContent))]
         public async Task<IActionResult> SaveAssignmentLearnContent(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "assignments/{assignmentId}/learn-content/{contentUid}")] HttpRequest req,
-            [Table(AssignmentLearnContentTableName)] IAsyncCollector<AssignmentLearnContentEntity> linksCollector,
+            [Table(AssignmentLearnContentTableName)] IAsyncCollector<AssignmentLearnContentEntity> learnContentCollector,
             string assignmentId,
             string contentUid,
             [User] UsersClient usersClient)
@@ -98,8 +98,8 @@ namespace Edna.AssignmentLearnContent
 
             AssignmentLearnContentEntity assignmentLearnContentEntity = new AssignmentLearnContentEntity { PartitionKey = assignmentId, RowKey = contentUid, ETag = "*" };
 
-            await linksCollector.AddAsync(assignmentLearnContentEntity);
-            await linksCollector.FlushAsync();
+            await learnContentCollector.AddAsync(assignmentLearnContentEntity);
+            await learnContentCollector.FlushAsync();
 
             AssignmentLearnContentDto savedLearnContentDto = _mapper.Map<AssignmentLearnContentDto>(assignmentLearnContentEntity);
             string assignmentUrl = $"{req.Scheme}://{req.Host}/api/assignments/{assignmentId}/learn-content/{savedLearnContentDto.ContentUid}";
