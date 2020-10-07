@@ -7,8 +7,6 @@ import React, { PropsWithChildren } from 'react';
 import { IThemeOnlyProps, SimpleComponentStyles, IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { styled } from '@fluentui/react';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
-import { PublishControlArea, PublishControlAreaStyles } from '../../Features/PublishAssignment/PublishControlArea';
-import { stickyHeaderStyle } from './Common/StickyHeaderStyle';
 
 type MainPagesWrapperStyles = SimpleComponentStyles<'root'>;
 
@@ -19,7 +17,6 @@ const MainPagesWrapperInner = ({
   const classes = themedClassNames(styles);
   return (
     <div className={classes.root}>
-      <PublishControlArea styles={themedClassNames(publishControlAreaStyles)} />
       {children}
     </div>
   );
@@ -40,7 +37,4 @@ const MainPagesWrapperStyles = ({ theme }: IThemeOnlyProps): MainPagesWrapperSty
   ]
 });
 
-const publishControlAreaStyles = ({ theme }: IThemeOnlyProps): Partial<PublishControlAreaStyles> => ({
-  root: [stickyHeaderStyle(theme)]
-});
 export const MainPagesWrapper = styled(MainPagesWrapperInner, MainPagesWrapperStyles);

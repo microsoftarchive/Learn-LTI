@@ -31,9 +31,8 @@ const getNavLinkGroups = (assignment: Assignment): INavLinkGroup[] => [
 
 const removeSlashFromStringEnd = (initialString: string): string => initialString.replace(/\/$/, '');
 
-const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null => {
+const NavbarLHPInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null => {
   const assignmentStore = useStore('assignmentStore');
-  const { filterStore } = useStore('microsoftLearnStore');
   const history = useHistory();
   const location = useLocation();
 
@@ -54,13 +53,7 @@ const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null =>
 
   const handleLinkClick = (event?: MouseEvent, item?: INavLink): void => {
     event?.preventDefault();
-    if(item && item.url?.indexOf('ms-learn')>0){
-      history.push({
-        pathname: item.url,
-        search: '?'+filterStore.learnFilterUriParam
-      })
-    }
-    else if (item) {
+    if (item) {
       history.push(item.url);
     }
   };
@@ -84,7 +77,7 @@ const NavbarInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null =>
   });
 };
 
-const navStyles = ({ theme }: IThemeOnlyProps): Partial<INavStyles> => ({
+const navbarLHPStyles = ({ theme }: IThemeOnlyProps): Partial<INavStyles> => ({
   root: {
     width: `calc(${theme.spacing.l1} * 11)`,
     backgroundColor: theme.palette.neutralLighter,
@@ -146,4 +139,4 @@ const navStyles = ({ theme }: IThemeOnlyProps): Partial<INavStyles> => ({
   }
 });
 
-export const Navbar = styled(NavbarInner, navStyles);
+export const NavbarLHP = styled(NavbarLHPInner, navbarLHPStyles);
