@@ -55,7 +55,7 @@
         "contributorRoleAssignmentId": "[guid(concat(resourceGroup().id, 'contributor'))]",
         "contributorRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
         "readerRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
-        "keyPermissions": [
+        "KVKeyPermissions": [
             "encrypt",
             "decrypt",
             "wrapKey",
@@ -375,21 +375,21 @@
                         "tenantId": "[variables('tenantId')]",
                         "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('connect' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
-                            "keys": "[variables('keyPermissions')]"
+                            "keys": "[variables('KVKeyPermissions')]"
                         }
                     },
                     {
                         "tenantId": "[variables('tenantId')]",
                         "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('users' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
-                            "keys": "[variables('keyPermissions')]"
+                            "keys": "[variables('KVKeyPermissions')]"
                         }
                     },
                     {
                         "tenantId": "[variables('tenantId')]",
                         "objectId": "[reference(resourceId('Microsoft.Web/sites',concat('platforms' , variables('ProjectNameSuffix'))), '2019-08-01', 'Full').identity.principalId]",
                         "permissions": {
-                            "keys": "[variables('keyPermissions')]"
+                            "keys": "[variables('KVKeyPermissions')]"
                         }
                     }
                 ]
