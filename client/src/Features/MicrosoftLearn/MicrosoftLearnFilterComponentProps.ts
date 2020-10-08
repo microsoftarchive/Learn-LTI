@@ -10,6 +10,8 @@ import { FilterComponentStyles } from './MicrosoftLearnFilterComponentUtils';
 
 export type LearnTypeName = 'Learning Path' | 'Module';
 
+// The following type has been declared separately because the currently, the LearnType.model stores a simple string.
+// TODO: Make LearnType.model to be in the following object format, and change all its references accordingly.
 export type LearnTypeFilterOption = {
   id: LearnType;
   name: LearnTypeName;
