@@ -5,7 +5,14 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { IThemeOnlyProps, IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-import { styled, MessageBar, MessageBarType, IMessageBarStyles } from '@fluentui/react';
+import {
+  styled,
+  MessageBar,
+  MessageBarType,
+  IMessageBarStyles,
+  mergeStyles,
+  AnimationClassNames
+} from '@fluentui/react';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 
 interface PublishSuccessMessageBarProps {
@@ -58,12 +65,15 @@ const PublishSuccessMessageBarInner = ({
   return null;
 };
 
-const publishSuccessMessageBarStyles = ({ theme: _theme }: IThemeOnlyProps): PublishSuccessMessageBarStyles => ({
+const publishSuccessMessageBarStyles = ({ theme }: IThemeOnlyProps): PublishSuccessMessageBarStyles => ({
   root: [
-    {
+    mergeStyles(AnimationClassNames.fadeIn200, {
+      height: theme.spacing.l2,
       width: 'auto',
-      marginLeft: 'auto'
-    }
+      marginLeft: theme.spacing.l2,
+      marginRight: theme.spacing.l2, 
+      marginTop: `calc(${theme.spacing.s1} * 1.6)`
+    })
   ]
 });
 

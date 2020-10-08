@@ -14,7 +14,6 @@ type PublishStatusIndicatorStyles = SimpleComponentStyles<'root' | 'text' | 'pub
 
 const PublishStatusIndicatorInner = ({ styles }: IStylesOnly<PublishStatusIndicatorStyles>): JSX.Element | null => {
   const assignmentStore = useStore('assignmentStore');
-
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
@@ -61,7 +60,8 @@ const publishStatusIndicatorStyles = ({ theme }: IThemeOnlyProps): PublishStatus
   ],
   text: [
     mergeStyles(textIconStyle, {
-      marginLeft: theme.spacing.s1
+      marginLeft: theme.spacing.s1,
+      marginRight: theme.spacing.s1
     })
   ],
   publishedIcon: [
