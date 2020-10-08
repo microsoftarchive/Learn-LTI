@@ -15,6 +15,7 @@ import { AssignmentLinkDto } from '../Dtos/AssignmentLink.dto';
 export class AssignmentLinksStore extends ChildStore {
   @observable assignmentLinks: AssignmentLink[] = [];
   @observable isLoading = true;
+  @observable syncedAssignmentLinks: AssignmentLink[] = [];
 
   initialize(): void {
     toObservable(() => this.root.assignmentStore.assignment)
@@ -37,28 +38,42 @@ export class AssignmentLinksStore extends ChildStore {
 
   @action
   addAssignmentLink(assignmentLink: AssignmentLink): void {
+    this.syncedAssignmentLinks = this.assignmentLinks;
     this.assignmentLinks = [...this.assignmentLinks, assignmentLink];
     const assignmentId = this.root.assignmentStore.assignment!.id;
 
-    AssignmentLinksService.updateAssignmentLink(assignmentLink, assignmentId);
+    const hasErrors = AssignmentLinksService.updateAssignmentLink(assignmentLink, assignmentId);
+    if(hasErrors === null)
+    {
+      this.syncedAssignmentLinks = this.assignmentLinks;
+    }
   }
 
   @action
   editAssignmentLink(editedLink: AssignmentLink): void {
+    this.syncedAssignmentLinks = this.assignmentLinks;
     const updatedLinks = this.assignmentLinks.map(link => (link.id === editedLink.id ? editedLink : link));
-
     const assignmentId = this.root.assignmentStore.assignment!.id;
-
     this.assignmentLinks = updatedLinks;
-    AssignmentLinksService.updateAssignmentLink(editedLink, assignmentId);
+
+    const hasErrors = AssignmentLinksService.updateAssignmentLink(editedLink, assignmentId);
+    if(hasErrors === null)
+    {
+      this.syncedAssignmentLinks = this.assignmentLinks;
+    }
   }
 
   @action
   deleteAssignmentLink(assignmentLinkId: string): void {
+    this.syncedAssignmentLinks = this.assignmentLinks;
     const updatedLinks = _.filter(this.assignmentLinks, link => link.id !== assignmentLinkId);
     const assignmentId = this.root.assignmentStore.assignment!.id;
-
     this.assignmentLinks = updatedLinks;
-    AssignmentLinksService.deleteAssignmentLink(assignmentLinkId, assignmentId);
+
+    const hasErrors = AssignmentLinksService.deleteAssignmentLink(assignmentLinkId, assignmentId);
+    if(hasErrors === null)
+    {
+      this.syncedAssignmentLinks = this.assignmentLinks;
+    }
   }
 }

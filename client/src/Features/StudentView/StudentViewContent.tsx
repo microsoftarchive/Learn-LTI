@@ -43,7 +43,7 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
         title: 'Deadline',
         textContent: formatDate(assignmentStore.assignment.deadline)
       },
-      (assignmentLinksStore.isLoading || assignmentLinksStore.assignmentLinks.length > 0) && {
+      (assignmentLinksStore.isLoading || assignmentLinksStore.syncedAssignmentLinks.length > 0) && {
         title: 'Links',
         styles: linksSectionStyles,
         content: <AssignmentLinksList disableEdit />
