@@ -52,7 +52,7 @@ namespace Edna.Platforms
                 return new UnauthorizedResult();
 
             _logger.LogInformation("Getting all the registered platforms.");
-            
+
             List<PlatformDto> platforms = new List<PlatformDto>();
 
             TableQuery<PlatformEntity> emptyQuery = new TableQuery<PlatformEntity>();
@@ -65,7 +65,7 @@ namespace Edna.Platforms
                 IEnumerable<PlatformDto> platformDtos = querySegmentResult
                     .Results
                     .Select(_mapper.Map<PlatformDto>)
-                    .Do(dto => { 
+                    .Do(dto => {
                         dto.PublicKey = publicKey.PemString;
                         dto.ToolJwk = JsonConvert.SerializeObject(publicKey.Jwk);
                     });
@@ -88,7 +88,7 @@ namespace Edna.Platforms
             PlatformDto platformDto = _mapper.Map<PlatformDto>(platformEntity);
             platformDto.PublicKey = publicKey.PemString;
             platformDto.ToolJwk = JsonConvert.SerializeObject(publicKey.Jwk);
-            
+
             return new OkObjectResult(platformDto);
         }
 
@@ -144,7 +144,7 @@ namespace Edna.Platforms
         {
             #if DEBUG
             // For debug purposes, there is no authentication.
-            return true;   
+            return true;
             #endif
 
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))

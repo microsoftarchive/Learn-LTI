@@ -10,7 +10,7 @@ import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { StudentViewContent } from './StudentViewContent';
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
-import { PageWrapper, PageWrapperStyles } from '../../Core/Components/Common/PageWrapper';
+import { PageWrapper } from '../../Core/Components/Common/PageWrapper';
 
 type StudentPageStyles = SimpleComponentStyles<'root'>;
 
@@ -21,7 +21,7 @@ const StudentPageInner = ({ styles }: IStylesOnly<StudentPageStyles>): JSX.Eleme
 
   return useObserver(() => (
     <div className={classes.root}>
-      <PageWrapper title={assignmentStore.assignment?.name || ''} styles={themedClassNames(pageWrapperStyles)}>
+      <PageWrapper title={assignmentStore.assignment?.name || ''}>
         <StudentViewContent requirePublished />
       </PageWrapper>
     </div>
@@ -32,25 +32,10 @@ const StudentPageStyles = ({ theme }: IThemeOnlyProps): StudentPageStyles => ({
   root: [
     {
       display: 'flex',
-      width: '100%',
       flexDirection: 'column',
       overflowY: 'auto',
       padding: theme.spacing.l2,
       paddingTop: 0
-    }
-  ]
-});
-
-const pageWrapperStyles = ({ theme }: IThemeOnlyProps): Partial<PageWrapperStyles> => ({
-  root: [
-    {
-      padding: theme.spacing.m
-    }
-  ],
-  content: [
-    {
-      borderWidth: 0,
-      padding: 0
     }
   ]
 });

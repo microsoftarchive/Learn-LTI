@@ -5,7 +5,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
@@ -30,7 +29,6 @@ namespace Edna.Users
 {
     public class UsersApi
     {
-        private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
         private const string LtiAdvantageVersionString = "1.3.0";
 
         private readonly IMapper _mapper;
@@ -55,10 +53,7 @@ namespace Edna.Users
             if (req.Headers == null)
                 return new BadRequestErrorMessageResult("No headers are presented in the request.");
 
-            if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
-                return new BadRequestErrorMessageResult("Error in sent JWT.");
-
-            if (!TryGetUserEmails(claims, out List<string> userEmails))
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
                 return new BadRequestErrorMessageResult("Could not get user email.");
 
             _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
@@ -98,24 +93,6 @@ namespace Edna.Users
             IEnumerable<Member> allMembers = await nrpsClient.Get(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl);
 
             return new OkObjectResult(allMembers.Select(_mapper.Map<MemberDto>));
-        }
-
-        private bool TryGetUserEmails(IEnumerable<Claim> claims, out List<string> userEmails)
-        {
-            userEmails = new List<string>();
-            if (claims == null)
-                return false;
-
-            Claim[] claimsArray = claims.ToArray();
-
-            userEmails = PossibleEmailClaimTypes
-                .Select(claimType => claimsArray.FirstOrDefault(claim => claim.Type == claimType))
-                .Where(claim => claim != null)
-                .Select(claim => claim.Value)
-                .Distinct()
-                .ToList();
-
-            return userEmails.Any();
         }
     }
 }

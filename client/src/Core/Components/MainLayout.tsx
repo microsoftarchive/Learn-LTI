@@ -8,7 +8,6 @@ import { Header } from './Header';
 import { styled, Spinner, SpinnerSize, FontSizes, FontWeights } from '@fluentui/react';
 import { SimpleComponentStyles, IThemeOnlyProps, IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
 import { PagesRouter } from '../../Router/PagesRouter';
-import { Navbar } from './Navbar/Navbar';
 import { useObserver } from 'mobx-react-lite';
 import { useStore } from '../../Stores/Core';
 import { useAssignmentInitializer } from '../Hooks/useAssignmentInitializer';
@@ -17,6 +16,7 @@ import { StudentPage } from '../../Features/StudentView/StudentPage';
 import learnLogo from '../../Assets/icon_learn_062020.png';
 import { useQueryValue } from '../Hooks';
 import { ErrorPage } from './ErrorsPage';
+import { NavigationControlHeader } from './NavigationControlHeader';
 
 type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content'>;
 
@@ -32,7 +32,6 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
     <div className={classes.root}>
       <Header
         mainHeader={assignmentStore.assignment?.courseName}
-        secondaryHeader={assignmentStore.assignment?.name}
         logoUrl={assignmentStore.assignment?.platformPersonalization?.logoUrl || learnLogo}
         userInstitution={assignmentStore.assignment?.platformPersonalization?.institutionName}
       />
@@ -53,7 +52,7 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         <div className={classes.content}>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
-              <Navbar />
+              <NavigationControlHeader/>
               <PagesRouter />
             </>
           ) : (
@@ -71,7 +70,8 @@ const mainLayoutStyle = ({ theme }: IThemeOnlyProps): MainLayoutStyles => {
       {
         height: '100vh',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        backgroundColor: theme.palette.neutralLighterAlt,
       }
     ],
     spinner: [
@@ -91,7 +91,8 @@ const mainLayoutStyle = ({ theme }: IThemeOnlyProps): MainLayoutStyles => {
         display: 'flex',
         width: '100%',
         overflow: 'hidden',
-        height: '100%'
+        height: '100%',
+        flexDirection:'column'
       }
     ]
   };
