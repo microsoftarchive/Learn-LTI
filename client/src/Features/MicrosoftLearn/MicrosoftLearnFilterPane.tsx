@@ -82,7 +82,7 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
     setRoleOpen(open(FilterType.roles));
     setLevelOpen(open(FilterType.levels));
     setTypeOpen(open(FilterType.types));
-  }
+  };
 
   const backToMainFilters = (props: any, defaultRender: any) => {
     if (mainIsOpen) {
@@ -131,6 +131,44 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
     );
   };
 
+  const getPanelContent = () => {
+    if (mainIsOpen) {
+      return (
+        <>
+          <ActionButton onClick={() => setOpen([FilterType.products])} className={classes.mainPanelActionButtons}>
+            <Text className="buttonTitle">Products</Text>
+            <Icon iconName="ChevronRight" />
+          </ActionButton>
+
+          <ActionButton onClick={() => setOpen([FilterType.roles])} className={classes.mainPanelActionButtons}>
+            <Text className="buttonTitle">Roles</Text>
+            <Icon iconName="ChevronRight" />
+          </ActionButton>
+
+          <ActionButton onClick={() => setOpen([FilterType.levels])} className={classes.mainPanelActionButtons}>
+            <Text className="buttonTitle">Levels</Text>
+            <Icon iconName="ChevronRight" />
+          </ActionButton>
+
+          <ActionButton onClick={() => setOpen([FilterType.types])} className={classes.mainPanelActionButtons}>
+            <Text className="buttonTitle">Types</Text>
+            <Icon iconName="ChevronRight" />
+          </ActionButton>
+        </>
+      );
+    } else if (productIsOpen) {
+      return <FilterComponent type={FilterType.products} name="Products" />;
+    } else if (roleIsOpen) {
+      return <FilterComponent type={FilterType.roles} name="Roles" />;
+    } else if (levelIsOpen) {
+      return <FilterComponent type={FilterType.levels} name="Levels" />;
+    } else if (typeIsOpen) {
+      return <FilterComponent type={FilterType.types} name="Types" />;
+    } else {
+      return null;
+    }
+  };
+
   return useObserver(() => {
     return (
       <>
@@ -144,7 +182,6 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
           }}
           disabled={isLoadingCatalog ? true : false}
         />
-
         <Panel
           headerText={getHeader()}
           isOpen={panelIsOpen}
@@ -155,51 +192,7 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
           onRenderNavigationContent={backToMainFilters}
           type={PanelType.smallFixedNear}
         >
-          <>
-            {mainIsOpen ? (
-              <>
-                <ActionButton
-                  onClick={() => setOpen([FilterType.products])}
-                  className={classes.mainPanelActionButtons}
-                >
-                  <Text className="buttonTitle">Products</Text>
-                  <Icon iconName="ChevronRight" />
-                </ActionButton>
-
-                <ActionButton
-                  onClick={() => setOpen([FilterType.roles])}
-                  className={classes.mainPanelActionButtons}
-                >
-                  <Text className="buttonTitle">Roles</Text>
-                  <Icon iconName="ChevronRight" />
-                </ActionButton>
-
-                <ActionButton
-                  onClick={() => setOpen([FilterType.levels])}
-                  className={classes.mainPanelActionButtons}
-                >
-                  <Text className="buttonTitle">Levels</Text>
-                  <Icon iconName="ChevronRight" />
-                </ActionButton>
-
-                <ActionButton
-                  onClick={() => setOpen([FilterType.types])}
-                  className={classes.mainPanelActionButtons}
-                >
-                  <Text className="buttonTitle">Types</Text>
-                  <Icon iconName="ChevronRight" />
-                </ActionButton>
-              </>
-            ) : productIsOpen ? (
-              <FilterComponent type={FilterType.products} name="Products" />
-            ) : roleIsOpen ? (
-              <FilterComponent type={FilterType.roles} name="Roles" />
-            ) : levelIsOpen ? (
-              <FilterComponent type={FilterType.levels} name="Levels" />
-            ) : (
-              <FilterComponent type={FilterType.types} name="Types" />
-            )}
-          </>
+          <>{getPanelContent()}</>
           {PanelFooterContent(filteredCatalogContent?.length)}
         </Panel>
       </>
