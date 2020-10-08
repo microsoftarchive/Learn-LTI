@@ -148,7 +148,7 @@ const FilterComponentStyles = ({ theme }: IThemeOnlyProps): FilterComponentStyle
           color: theme.palette.neutralDark,
           selectors: {
             ' i':{
-              color:'#323130'
+              color: theme.palette.neutralDark
             }
           }
         }

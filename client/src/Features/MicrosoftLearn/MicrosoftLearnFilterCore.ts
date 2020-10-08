@@ -153,7 +153,7 @@ export function getUpdatedURIFromSelectedFilters(
 }
 
 export const getRegexs = (searchTerm: string): RegExp[] => {
-  searchTerm = searchTerm.replace(/\W/gi, '');
+  searchTerm = searchTerm.replace(/([.?*+^$[\]\\(){}|-])/g, '');
   if (searchTerm === '') {
     return [new RegExp(`.*`)];
   }

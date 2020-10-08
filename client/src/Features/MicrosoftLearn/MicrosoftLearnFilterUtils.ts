@@ -19,7 +19,7 @@ const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
   return -1;
 };
 
-const createOptoinArrayFromKeys = (keys: FilterOption[]) => {
+const createOptionArrayFromKeys = (keys: FilterOption[]) => {
   let map: Map<FilterOption, FilterOption[]> = new Map<FilterOption, FilterOption[]>();
   keys.forEach(key => map.set(key, []));
   return map;
@@ -44,7 +44,7 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
 export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<string, Role> | undefined) => {
   if (roleMap != null) {
     let sortedRoles = roleId?.map(id => roleMap.get(id)!!).sort(FilterOptionComparer);
-    return createOptoinArrayFromKeys(sortedRoles || []);
+    return createOptionArrayFromKeys(sortedRoles || []);
   }
   return new Map<Role, Role[]>();
 };
@@ -52,7 +52,7 @@ export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<str
 export const getLevelsToDisplay = (levelId: string[] | undefined, levelMap: Map<string, Level> | undefined) => {
   if (levelMap != null) {
     let sortedLevels = levelId?.map(id => levelMap.get(id)!!).sort(FilterOptionComparer);
-    return createOptoinArrayFromKeys(sortedLevels || []);
+    return createOptionArrayFromKeys(sortedLevels || []);
   }
   return new Map<Level, Level[]>();
 };
@@ -60,7 +60,7 @@ export const getLevelsToDisplay = (levelId: string[] | undefined, levelMap: Map<
 export const getTypesToDisplay = (typeId: string[] | undefined) => {
   const t1: LearnTypeFilterOption = { id: 'module', name: 'Module' };
   const t2: LearnTypeFilterOption = { id: 'learningPath', name: 'Learning Path' };
-  return createOptoinArrayFromKeys(typeId?.sort().map(id => (id === 'module' ? t1 : t2)) || []);
+  return createOptionArrayFromKeys(typeId?.sort().map(id => (id === 'module' ? t1 : t2)) || []);
 };
 
 export type FilterTag = { id: string; name: string; type: FilterType };
