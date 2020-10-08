@@ -17,6 +17,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
+using Edna.Utils.Http;
+using Edna.Bindings.User.Attributes;
+using Edna.Bindings.User;
+using Edna.Bindings.User.Models;
 
 namespace Edna.AssignmentLinks
 {
@@ -79,13 +83,30 @@ namespace Edna.AssignmentLinks
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "assignments/{assignmentId}/links/{linkId}")] HttpRequest req,
             [Table(AssignmentLinksTableName)] IAsyncCollector<AssignmentLinkEntity> linksCollector,
             string assignmentId,
-            string linkId)
+            string linkId,
+            [User] UsersClient usersClient)
         {
             string linkJson = await req.ReadAsStringAsync();
             AssignmentLinkDto linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
 
             if (linkId != linkDto.Id)
                 return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
+
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
 
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");
 
@@ -95,8 +116,6 @@ namespace Edna.AssignmentLinks
 
             await linksCollector.AddAsync(assignmentLinkEntity);
             await linksCollector.FlushAsync();
-
-            _logger.LogInformation("Link saved.");
 
             AssignmentLinkDto savedLinkDto = _mapper.Map<AssignmentLinkDto>(assignmentLinkEntity);
             string assignmentUrl = $"{req.Scheme}://{req.Host}/api/assignments/{assignmentId}/links/{savedLinkDto.Id}";
@@ -108,8 +127,26 @@ namespace Edna.AssignmentLinks
         public async Task<IActionResult> DeleteLink(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "assignments/{assignmentId}/links/{linkId}")] HttpRequest req,
             [Table(AssignmentLinksTableName)] CloudTable assignmentLinksTable,
-            [Table(AssignmentLinksTableName, "{assignmentId}", "{linkId}")] AssignmentLinkEntity entityToDelete)
+            [Table(AssignmentLinksTableName, "{assignmentId}", "{linkId}")] AssignmentLinkEntity entityToDelete,
+            string assignmentId,
+            [User] UsersClient usersClient)
         {
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
+
             if (entityToDelete == null)
                 return new NoContentResult();
 
