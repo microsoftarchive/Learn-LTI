@@ -22,7 +22,6 @@ export const FilterPaneStyles = ({ theme }: IThemeOnlyProps): FilterPaneStyles =
     {
       display: 'flex',
       flexDirection: 'column',
-      backgroundColor: theme.palette.neutralLighterAlt,
       marginRight: `calc(${theme.spacing.l1} * 1.6)`,
       width: '300px'
     }
@@ -45,10 +44,10 @@ export const FilterPaneStyles = ({ theme }: IThemeOnlyProps): FilterPaneStyles =
     {
       color: theme.palette.themePrimary,
       fontSize: FontSizes.mediumPlus,
-      padding: `0px`,
+      padding: '0px',
       selectors: {
         '.ms-Button-label': {
-          margin: `0px`
+          margin: '0px'
         }
       }
     }

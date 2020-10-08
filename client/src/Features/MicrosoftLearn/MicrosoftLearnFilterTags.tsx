@@ -52,18 +52,18 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>): JSX.Element 
 const FilterTagStyles = ({ theme }: IThemeOnlyProps): FilterTagStyles => ({
   root: [
     {
-      margin: `calc(${theme.spacing.s1}*1.5)`
+      margin: `calc(${theme.spacing.s1} * 1.5)`
     }
   ],
   tags: [
     {
       display: 'inline',
-      backgroundColor: '#F3F2F1',
-      borderRadius: '2px',
-      marginRight: '4px',
-      marginBottom: '4px',
-      border: `0px`,
-      padding: `0px 8px`,
+      backgroundColor: theme.palette.neutralLight,
+      borderRadius: `calc(${theme.spacing.s2} * 0.5)`,
+      marginRight: theme.spacing.s2,
+      marginBottom: theme.spacing.s2,
+      border: '0px',
+      padding: `0px ${theme.spacing.s1}`,
       selectors: {
         '.ms-Button-flexContainer': {
           flexDirection: 'row-reverse'

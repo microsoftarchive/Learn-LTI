@@ -17,6 +17,7 @@ import { MicrosoftLearnFilterComponent } from './MicrosoftLearnFilterComponent';
 import { FontWeights } from '@fluentui/react';
 import { IThemeOnlyProps, SimpleComponentStyles } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
+import { TAB_SCREEN_SIZE } from './MicrosoftLearnPage';
 
 export type FilterComponentStyles = SimpleComponentStyles<
   'root' | 'title' | 'search' | 'optionsList' | 'subOptionsList' | 'filterItem'
@@ -26,21 +27,21 @@ type FilterComponentTypes = FilterType.products | FilterType.roles | FilterType.
 
 export const FilterComponent = (props: { type: FilterComponentTypes; name: string }) => {
   const { filterStore, catalog } = useStore('microsoftLearnStore');
-  return useObserver(() => {
-    
-    const getDisplayOptions = () => {
-      switch (props.type) {
-        case FilterType.products:
-          return getProductsToDisplay(filterStore.displayFilter[props.type], catalog?.products);
-        case FilterType.roles:
-          return getRolesToDisplay(filterStore.displayFilter[props.type], catalog?.roles);
-        case FilterType.levels:
-          return getLevelsToDisplay(filterStore.displayFilter[props.type], catalog?.levels);
-        case FilterType.types:
-          return getTypesToDisplay(filterStore.displayFilter[props.type]);
-      }
-    };
 
+  const getDisplayOptions = () => {
+    switch (props.type) {
+      case FilterType.products:
+        return getProductsToDisplay(filterStore.displayFilter[props.type], catalog?.products);
+      case FilterType.roles:
+        return getRolesToDisplay(filterStore.displayFilter[props.type], catalog?.roles);
+      case FilterType.levels:
+        return getLevelsToDisplay(filterStore.displayFilter[props.type], catalog?.levels);
+      case FilterType.types:
+        return getTypesToDisplay(filterStore.displayFilter[props.type]);
+    }
+  };
+
+  return useObserver(() => {
     const displayOptions = getDisplayOptions();
     if (props.type === FilterType.products) {
       return (
@@ -111,7 +112,7 @@ const FilterComponentStyles = ({ theme }: IThemeOnlyProps): FilterComponentStyle
     {
       color: theme.palette.neutralPrimary,
       fontWeight: FontWeights.semibold,
-      display: window.innerWidth > 768 ? 'block' : 'none'
+      display: window.innerWidth > TAB_SCREEN_SIZE ? 'block' : 'none'
     }
   ],
   search: [
@@ -123,7 +124,7 @@ const FilterComponentStyles = ({ theme }: IThemeOnlyProps): FilterComponentStyle
     {
       width: '260px',
       height: 'max-content',
-      maxHeight: window.innerWidth > 768 ? '260px' : '85%',
+      maxHeight: window.innerWidth > TAB_SCREEN_SIZE ? '260px' : '85%',
       overflowY: 'auto',
       marginTop: `calc(${theme.spacing.s1}*2)`
     }
@@ -139,11 +140,17 @@ const FilterComponentStyles = ({ theme }: IThemeOnlyProps): FilterComponentStyle
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      margin: `4px 4px`,
+      margin: theme.spacing.s2,
       selectors: {
         '.collapseSubMenuIcon': {
           display: 'inline',
-          height: 'max-content'
+          height: 'max-content',
+          color: theme.palette.neutralDark,
+          selectors: {
+            ' i':{
+              color:'#323130'
+            }
+          }
         }
       }
     }

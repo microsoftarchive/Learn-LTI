@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useObserver } from 'mobx-react-lite';
 import { useStore } from '../../Stores/Core';
 import { MicrosoftLearnList } from './MicrosoftLearnList';
-// import { PageWrapper } from '../../Core/Components/Common/PageWrapper';
+import { PageWrapper } from '../../Core/Components/Common/PageWrapper';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { SimpleComponentStyles, IStylesOnly, IThemeOnlyProps } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { styled, Separator, mergeStyles } from '@fluentui/react';
@@ -21,8 +21,11 @@ import { MicrosoftLearnFilterPane } from './MicrosoftLearnFilterPane';
 import { debounce } from 'lodash';
 import { MicrosoftLearnFilterTags } from './MicrosoftLearnFilterTags';
 import { useLocation } from 'react-router-dom';
+import { pagesDisplayNames } from '../../Router/Consts';
 
 type MicrosoftLearnPageStyles = SimpleComponentStyles<'root' | 'separator' | 'wrapper'>;
+
+export const TAB_SCREEN_SIZE = 768;
 
 const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
@@ -67,17 +70,19 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
   return useObserver(() => {
 
       return (
+        <PageWrapper title={pagesDisplayNames.MSLEARN}>
         <div className={classes.wrapper}>
-          {width > 768 && <MicrosoftLearnFilterPane />}
+          {width > TAB_SCREEN_SIZE && <MicrosoftLearnFilterPane />}
           <div className={classes.root}>
             <MicrosoftLearnSearch styles={themedClassNames(microsoftLearnSearchStyles)} />
             <MicrosoftLearnSelectedItemsList styles={themedClassNames(microsoftLearnSelectedItemsStyles)} />
             <Separator className={classes.separator} />
-            {width <= 768 && <MicrosoftLearnFilterPane />}
+            {width <= TAB_SCREEN_SIZE && <MicrosoftLearnFilterPane />}
             <MicrosoftLearnFilterTags />
             <MicrosoftLearnList />
           </div>
         </div>
+        </PageWrapper>
       );
   });
 };

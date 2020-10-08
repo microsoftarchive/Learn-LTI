@@ -6,8 +6,20 @@
 import { FilterItemProps } from './MicrosoftLearnFilterComponentProps';
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
-import { Checkbox, ActionButton } from '@fluentui/react';
+import {
+  Checkbox,
+  ActionButton,
+  classNamesFunction,
+  getTheme,
+  ITheme,
+  ICheckboxStyles
+} from '@fluentui/react';
 import React from 'react';
+
+interface SubItemNumberStyleProps {
+  nSubItems: Number;
+  theme: ITheme;
+}
 
 const FilterItemInner = (props: FilterItemProps) => {
   const { filterStore } = useStore('microsoftLearnStore');
@@ -31,6 +43,11 @@ const FilterItemInner = (props: FilterItemProps) => {
     return id && filterStore.expandedProducts.includes(id);
   };
 
+  const checkboxClassName = classNamesFunction<SubItemNumberStyleProps, ICheckboxStyles>()(mainCheckboxStyles, {
+    nSubItems,
+    theme: getTheme()
+  });
+
   return useObserver(() => {
     return (
       <div>
@@ -38,7 +55,7 @@ const FilterItemInner = (props: FilterItemProps) => {
           <ActionButton
             iconProps={{ iconName: inExpanded(props.mainItem?.id) ? 'ChevronUpMed' : 'ChevronDownMed' }}
             className="collapseSubMenuIcon"
-            style={{ color: nSubItems === 0 ? 'white' : '#605E5C' }}
+            style={{ display: nSubItems === 0 ? 'none' : 'inline' }}
             onClick={event => {
               event.preventDefault();
               updateExpandedSet();
@@ -56,6 +73,7 @@ const FilterItemInner = (props: FilterItemProps) => {
               }
             }}
             label={props.mainItem?.name}
+            styles={checkboxClassName}
           />
         </span>
         <div
@@ -83,5 +101,13 @@ const FilterItemInner = (props: FilterItemProps) => {
     );
   });
 };
+
+const mainCheckboxStyles = ({ nSubItems, theme }: SubItemNumberStyleProps): Partial<ICheckboxStyles> => ({
+  root: [
+    {
+      paddingLeft: nSubItems > 0 ? '0px' : `calc(${theme.spacing.l1}*1.7)`
+    }
+  ]
+});
 
 export const MicrosoftLearnFilterItem = FilterItemInner;
