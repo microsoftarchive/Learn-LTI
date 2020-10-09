@@ -81,8 +81,7 @@ export class MicrosoftLearnStore extends ChildStore {
       this.serviceCallInProgress = true;
       MicrosoftLearnService.saveAssignmentLearnContent(assignmentId, learnContentUid)
         .then(hasError => {
-          console.log('haserr', hasError)
-          if (hasError===null){
+          if (hasError === null){
             this.syncedSelectedItems?.push({ contentUid: learnContentUid });
           }
           this.serviceCallInProgress = false;
@@ -99,7 +98,7 @@ export class MicrosoftLearnStore extends ChildStore {
     this.serviceCallInProgress = true;
     MicrosoftLearnService.clearAssignmentLearnContent(assignmentId)
       .then(hasError => {
-        if (hasError===null){
+        if (hasError === null){
           this.syncedSelectedItems = [];
         }
         this.serviceCallInProgress = false;
@@ -141,7 +140,7 @@ export class MicrosoftLearnStore extends ChildStore {
     this.serviceCallInProgress = true;
     MicrosoftLearnService.removeAssignmentLearnContent(assignmentId, learnContentUid)
       .then(hasError => {
-        if (hasError===null){
+        if (hasError === null){
           this.syncedSelectedItems?.splice(itemIndexInSelectedItemsList, 1);
         }
         this.serviceCallInProgress = false;

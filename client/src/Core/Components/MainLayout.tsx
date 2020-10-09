@@ -51,7 +51,7 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         />
         ))) : (
         <div className={classes.content}>
-          {usersStore.userDetails.role === 'teacher' && !asStudent ? (            
+          {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
               <UnsyncedAssignmentStickeyMessageBar/>
               <NavigationControlHeader/>
