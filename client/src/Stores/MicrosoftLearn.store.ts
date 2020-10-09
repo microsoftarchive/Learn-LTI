@@ -44,7 +44,11 @@ export class MicrosoftLearnStore extends ChildStore {
         filter(assignmentLearnContent => !assignmentLearnContent.error),
         map(assignmentLearnContent => assignmentLearnContent as AssignmentLearnContentDto[])
       )
-      .subscribe(selectedItems => {this.selectedItems = selectedItems; this.syncedSelectedItems = selectedItems; this.isSynced = true; console.log("calling selected item stream")});
+      .subscribe(selectedItems => {
+        this.selectedItems = selectedItems; 
+        this.syncedSelectedItems = selectedItems; 
+        this.isSynced = true; 
+      });
   }
 
   @action
@@ -75,12 +79,15 @@ export class MicrosoftLearnStore extends ChildStore {
       this.selectedItems?.push({ contentUid: learnContentUid });
 
       this.serviceCallInProgress = true;
-      const hasErrors = MicrosoftLearnService.saveAssignmentLearnContent(assignmentId, learnContentUid);
-      if (hasErrors===null){
-        this.syncedSelectedItems?.push({ contentUid: learnContentUid });
-      }
-      this.serviceCallInProgress = false;
-      this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
+      MicrosoftLearnService.saveAssignmentLearnContent(assignmentId, learnContentUid)
+        .then(hasError => {
+          console.log('haserr', hasError)
+          if (hasError===null){
+            this.syncedSelectedItems?.push({ contentUid: learnContentUid });
+          }
+          this.serviceCallInProgress = false;
+          this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
+        })
     }
   }
 
@@ -90,12 +97,14 @@ export class MicrosoftLearnStore extends ChildStore {
     const assignmentId = this.root.assignmentStore.assignment!.id;
 
     this.serviceCallInProgress = true;
-    const hasErrors = MicrosoftLearnService.clearAssignmentLearnContent(assignmentId);
-    if (hasErrors===null){
-      this.syncedSelectedItems = [];
-    }
-    this.serviceCallInProgress = false;
-    this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
+    MicrosoftLearnService.clearAssignmentLearnContent(assignmentId)
+      .then(hasError => {
+        if (hasError===null){
+          this.syncedSelectedItems = [];
+        }
+        this.serviceCallInProgress = false;
+        this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
+      })  
   }
 
   @action
@@ -130,12 +139,14 @@ export class MicrosoftLearnStore extends ChildStore {
     this.selectedItems?.splice(itemIndexInSelectedItemsList, 1);
 
     this.serviceCallInProgress = true;
-    const hasErrors = MicrosoftLearnService.removeAssignmentLearnContent(assignmentId, learnContentUid);
-    if (hasErrors===null){
-      this.syncedSelectedItems?.splice(itemIndexInSelectedItemsList, 1);
-    }
-    this.serviceCallInProgress = false;
-    this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
+    MicrosoftLearnService.removeAssignmentLearnContent(assignmentId, learnContentUid)
+      .then(hasError => {
+        if (hasError===null){
+          this.syncedSelectedItems?.splice(itemIndexInSelectedItemsList, 1);
+        }
+        this.serviceCallInProgress = false;
+        this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
+      })
   };
 
   private getProducts = (catalog: CatalogDto): Map<string, Product> => {
