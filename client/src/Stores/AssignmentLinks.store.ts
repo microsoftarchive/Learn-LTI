@@ -63,6 +63,7 @@ export class AssignmentLinksStore extends ChildStore {
     const assignmentId = this.root.assignmentStore.assignment!.id;
     this.assignmentLinks = updatedLinks;
 
+    this.serviceCallInProgress = true;
     AssignmentLinksService.updateAssignmentLink(editedLink, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null)
@@ -81,6 +82,7 @@ export class AssignmentLinksStore extends ChildStore {
     const assignmentId = this.root.assignmentStore.assignment!.id;
     this.assignmentLinks = updatedLinks;
 
+    this.serviceCallInProgress = true;
     AssignmentLinksService.deleteAssignmentLink(assignmentLinkId, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null)
