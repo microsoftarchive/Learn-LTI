@@ -16,6 +16,13 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
+using Edna.Utils.Http;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+using Edna.Bindings.User.Attributes;
+using Edna.Bindings.User;
+using Edna.Bindings.User.Models;
 
 namespace Edna.Assignments
 {
@@ -36,14 +43,31 @@ namespace Edna.Assignments
 
         [FunctionName(nameof(CreateOrUpdateAssignment))]
         public async Task<IActionResult> CreateOrUpdateAssignment(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = AssignmentsRoutePath)] HttpRequest request,
-            [Table(AssignmentsTableName)] CloudTable assignmentsTable)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = AssignmentsRoutePath)] HttpRequest req,
+            [Table(AssignmentsTableName)] CloudTable assignmentsTable,
+            [User] UsersClient usersClient)
         {
-            string result = await request.ReadAsStringAsync();
+            string result = await req.ReadAsStringAsync();
 
             AssignmentDto assignmentDto = JsonConvert.DeserializeObject<AssignmentDto>(result);
             AssignmentEntity assignmentEntity = _mapper.Map<AssignmentEntity>(assignmentDto);
             assignmentEntity.ETag = "*";
+
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allUsers = await usersClient.GetAllUsers(assignmentDto.Id);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
 
             TableOperation insertOrMergeAssignment = TableOperation.InsertOrMerge(assignmentEntity);
             TableResult insertOrMergeResult = await assignmentsTable.ExecuteAsync(insertOrMergeAssignment);
@@ -55,7 +79,7 @@ namespace Edna.Assignments
 
             _logger.LogInformation($"Saved assignment {assignmentEntity.ToAssignmentId()}.");
 
-            string assignmentUrl = $"{request.Scheme}://{request.Host}/api/{AssignmentsRoutePath}/{assignmentEntity.ToAssignmentId()}";
+            string assignmentUrl = $"{req.Scheme}://{req.Host}/api/{AssignmentsRoutePath}/{assignmentEntity.ToAssignmentId()}";
             AssignmentDto savedAssignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
 
             return new CreatedResult(assignmentUrl, savedAssignmentDto);
@@ -84,23 +108,25 @@ namespace Edna.Assignments
         }
 
         [FunctionName(nameof(PublishAssignment))]
-        public Task<IActionResult> PublishAssignment(
+        public async Task<IActionResult> PublishAssignment(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = AssignmentsRoutePath + "/{assignmentId}/publish")] HttpRequest req,
             [Table(AssignmentsTableName)] CloudTable table,
             [Table(AssignmentsTableName)] IAsyncCollector<AssignmentEntity> assignmentEntityCollector,
-            string assignmentId)
+            string assignmentId,
+            [User] UsersClient usersClient)
         {
-            return ChangePublishStatus(table, assignmentEntityCollector, assignmentId, PublishStatus.Published);
+            return await ChangePublishStatus(req, table, assignmentEntityCollector, assignmentId, usersClient, PublishStatus.Published);
         }
 
         [FunctionName(nameof(UnpublishAssignment))]
-        public Task<IActionResult> UnpublishAssignment(
+        public async Task<IActionResult> UnpublishAssignment(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = AssignmentsRoutePath + "/{assignmentId}/unpublish")] HttpRequest req,
             [Table(AssignmentsTableName)] CloudTable table,
             [Table(AssignmentsTableName)] IAsyncCollector<AssignmentEntity> assignmentEntityCollector,
-            string assignmentId)
+            string assignmentId,
+            [User] UsersClient usersClient)
         {
-            return ChangePublishStatus(table, assignmentEntityCollector, assignmentId, PublishStatus.NotPublished);
+            return await ChangePublishStatus(req, table, assignmentEntityCollector, assignmentId, usersClient, PublishStatus.NotPublished);
         }
 
         private async Task<AssignmentEntity> FetchAssignment(CloudTable table, string assignmentId)
@@ -117,11 +143,29 @@ namespace Edna.Assignments
             return assignmentEntity;
         }
 
-        private async Task<IActionResult> ChangePublishStatus(CloudTable table, IAsyncCollector<AssignmentEntity> assignmentEntityCollector, string assignmentId, PublishStatus newPublishStatus)
+        private async Task<IActionResult> ChangePublishStatus(HttpRequest req, CloudTable table, IAsyncCollector<AssignmentEntity> assignmentEntityCollector, string assignmentId, UsersClient usersClient, PublishStatus newPublishStatus)
         {
             AssignmentEntity assignmentEntity = await FetchAssignment(table, assignmentId);
             if (assignmentEntity == null)
                 return new NotFoundResult();
+
+            AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
+
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
 
             assignmentEntity.PublishStatus = newPublishStatus.ToString();
             assignmentEntity.ETag = "*";
