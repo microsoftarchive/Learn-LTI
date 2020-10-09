@@ -46,7 +46,7 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
       (assignmentLinksStore.isLoading || assignmentLinksStore.syncedAssignmentLinks.length > 0) && {
         title: 'Links',
         styles: linksSectionStyles,
-        content: <AssignmentLinksList disableEdit />
+        content: <AssignmentLinksList disableEdit showSynced/>
       },
       learnStore.selectedItems &&
         learnStore.selectedItems.length > 0 && {

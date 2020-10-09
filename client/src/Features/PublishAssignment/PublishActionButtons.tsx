@@ -37,8 +37,8 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
   const assignmentLinksStore = useStore('assignmentLinksStore');
   const learnStore = useStore('microsoftLearnStore');
 
-  const isDataSynced = assignmentLinksStore.assignmentLinks === assignmentLinksStore.syncedAssignmentLinks;
-  const primaryButtonSubText = isDataSynced? 'You are about to Publish the assignment and make it visible to the students.\nAre you sure you want to proceed?'
+  const primaryButtonSubText = (assignmentLinksStore.isSynced && learnStore.isSynced /** && assignmentStore.isSynced */) ? 
+  'You are about to Publish the assignment and make it visible to the students.\nAre you sure you want to proceed?'
   : 'Some parts of the assignment are not updated but you are about to Publish the assignment and make it visible to the students.\nHead to the Preview page to see the saved state of the assignment which will be visible to the students. \nAre you sure you still want to proceed to publish the assignment?';
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);

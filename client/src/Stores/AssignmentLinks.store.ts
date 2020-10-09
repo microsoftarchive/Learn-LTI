@@ -16,6 +16,8 @@ export class AssignmentLinksStore extends ChildStore {
   @observable assignmentLinks: AssignmentLink[] = [];
   @observable isLoading = true;
   @observable syncedAssignmentLinks: AssignmentLink[] = [];
+  @observable serviceCallInProgress: boolean | null = null;
+  @observable isSynced: boolean | null = null;
 
   initialize(): void {
     toObservable(() => this.root.assignmentStore.assignment)
@@ -32,35 +34,44 @@ export class AssignmentLinksStore extends ChildStore {
       )
       .subscribe((links: AssignmentLinkDto[]) => {
         this.assignmentLinks = links;
+        this.syncedAssignmentLinks=links;
+        this.isSynced=true;
         this.isLoading = false;
       });
   }
 
   @action
   addAssignmentLink(assignmentLink: AssignmentLink): void {
-    this.syncedAssignmentLinks = this.assignmentLinks;
     this.assignmentLinks = [...this.assignmentLinks, assignmentLink];
     const assignmentId = this.root.assignmentStore.assignment!.id;
 
-    const hasErrors = AssignmentLinksService.updateAssignmentLink(assignmentLink, assignmentId);
+    this.serviceCallInProgress = true;
+    AssignmentLinksService.updateAssignmentLink(assignmentLink, assignmentId)
+    .then(hasErrors => {
     if(hasErrors === null)
     {
-      this.syncedAssignmentLinks = this.assignmentLinks;
+      this.syncedAssignmentLinks = [...this.syncedAssignmentLinks, assignmentLink];
     }
+    this.serviceCallInProgress = false;
+    this.isSynced = _.isEqual(this.assignmentLinks, this.syncedAssignmentLinks);  
+  })
   }
 
   @action
   editAssignmentLink(editedLink: AssignmentLink): void {
-    this.syncedAssignmentLinks = this.assignmentLinks;
     const updatedLinks = this.assignmentLinks.map(link => (link.id === editedLink.id ? editedLink : link));
     const assignmentId = this.root.assignmentStore.assignment!.id;
     this.assignmentLinks = updatedLinks;
 
-    const hasErrors = AssignmentLinksService.updateAssignmentLink(editedLink, assignmentId);
+    AssignmentLinksService.updateAssignmentLink(editedLink, assignmentId)
+    .then(hasErrors => {
     if(hasErrors === null)
     {
-      this.syncedAssignmentLinks = this.assignmentLinks;
+      this.syncedAssignmentLinks = this.syncedAssignmentLinks.map(link => (link.id === editedLink.id ? editedLink : link));
     }
+    this.serviceCallInProgress = false;
+    this.isSynced = _.isEqual(this.assignmentLinks, this.syncedAssignmentLinks);
+  })
   }
 
   @action
@@ -70,10 +81,14 @@ export class AssignmentLinksStore extends ChildStore {
     const assignmentId = this.root.assignmentStore.assignment!.id;
     this.assignmentLinks = updatedLinks;
 
-    const hasErrors = AssignmentLinksService.deleteAssignmentLink(assignmentLinkId, assignmentId);
+    AssignmentLinksService.deleteAssignmentLink(assignmentLinkId, assignmentId)
+    .then(hasErrors => {
     if(hasErrors === null)
     {
-      this.syncedAssignmentLinks = this.assignmentLinks;
+      this.syncedAssignmentLinks = _.filter(this.syncedAssignmentLinks, link => link.id !== assignmentLinkId);
     }
+    this.serviceCallInProgress = false;
+    this.isSynced = _.isEqual(this.assignmentLinks, this.syncedAssignmentLinks);
+  })
   }
 }
