@@ -39,10 +39,14 @@ const NavbarTopInner = ({ styles }: IStylesOnly<NavbarTopStyles>): JSX.Element |
   uriSearchParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam); 
   
   const handleLinkClick = (item?: PivotItem, event?: MouseEvent): void => {
+    const pushToHistory = (url: string, search: string | undefined) => {
+      history.push(url + (search!==undefined && search.length>0 ? '?'+search : ''));
+    }
+
     event?.preventDefault();
     if (item && item.props.itemKey && item.props.headerText) {
       const searchParam = uriSearchParamsMap.get(item.props.headerText);
-      history.push(item.props.itemKey + (searchParam!==undefined && searchParam.length>0 ? '?'+searchParam : ''));
+      pushToHistory(item.props.itemKey, searchParam);
     }
   };
   

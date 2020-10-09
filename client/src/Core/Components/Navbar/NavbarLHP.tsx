@@ -14,6 +14,7 @@ import { NavbarSectionHeader } from './NavbarSectionHeader';
 import { styled, FontWeights } from '@fluentui/react';
 import { IThemeOnlyProps, IStylesOnly } from '../../Utils/FluentUI/typings.fluent-ui';
 import { Assignment } from '../../../Models/Assignment.model';
+import { pagesDisplayNames } from '../../../Router/Consts';
 
 const getNavLinkGroups = (assignment: Assignment): INavLinkGroup[] => [
   {
@@ -35,6 +36,7 @@ const NavbarLHPInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null
   const assignmentStore = useStore('assignmentStore');
   const history = useHistory();
   const location = useLocation();
+  const { filterStore } = useStore('microsoftLearnStore');  
 
   const getMappedLinkGroups = (assignment: Assignment): INavLinkGroup[] =>
     _.map(getNavLinkGroups(assignment), group => ({
@@ -51,10 +53,18 @@ const NavbarLHPInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null
       })
     }));
 
+  // The following map can be extended to include other searchParams as well in future in case need be
+  let uriSearchParamsMap = new Map<string, string>();
+  uriSearchParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam);   
+
   const handleLinkClick = (event?: MouseEvent, item?: INavLink): void => {
+    const pushToHistory = (url: string, search: string | undefined) => {
+      history.push(url + (search!==undefined && search.length>0 ? '?'+search : ''));
+    }
     event?.preventDefault();
     if (item) {
-      history.push(item.url);
+      const searchParam = uriSearchParamsMap.get(item.name);
+      pushToHistory(item.url, searchParam);
     }
   };
 
