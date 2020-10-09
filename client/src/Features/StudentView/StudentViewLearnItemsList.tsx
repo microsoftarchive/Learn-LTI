@@ -27,8 +27,8 @@ const StudentViewLearnItemsListInner = ({ styles }: IStylesOnly<StudentViewLearn
 
   return useObserver(() => (
     <div className={classes.root}>
-      {learnStore.selectedItems &&
-        learnStore.selectedItems.map(selectedItem => {
+      {learnStore.syncedSelectedItems &&
+        learnStore.syncedSelectedItems.map(selectedItem => {
           const contentItem = learnStore.catalog?.contents.get(selectedItem.contentUid);
 
           return contentItem ? (
