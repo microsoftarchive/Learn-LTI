@@ -7,14 +7,14 @@ import _ from 'lodash';
 
 export const pagesDisplayNames = {
   GENERAL: 'General',
-  MSLEARN: 'MS Learn',
+  MSLEARN: 'Microsoft Learn',
   PREVIEW: 'Preview',
   PARTICIPANTS: 'Participants'
 };
 
-const getRouteFromDisplayName = (displayName: string): string => {
-  return _.kebabCase(_.toLower(displayName));
-};
+function getRouteFromDisplayName(displayName: string): string {
+  return _.kebabCase(displayName.toLowerCase());
+}
 
 export const routesConstants = {
   ROOT: '',
