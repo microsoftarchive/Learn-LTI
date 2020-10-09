@@ -20,6 +20,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Edna.Utils.Http;
+using Edna.Bindings.User.Attributes;
+using Edna.Bindings.User;
+using Edna.Bindings.User.Models;
 
 namespace Edna.AssignmentLearnContent
 {
@@ -72,15 +76,40 @@ namespace Edna.AssignmentLearnContent
         }
 
         [FunctionName(nameof(SaveAssignmentLearnContent))]
-        public void SaveAssignmentLearnContent(
+        public async Task<IActionResult> SaveAssignmentLearnContent(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "assignments/{assignmentId}/learn-content/{contentUid}")] HttpRequest req,
-            [Table(AssignmentLearnContentTableName)] out AssignmentLearnContentEntity assignmentLearnContentEntity,
+            [Table(AssignmentLearnContentTableName)] IAsyncCollector<AssignmentLearnContentEntity> learnContentCollector,
             string assignmentId,
-            string contentUid)
+            string contentUid,
+            [User] UsersClient usersClient)
         {
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if(user == null || !user.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
+
             _logger.LogInformation($"Saving assignment learn content with uid [{contentUid}] to assignment {assignmentId}");
 
-            assignmentLearnContentEntity = new AssignmentLearnContentEntity { PartitionKey = assignmentId, RowKey = contentUid, ETag = "*" };
+            AssignmentLearnContentEntity assignmentLearnContentEntity = new AssignmentLearnContentEntity { PartitionKey = assignmentId, RowKey = contentUid, ETag = "*" };
+
+            await learnContentCollector.AddAsync(assignmentLearnContentEntity);
+            await learnContentCollector.FlushAsync();
+
+            AssignmentLearnContentDto savedLearnContentDto = _mapper.Map<AssignmentLearnContentDto>(assignmentLearnContentEntity);
+            string assignmentUrl = $"{req.Scheme}://{req.Host}/api/assignments/{assignmentId}/learn-content/{savedLearnContentDto.ContentUid}";
+
+            return new CreatedResult(assignmentUrl, savedLearnContentDto);
         }
 
         [FunctionName(nameof(RemoveAssignmentLearnContent))]
@@ -89,8 +118,25 @@ namespace Edna.AssignmentLearnContent
             [Table(AssignmentLearnContentTableName)] CloudTable assignmentLearnContentTable,
             [Table(AssignmentLearnContentTableName, "{assignmentId}", "{contentUid}")] AssignmentLearnContentEntity assignmentLearnContentEntityToDelete,
             string assignmentId,
-            string contentUid)
+            string contentUid,
+            [User] UsersClient usersClient)
         {
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
+
             if (assignmentLearnContentEntityToDelete == null)
                 return new NoContentResult();
 
@@ -109,8 +155,25 @@ namespace Edna.AssignmentLearnContent
         public async Task<IActionResult> ClearAssignmentLearnContent(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "assignments/{assignmentId}/learn-content")] HttpRequest req,
             [Table(AssignmentLearnContentTableName)] CloudTable assignmentLearnContentTable,
-            string assignmentId)
+            string assignmentId,
+            [User] UsersClient usersClient)
         {
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
+
             List<AssignmentLearnContentEntity> assignmentLearnContentEntities = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
 
             if (assignmentLearnContentEntities.Count == 0)
@@ -126,8 +189,8 @@ namespace Edna.AssignmentLearnContent
             IList<TableResult> executeBatchResults = await assignmentLearnContentTable.ExecuteBatchAsync(deleteBatchOperations);
             bool errorExists = executeBatchResults.Any(result => result.HttpStatusCode < 200 || result.HttpStatusCode >= 300);
 
-            return errorExists 
-                ? (IActionResult) new InternalServerErrorResult() 
+            return errorExists
+                ? (IActionResult)new InternalServerErrorResult()
                 : new OkResult();
         }
 
@@ -155,7 +218,7 @@ namespace Edna.AssignmentLearnContent
             string url = contentJToken["url"]?.ToString();
             if (string.IsNullOrEmpty(url))
                 return;
-            
+
             Uri previousUri = new Uri(url);
             NameValueCollection queryParams = previousUri.ParseQueryString();
             queryParams[LearnContentUrlIdentifierKey] = LearnContentUrlIdentifierValue;

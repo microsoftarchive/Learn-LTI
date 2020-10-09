@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Bindings\Edna.Bindings.User\Edna.Bindings.User.csproj" />
     <ProjectReference Include="..\..\..\Utils\Edna.Utils.Linq\Edna.Utils.Linq\Edna.Utils.Linq.csproj" />
   </ItemGroup>
   <ItemGroup>

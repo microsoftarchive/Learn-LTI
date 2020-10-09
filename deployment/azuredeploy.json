@@ -224,6 +224,7 @@
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
                 "PlatformsServiceUrl": "[concat('https://','platforms' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
+                "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('assignments' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('assignments' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
@@ -255,6 +256,52 @@
                 "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('platforms' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('platforms' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
                 "WEBSITE_CONTENTSHARE": "[toLower(concat('platforms' , variables('ProjectNameSuffix')))]",
                 "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('platforms' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
+                "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
+                "WEBSITE_RUN_FROM_PACKAGE": "1"
+            }
+        },
+        {
+            "name": "[concat('links', variables('ProjectNameSuffix'), '/appsettings')]",
+            "apiVersion": "2018-11-01",
+            "type": "Microsoft.Web/sites/config",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', concat('links' , variables('ProjectNameSuffix')))]",
+                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+            ],
+            "properties": {
+                "AuthUrl": "[parameters('appRegistrationApiURI')]",
+                "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
+                "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('links' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('links' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
+                "FUNCTIONS_EXTENSION_VERSION": "~3",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('links' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('links' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(concat('links' , variables('ProjectNameSuffix')))]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
+                "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
+                "WEBSITE_RUN_FROM_PACKAGE": "1"
+            }
+        },
+        {
+            "name": "[concat('learncontent', variables('ProjectNameSuffix'), '/appsettings')]",
+            "apiVersion": "2018-11-01",
+            "type": "Microsoft.Web/sites/config",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', concat('learncontent' , variables('ProjectNameSuffix')))]",
+                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+            ],
+            "properties": {
+                "AuthUrl": "[parameters('appRegistrationApiURI')]",
+                "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
+                "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('learncontent' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('learncontent' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
+                "FUNCTIONS_EXTENSION_VERSION": "~3",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('learncontent' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('learncontent' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(concat('learncontent' , variables('ProjectNameSuffix')))]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1"
             }

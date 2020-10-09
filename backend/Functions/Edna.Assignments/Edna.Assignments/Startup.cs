@@ -6,6 +6,7 @@
 using AutoMapper;
 using Edna.Assignments;
 using Edna.Bindings.Platform;
+using Edna.Bindings.User;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
@@ -20,6 +21,7 @@ namespace Edna.Assignments
         {
             builder.Services.AddLogging();
             builder.AddPlatformBinding();
+            builder.AddUserBinding();
 
             builder.Services.AddAutoMapper(GetType().Assembly);
         }
