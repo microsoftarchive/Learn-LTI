@@ -3,7 +3,7 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import {
   ActionButton,
   DefaultButton,
@@ -62,35 +62,46 @@ const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
 
 const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
   const { filterStore, filteredCatalogContent, isLoadingCatalog } = useStore('microsoftLearnStore');
+  type PanelContentOptions = FilterType | 'main' | 'none';
+  type PanelContentStateType = { panelContent: PanelContentOptions; title?: string };
+  const initialPanelContentState: PanelContentStateType = { panelContent: 'none' };
 
-  const [mainIsOpen, setMainOpen] = useState(false);
-  const [productIsOpen, setProductOpen] = useState(false);
-  const [roleIsOpen, setRoleOpen] = useState(false);
-  const [typeIsOpen, setTypeOpen] = useState(false);
-  const [levelIsOpen, setLevelOpen] = useState(false);
-  const [panelIsOpen, setPanelOpen] = useState(false);
+  const panelContentReducer = (
+    state: PanelContentStateType,
+    action: { type: PanelContentOptions }
+  ): PanelContentStateType => {
+    switch (action.type) {
+      case 'none':
+        return { panelContent: 'none' };
+      case 'main':
+        return { panelContent: 'main', title: 'Search Filters' };
+      case FilterType.products:
+        return { panelContent: FilterType.products, title: 'Products' };
+      case FilterType.roles:
+        return { panelContent: FilterType.roles, title: 'Roles' };
+      case FilterType.levels:
+        return { panelContent: FilterType.levels, title: 'Levels' };
+      case FilterType.types:
+        return { panelContent: FilterType.types, title: 'Types' };
+      default:
+        return { panelContent: 'none' };
+    }
+  };
 
+  const [panelContentState, dispatchPanelContent] = useReducer(panelContentReducer, initialPanelContentState);
   const classes = themedClassNames(styles);
 
-  type PanelOptions = FilterType.products | FilterType.roles | FilterType.levels | FilterType.types | 'main';
-
-  const setOpen = (options: PanelOptions[]) => {
-    const open = (opt: PanelOptions) => options.includes(opt);
-
-    setMainOpen(open('main'));
-    setProductOpen(open(FilterType.products));
-    setRoleOpen(open(FilterType.roles));
-    setLevelOpen(open(FilterType.levels));
-    setTypeOpen(open(FilterType.types));
+  const kFormatter = (num: number | bigint | any) => {
+    return num > 999 ? (num / 1000).toFixed(1) + 'K' : num;
   };
 
   const backToMainFilters = (props: any, defaultRender: any) => {
-    if (mainIsOpen) {
+    if (panelContentState.panelContent === 'main') {
       return <>{defaultRender!(props)}</>;
     }
     return (
       <div className={classes.filterPanelHeader}>
-        <ActionButton onClick={event => setOpen(['main'])}>
+        <ActionButton onClick={() => dispatchPanelContent({ type: 'main' })}>
           <Icon iconName="Back" />
           <Text className="backTitle">All Filters</Text>
         </ActionButton>
@@ -99,73 +110,46 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
     );
   };
 
-  const getHeader = () => {
-    if (mainIsOpen) return 'Search Filters';
-    else if (productIsOpen) return 'Products';
-    else if (roleIsOpen) return 'Roles';
-    else if (typeIsOpen) return 'Types';
-    else if (levelIsOpen) return 'Levels';
-    return '';
-  };
-
-  const kFormatter = (num: number | bigint | any) => {
-    return Math.abs(num) > 999 ? (Math.abs(num) / 1000).toFixed(1) + 'K' : Math.sign(num) * Math.abs(num);
-  };
-
   const PanelFooterContent = (num: number | undefined) => {
     return (
       <div className={classes.filterPanelFooter}>
         <PrimaryButton
           text={num ? `View results (${kFormatter(num)})` : `View results`}
-          onClick={() => {
-            setPanelOpen(false);
-          }}
+          onClick={() => dispatchPanelContent({ type: 'none' })}
         />
-        <DefaultButton
-          text="Clear All"
-          onClick={() => {
-            filterStore.resetFilter();
-          }}
-        />
+        <DefaultButton text="Clear All" onClick={() => filterStore.resetFilter()} />
       </div>
     );
   };
 
   const getPanelContent = () => {
-    if (mainIsOpen) {
-      return (
-        <>
-          <ActionButton onClick={() => setOpen([FilterType.products])} className={classes.mainPanelActionButtons}>
-            <Text className="buttonTitle">Products</Text>
-            <Icon iconName="ChevronRight" />
-          </ActionButton>
+    const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-          <ActionButton onClick={() => setOpen([FilterType.roles])} className={classes.mainPanelActionButtons}>
-            <Text className="buttonTitle">Roles</Text>
-            <Icon iconName="ChevronRight" />
-          </ActionButton>
-
-          <ActionButton onClick={() => setOpen([FilterType.levels])} className={classes.mainPanelActionButtons}>
-            <Text className="buttonTitle">Levels</Text>
-            <Icon iconName="ChevronRight" />
-          </ActionButton>
-
-          <ActionButton onClick={() => setOpen([FilterType.types])} className={classes.mainPanelActionButtons}>
-            <Text className="buttonTitle">Types</Text>
-            <Icon iconName="ChevronRight" />
-          </ActionButton>
-        </>
-      );
-    } else if (productIsOpen) {
-      return <FilterComponent type={FilterType.products} name="Products" />;
-    } else if (roleIsOpen) {
-      return <FilterComponent type={FilterType.roles} name="Roles" />;
-    } else if (levelIsOpen) {
-      return <FilterComponent type={FilterType.levels} name="Levels" />;
-    } else if (typeIsOpen) {
-      return <FilterComponent type={FilterType.types} name="Types" />;
-    } else {
-      return null;
+    switch (panelContentState.panelContent) {
+      case 'main':
+        return (
+          <>
+            {[FilterType.products, FilterType.roles, FilterType.levels, FilterType.types].map(filterType => (
+              <ActionButton
+                onClick={() => dispatchPanelContent({ type: filterType })}
+                className={classes.mainPanelActionButtons}
+              >
+                <Text className="buttonTitle">{capitalizeFirstLetter(filterType)}</Text>
+                <Icon iconName="ChevronRight" />
+              </ActionButton>
+            ))}
+          </>
+        );
+      case FilterType.products:
+        return <FilterComponent type={FilterType.products} name="Products" />;
+      case FilterType.roles:
+        return <FilterComponent type={FilterType.roles} name="Roles" />;
+      case FilterType.levels:
+        return <FilterComponent type={FilterType.levels} name="Levels" />;
+      case FilterType.types:
+        return <FilterComponent type={FilterType.types} name="Types" />;
+      default:
+        return null;
     }
   };
 
@@ -176,16 +160,13 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
           iconProps={{ iconName: 'FilterSettings' }}
           className={classes.collapsePanelButton}
           text="Search Filters"
-          onClick={() => {
-            setPanelOpen(true);
-            setMainOpen(true);
-          }}
+          onClick={() => dispatchPanelContent({ type: 'main' })}
           disabled={isLoadingCatalog ? true : false}
         />
         <Panel
-          headerText={getHeader()}
-          isOpen={panelIsOpen}
-          onDismiss={() => setPanelOpen(false)}
+          headerText={panelContentState.title || ''}
+          isOpen={panelContentState.panelContent !== 'none'}
+          onDismiss={() => dispatchPanelContent({ type: 'none' })}
           closeButtonAriaLabel="Close"
           isFooterAtBottom={true}
           className={classes.filterPanelTabView}

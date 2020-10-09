@@ -18,16 +18,13 @@ export type LearnTypeFilterOption = {
 };
 
 export type FilterOption = Product | Role | Level | LearnTypeFilterOption;
+type FilterItemClickHandler = ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void);
 
 interface FilterCommonProps {
   styles: FilterComponentStyles;
   filterType: FilterType;
-  mainItemClickHandler:
-    | ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void)
-    | undefined;
-  subItemClickHandler?:
-    | ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void)
-    | undefined;
+  mainItemClickHandler: FilterItemClickHandler | undefined;
+  subItemClickHandler?: FilterItemClickHandler | undefined;
 }
 
 export interface FilterComponentProps extends FilterCommonProps {

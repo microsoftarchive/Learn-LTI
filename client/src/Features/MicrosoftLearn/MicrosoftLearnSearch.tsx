@@ -19,6 +19,7 @@ const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchS
 
   const classes = themedClassNames(styles);
   return useObserver(() => {
+    const searchTerm = filterStore.selectedFilter.terms.join(' ') || '';
     return (
       <div className={classes.root}>
         <Label className={classes.label}>Search</Label>
@@ -26,7 +27,7 @@ const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchS
           onChange={(_e: React.ChangeEvent<HTMLElement> | undefined, newValue: string | undefined) => filterStore.updateSearchTerm(newValue || '')}
           className={classes.searchBox}
           disabled={!!isLoadingCatalog}
-          value= {filterStore.selectedFilter.terms.join(' ') || ''}
+          value= {searchTerm}
         />
       </div>
     );

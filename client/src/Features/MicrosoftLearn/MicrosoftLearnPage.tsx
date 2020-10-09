@@ -50,7 +50,7 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
       catalog !== null &&
       location.search !== '?' + filterStore.learnFilterUriParam && location.search !== filterStore.learnFilterUriParam
     ) {
-      filterStore.initializeFilters(catalog!!, new URLSearchParams(location.search));
+      filterStore.initializeFilters(catalog, new URLSearchParams(location.search));
     }  
   }, [location]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -68,7 +68,6 @@ const MicrosoftLearnPageInner = ({ styles }: IStylesOnly<MicrosoftLearnPageStyle
   });
 
   return useObserver(() => {
-
       return (
         <PageWrapper title={pagesDisplayNames.MSLEARN}>
         <div className={classes.wrapper}>

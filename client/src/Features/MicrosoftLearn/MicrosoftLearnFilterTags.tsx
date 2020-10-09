@@ -18,8 +18,19 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>): JSX.Element 
   const { filterStore, catalog } = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
 
+  const handleClick = (tag: FilterTag) => {
+    if (tag.type === FilterType.products) {
+      let subItems: string[] = [...catalog?.products.values()]
+        .filter(product => product.parentId && product.parentId === tag.id)
+        .map(product => product.id);
+      filterStore.removeFilter(tag.type, [...subItems, tag.id]);
+    } else {
+      filterStore.removeFilter(tag.type, [tag.id]);
+    }
+  }
+
   return useObserver(() => {
-    let tagMap: FilterTag[] = getDisplayFilterTags(
+    let tags: FilterTag[] = getDisplayFilterTags(
       filterStore.displayFilter,
       filterStore.selectedFilter,
       filterStore.productMap,
@@ -27,20 +38,14 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>): JSX.Element 
     );
     return (
       <div className={classes.root}>
-        {tagMap.map(tag => (
+        {tags.map(tag => (
           <DefaultButton
             className={classes.tags}
             iconProps={{ iconName: 'StatusCircleErrorX' }}
             text={tag.name}
-            onClick={() => {
-              if (tag.type === FilterType.products) {
-                let subItems: string[] = [...catalog?.products.values()]
-                  .filter(product => product.parentId && product.parentId === tag.id)
-                  .map(product => product.id);
-                filterStore.removeFilter(tag.type, [...subItems, tag.id]);
-              } else {
-                filterStore.removeFilter(tag.type, [tag.id]);
-              }
+            onClick={(event) => {
+              event.preventDefault();
+              handleClick(tag);
             }}
           />
         ))}

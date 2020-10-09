@@ -54,17 +54,19 @@ const NavbarLHPInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null
     }));
 
   // The following map can be extended to include other searchParams as well in future in case need be
-  let uriSearchParamsMap = new Map<string, string>();
-  uriSearchParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam);   
+  let queryParamsMap = new Map<string, string>();
+  queryParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam);   
 
   const handleLinkClick = (event?: MouseEvent, item?: INavLink): void => {
-    const pushToHistory = (url: string, search: string | undefined) => {
-      history.push(url + (search!==undefined && search.length>0 ? '?'+search : ''));
+    const pushToHistory = (item: INavLink) => {
+      const { url, name } = item;
+      const queryParam = queryParamsMap.get(name);
+      queryParam && queryParam.length>0 ? history.push(`${url}?${queryParam}`) : history.push(`${url}`);
     }
+
     event?.preventDefault();
     if (item) {
-      const searchParam = uriSearchParamsMap.get(item.name);
-      pushToHistory(item.url, searchParam);
+      pushToHistory(item);
     }
   };
 

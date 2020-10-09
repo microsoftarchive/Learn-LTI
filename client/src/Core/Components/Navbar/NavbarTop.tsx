@@ -35,18 +35,21 @@ const NavbarTopInner = ({ styles }: IStylesOnly<NavbarTopStyles>): JSX.Element |
   const { filterStore } = useStore('microsoftLearnStore');
   
   // The following map can be extended to include other searchParams as well in future in case need be
-  let uriSearchParamsMap = new Map<string, string>();
-  uriSearchParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam); 
+  let queryParamsMap = new Map<string, string>();
+  queryParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam);   
   
   const handleLinkClick = (item?: PivotItem, event?: MouseEvent): void => {
-    const pushToHistory = (url: string, search: string | undefined) => {
-      history.push(url + (search!==undefined && search.length>0 ? '?'+search : ''));
+    const pushToHistory = (item: PivotItem) => {
+      if(item.props && item.props.itemKey && item.props.headerText) {
+        const { itemKey, headerText } = item.props;
+        const queryParam = queryParamsMap.get(headerText);
+        queryParam && queryParam.length>0 ? history.push(`${itemKey}?${queryParam}`) : history.push(`${itemKey}`);
+      }
     }
 
     event?.preventDefault();
-    if (item && item.props.itemKey && item.props.headerText) {
-      const searchParam = uriSearchParamsMap.get(item.props.headerText);
-      pushToHistory(item.props.itemKey, searchParam);
+    if(item){
+      pushToHistory(item)
     }
   };
   

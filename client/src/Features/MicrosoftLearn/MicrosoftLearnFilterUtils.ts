@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { getParentProduct, scoreRegex } from './MicrosoftLearnFilterCore';
 import { Filter } from '../../Models/Learn/Filter.model';
 
-const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
+const SortByFilterNameAscComparer = (a: FilterOption, b: FilterOption) => {
   if (a && b) {
     return a.name.localeCompare(b.name);
   } else if (a) {
@@ -19,7 +19,7 @@ const FilterOptionComparer = (a: FilterOption, b: FilterOption) => {
   return -1;
 };
 
-const createOptionArrayFromKeys = (keys: FilterOption[]) => {
+const createOptionsMapFromKeys = (keys: FilterOption[]) => {
   let map: Map<FilterOption, FilterOption[]> = new Map<FilterOption, FilterOption[]>();
   keys.forEach(key => map.set(key, []));
   return map;
@@ -32,10 +32,10 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
   if (productMap != null) {
     products = [...productMap.values()].filter(product => productId?.includes(product.id));
     const getParentProductMapping = getParentProduct(productMap);
-    const parentProducts = products.filter(item => getParentProductMapping(item.id) === '').sort(FilterOptionComparer);
+    const parentProducts = products.filter(item => getParentProductMapping(item.id) === '').sort(SortByFilterNameAscComparer);
     parentProducts.forEach(parent => {
       let children = products.filter(product => product?.parentId && product.parentId === parent?.id && product.id!==parent.id);
-      productParentChildMap.set(parent, children.sort(FilterOptionComparer));
+      productParentChildMap.set(parent, children.sort(SortByFilterNameAscComparer));
     });
   }
   return productParentChildMap;
@@ -43,16 +43,16 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
 
 export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<string, Role> | undefined) => {
   if (roleMap != null) {
-    let sortedRoles = roleId?.map(id => roleMap.get(id)!!).sort(FilterOptionComparer);
-    return createOptionArrayFromKeys(sortedRoles || []);
+    let sortedRoles = roleId?.map(id => roleMap.get(id)!!).sort(SortByFilterNameAscComparer);
+    return createOptionsMapFromKeys(sortedRoles || []);
   }
   return new Map<Role, Role[]>();
 };
 
 export const getLevelsToDisplay = (levelId: string[] | undefined, levelMap: Map<string, Level> | undefined) => {
   if (levelMap != null) {
-    let sortedLevels = levelId?.map(id => levelMap.get(id)!!).sort(FilterOptionComparer);
-    return createOptionArrayFromKeys(sortedLevels || []);
+    let sortedLevels = levelId?.map(id => levelMap.get(id)!!).sort(SortByFilterNameAscComparer);
+    return createOptionsMapFromKeys(sortedLevels || []);
   }
   return new Map<Level, Level[]>();
 };
@@ -60,7 +60,7 @@ export const getLevelsToDisplay = (levelId: string[] | undefined, levelMap: Map<
 export const getTypesToDisplay = (typeId: string[] | undefined) => {
   const t1: LearnTypeFilterOption = { id: 'module', name: 'Module' };
   const t2: LearnTypeFilterOption = { id: 'learningPath', name: 'Learning Path' };
-  return createOptionArrayFromKeys(typeId?.sort().map(id => (id === 'module' ? t1 : t2)) || []);
+  return createOptionsMapFromKeys(typeId?.sort().map(id => (id === 'module' ? t1 : t2)) || []);
 };
 
 export type FilterTag = { id: string; name: string; type: FilterType };
