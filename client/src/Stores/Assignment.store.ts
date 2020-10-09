@@ -13,6 +13,7 @@ export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
   @observable errorContent : ErrorPageContent | undefined = undefined;
+  @observable pushlishStatusChangeError: boolean = false;
 
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {
@@ -45,12 +46,16 @@ export class AssignmentStore extends ChildStore {
   async changeAssignmentPublishStatus(newPublishStatus: boolean): Promise<void> {
     if (this.assignment) {
       this.isChangingPublishState = true;
-      const isStatusChanged = await AssignmentService.changeAssignmentPublishStatus(
+      this.pushlishStatusChangeError = false;
+
+      const hasError = await AssignmentService.changeAssignmentPublishStatus(
         this.assignment.id,
         newPublishStatus
       );
-      if (isStatusChanged) {
+      if (hasError === null) {
         this.assignment.publishStatus = newPublishStatus ? 'Published' : 'NotPublished';
+      } else {
+        this.pushlishStatusChangeError = true;
       }
       this.isChangingPublishState = false;
     }

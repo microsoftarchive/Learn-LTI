@@ -5,7 +5,8 @@
 
 import { AssignmentDto } from '../Dtos/Assignment.dto';
 import axios from 'axios';
-import { safeData, WithError } from '../Core/Utils/Axios/safeData';
+import { getServiceError, safeData, WithError } from '../Core/Utils/Axios/safeData';
+import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 class AssignmentServiceClass {
   public async getAssignment(assignmentId: string): Promise<WithError<AssignmentDto>> {
@@ -22,13 +23,13 @@ class AssignmentServiceClass {
     });
   }
 
-  public async changeAssignmentPublishStatus(assignmentId: string, newPublishStatus: boolean): Promise<boolean> {
+  public async changeAssignmentPublishStatus(assignmentId: string, newPublishStatus: boolean): Promise<ServiceError | null> {
     const serviceAction = newPublishStatus ? 'publish' : 'unpublish';
-    await axios.post(
+    const response = await axios.post(
       `${process.env.REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL}/assignments/${assignmentId}/${serviceAction}`
     );
 
-    return true;
+    return getServiceError(response);
     // TODO: Handle errors
   }
 }

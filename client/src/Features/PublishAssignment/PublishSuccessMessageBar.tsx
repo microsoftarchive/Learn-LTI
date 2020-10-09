@@ -15,8 +15,10 @@ import {
 } from '@fluentui/react';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 
-interface PublishSuccessMessageBarProps {
-  isPublished: boolean;
+export interface PublishSuccessMessageBarProps {
+  showMessage: boolean;
+  messageBarType: MessageBarType;
+  message: string;
 }
 type PublishSuccessMessageBarStyles = Partial<IMessageBarStyles>;
 
@@ -24,7 +26,9 @@ const AUTO_HIDE_DURATION = 5000;
 
 const PublishSuccessMessageBarInner = ({
   styles,
-  isPublished
+  showMessage,
+  messageBarType,
+  message
 }: PublishSuccessMessageBarProps & IStylesOnly<PublishSuccessMessageBarStyles>): JSX.Element | null => {
   const [isShown, setIsShown] = useState<boolean>(false);
   const isFirstRun = useRef<boolean>(true);
@@ -40,13 +44,13 @@ const PublishSuccessMessageBarInner = ({
   );
 
   useEffect(() => {
-    if (isPublished && isFirstRun && !isFirstRun.current) {
+    if (showMessage && isFirstRun && !isFirstRun.current) {
       setIsShown(true);
       timer.current = setTimeout(() => {
         setIsShown(false);
       }, AUTO_HIDE_DURATION);
     }
-  }, [isPublished]);
+  }, [showMessage]);
 
   useEffect(() => {
     if (isFirstRun.current) {
@@ -57,8 +61,8 @@ const PublishSuccessMessageBarInner = ({
 
   if (isShown) {
     return (
-      <MessageBar messageBarType={MessageBarType.success} isMultiline={false} styles={themedClassNames(styles)}>
-        Your assignment was published successfully
+      <MessageBar messageBarType={messageBarType} isMultiline={true} styles={themedClassNames(styles)}>
+        {message}
       </MessageBar>
     );
   }

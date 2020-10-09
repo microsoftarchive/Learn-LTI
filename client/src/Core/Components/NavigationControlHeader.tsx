@@ -3,11 +3,14 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { FontSizes, FontWeights, mergeStyles, styled } from '@fluentui/react';
+import { FontSizes, FontWeights, mergeStyles, MessageBarType, styled } from '@fluentui/react';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import { PublishControlArea } from '../../Features/PublishAssignment/PublishControlArea';
-import { PublishSuccessMessageBar } from '../../Features/PublishAssignment/PublishSuccessMessageBar';
+import {
+  PublishSuccessMessageBar,
+  PublishSuccessMessageBarProps
+} from '../../Features/PublishAssignment/PublishSuccessMessageBar';
 import { useStore } from '../../Stores/Core';
 import { themedClassNames } from '../Utils/FluentUI';
 import { IStylesOnly, IThemeOnlyProps, SimpleComponentStyles } from '../Utils/FluentUI/typings.fluent-ui';
@@ -19,20 +22,33 @@ type NavigationControlHeaderStyles = SimpleComponentStyles<'assignmentTitle' | '
 function NavigationControlHeaderInner({ styles }: IStylesOnly<NavigationControlHeaderStyles>): JSX.Element {
   const assignmentStore = useStore('assignmentStore');
   const classes = themedClassNames(styles);
-  return useObserver(() => (
-    <>
-      <span className={classes.assignmentTitle}>{assignmentStore.assignment?.name}</span>
-      <div className={classes.navAndControlArea}>
-        <NavBarBase.NavbarTop />
-        <PublishControlArea />
-      </div>
-      <PublishSuccessMessageBar
-        isPublished={
-          assignmentStore.assignment?.publishStatus === 'Published' && assignmentStore.isChangingPublishState === false
+
+  return useObserver(() => {
+    const publishStatusMessageBarProps: PublishSuccessMessageBarProps = assignmentStore.pushlishStatusChangeError
+      ? {
+          messageBarType: MessageBarType.error,
+          message: assignmentStore.assignment?.publishStatus !== 'Published'? 'Something went wrong! Could not publish the assignment' : 'Something went wrong, could not change the assignment status',
+          showMessage: assignmentStore.pushlishStatusChangeError
         }
-      />
-    </>
-  ));
+      : {
+          messageBarType: MessageBarType.success,
+          message: 'Your assignment was published successfully',
+          showMessage:
+            assignmentStore.assignment?.publishStatus === 'Published' &&
+            assignmentStore.isChangingPublishState === false
+        };
+
+    return (
+      <>
+        <span className={classes.assignmentTitle}>{assignmentStore.assignment?.name}</span>
+        <div className={classes.navAndControlArea}>
+          <NavBarBase.NavbarTop />
+          <PublishControlArea />
+        </div>
+        <PublishSuccessMessageBar {...publishStatusMessageBarProps} />
+      </>
+    );
+  });
 }
 
 const navigationControlHeaderStyle = ({ theme }: IThemeOnlyProps): NavigationControlHeaderStyles => {
