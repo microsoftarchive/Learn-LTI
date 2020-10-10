@@ -60,7 +60,7 @@ const FilterPaneLargeInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
 };
 
 const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
-  const { filterStore, filteredCatalogContent, isLoadingCatalog } = useStore('microsoftLearnStore');
+  const learnStore = useStore('microsoftLearnStore');
   type PanelContentOptions = FilterType | 'main' | 'none';
   type PanelContentStateType = { panelContent: PanelContentOptions; title?: string };
   const initialPanelContentState: PanelContentStateType = { panelContent: 'none' };
@@ -116,7 +116,7 @@ const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
           text={num ? `View results (${kFormatter(num)})` : `View results`}
           onClick={() => dispatchPanelContent({ type: 'none' })}
         />
-        <DefaultButton text="Clear All" onClick={() => filterStore.resetFilter()} />
+        <DefaultButton text="Clear All" onClick={() => learnStore.filterStore.resetFilter()} />
       </div>
     );
   };
@@ -160,7 +160,7 @@ const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
           className={classes.collapsePanelButton}
           text="Search Filters"
           onClick={() => dispatchPanelContent({ type: 'main' })}
-          disabled={isLoadingCatalog ? true : false}
+          disabled={learnStore.isLoadingCatalog ? true : false}
         />
         <Panel
           headerText={panelContentState.title || ''}
@@ -173,7 +173,7 @@ const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
           type={PanelType.smallFixedNear}
         >
           <>{getPanelContent()}</>
-          {PanelFooterContent(filteredCatalogContent?.length)}
+          {PanelFooterContent(learnStore.filteredCatalogContent?.length)}
         </Panel>
       </>
     );
@@ -196,7 +196,6 @@ const useWindowWidth = () => {
 };
 
 const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
-  const learnStore = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
   useWindowWidth();
 
@@ -204,31 +203,20 @@ const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
     return (
       <div className={classes.rootLarge}>
         <Text className={classes.title}>Filters</Text>
-        {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0 ? (
-          <></>
-        ) : (
-          <div>
-            <FilterPaneLargeInner styles={styles} />
-          </div>
-        )}
+        <FilterPaneLargeInner styles={styles} />
       </div>
     );
   });
 };
 
 const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
-  const learnStore = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
   useWindowWidth();
 
   return useObserver(() => {
     return (
       <div className={classes.rootSmall}>
-        {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0 ? (
-          <></>
-        ) : (
-          <FilterPaneSmallInner styles={styles} />
-        )}
+        <FilterPaneSmallInner styles={styles} />
       </div>
     );
   });

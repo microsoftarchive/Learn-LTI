@@ -9,6 +9,7 @@ import { LearnTypeFilterOption, FilterOption } from './MicrosoftLearnFilterCompo
 import _ from 'lodash';
 import { getParentProduct, scoreRegex } from './MicrosoftLearnFilterCore';
 import { Filter } from '../../Models/Learn/Filter.model';
+import { toMap } from '../../Core/Utils/Typescript/ToMap';
 
 export const TYPE_MAP = new Map<LearnType, LearnTypeFilterOption>([
   ['module', { id: 'module', name: 'Module' }],
@@ -25,9 +26,9 @@ const SortByFilterNameAscComparer = (a: FilterOption, b: FilterOption) => {
 };
 
 const createOptionsMapFromKeys = (keys: FilterOption[]) => {
-  let map: Map<FilterOption, FilterOption[]> = new Map<FilterOption, FilterOption[]>();
-  keys.forEach(key => map.set(key, []));
-  return map;
+  const valueTransformer = (item: FilterOption) => [];
+  const keySelector = (item: FilterOption) => item;   
+  return toMap(keys, keySelector, valueTransformer); 
 };
 
 export const getProductsToDisplay = (productId: string[] | undefined, productMap: Map<string, Product> | undefined) => {
