@@ -57,7 +57,9 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>): JSX.Element 
 const FilterTagStyles = ({ theme }: IThemeOnlyProps): FilterTagStyles => ({
   root: [
     {
-      margin: `calc(${theme.spacing.s1} * 1.5)`
+      margin: `calc(${theme.spacing.s1} * 1.5)`,
+      paddingLeft: theme.spacing.s1,
+      paddingBottom: `calc(${theme.spacing.s1} * 2)`
     }
   ],
   tags: [

@@ -6,12 +6,7 @@
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
-import {
-  getProductsToDisplay,
-  getTypesToDisplay,
-  getLevelsToDisplay,
-  getRolesToDisplay
-} from './MicrosoftLearnFilterUtils';
+import { getProductsToDisplay, getFilterItemsToDisplay, TYPE_MAP } from './MicrosoftLearnFilterUtils';
 import { FilterType } from '../../Models/Learn/FilterType.model';
 import { MicrosoftLearnFilterComponent } from './MicrosoftLearnFilterComponent';
 import { FontWeights } from '@fluentui/react';
@@ -33,11 +28,11 @@ export const FilterComponent = (props: { type: FilterComponentTypes; name: strin
       case FilterType.products:
         return getProductsToDisplay(filterStore.displayFilter[props.type], catalog?.products);
       case FilterType.roles:
-        return getRolesToDisplay(filterStore.displayFilter[props.type], catalog?.roles);
+        return getFilterItemsToDisplay(filterStore.displayFilter[props.type], catalog?.roles);
       case FilterType.levels:
-        return getLevelsToDisplay(filterStore.displayFilter[props.type], catalog?.levels);
+        return getFilterItemsToDisplay(filterStore.displayFilter[props.type], catalog?.levels);
       case FilterType.types:
-        return getTypesToDisplay(filterStore.displayFilter[props.type]);
+        return getFilterItemsToDisplay(filterStore.displayFilter[props.type], TYPE_MAP);
     }
   };
 
@@ -147,7 +142,7 @@ const FilterComponentStyles = ({ theme }: IThemeOnlyProps): FilterComponentStyle
           height: 'max-content',
           color: theme.palette.neutralDark,
           selectors: {
-            ' i':{
+            ' i': {
               color: theme.palette.neutralDark
             }
           }

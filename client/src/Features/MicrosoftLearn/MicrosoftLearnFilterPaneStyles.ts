@@ -5,9 +5,11 @@
 
 import { FontWeights, FontSizes } from '@fluentui/react';
 import { SimpleComponentStyles, IThemeOnlyProps } from '../../Core/Utils/FluentUI/typings.fluent-ui';
+import { TAB_SCREEN_SIZE } from './MicrosoftLearnPage';
 
 export type FilterPaneStyles = SimpleComponentStyles<
-  | 'root'
+  | 'rootLarge'
+  | 'rootSmall'
   | 'title'
   | 'collapsePanelButton'
   | 'clearAll'
@@ -18,12 +20,20 @@ export type FilterPaneStyles = SimpleComponentStyles<
 >;
 
 export const FilterPaneStyles = ({ theme }: IThemeOnlyProps): FilterPaneStyles => ({
-  root: [
+  rootLarge: [
     {
-      display: 'flex',
+      display: window.innerWidth > TAB_SCREEN_SIZE ? 'flex' : 'none',
       flexDirection: 'column',
       marginRight: `calc(${theme.spacing.l1} * 1.6)`,
       width: '300px'
+    }
+  ],
+  rootSmall: [
+    {
+      display: window.innerWidth <= TAB_SCREEN_SIZE ? 'flex' : 'none',
+      flexDirection: 'column',
+      marginRight: `calc(${theme.spacing.l1} * 1.6)`,
+      width: 'max-content'
     }
   ],
   title: [
@@ -74,7 +84,7 @@ export const FilterPaneStyles = ({ theme }: IThemeOnlyProps): FilterPaneStyles =
 
   filterPanelTabView: [
     {
-      width: '340px',
+      maxWidth: '340px',
       selectors: {
         '.ms-Panel-main': {
           width: '100%'

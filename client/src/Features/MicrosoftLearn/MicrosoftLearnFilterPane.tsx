@@ -18,14 +18,13 @@ import {
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
 import { FilterComponent } from './MicrosoftLearnFilterComponentUtils';
-import { debounce } from 'lodash';
 import { IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { FilterType } from '../../Models/Learn/FilterType.model';
 import { FilterPaneStyles } from './MicrosoftLearnFilterPaneStyles';
-import { TAB_SCREEN_SIZE } from './MicrosoftLearnPage';
+import { debounce } from 'lodash';
 
-const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
+const FilterPaneLargeInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
   const { filterStore } = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
 
@@ -60,7 +59,7 @@ const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
   });
 };
 
-const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
+const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
   const { filterStore, filteredCatalogContent, isLoadingCatalog } = useStore('microsoftLearnStore');
   type PanelContentOptions = FilterType | 'main' | 'none';
   type PanelContentStateType = { panelContent: PanelContentOptions; title?: string };
@@ -181,43 +180,59 @@ const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element
   });
 };
 
-const FilterPaneInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
-  const learnStore = useStore('microsoftLearnStore');
+// custom window resize hook
+const useWindowWidth = () => {
   const [width, setWidth] = useState(window.innerWidth);
-  const classes = themedClassNames(styles);
-
   useEffect(() => {
     const debouncedHandleResize = debounce(function handleResize() {
       setWidth(window.innerWidth);
-    }, 500);
+    }, 200);
     window.addEventListener('resize', debouncedHandleResize);
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
     };
   });
+  return width;
+};
+
+const FilterPaneLarge = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
+  const learnStore = useStore('microsoftLearnStore');
+  const classes = themedClassNames(styles);
+  useWindowWidth();
 
   return useObserver(() => {
-    return width > TAB_SCREEN_SIZE ? (
-      <div className={classes.root}>
+    return (
+      <div className={classes.rootLarge}>
         <Text className={classes.title}>Filters</Text>
         {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0 ? (
           <></>
         ) : (
           <div>
-            <FilterPaneLarge styles={styles} />
+            <FilterPaneLargeInner styles={styles} />
           </div>
-        )}
-      </div>
-    ) : (
-      <div>
-        {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0 ? (
-          <></>
-        ) : (
-          <FilterPaneSmall styles={styles} />
         )}
       </div>
     );
   });
 };
 
-export const MicrosoftLearnFilterPane = styled(FilterPaneInner, FilterPaneStyles);
+const FilterPaneSmall = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.Element | null => {
+  const learnStore = useStore('microsoftLearnStore');
+  const classes = themedClassNames(styles);
+  useWindowWidth();
+
+  return useObserver(() => {
+    return (
+      <div className={classes.rootSmall}>
+        {!learnStore.isLoadingCatalog && learnStore.filteredCatalogContent?.length === 0 ? (
+          <></>
+        ) : (
+          <FilterPaneSmallInner styles={styles} />
+        )}
+      </div>
+    );
+  });
+};
+
+export const MicrosoftLearnFilterPaneLarge = styled(FilterPaneLarge, FilterPaneStyles);
+export const MicrosoftLearnFilterPaneSmall = styled(FilterPaneSmall, FilterPaneStyles);

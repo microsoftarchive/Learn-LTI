@@ -3,12 +3,17 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { Product, Role, Level, Catalog } from '../../Models/Learn';
+import { Product, Catalog, LearnType } from '../../Models/Learn';
 import { FilterType } from '../../Models/Learn/FilterType.model';
 import { LearnTypeFilterOption, FilterOption } from './MicrosoftLearnFilterComponentProps';
 import _ from 'lodash';
 import { getParentProduct, scoreRegex } from './MicrosoftLearnFilterCore';
 import { Filter } from '../../Models/Learn/Filter.model';
+
+export const TYPE_MAP = new Map<LearnType, LearnTypeFilterOption>([
+  ['module', { id: 'module', name: 'Module' }],
+  ['learningPath', { id: 'learningPath', name: 'Learning Path' }]
+]);
 
 const SortByFilterNameAscComparer = (a: FilterOption, b: FilterOption) => {
   if (a && b) {
@@ -32,36 +37,29 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
   if (productMap != null) {
     products = [...productMap.values()].filter(product => productId?.includes(product.id));
     const getParentProductMapping = getParentProduct(productMap);
-    const parentProducts = products.filter(item => getParentProductMapping(item.id) === '').sort(SortByFilterNameAscComparer);
+    const parentProducts = products
+      .filter(item => getParentProductMapping(item.id) === '')
+      .sort(SortByFilterNameAscComparer);
     parentProducts.forEach(parent => {
-      let children = products.filter(product => product?.parentId && product.parentId === parent?.id && product.id!==parent.id);
+      let children = products.filter(
+        product => product?.parentId && product.parentId === parent?.id && product.id !== parent.id
+      );
       productParentChildMap.set(parent, children.sort(SortByFilterNameAscComparer));
     });
   }
   return productParentChildMap;
 };
 
-export const getRolesToDisplay = (roleId: string[] | undefined, roleMap: Map<string, Role> | undefined) => {
-  if (roleMap != null) {
-    let sortedRoles = roleId?.map(id => roleMap.get(id)!!).sort(SortByFilterNameAscComparer);
-    return createOptionsMapFromKeys(sortedRoles || []);
+export function getFilterItemsToDisplay<T extends FilterOption>(
+  ids: string[] | undefined,
+  map: Map<string, T> | undefined
+) {
+  if (map != null) {
+    let sortedItems = ids?.map(id => map.get(id)!!).sort(SortByFilterNameAscComparer);
+    return createOptionsMapFromKeys(sortedItems || []);
   }
-  return new Map<Role, Role[]>();
-};
-
-export const getLevelsToDisplay = (levelId: string[] | undefined, levelMap: Map<string, Level> | undefined) => {
-  if (levelMap != null) {
-    let sortedLevels = levelId?.map(id => levelMap.get(id)!!).sort(SortByFilterNameAscComparer);
-    return createOptionsMapFromKeys(sortedLevels || []);
-  }
-  return new Map<Level, Level[]>();
-};
-
-export const getTypesToDisplay = (typeId: string[] | undefined) => {
-  const t1: LearnTypeFilterOption = { id: 'module', name: 'Module' };
-  const t2: LearnTypeFilterOption = { id: 'learningPath', name: 'Learning Path' };
-  return createOptionsMapFromKeys(typeId?.sort().map(id => (id === 'module' ? t1 : t2)) || []);
-};
+  return new Map<T, T[]>();
+}
 
 export type FilterTag = { id: string; name: string; type: FilterType };
 
@@ -98,16 +96,8 @@ export const getDisplayFilterTags = (
   let productTags: FilterTag[] = getTags(learnCatalog?.products, FilterType.products);
   let roleTags: FilterTag[] = getTags(learnCatalog?.roles, FilterType.roles);
   let levelTags: FilterTag[] = getTags(learnCatalog?.levels, FilterType.levels);
+  let typeTags: FilterTag[] = getTags(TYPE_MAP, FilterType.types);
 
-  let typeFilters = getIntersection(FilterType.types)?.filter(item => item!!);
-  let typeTags: FilterTag[] = [];
-  if (typeFilters) {
-    typeTags = typeFilters?.map(typeId =>
-      typeId === 'module'
-        ? { id: typeId, name: 'Module', type: FilterType.types }
-        : { id: typeId, name: 'Learning Path', type: FilterType.types }
-    );
-  }
   return [...productTags, ...roleTags, ...levelTags, ...typeTags];
 };
 
