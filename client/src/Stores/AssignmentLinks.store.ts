@@ -16,7 +16,7 @@ export class AssignmentLinksStore extends ChildStore {
   @observable assignmentLinks: AssignmentLink[] = [];
   @observable isLoading = true;
   @observable syncedAssignmentLinks: AssignmentLink[] = [];
-  @observable serviceCallInProgress: boolean | null = null;
+  @observable serviceCallInProgress: number = 0;
   @observable isSynced: boolean | null = null;
 
   initialize(): void {
@@ -45,14 +45,14 @@ export class AssignmentLinksStore extends ChildStore {
     this.assignmentLinks = [...this.assignmentLinks, assignmentLink];
     const assignmentId = this.root.assignmentStore.assignment!.id;
 
-    this.serviceCallInProgress = true;
+    this.serviceCallInProgress++; 
     AssignmentLinksService.updateAssignmentLink(assignmentLink, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null)
     {
       this.syncedAssignmentLinks = [...this.syncedAssignmentLinks, assignmentLink];
     }
-    this.serviceCallInProgress = false;
+    this.serviceCallInProgress--; 
     this.isSynced = _.isEqual(this.assignmentLinks, this.syncedAssignmentLinks);  
   })
   }
@@ -63,14 +63,14 @@ export class AssignmentLinksStore extends ChildStore {
     const assignmentId = this.root.assignmentStore.assignment!.id;
     this.assignmentLinks = updatedLinks;
 
-    this.serviceCallInProgress = true;
+    this.serviceCallInProgress++; 
     AssignmentLinksService.updateAssignmentLink(editedLink, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null)
     {
       this.syncedAssignmentLinks = this.syncedAssignmentLinks.map(link => (link.id === editedLink.id ? editedLink : link));
     }
-    this.serviceCallInProgress = false;
+    this.serviceCallInProgress--; 
     this.isSynced = _.isEqual(this.assignmentLinks, this.syncedAssignmentLinks);
   })
   }
@@ -82,14 +82,14 @@ export class AssignmentLinksStore extends ChildStore {
     const assignmentId = this.root.assignmentStore.assignment!.id;
     this.assignmentLinks = updatedLinks;
 
-    this.serviceCallInProgress = true;
+    this.serviceCallInProgress++; 
     AssignmentLinksService.deleteAssignmentLink(assignmentLinkId, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null)
     {
       this.syncedAssignmentLinks = _.filter(this.syncedAssignmentLinks, link => link.id !== assignmentLinkId);
     }
-    this.serviceCallInProgress = false;
+    this.serviceCallInProgress--; 
     this.isSynced = _.isEqual(this.assignmentLinks, this.syncedAssignmentLinks);
   })
   }

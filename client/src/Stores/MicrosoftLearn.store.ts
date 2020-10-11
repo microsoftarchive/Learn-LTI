@@ -22,7 +22,7 @@ export class MicrosoftLearnStore extends ChildStore {
   @observable syncedSelectedItems: AssignmentLearnContent[] | null = null; 
   @observable filteredCatalogContent: LearnContent[] | null = null;
   @observable searchTerm = '';
-  @observable serviceCallInProgress: boolean | null = null;
+  @observable serviceCallInProgress: number = 0;
   @observable isSynced: boolean | null = null;
 
   initialize(): void {
@@ -78,13 +78,13 @@ export class MicrosoftLearnStore extends ChildStore {
     } else {
       this.selectedItems?.push({ contentUid: learnContentUid });
 
-      this.serviceCallInProgress = true;
+      this.serviceCallInProgress++; 
       MicrosoftLearnService.saveAssignmentLearnContent(assignmentId, learnContentUid)
         .then(hasError => {
           if (hasError === null){
             this.syncedSelectedItems?.push({ contentUid: learnContentUid });
           }
-          this.serviceCallInProgress = false;
+          this.serviceCallInProgress--; 
           this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
         })
     }
@@ -95,13 +95,13 @@ export class MicrosoftLearnStore extends ChildStore {
     this.selectedItems = [];
     const assignmentId = this.root.assignmentStore.assignment!.id;
 
-    this.serviceCallInProgress = true;
+    this.serviceCallInProgress++; 
     MicrosoftLearnService.clearAssignmentLearnContent(assignmentId)
       .then(hasError => {
         if (hasError === null){
           this.syncedSelectedItems = [];
         }
-        this.serviceCallInProgress = false;
+        this.serviceCallInProgress--; 
         this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
       })  
   }
@@ -137,13 +137,13 @@ export class MicrosoftLearnStore extends ChildStore {
   ): void => {
     this.selectedItems?.splice(itemIndexInSelectedItemsList, 1);
 
-    this.serviceCallInProgress = true;
+    this.serviceCallInProgress++; 
     MicrosoftLearnService.removeAssignmentLearnContent(assignmentId, learnContentUid)
       .then(hasError => {
         if (hasError === null){
           this.syncedSelectedItems?.splice(itemIndexInSelectedItemsList, 1);
         }
-        this.serviceCallInProgress = false;
+        this.serviceCallInProgress--; 
         this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
       })
   };
