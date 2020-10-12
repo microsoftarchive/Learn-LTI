@@ -3,4 +3,4 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-export type ServiceError = 'unauthorized' | 'internal error' | 'other' | 'not found';
+export type ServiceError = 'unauthorized' | 'internal error' | 'other' | 'not found' | 'bad request';

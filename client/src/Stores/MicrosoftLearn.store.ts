@@ -14,6 +14,7 @@ import _ from 'lodash';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
+import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -24,6 +25,7 @@ export class MicrosoftLearnStore extends ChildStore {
   @observable searchTerm = '';
   @observable serviceCallInProgress: number = 0;
   @observable isSynced: boolean | null = null;
+  @observable hasServiceError: ServiceError | null = null;
 
   initialize(): void {
     toObservable(() => this.searchTerm)
@@ -36,11 +38,15 @@ export class MicrosoftLearnStore extends ChildStore {
       )
       .subscribe(filteredCatalog => (this.filteredCatalogContent = filteredCatalog));
 
-    toObservable(() => this.root.assignmentStore.assignment)
+    const assignmentLearnContentObservable = toObservable(() => this.root.assignmentStore.assignment)
       .pipe(
         filter(assignment => !!assignment),
         map(assignment => assignment!.id),
         switchMap(assignmentId => MicrosoftLearnService.getAssignmentLearnContent(assignmentId)),
+      );
+
+    assignmentLearnContentObservable
+      .pipe(
         filter(assignmentLearnContent => !assignmentLearnContent.error),
         map(assignmentLearnContent => assignmentLearnContent as AssignmentLearnContentDto[])
       )
@@ -49,6 +55,21 @@ export class MicrosoftLearnStore extends ChildStore {
         this.syncedSelectedItems = selectedItems; 
         this.isSynced = true; 
       });
+
+    assignmentLearnContentObservable
+      .subscribe(assignmentLearnContent => {
+        if(assignmentLearnContent.error!==undefined){
+          this.hasServiceError=assignmentLearnContent.error
+        }
+      })
+    
+    toObservable(() => this.root.assignmentStore.assignment?.publishStatus)
+      .subscribe(publishStatus => {
+        if(publishStatus==='Published'){
+          this.selectedItems = this.syncedSelectedItems; 
+          this.isSynced = true;          
+        }
+      })
   }
 
   @action
@@ -81,11 +102,13 @@ export class MicrosoftLearnStore extends ChildStore {
       this.serviceCallInProgress++; 
       MicrosoftLearnService.saveAssignmentLearnContent(assignmentId, learnContentUid)
         .then(hasError => {
-          if (hasError === null){
+          if(hasError === null){
             this.syncedSelectedItems?.push({ contentUid: learnContentUid });
+          } else {
+            this.hasServiceError = hasError          
           }
           this.serviceCallInProgress--; 
-          this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
+          this.isSynced = _.differenceBy(this.selectedItems, this.syncedSelectedItems!!, 'contentUid').length === 0;
         })
     }
   }
@@ -98,11 +121,13 @@ export class MicrosoftLearnStore extends ChildStore {
     this.serviceCallInProgress++; 
     MicrosoftLearnService.clearAssignmentLearnContent(assignmentId)
       .then(hasError => {
-        if (hasError === null){
+        if(hasError === null){
           this.syncedSelectedItems = [];
+        } else{
+          this.hasServiceError = hasError;        
         }
         this.serviceCallInProgress--; 
-        this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
+        this.isSynced = _.differenceBy(this.selectedItems, this.syncedSelectedItems!!, 'contentUid').length === 0;
       })  
   }
 
@@ -112,6 +137,7 @@ export class MicrosoftLearnStore extends ChildStore {
     const catalog = await MicrosoftLearnService.getCatalog();
     if (catalog.error) {
       // Will show the error on the message bar once it's implemented
+      this.hasServiceError = catalog.error;
       return;
     }
 
@@ -140,11 +166,13 @@ export class MicrosoftLearnStore extends ChildStore {
     this.serviceCallInProgress++; 
     MicrosoftLearnService.removeAssignmentLearnContent(assignmentId, learnContentUid)
       .then(hasError => {
-        if (hasError === null){
+        if(hasError === null){
           this.syncedSelectedItems?.splice(itemIndexInSelectedItemsList, 1);
+        } else{
+          this.hasServiceError = hasError;        
         }
         this.serviceCallInProgress--; 
-        this.isSynced = _.isEqual(this.selectedItems, this.syncedSelectedItems);
+        this.isSynced = _.differenceBy(this.selectedItems, this.syncedSelectedItems!!, 'contentUid').length === 0;
       })
   };
 

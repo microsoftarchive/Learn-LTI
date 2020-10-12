@@ -9,7 +9,8 @@ import { ServiceError } from './ServiceError';
 const errorNumberToEnumMap: Map<number, ServiceError> = new Map<number, ServiceError>([
   [500, 'internal error'],
   [401, 'unauthorized'],
-  [404, 'not found']
+  [404, 'not found'],
+  [400, 'bad request']
 ]);
 
 export type WithError<T> = T & { error?: ServiceError };

@@ -27,7 +27,7 @@ function NavigationControlHeaderInner({ styles }: IStylesOnly<NavigationControlH
     const publishStatusMessageBarProps: PublishSuccessMessageBarProps = assignmentStore.pushlishStatusChangeError
       ? {
           messageBarType: MessageBarType.error,
-          message: assignmentStore.assignment?.publishStatus !== 'Published'? 'Something went wrong! Could not publish the assignment' : 'Something went wrong, could not change the assignment status',
+          message: assignmentStore.assignment?.publishStatus !== 'Published'? 'Something went wrong! Could not publish the assignment' : 'Something went wrong! Could not switch to edit mode',
           showMessage: assignmentStore.pushlishStatusChangeError
         }
       : {

@@ -39,10 +39,10 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
 
   const isAssignmentSynced = assignmentLinksStore.isSynced &&  learnStore.isSynced && assignmentStore.isSynced;
   const isCallInProgress = assignmentLinksStore.serviceCallInProgress + learnStore.serviceCallInProgress + assignmentStore.serviceCallInProgress;
-  const primaryButtonSubText = isCallInProgress > 0 ? 'Some parts of the assignment are still updating. Please wait a few seconds before publishing. \nYou are about to Publish the assignment and make it visible to the students. Are you sure you want to proceed?' 
-  : isAssignmentSynced ? 'You are about to Publish the assignment and make it visible to the students.\nAre you sure you want to proceed?'
-  : 'Some parts of the assignment are not updated but you are about to Publish the assignment and make it visible to the students.\nHead to the Preview page to see the saved state of the assignment which will be visible to the students. \nAre you sure you still want to proceed to publish the assignment?';
-
+  const mainPublishSubtext = 'You are about to Publish the assignment and make it visible to the students.\nAre you sure you want to proceed?'
+  const warningText = isCallInProgress > 0 ? 'Some parts of the assignment are still updating. We recommend you to please wait for a few seconds before publishing.' :
+    isAssignmentSynced===false ?  'Some parts of the assignment were not updated properly, but you are about to publish and make the assignment visible to the students. Head to the Preview page to see the saved state of the assignment which will be visible to the students.' : null;
+  
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [isPublishDialogOpen, setIsPublishDialogOpen] = useState<boolean>(false);
 
@@ -83,6 +83,7 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
               'By switching to Edit mode, the assignment will not be visible to the students.\nDo you want to continue?'
             }
             title="Switch to Edit Mode"
+            warningText={null}
           />
         </DefaultButton>
 
@@ -102,8 +103,9 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
             onDismiss={() => setIsPublishDialogOpen(false)}
             approveButtonText="Publish"
             isOpen={isPublishDialogOpen}
-            subText={ primaryButtonSubText }
+            subText={mainPublishSubtext}
             title="Publish"
+            warningText={warningText}
           />
         </PrimaryButton>
       </div>

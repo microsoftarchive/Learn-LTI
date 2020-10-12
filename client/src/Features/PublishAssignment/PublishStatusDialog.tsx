@@ -12,11 +12,13 @@ import {
   DefaultButton,
   IModalProps,
   IModalStyles,
-  IDialogStyles
+  IDialogStyles,
+  Icon
 } from '@fluentui/react';
 import { DIALOG_MIN_WIDTH, commonDialogContentProps } from '../../Core/Components/Common/Dialog/EdnaDialogStyles';
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
+import { FontSizes } from '@uifabric/fluent-theme';
 
 interface PublishStatusDialogProps {
   onApprove: () => void;
@@ -25,6 +27,7 @@ interface PublishStatusDialogProps {
   title: string;
   subText: string;
   approveButtonText: string;
+  warningText: string | null;
 }
 
 export const PublishStatusDialog = ({
@@ -34,6 +37,7 @@ export const PublishStatusDialog = ({
   title,
   subText,
   approveButtonText,
+  warningText,
   styles
 }: PublishStatusDialogProps & IStylesOnly<Partial<IDialogStyles>>): JSX.Element => {
   const [isDialogWindowVisible, setIsDialogWindowVisible] = useState<boolean>(true);
@@ -65,6 +69,13 @@ export const PublishStatusDialog = ({
         minWidth={DIALOG_MIN_WIDTH}
         subText={subText}
       >
+
+        {/* {warningText &&  */}
+        <div>
+        <Icon className='warningIcon' iconName='Warning'/>
+        <span className='warningText'> 'You are about to Publish the assignment and make it visible to the students.\nAre you sure you want to proceed?' </span>
+        </div>
+        {/* } */}
         <DialogFooter>
           <PrimaryButton onClick={onClickApprove} text={approveButtonText} />
           <DefaultButton onClick={onDismiss} text="Cancel" />
@@ -77,7 +88,17 @@ export const PublishStatusDialog = ({
 const modalStyle = (isDialogWindowVisible: boolean): Partial<IModalStyles> => ({
   main: [
     {
-      display: isDialogWindowVisible ? 'flex' : 'none'
+      display: isDialogWindowVisible ? 'flex' : 'none',
+      selectors: {
+        '.warningIcon': {
+          fontSize: FontSizes.size24,
+          color: '#F1C40F'
+        },
+        '.warningText': {
+          fontWeight: '600',
+          paddingLeft: '4px'
+        }
+      }
     }
   ]
 });
