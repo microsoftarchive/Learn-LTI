@@ -140,8 +140,8 @@ process {
         if(!$LocationName) {
             Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
             $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
-            Write-Log -Message "User Entered Location Name: $LocationName"
         }
+        Write-Log -Message "User Provided Location Name: $LocationName"
 
         $ValidLocation = $LocationList | Where-Object { $_.name -ieq $LocationName }
         if(!$ValidLocation) {
