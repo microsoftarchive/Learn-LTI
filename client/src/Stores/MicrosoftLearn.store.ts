@@ -87,7 +87,7 @@ export class MicrosoftLearnStore extends ChildStore {
   }
 
   @action
-  async initializeCatalog(searchParams?: URLSearchParams): Promise<void> {
+  async initializeCatalog(searchParams: string = ''): Promise<void> {
     this.isLoadingCatalog = true;
     const catalog = await MicrosoftLearnService.getCatalog();
     if (catalog.error) {
@@ -105,9 +105,7 @@ export class MicrosoftLearnStore extends ChildStore {
     this.isLoadingCatalog = false;
     this.filteredCatalogContent = allItems;
 
-    if(searchParams){
-      this.filterStore.initializeFilters(this.catalog, searchParams);
-    }
+    this.filterStore.initializeFilters(this.catalog, searchParams);
   }
 
   private getItemIndexInSelectedList = (learnContentUid: string): number | void => {

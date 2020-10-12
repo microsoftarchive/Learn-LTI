@@ -27,7 +27,8 @@ export class MicrosoftLearnFilterStore extends ChildStore {
   history: H.History | null = null; 
 
   @action
-  public initializeFilters(catalog: Catalog, filterParams: URLSearchParams): void {
+  public initializeFilters(catalog: Catalog, searchParams: string): void {
+    const filterParams = new URLSearchParams(searchParams);
     this.productMap = catalog.products;
     this.history = H.createBrowserHistory();
     this.selectedFilter = loadFiltersFromQueryParams(filterParams, this.productMap);
