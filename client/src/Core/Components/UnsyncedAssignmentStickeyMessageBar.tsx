@@ -12,7 +12,7 @@ const UnsyncedAssignmentStickeyMessageBarInner = ({ styles }: IStylesOnly<IMessa
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
-    const isAssignmentSynced = learnStore.isSynced && assignmentLinksStore.isSynced; // && assignmentStore.isSynced;
+    const isAssignmentSynced = learnStore.isSynced && assignmentLinksStore.isSynced && assignmentStore.isSynced;
 
     if (isAssignmentSynced === false) {
       return (

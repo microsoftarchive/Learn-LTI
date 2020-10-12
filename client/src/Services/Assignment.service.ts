@@ -17,10 +17,10 @@ class AssignmentServiceClass {
     return safeData(response);
   }
 
-  public async updateAssignment(assignment: AssignmentDto): Promise<void> {
-    axios.post(`${process.env.REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL}/assignments`, assignment).catch(function (_error) {
-      //TODO: YS handle errors
-    });
+  public async updateAssignment(assignment: AssignmentDto): Promise<ServiceError | null> {
+    const response = await axios.post(`${process.env.REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL}/assignments`, assignment);
+
+    return getServiceError(response);
   }
 
   public async changeAssignmentPublishStatus(assignmentId: string, newPublishStatus: boolean): Promise<ServiceError | null> {
@@ -30,7 +30,6 @@ class AssignmentServiceClass {
     );
 
     return getServiceError(response);
-    // TODO: Handle errors
   }
 }
 

@@ -8,12 +8,17 @@ import { ChildStore } from './Core';
 import { AssignmentService } from '../Services/Assignment.service';
 import { Assignment } from '../Models/Assignment.model';
 import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
+import _ from 'lodash';
 
 export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
   @observable errorContent : ErrorPageContent | undefined = undefined;
   @observable pushlishStatusChangeError: boolean = false;
+  @observable syncedDescription: string | undefined;
+  @observable syncedDeadline: Date | undefined;
+  @observable serviceCallInProgress: number = 0;
+  @observable isSynced: boolean | null = null;
 
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {
@@ -24,13 +29,25 @@ export class AssignmentStore extends ChildStore {
     }
     const { deadline } = assignment;
     this.assignment = deadline ? { ...assignment, deadline: new Date(deadline) } : assignment;
+    this.syncedDescription = assignment.description;
+    this.syncedDeadline = assignment.deadline;
+    this.isSynced = true;
   }
 
   @action
   updateAssignmentDeadline(newDeadline: Date): void {
     if (this.assignment) {
       this.assignment.deadline = newDeadline;
-      AssignmentService.updateAssignment(this.assignment);
+      this.serviceCallInProgress++;
+      AssignmentService.updateAssignment(this.assignment)
+      .then(hasErrors => {
+        if(hasErrors === null)
+        {
+          this.syncedDeadline=newDeadline;
+        }
+        this.serviceCallInProgress--;
+        this.isSynced=_.isEqual(this.syncedDeadline,this.assignment?.deadline);
+      })
     }
   }
 
@@ -38,7 +55,17 @@ export class AssignmentStore extends ChildStore {
   updateAssignmentDescription(newDescription: string): void {
     if (this.assignment) {
       this.assignment.description = newDescription;
-      AssignmentService.updateAssignment(this.assignment);
+      this.serviceCallInProgress++;
+      AssignmentService.updateAssignment(this.assignment)
+      .then(hasErrors => {
+        if(hasErrors === null)
+        {
+          this.syncedDescription=newDescription;
+        }
+        this.serviceCallInProgress--;
+        this.isSynced=_.isEqual(this.syncedDescription,this.assignment?.description);
+      })
+    
     }
   }
 

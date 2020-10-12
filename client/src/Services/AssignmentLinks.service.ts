@@ -23,7 +23,6 @@ class AssignmentLinksServiceClass {
       assignmentLink
     );
     return getServiceError(response);
-    //TODO: YS handle errors
   }
 
   public async deleteAssignmentLink(assignmentLinkId: string, assignmentId: string): Promise<ServiceError | null> {
@@ -31,7 +30,6 @@ class AssignmentLinksServiceClass {
       `${process.env.REACT_APP_EDNA_LINKS_SERVICE_URL}/assignments/${assignmentId}/links/${assignmentLinkId}`
     );
     return getServiceError(response);
-    //TODO: YS handle errors
   }
 }
 
