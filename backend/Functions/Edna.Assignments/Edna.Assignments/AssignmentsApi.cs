@@ -23,6 +23,7 @@ using System;
 using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
+using System.Security.Claims;
 
 namespace Edna.Assignments
 {
@@ -52,17 +53,27 @@ namespace Edna.Assignments
             AssignmentDto assignmentDto = JsonConvert.DeserializeObject<AssignmentDto>(result);
             AssignmentEntity assignmentEntity = _mapper.Map<AssignmentEntity>(assignmentDto);
             assignmentEntity.ETag = "*";
-
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            
+            if (!req.Headers.TryGetTokenClaims(out Claim[] claims))
             {
-                _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Could not get user email.");
+                _logger.LogError("Error in sent JWT.");
+                return new BadRequestErrorMessageResult("Error in sent JWT.");
             }
 
-            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+            string clientAuthenticationType = HttpClaimsExtension.GetClientAuthenticationType(claims);
 
-            if (userEmails.Count > 0)
+            if (clientAuthenticationType != "0" && clientAuthenticationType != "2")
+                return new BadRequestErrorMessageResult("Wrong Client Authentication type");
+            else if (clientAuthenticationType == "0")
             {
+                if (!HttpClaimsExtension.TryGetUserEmails(claims, out List<String> userEmails))
+                {
+                    _logger.LogError("Could not get user email.");
+                    return new BadRequestErrorMessageResult("Could not get user email.");
+                }
+
+                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
                 User[] allUsers = await usersClient.GetAllUsers(assignmentDto.Id);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
@@ -145,27 +156,37 @@ namespace Edna.Assignments
 
         private async Task<IActionResult> ChangePublishStatus(HttpRequest req, CloudTable table, IAsyncCollector<AssignmentEntity> assignmentEntityCollector, string assignmentId, UsersClient usersClient, PublishStatus newPublishStatus)
         {
-            AssignmentEntity assignmentEntity = await FetchAssignment(table, assignmentId);
-            if (assignmentEntity == null)
-                return new NotFoundResult();
-
-            AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
-
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            if (!req.Headers.TryGetTokenClaims(out Claim[] claims))
             {
-                _logger.LogError("Could not get user email.");
-                return new BadRequestErrorMessageResult("Could not get user email.");
+                _logger.LogError("Error in sent JWT.");
+                return new BadRequestErrorMessageResult("Error in sent JWT.");
             }
 
-            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+            string clientAuthenticationType = HttpClaimsExtension.GetClientAuthenticationType(claims);
 
-            if (userEmails.Count > 0)
+            if (clientAuthenticationType != "0" && clientAuthenticationType != "2")
+                return new BadRequestErrorMessageResult("Wrong Client Authentication type");
+            else if (clientAuthenticationType == "0")
             {
+                if (!HttpClaimsExtension.TryGetUserEmails(claims, out List<String> userEmails))
+                {
+                    _logger.LogError("Could not get user email.");
+                    return new BadRequestErrorMessageResult("Could not get user email.");
+                }
+
+                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
+
+            AssignmentEntity assignmentEntity = await FetchAssignment(table, assignmentId);
+            if (assignmentEntity == null)
+                return new NotFoundResult();
+
+            AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
 
             assignmentEntity.PublishStatus = newPublishStatus.ToString();
             assignmentEntity.ETag = "*";

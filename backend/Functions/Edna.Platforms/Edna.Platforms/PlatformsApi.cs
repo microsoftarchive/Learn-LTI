@@ -150,15 +150,14 @@ namespace Edna.Platforms
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
                 return false;
 
-            // By checking appidacr claim, we can know if the call was made by a user or by the system.
-            // https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens
-            string appidacr = claims.FirstOrDefault(claim => claim.Type == "appidacr")?.Value;
-            if (appidacr == "2")
+            string clientAuthenticationType = HttpClaimsExtension.GetClientAuthenticationType(claims);
+
+            if (clientAuthenticationType == "2")
                 return true;
 
-            if (appidacr == "0")
+            if (clientAuthenticationType == "0")
             {
-                if (!TryGetUserEmails(claims, out List<string> userEmails))
+                if (!HttpClaimsExtension.TryGetUserEmails(claims, out List<string> userEmails))
                 {
                     _logger.LogError("Could not get any user email / uid for the current user.");
                     return false;
@@ -168,24 +167,6 @@ namespace Edna.Platforms
             }
 
             return false;
-        }
-
-        private bool TryGetUserEmails(IEnumerable<Claim> claims, out List<string> userEmails)
-        {
-            userEmails = new List<string>();
-            if (claims == null)
-                return false;
-
-            Claim[] claimsArray = claims.ToArray();
-
-            userEmails = PossibleEmailClaimTypes
-                .Select(claimType => claimsArray.FirstOrDefault(claim => claim.Type == claimType))
-                .Where(claim => claim != null)
-                .Select(claim => claim.Value)
-                .Distinct()
-                .ToList();
-
-            return userEmails.Any();
         }
 
         private string GeneratePlatformID()
