@@ -81,6 +81,7 @@
                 "type": "SystemAssigned"
             },
             "properties": {
+                "httpsOnly": true,
                 "siteConfig": {
                     "appSettings": [
                         {
@@ -124,7 +125,9 @@
                         "allowedOrigins": [
                             "[substring(reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web,0,sub(length(reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web),1))]"
                         ]
-                    }
+                    },
+                    "ftpsState": "Disabled",
+                    "minTlsVersion": "1.2"
                 },
                 "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix'))]",
                 "clientAffinityEnabled": false,
