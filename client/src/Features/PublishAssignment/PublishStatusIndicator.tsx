@@ -55,7 +55,8 @@ const publishStatusIndicatorStyles = ({ theme }: IThemeOnlyProps): PublishStatus
   root: [
     {
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      paddingTop: theme.spacing.s1
     }
   ],
   text: [
