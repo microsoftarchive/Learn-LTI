@@ -38,9 +38,14 @@ export class AssignmentLinksStore extends ChildStore {
         this.isSynced=true;
         this.isLoading = false;
       });
-      
-    toObservable(() => this.root.assignmentStore.assignment?.publishStatus==="Published")
-    .subscribe(() => (this.assignmentLinks = this.syncedAssignmentLinks));
+
+    toObservable(() => this.root.assignmentStore.assignment?.publishStatus)
+      .subscribe(publishStatus => {
+        if(publishStatus==='Published'){
+          this.assignmentLinks = this.syncedAssignmentLinks
+          this.isSynced = true;          
+        }
+      })
   }
 
   @action

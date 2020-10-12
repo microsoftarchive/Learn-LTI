@@ -71,11 +71,11 @@ export const PublishStatusDialog = ({
       >
 
         {warningText && 
-        <div>
-        <Icon className='warningIcon' iconName='Warning'/>
-        <span className='warningText'> {warningText} </span>
-        </div>
-        }
+          <div className='warning'>
+            <Icon className='warningIcon' iconName='WarningSolid'/>
+            <span className='warningText'> {warningText} </span>
+          </div>
+        } 
         <DialogFooter>
           <PrimaryButton onClick={onClickApprove} text={approveButtonText} />
           <DefaultButton onClick={onDismiss} text="Cancel" />
@@ -90,14 +90,21 @@ const modalStyle = (isDialogWindowVisible: boolean): Partial<IModalStyles> => ({
     {
       display: isDialogWindowVisible ? 'flex' : 'none',
       selectors: {
-        '.warningIcon': {
-          fontSize: FontSizes.size24,
-          color: '#F1C40F'
-        },
-        '.warningText': {
-          fontWeight: '600',
-          paddingLeft: '4px'
-        }
+        '.warning':{
+          display: 'flex', 
+          flexDirection: 'row',
+          selectors: {
+            '.warningIcon': {
+              fontSize: FontSizes.size32,
+              color: '#FFC100',
+              margin: 'auto'
+            },
+            '.warningText': {
+              fontSize: FontSizes.size12,
+              paddingLeft: '8px'
+            }
+          }
+        }    
       }
     }
   ]
