@@ -32,15 +32,24 @@ const NavbarTopInner = ({ styles }: IStylesOnly<NavbarTopStyles>): JSX.Element |
   const history = useHistory();
   const assignmentStore = useStore('assignmentStore');
   const location = useLocation();
+  const { filterStore } = useStore('microsoftLearnStore');
   
   // The following map can be extended to include other searchParams as well in future in case need be
-  let uriSearchParamsMap = new Map<string, string>();
-  uriSearchParamsMap.set(pagesDisplayNames.MSLEARN, ''); // replace empty string with store state
+  let queryParamsMap = new Map<string, string>();
+  queryParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam);   
   
   const handleLinkClick = (item?: PivotItem, event?: MouseEvent): void => {
+    const pushToHistory = (item: PivotItem) => {
+      if(item.props && item.props.itemKey && item.props.headerText) {
+        const { itemKey, headerText } = item.props;
+        const queryParam = queryParamsMap.get(headerText);
+        queryParam && queryParam.length>0 ? history.push(`${itemKey}?${queryParam}`) : history.push(`${itemKey}`);
+      }
+    }
+
     event?.preventDefault();
-    if (item && item.props.itemKey) {
-      history.push(item.props.itemKey);
+    if(item){
+      pushToHistory(item)
     }
   };
   
@@ -52,13 +61,11 @@ const NavbarTopInner = ({ styles }: IStylesOnly<NavbarTopStyles>): JSX.Element |
       url: url,
       key: url,
       title: '',
-      search: uriSearchParamsMap.get(link.name)
     }
   });
 
   const selectedNavKey = removeSlashFromStringEnd(location.pathname);
   const classes = themedClassNames(styles);
-
     return useObserver(() => {
       if (!assignmentStore.assignment) {
         return null;
@@ -72,13 +79,11 @@ const NavbarTopInner = ({ styles }: IStylesOnly<NavbarTopStyles>): JSX.Element |
             styles={themedClassNames(navStyles)}
           >
             {_.map(getMappedLinks(assignmentStore.assignment), link=>{
-              let urlWithSearchParams = link.url + 
-                (link.search!==undefined && link.search.length>0 ? '?'+link.search : '')
               return(            
                 <PivotItem
                   headerText={link.name}
                   itemIcon={link.icon}    
-                  itemKey={urlWithSearchParams} 
+                  itemKey={link.key} 
                   headerButtonProps={{disabled:link.disabled?link.disabled: false}}
               />)
             })}
