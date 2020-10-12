@@ -70,12 +70,12 @@ export const PublishStatusDialog = ({
         subText={subText}
       >
 
-        {/* {warningText &&  */}
+        {warningText && 
         <div>
         <Icon className='warningIcon' iconName='Warning'/>
-        <span className='warningText'> 'You are about to Publish the assignment and make it visible to the students.\nAre you sure you want to proceed?' </span>
+        <span className='warningText'> {warningText} </span>
         </div>
-        {/* } */}
+        }
         <DialogFooter>
           <PrimaryButton onClick={onClickApprove} text={approveButtonText} />
           <DefaultButton onClick={onDismiss} text="Cancel" />

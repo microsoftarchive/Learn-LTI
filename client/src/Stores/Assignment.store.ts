@@ -8,6 +8,7 @@ import { ChildStore } from './Core';
 import { AssignmentService } from '../Services/Assignment.service';
 import { Assignment } from '../Models/Assignment.model';
 import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
+import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import _ from 'lodash';
 
 export class AssignmentStore extends ChildStore {
@@ -20,6 +21,16 @@ export class AssignmentStore extends ChildStore {
   @observable serviceCallInProgress: number = 0;
   @observable isSynced: boolean | null = null;
 
+  initialize(): void {
+    toObservable(() => this.assignment?.publishStatus)
+      .subscribe(newPublishStatus => {
+        if(this.assignment && newPublishStatus === 'Published' && this.syncedDeadline && this.syncedDescription){
+          this.assignment.deadline = this.syncedDeadline;
+          this.assignment.description = this.syncedDescription;
+        }
+      })
+  }
+  
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {
     const assignment = await AssignmentService.getAssignment(assignmentId);
@@ -32,6 +43,8 @@ export class AssignmentStore extends ChildStore {
     this.syncedDescription = assignment.description;
     this.syncedDeadline = assignment.deadline;
     this.isSynced = true;
+
+
   }
 
   @action
