@@ -29,7 +29,6 @@ namespace Edna.Platforms
     {
         private const string PlatformsTableName = "Platforms";
 
-        private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
         private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
 
