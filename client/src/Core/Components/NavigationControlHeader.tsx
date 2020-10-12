@@ -24,19 +24,29 @@ function NavigationControlHeaderInner({ styles }: IStylesOnly<NavigationControlH
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
-    const publishStatusMessageBarProps: PublishSuccessMessageBarProps = assignmentStore.pushlishStatusChangeError
-      ? {
-          messageBarType: MessageBarType.error,
-          message: assignmentStore.assignment?.publishStatus !== 'Published'? 'Something went wrong! Could not publish the assignment' : 'Something went wrong! Could not switch to edit mode',
-          showMessage: assignmentStore.pushlishStatusChangeError
-        }
-      : {
-          messageBarType: MessageBarType.success,
-          message: 'Your assignment was published successfully',
-          showMessage:
-            assignmentStore.assignment?.publishStatus === 'Published' &&
-            assignmentStore.isChangingPublishState === false
-        };
+    const publishStatusMessageBarProps: PublishSuccessMessageBarProps =
+      assignmentStore.pushlishStatusChangeError === 'unauthorized'
+        ? {
+            messageBarType: MessageBarType.error,
+            message: 'Sorry, but it seems like you do not have sufficient permissions to perform this action.',
+            showMessage: assignmentStore.pushlishStatusChangeError === 'unauthorized'
+          }
+        : assignmentStore.pushlishStatusChangeError !== null
+        ? {
+            messageBarType: MessageBarType.error,
+            message:
+              assignmentStore.assignment?.publishStatus !== 'Published'
+                ? 'Something went wrong! Could not publish the assignment'
+                : 'Something went wrong! Could not switch to edit mode',
+            showMessage: assignmentStore.pushlishStatusChangeError !== null
+          }
+        : {
+            messageBarType: MessageBarType.success,
+            message: 'Your assignment was published successfully',
+            showMessage:
+              assignmentStore.assignment?.publishStatus === 'Published' &&
+              assignmentStore.isChangingPublishState === false
+          };
 
     return (
       <>

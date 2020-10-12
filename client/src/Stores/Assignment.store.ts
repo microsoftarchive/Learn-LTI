@@ -10,12 +10,13 @@ import { Assignment } from '../Models/Assignment.model';
 import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import _ from 'lodash';
+import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
   @observable errorContent : ErrorPageContent | undefined = undefined;
-  @observable pushlishStatusChangeError: boolean = false;
+  @observable pushlishStatusChangeError: ServiceError | null = null;
   @observable syncedDescription: string | undefined;
   @observable syncedDeadline: Date | undefined;
   @observable serviceCallInProgress: number = 0;
@@ -86,7 +87,7 @@ export class AssignmentStore extends ChildStore {
   async changeAssignmentPublishStatus(newPublishStatus: boolean): Promise<void> {
     if (this.assignment) {
       this.isChangingPublishState = true;
-      this.pushlishStatusChangeError = false;
+      this.pushlishStatusChangeError = null;
 
       const hasError = await AssignmentService.changeAssignmentPublishStatus(
         this.assignment.id,
@@ -95,7 +96,7 @@ export class AssignmentStore extends ChildStore {
       if (hasError === null) {
         this.assignment.publishStatus = newPublishStatus ? 'Published' : 'NotPublished';
       } else {
-        this.pushlishStatusChangeError = true;
+        this.pushlishStatusChangeError = hasError;
       }
       this.isChangingPublishState = false;
     }
