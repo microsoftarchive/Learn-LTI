@@ -5,7 +5,7 @@
 
 import React, { CSSProperties, useState } from 'react';
 import { SimpleComponentStyles, IStylesOnly, IThemeOnlyProps } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-import { styled, Text } from '@fluentui/react';
+import { FontWeights, styled, Text } from '@fluentui/react';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { MicrosoftLearnItemShimmer } from './MicrosoftLearnItemShimmer';
 import { MicrosoftLearnItem } from './MicrosoftLearnItem';
@@ -16,7 +16,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { useObserver } from 'mobx-react-lite';
 import { FIXED_ITEM_HEIGHT, FIXED_ITEM_WIDTH } from './MicrosoftLearnStyles';
 
-type MicrosoftLearnListStyles = SimpleComponentStyles<'root' | 'noResultsText' | 'row' | 'item'>;
+type MicrosoftLearnListStyles = SimpleComponentStyles<'root' | 'noResultsText' | 'row' | 'item' | 'contentCount'>;
 const ListRow = ({
   data: { numItemsPerRow, itemsData, isLoadingCatalog },
   index,
@@ -57,42 +57,50 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
 
   return useObserver(() => {
     const isLoadingCatalog = !!learnStore.isLoadingCatalog;
-    const catalogContent = learnStore.filteredCatalogContent;
-    const noVisibleItems = !isLoadingCatalog && catalogContent?.length === 0;
+    const { filteredCatalogContent } = learnStore;
+    const noVisibleItems = !isLoadingCatalog && filteredCatalogContent?.length === 0;
 
     return (
       <div className={classes.root}>
         {noVisibleItems ? (
           <Text className={classes.noResultsText}>No items match your search. Please refine your search criteria.</Text>
         ) : (
-          <AutoSizer>
-            {({ height, width }): JSX.Element | null => {
-              if (autoSizerWidth === 0 || Math.abs(autoSizerWidth - width) > 25) {
-                setAutoSizerWidth(width);
-              }
 
-              const numItemsPerRow = Math.floor(autoSizerWidth / FIXED_ITEM_WIDTH);
-              const rowCount = catalogContent
-                ? Math.floor(catalogContent.length / numItemsPerRow) + (catalogContent.length % numItemsPerRow ? 1 : 0)
-                : 2;
-              return (
-                <FixedSizeList
-                  style={getListStyle(isLoadingCatalog)}
-                  height={height}
-                  itemCount={rowCount}
-                  itemData={{
-                    numItemsPerRow,
-                    itemsData: catalogContent,
-                    isLoadingCatalog
-                  }}
-                  itemSize={FIXED_ITEM_HEIGHT}
-                  width={autoSizerWidth}
-                >
-                  {ListRow}
-                </FixedSizeList>
-              );
-            }}
-          </AutoSizer>
+          <>
+            {filteredCatalogContent && filteredCatalogContent.length>0 &&
+              (<div className={classes.contentCount}>
+              <Text variant="mediumPlus" className='contentCountText'> {filteredCatalogContent.length.toLocaleString()} results from Microsoft Learn </Text>         
+              </div>)
+            }
+            <AutoSizer>
+              {({ height, width }): JSX.Element | null => {
+                if (autoSizerWidth === 0 || Math.abs(autoSizerWidth - width) > 25) {
+                  setAutoSizerWidth(width);
+                }
+
+                const numItemsPerRow = Math.floor(autoSizerWidth / FIXED_ITEM_WIDTH);
+                const rowCount = filteredCatalogContent
+                  ? Math.floor(filteredCatalogContent.length / numItemsPerRow) + (filteredCatalogContent.length % numItemsPerRow ? 1 : 0)
+                  : 2;
+                return (
+                  <FixedSizeList
+                    style={getListStyle(isLoadingCatalog)}
+                    height={height}
+                    itemCount={rowCount}
+                    itemData={{
+                      numItemsPerRow,
+                      itemsData: filteredCatalogContent,
+                      isLoadingCatalog
+                    }}
+                    itemSize={FIXED_ITEM_HEIGHT}
+                    width={autoSizerWidth}
+                  >
+                    {ListRow}
+                  </FixedSizeList>
+                );
+              }}
+            </AutoSizer>
+          </>
         )}
       </div>
     );
@@ -120,6 +128,17 @@ const microsoftLearnListStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnLis
   item: [
     {
       flex: 1
+    }
+  ],
+  contentCount: [
+    {
+      marginLeft: theme.spacing.s1,
+      marginBottom: theme.spacing.l1,
+      selectors: {
+        '.contentCountText':{
+          fontWeight: FontWeights.semibold
+        }
+      }
     }
   ]
 });

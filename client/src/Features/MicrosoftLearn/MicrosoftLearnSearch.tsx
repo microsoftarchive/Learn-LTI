@@ -15,16 +15,19 @@ export type MicrosoftLearnSearchStyles = SimpleComponentStyles<'root' | 'label' 
 
 const MicrosoftLearnSearchInner = ({ styles }: IStylesOnly<MicrosoftLearnSearchStyles>): JSX.Element => {
   const learnStore = useStore('microsoftLearnStore');
+  const { filterStore, isLoadingCatalog } = learnStore;
 
   const classes = themedClassNames(styles);
   return useObserver(() => {
+    const searchTerm = filterStore.selectedFilter.terms.join(' ') || '';
     return (
       <div className={classes.root}>
         <Label className={classes.label}>Search</Label>
         <SearchBox
-          onChange={(_e, newValue) => learnStore.updateSearchTerm(newValue || '')}
+          onChange={(_e: React.ChangeEvent<HTMLElement> | undefined, newValue: string | undefined) => filterStore.updateSearchTerm(newValue || '')}
           className={classes.searchBox}
-          disabled={!!learnStore.isLoadingCatalog}
+          disabled={!!isLoadingCatalog}
+          value= {searchTerm}
         />
       </div>
     );
