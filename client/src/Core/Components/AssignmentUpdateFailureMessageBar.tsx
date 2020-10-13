@@ -31,13 +31,24 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   const learnStore = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
 
+  const getServiceError = () =>
+  {
+      if(learnStore.hasServiceError) {
+        return learnStore.hasServiceError;
+      }else if(assignmentLinksStore.hasServiceError) {
+        return assignmentLinksStore.hasServiceError;
+      }else if(assignmentStore.hasServiceError) {
+        return assignmentStore.hasServiceError;
+      }
+      return null;
+  }
   return useObserver(() => {
     const isAssignmentSynced = learnStore.isSynced && assignmentLinksStore.isSynced && assignmentStore.isSynced;
-    const isCallInProgress = assignmentLinksStore.serviceCallInProgress + learnStore.serviceCallInProgress;
-    const hasError = learnStore.hasServiceError; // TODO: from other stores as well!
+    const isCallInProgress = assignmentLinksStore.serviceCallInProgress + learnStore.serviceCallInProgress + assignmentStore.serviceCallInProgress;
+    const hasError = getServiceError();
     const errorMessage = getErrorMessage(hasError, isAssignmentSynced);
 
-    if ((hasError !== null || isAssignmentSynced === false) && isCallInProgress === 0) {
+    if ( isCallInProgress === 0 && (hasError !== null || isAssignmentSynced === false)) {
       return (
         <MessageBar messageBarType={MessageBarType.warning} isMultiline={true} className={classes.root}>
           {errorMessage}

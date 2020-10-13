@@ -21,6 +21,7 @@ export class AssignmentStore extends ChildStore {
   @observable syncedDeadline: Date | undefined;
   @observable serviceCallInProgress: number = 0;
   @observable isSynced: boolean | null = null;
+  @observable hasServiceError: ServiceError | null = null;
 
   initialize(): void {
     toObservable(() => this.assignment?.publishStatus)
@@ -28,6 +29,7 @@ export class AssignmentStore extends ChildStore {
         if(this.assignment && newPublishStatus === 'Published' && this.syncedDeadline && this.syncedDescription){
           this.assignment.deadline = this.syncedDeadline;
           this.assignment.description = this.syncedDescription;
+          this.isSynced=true;
         }
       })
   }
@@ -44,8 +46,6 @@ export class AssignmentStore extends ChildStore {
     this.syncedDescription = assignment.description;
     this.syncedDeadline = assignment.deadline;
     this.isSynced = true;
-
-
   }
 
   @action
@@ -55,9 +55,10 @@ export class AssignmentStore extends ChildStore {
       this.serviceCallInProgress++;
       AssignmentService.updateAssignment(this.assignment)
       .then(hasErrors => {
-        if(hasErrors === null)
-        {
+        if(hasErrors === null) {
           this.syncedDeadline=newDeadline;
+        }else {
+          this.hasServiceError = hasErrors;
         }
         this.serviceCallInProgress--;
         this.isSynced=_.isEqual(this.syncedDeadline,this.assignment?.deadline);
@@ -72,9 +73,10 @@ export class AssignmentStore extends ChildStore {
       this.serviceCallInProgress++;
       AssignmentService.updateAssignment(this.assignment)
       .then(hasErrors => {
-        if(hasErrors === null)
-        {
+        if(hasErrors === null) {
           this.syncedDescription=newDescription;
+        }else {
+          this.hasServiceError = hasErrors;
         }
         this.serviceCallInProgress--;
         this.isSynced=_.isEqual(this.syncedDescription,this.assignment?.description);

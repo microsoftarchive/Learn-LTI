@@ -28,7 +28,7 @@ function NavigationControlHeaderInner({ styles }: IStylesOnly<NavigationControlH
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
-    const isCallInProgress = assignmentLinksStore.serviceCallInProgress + learnStore.serviceCallInProgress;
+    const isCallInProgress = assignmentLinksStore.serviceCallInProgress + learnStore.serviceCallInProgress + assignmentStore.serviceCallInProgress;
     const publishStatusMessageBarProps: PublishSuccessMessageBarProps =
       assignmentStore.pushlishStatusChangeError === 'unauthorized'
         ? {
@@ -57,7 +57,7 @@ function NavigationControlHeaderInner({ styles }: IStylesOnly<NavigationControlH
       <>
         <div className={classes.header}>
           <span className={classes.assignmentTitle}>{assignmentStore.assignment?.name}</span>
-          {isCallInProgress>0 && <Spinner label="Updating..." labelPosition="left" size={SpinnerSize.small}/>}
+          {isCallInProgress > 0 && <Spinner label="Updating..." labelPosition="left" size={SpinnerSize.small}/>}
         </div>
         <div className={classes.navAndControlArea}>
           <NavBarBase.NavbarTop />

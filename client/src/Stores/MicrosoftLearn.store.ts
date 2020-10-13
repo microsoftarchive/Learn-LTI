@@ -17,6 +17,7 @@ import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
 import { debounceTime, map, filter, switchMap } from 'rxjs/operators';
 import { applySelectedFilter, getFiltersToDisplay } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
 import { ServiceError } from '../Core/Utils/Axios/ServiceError';
+import { WithError } from '../Core/Utils/Axios/safeData';
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -47,14 +48,20 @@ export class MicrosoftLearnStore extends ChildStore {
         this.filterStore.displayFilter = filtersToDisplay;
       });
 
-    const assignmentLearnContentObservable = toObservable(() => this.root.assignmentStore.assignment)
+      const getLearnContent =  async (assignmentId : string) : Promise<WithError<AssignmentLearnContentDto[]>> =>
+      {
+        const assignmentLearnContent = await MicrosoftLearnService.getAssignmentLearnContent(assignmentId);
+        if(assignmentLearnContent.error) {
+          this.hasServiceError = assignmentLearnContent.error;
+        }
+        return assignmentLearnContent;
+      }
+
+    toObservable(() => this.root.assignmentStore.assignment)
       .pipe(
         filter(assignment => !!assignment),
         map(assignment => assignment!.id),
-        switchMap(assignmentId => MicrosoftLearnService.getAssignmentLearnContent(assignmentId)),
-      );
-
-    assignmentLearnContentObservable.pipe(
+        switchMap(getLearnContent),
         filter(assignmentLearnContent => !assignmentLearnContent.error),
         map(assignmentLearnContent => assignmentLearnContent as AssignmentLearnContentDto[])
       )
@@ -64,12 +71,6 @@ export class MicrosoftLearnStore extends ChildStore {
         this.isSynced = true; 
       });
 
-    assignmentLearnContentObservable.subscribe(assignmentLearnContent => {
-        if(assignmentLearnContent.error!==undefined){
-          this.hasServiceError=assignmentLearnContent.error
-        }
-      })
-    
     toObservable(() => this.root.assignmentStore.assignment?.publishStatus)
       .subscribe(publishStatus => {
         if(publishStatus==='Published'){
