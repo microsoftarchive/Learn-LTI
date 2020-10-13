@@ -5,18 +5,17 @@
 
 import { ChildStore } from './Core';
 import { observable, action } from 'mobx';
-import { Catalog, Product, LearnContent } from '../Models/Learn';
+import { Catalog, LearnContent, Product } from '../Models/Learn';
 import { MicrosoftLearnService } from '../Services/MicrosoftLearn.service';
 import { CatalogDto, ProductChildDto, ProductDto } from '../Dtos/Learn';
 import { toMap } from '../Core/Utils/Typescript/ToMap';
-import { debounceTime, map, filter, switchMap } from 'rxjs/operators';
-import _ from 'lodash';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
-import { ServiceError } from '../Core/Utils/Axios/ServiceError';
-import { applySelectedFilter, getFiltersToDisplay } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
 import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
+import { debounceTime, map, filter, switchMap } from 'rxjs/operators';
+import { applySelectedFilter, getFiltersToDisplay } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
+import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -24,7 +23,6 @@ export class MicrosoftLearnStore extends ChildStore {
   @observable selectedItems: AssignmentLearnContent[] | null = null;
   @observable syncedSelectedItems: AssignmentLearnContent[] | null = null; 
   @observable filteredCatalogContent: LearnContent[] | null = null;
-  @observable searchTerm = '';
   @observable serviceCallInProgress: number = 0;
   @observable isSynced: boolean | null = null;
   @observable hasServiceError: ServiceError | null = null;
@@ -83,11 +81,6 @@ export class MicrosoftLearnStore extends ChildStore {
   }
 
   @action
-  updateSearchTerm(searchTerm: string): void {
-    this.searchTerm = searchTerm;
-  }
-
-  @action
   removeItemSelection(learnContentUid: string): void {
     const assignmentId = this.root.assignmentStore.assignment!.id;
     const itemIndexInSelectedItemsList = this.getItemIndexInSelectedList(learnContentUid);
@@ -127,7 +120,6 @@ export class MicrosoftLearnStore extends ChildStore {
   clearAssignmentLearnContent(): void {
     this.selectedItems = [];
     const assignmentId = this.root.assignmentStore.assignment!.id;
-
     this.serviceCallInProgress++; 
     MicrosoftLearnService.clearAssignmentLearnContent(assignmentId)
       .then(hasError => {
@@ -138,7 +130,7 @@ export class MicrosoftLearnStore extends ChildStore {
         }
         this.serviceCallInProgress--; 
         this.isSynced = _.differenceBy(this.selectedItems, this.syncedSelectedItems!!, 'contentUid').length === 0;
-      })  
+      })
   }
 
   @action
@@ -174,7 +166,6 @@ export class MicrosoftLearnStore extends ChildStore {
     learnContentUid: string
   ): void => {
     this.selectedItems?.splice(itemIndexInSelectedItemsList, 1);
-
     this.serviceCallInProgress++; 
     MicrosoftLearnService.removeAssignmentLearnContent(assignmentId, learnContentUid)
       .then(hasError => {
