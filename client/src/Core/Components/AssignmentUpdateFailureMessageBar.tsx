@@ -10,14 +10,13 @@ const getErrorMessage = (error: ServiceError | null, isSynced: boolean | null) =
   switch (error) {
     case 'unauthorized':
       return 'Sorry, but it seems like you do not have sufficient permissions to perform this action.';
-    case 'internal error':
-      return 'Sorry, the server encountered an internal error and was unable to complete your request. Please contact the server administrator.';
     case 'not found':
       return 'Sorry, we could not find what you were looking for. Please contact the server administrator or the teacher.';
     case 'bad request':
       return 'Sorry, but the server could not process your request.';
+    case 'internal error':
     case 'other':
-      return 'Sorry, something went wrong, and we could not process your request successfully.';
+      return 'Sorry, the server encountered an internal error and was unable to complete your request. Please contact the server administrator.';
   }
 
   if (error === null && isSynced === false) {
@@ -42,6 +41,7 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
       }
       return null;
   }
+  
   return useObserver(() => {
     const isAssignmentSynced = learnStore.isSynced && assignmentLinksStore.isSynced && assignmentStore.isSynced;
     const isCallInProgress = assignmentLinksStore.serviceCallInProgress + learnStore.serviceCallInProgress + assignmentStore.serviceCallInProgress;

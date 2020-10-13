@@ -48,14 +48,14 @@ export class MicrosoftLearnStore extends ChildStore {
         this.filterStore.displayFilter = filtersToDisplay;
       });
 
-      const getLearnContent =  async (assignmentId : string) : Promise<WithError<AssignmentLearnContentDto[]>> =>
-      {
-        const assignmentLearnContent = await MicrosoftLearnService.getAssignmentLearnContent(assignmentId);
-        if(assignmentLearnContent.error) {
-          this.hasServiceError = assignmentLearnContent.error;
-        }
-        return assignmentLearnContent;
+    const getLearnContent =  async (assignmentId : string) : Promise<WithError<AssignmentLearnContentDto[]>> =>
+    {
+      const assignmentLearnContent = await MicrosoftLearnService.getAssignmentLearnContent(assignmentId);
+      if(assignmentLearnContent.error) {
+        this.hasServiceError = assignmentLearnContent.error;
       }
+      return assignmentLearnContent;
+    }
 
     toObservable(() => this.root.assignmentStore.assignment)
       .pipe(

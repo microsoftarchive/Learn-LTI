@@ -70,11 +70,11 @@ export class AssignmentLinksStore extends ChildStore {
     .then(hasErrors => {
     if(hasErrors === null) {
       this.syncedAssignmentLinks = [...this.syncedAssignmentLinks, assignmentLink];
-    }else {
+    } else {
       this.hasServiceError = hasErrors;
     }
     this.serviceCallInProgress--; 
-    this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks).length === 0;  
+    this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
   })
   }
 
@@ -89,11 +89,11 @@ export class AssignmentLinksStore extends ChildStore {
     .then(hasErrors => {
     if(hasErrors === null) {
       this.syncedAssignmentLinks = this.syncedAssignmentLinks.map(link => (link.id === editedLink.id ? editedLink : link));
-    }else {
+    } else {
       this.hasServiceError = hasErrors;
     }
     this.serviceCallInProgress--; 
-    this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks).length === 0;
+    this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
   })
   }
 
@@ -109,11 +109,11 @@ export class AssignmentLinksStore extends ChildStore {
     .then(hasErrors => {
     if(hasErrors === null) {
       this.syncedAssignmentLinks = _.filter(this.syncedAssignmentLinks, link => link.id !== assignmentLinkId);
-    }else {
+    } else {
       this.hasServiceError = hasErrors;
     }
     this.serviceCallInProgress--; 
-    this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks).length === 0;
+    this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
   })
   }
 }

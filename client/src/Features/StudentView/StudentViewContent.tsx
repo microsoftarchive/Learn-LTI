@@ -37,19 +37,19 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
     const items: (StudentViewSectionProps & IStylesOnly<StudentViewSectionStyles>)[] = _.compact([
       assignmentStore.assignment?.description && {
         title: 'Description',
-        textContent: assignmentStore.assignment.description
+        textContent: assignmentStore.syncedDescription
       },
       assignmentStore.assignment?.deadline && {
         title: 'Deadline',
-        textContent: formatDate(assignmentStore.assignment.deadline)
+        textContent: formatDate(assignmentStore.syncedDeadline)
       },
       (assignmentLinksStore.isLoading || assignmentLinksStore.syncedAssignmentLinks.length > 0) && {
         title: 'Links',
         styles: linksSectionStyles,
         content: <AssignmentLinksList disableEdit showSynced/>
       },
-      learnStore.selectedItems &&
-        learnStore.selectedItems.length > 0 && {
+      learnStore.syncedSelectedItems &&
+        learnStore.syncedSelectedItems.length > 0 && {
           title: 'Tutorials',
           content: <StudentViewLearnItemsList />
         }
