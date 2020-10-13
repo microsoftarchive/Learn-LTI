@@ -35,11 +35,11 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
 
   return useObserver(() => {
     const items: (StudentViewSectionProps & IStylesOnly<StudentViewSectionStyles>)[] = _.compact([
-      assignmentStore.assignment?.description && {
+      assignmentStore.syncedDescription && {
         title: 'Description',
         textContent: assignmentStore.syncedDescription
       },
-      assignmentStore.assignment?.deadline && {
+      assignmentStore.syncedDeadline && {
         title: 'Deadline',
         textContent: formatDate(assignmentStore.syncedDeadline)
       },
