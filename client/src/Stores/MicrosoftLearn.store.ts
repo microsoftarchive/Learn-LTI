@@ -139,7 +139,6 @@ export class MicrosoftLearnStore extends ChildStore {
     const catalog = await MicrosoftLearnService.getCatalog();
     if (catalog.error) {
       // Will show the error on the message bar once it's implemented
-      this.hasServiceError = catalog.error;
       return;
     }
 
