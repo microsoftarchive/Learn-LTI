@@ -3,6 +3,8 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
+import { SpinnerSize } from '@fluentui/react';
+import { Spinner } from '@fluentui/react';
 import { FontSizes, FontWeights, mergeStyles, MessageBarType, styled } from '@fluentui/react';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
@@ -17,13 +19,16 @@ import { IStylesOnly, IThemeOnlyProps, SimpleComponentStyles } from '../Utils/Fl
 import { stickyHeaderStyle } from './Common/StickyHeaderStyle';
 import * as NavBarBase from './Navbar';
 
-type NavigationControlHeaderStyles = SimpleComponentStyles<'assignmentTitle' | 'navAndControlArea'>;
+type NavigationControlHeaderStyles = SimpleComponentStyles<'assignmentTitle' | 'navAndControlArea' | 'header'>;
 
 function NavigationControlHeaderInner({ styles }: IStylesOnly<NavigationControlHeaderStyles>): JSX.Element {
   const assignmentStore = useStore('assignmentStore');
+  const assignmentLinksStore = useStore('assignmentLinksStore');
+  const learnStore = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
+    const isCallInProgress = assignmentLinksStore.serviceCallInProgress + learnStore.serviceCallInProgress;
     const publishStatusMessageBarProps: PublishSuccessMessageBarProps =
       assignmentStore.pushlishStatusChangeError === 'unauthorized'
         ? {
@@ -50,7 +55,10 @@ function NavigationControlHeaderInner({ styles }: IStylesOnly<NavigationControlH
 
     return (
       <>
-        <span className={classes.assignmentTitle}>{assignmentStore.assignment?.name}</span>
+        <div className={classes.header}>
+          <span className={classes.assignmentTitle}>{assignmentStore.assignment?.name}</span>
+          {isCallInProgress>0 && <Spinner label="Updating..." labelPosition="left" size={SpinnerSize.small}/>}
+        </div>
         <div className={classes.navAndControlArea}>
           <NavBarBase.NavbarTop />
           <PublishControlArea />
@@ -63,6 +71,16 @@ function NavigationControlHeaderInner({ styles }: IStylesOnly<NavigationControlH
 
 const navigationControlHeaderStyle = ({ theme }: IThemeOnlyProps): NavigationControlHeaderStyles => {
   return {
+    header: [
+      {
+        display: 'flex',
+        justifyContent: 'space-between',
+        paddingRight: `calc(${theme.spacing.l1} * 1.6)`,
+        paddingLeft: `calc(${theme.spacing.l1} * 1.6)`,
+        paddingBottom: `calc(${theme.spacing.l1} * 0.5)`,
+        paddingTop: `calc(${theme.spacing.l1} * 1.5)`
+      }
+    ],
     assignmentTitle: [
       {
         fontSize: FontSizes.xLargePlus,
@@ -70,9 +88,6 @@ const navigationControlHeaderStyle = ({ theme }: IThemeOnlyProps): NavigationCon
         color: theme.palette.neutralPrimary,
         backgroundColor: theme.palette.neutralLighterAlt,
         lineHeight: FontSizes.xxLarge,
-        paddingLeft: `calc(${theme.spacing.l1} * 1.6)`,
-        paddingBottom: `calc(${theme.spacing.l1} * 0.5)`,
-        paddingTop: `calc(${theme.spacing.l1} * 1.5)`
       }
     ],
 

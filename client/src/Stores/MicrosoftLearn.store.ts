@@ -11,6 +11,7 @@ import { CatalogDto, ProductChildDto, ProductDto } from '../Dtos/Learn';
 import { toMap } from '../Core/Utils/Typescript/ToMap';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContent } from '../Models/Learn/AssignmentLearnContent';
+import _ from 'lodash';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
 import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
 import { debounceTime, map, filter, switchMap } from 'rxjs/operators';
@@ -53,8 +54,7 @@ export class MicrosoftLearnStore extends ChildStore {
         switchMap(assignmentId => MicrosoftLearnService.getAssignmentLearnContent(assignmentId)),
       );
 
-    assignmentLearnContentObservable
-      .pipe(
+    assignmentLearnContentObservable.pipe(
         filter(assignmentLearnContent => !assignmentLearnContent.error),
         map(assignmentLearnContent => assignmentLearnContent as AssignmentLearnContentDto[])
       )
@@ -64,8 +64,7 @@ export class MicrosoftLearnStore extends ChildStore {
         this.isSynced = true; 
       });
 
-    assignmentLearnContentObservable
-      .subscribe(assignmentLearnContent => {
+    assignmentLearnContentObservable.subscribe(assignmentLearnContent => {
         if(assignmentLearnContent.error!==undefined){
           this.hasServiceError=assignmentLearnContent.error
         }

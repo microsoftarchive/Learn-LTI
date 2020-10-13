@@ -17,7 +17,7 @@ import learnLogo from '../../Assets/icon_learn_062020.png';
 import { useQueryValue } from '../Hooks';
 import { ErrorPage } from './ErrorsPage';
 import { NavigationControlHeader } from './NavigationControlHeader';
-import { UnsyncedAssignmentStickeyMessageBar } from './UnsyncedAssignmentStickeyMessageBar';
+import { AssignmentUpdateFailureMessageBar } from './AssignmentUpdateFailureMessageBar';
 
 type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content'>;
 
@@ -53,7 +53,7 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         <div className={classes.content}>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
-              <UnsyncedAssignmentStickeyMessageBar/>
+              <AssignmentUpdateFailureMessageBar/>
               <NavigationControlHeader/>
               <PagesRouter />
             </>

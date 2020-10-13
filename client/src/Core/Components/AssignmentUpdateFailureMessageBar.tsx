@@ -25,7 +25,7 @@ const getErrorMessage = (error: ServiceError | null, isSynced: boolean | null) =
   }
 };
 
-const UnsyncedAssignmentStickeyMessageBarInner = ({ styles }: IStylesOnly<IMessageBarStyles>): JSX.Element | null => {
+const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessageBarStyles>): JSX.Element | null => {
   const assignmentStore = useStore('assignmentStore');
   const assignmentLinksStore = useStore('assignmentLinksStore');
   const learnStore = useStore('microsoftLearnStore');
@@ -49,11 +49,11 @@ const UnsyncedAssignmentStickeyMessageBarInner = ({ styles }: IStylesOnly<IMessa
   });
 };
 
-const unsyncedAssignmentMessageBarStyles = ({ theme }: IThemeOnlyProps): Partial<IMessageBarStyles> => ({
+const assignmentUpdateFailureMessageBarStyles = ({ theme }: IThemeOnlyProps): Partial<IMessageBarStyles> => ({
   root: [AnimationClassNames.fadeIn200]
 });
 
-export const UnsyncedAssignmentStickeyMessageBar = styled(
-  UnsyncedAssignmentStickeyMessageBarInner,
-  unsyncedAssignmentMessageBarStyles
+export const AssignmentUpdateFailureMessageBar = styled(
+  AssignmentUpdateFailureMessageBarInner,
+  assignmentUpdateFailureMessageBarStyles
 );
