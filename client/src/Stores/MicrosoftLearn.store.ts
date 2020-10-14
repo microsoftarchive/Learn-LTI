@@ -10,7 +10,6 @@ import { MicrosoftLearnService } from '../Services/MicrosoftLearn.service';
 import { CatalogDto, ProductChildDto, ProductDto } from '../Dtos/Learn';
 import { toMap } from '../Core/Utils/Typescript/ToMap';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
-import _ from 'lodash';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
 import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
 import { debounceTime, map, filter, switchMap } from 'rxjs/operators';
