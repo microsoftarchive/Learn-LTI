@@ -6,6 +6,7 @@
 import { SpinnerSize } from '@fluentui/react';
 import { Spinner } from '@fluentui/react';
 import { FontSizes, FontWeights, mergeStyles, MessageBarType, styled } from '@fluentui/react';
+import _ from 'lodash';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import { PublishControlArea } from '../../Features/PublishAssignment/PublishControlArea';
@@ -28,7 +29,7 @@ function NavigationControlHeaderInner({ styles }: IStylesOnly<NavigationControlH
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
-    const isCallInProgress = assignmentLinksStore.serviceCallInProgress + learnStore.serviceCallInProgress + assignmentStore.serviceCallInProgress;
+    const isCallInProgress = learnStore.isLoadingCatalog? 0 : assignmentLinksStore.serviceCallInProgress + _.sum([...learnStore.contentSelectionMap.values()].map(item => item.callsInProgress)) + assignmentStore.serviceCallInProgress;
     const publishStatusMessageBarProps: PublishSuccessMessageBarProps =
       assignmentStore.pushlishStatusChangeError === 'unauthorized'
         ? {

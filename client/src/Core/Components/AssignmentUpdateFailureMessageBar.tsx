@@ -1,4 +1,5 @@
 import { AnimationClassNames, IMessageBarStyles, MessageBar, MessageBarType, styled } from '@fluentui/react';
+import _ from 'lodash';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import { useStore } from '../../Stores/Core';
@@ -43,8 +44,8 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   }
   
   return useObserver(() => {
-    const isAssignmentSynced = learnStore.isSynced && assignmentLinksStore.isSynced && assignmentStore.isSynced;
-    const isCallInProgress = assignmentLinksStore.serviceCallInProgress + learnStore.serviceCallInProgress + assignmentStore.serviceCallInProgress;
+    const isAssignmentSynced = !learnStore.hasServiceError && assignmentLinksStore.isSynced && assignmentStore.isSynced;
+    const isCallInProgress = learnStore.isLoadingCatalog? 0 : assignmentLinksStore.serviceCallInProgress + _.sum([...learnStore.contentSelectionMap.values()].map(item => item.callsInProgress)) + assignmentStore.serviceCallInProgress;
     const hasError = getServiceError();
     const errorMessage = getErrorMessage(hasError, isAssignmentSynced);
 

@@ -37,13 +37,12 @@ const MicrosoftLearnRemoveSelectedItemsButtonInner = ({
     microsoftLearnStore.clearAssignmentLearnContent();
     setIsDialogOpen(false);
   };
-
   return (
     <ActionButton
       iconProps={{ iconName: 'Delete' }}
       className={classes.root}
       onClick={() => setIsDialogOpen(true)}
-      disabled={!microsoftLearnStore.selectedItems || microsoftLearnStore.selectedItems?.length === 0}
+      disabled={microsoftLearnStore.contentSelectionMap.size===0 || [...microsoftLearnStore.contentSelectionMap].filter(item => item[1].userState==='selected')?.length === 0}
     >
       Clear all Selected Tutorials
       <Dialog
