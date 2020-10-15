@@ -12,14 +12,13 @@ import { toMap } from '../Core/Utils/Typescript/ToMap';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
 import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.dto';
 import { MicrosoftLearnFilterStore } from './MicrosoftLearnFilter.store';
-import { debounceTime, map, filter, switchMap, tap} from 'rxjs/operators';
+import { debounceTime, map, filter, switchMap, tap } from 'rxjs/operators';
 import { applySelectedFilter, getFiltersToDisplay } from '../Features/MicrosoftLearn/MicrosoftLearnFilterCore';
 import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 import { WithError } from '../Core/Utils/Axios/safeData';
 import _ from 'lodash';
 
-
-enum LearnContentState{
+enum LearnContentState {
   selected = 'selected',
   notSelected = 'not-selected'
 }
@@ -27,25 +26,27 @@ enum LearnContentState{
 type ContentSelectionProps = {
   userState: LearnContentState;
   syncedState: LearnContentState;
-  callsInProgress: boolean;
-}
+  callStatus: 'in-progress' | 'error' | 'success';
+};
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
   @observable catalog: Catalog | null = null;
   @observable filteredCatalogContent: LearnContent[] | null = null;
-  @observable contentSelectionMap: ObservableMap<string, ContentSelectionProps> = observable.map();    
+  @observable contentSelectionMap: ObservableMap<string, ContentSelectionProps> = observable.map();
   @observable clearCallInProgress: boolean = false;
   @observable clearCallsToMake: boolean = false;
   @observable hasServiceError: ServiceError | null = null;
 
-  @computed get serviceCallsInProgress() {
-    return _.sumBy([...this.contentSelectionMap.values()].map(item => item.callsInProgress === true))!==0
+  @computed get serviceCallsInProgress(): boolean {
+    return _.sumBy([...this.contentSelectionMap.values()].map(item => item.callStatus === 'in-progress')) !== 0;
   }
 
   @computed get unSyncedItems() {
-    return [...this.contentSelectionMap].filter(item => this.clearCallInProgress===false && this.clearCallsToMake===false && this.filterUnsynced(item));
-  }  
+    return [...this.contentSelectionMap].filter(
+      item => this.clearCallInProgress === false && this.clearCallsToMake === false && this.isItemUnsynced(item)
+    );
+  }
 
   filterStore = new MicrosoftLearnFilterStore();
 
@@ -87,86 +88,141 @@ export class MicrosoftLearnStore extends ChildStore {
           this.contentSelectionMap.set(item.contentUid, {
             userState: LearnContentState.selected,
             syncedState: LearnContentState.selected,
-            callsInProgress: false
+            callStatus: 'success'
           })
         );
       });
 
+    const updateUserState = () => {
+      [...this.contentSelectionMap]
+        .filter(([contentUid, contentProps]) => contentProps.syncedState !== contentProps.userState)
+        .forEach(([contentUid, contentProps]) =>
+          this.contentSelectionMap.set(contentUid, { ...contentProps, userState: contentProps.syncedState, callStatus: 'success' })
+        );
+    };
     toObservable(() => this.root.assignmentStore.assignment?.publishStatus).subscribe(publishStatus => {
-      if (publishStatus === 'Published') {
-        [...this.contentSelectionMap]
-          .filter(items => items[1].syncedState !== items[1].userState)
-          .forEach(items => this.contentSelectionMap.set(items[0], { ...items[1], userState: items[1].syncedState}));
+      if (publishStatus === 'Published' && this.serviceCallsInProgress===false) {
+        updateUserState();
+        this.hasServiceError=null;
       }
-    });    
+    });
+    toObservable(() => this.serviceCallsInProgress).subscribe(serviceCallsInProgress => {
+      if (
+        serviceCallsInProgress === false &&
+        this.root.assignmentStore.assignment?.publishStatus === 'Published'
+      ) {
+        updateUserState();
+      }
+    });
 
     toObservable(() => this.unSyncedItems)
       .pipe(
         debounceTime(500),
-        filter(unSyncedContentItems => unSyncedContentItems.length>0),        
-        tap(unSyncedContentItems => unSyncedContentItems.forEach(([contentUid, contentProps]) => this.contentSelectionMap.set(contentUid, {...contentProps, callsInProgress: true}))),
-        map(unSyncedContentItems => unSyncedContentItems.map(item => this.makeServiceCall(item, this.root.assignmentStore.assignment?.id!!)))
-      ).subscribe(responses => {
-        console.log("inside contentid change subscribe")
-          responses.forEach((serviceCallPromise) => {
-            this.handleResponse(serviceCallPromise, this.root.assignmentStore.assignment?.id!!);
-          })
-      })
+        filter(unSyncedContentItems => unSyncedContentItems.length > 0),
+        tap(unSyncedContentItems =>
+          unSyncedContentItems.forEach(([contentUid, contentProps]) =>
+            this.contentSelectionMap.set(contentUid, { ...contentProps, callStatus: 'in-progress' })
+          )
+        ),
+        map(unSyncedContentItems =>
+          unSyncedContentItems.map(item => this.makeToggleServiceCall(item, this.root.assignmentStore.assignment?.id!!))
+        )
+      )
+      .subscribe(serviceCallPromises => {
+        console.log('inside contentid change subscribe');
+        serviceCallPromises.forEach(promise => {
+          this.handleToggleServiceCallResponse(promise, this.root.assignmentStore.assignment?.id!!);
+        });
+      });
 
-      toObservable(() => this.clearCallsToMake===true && this.clearCallInProgress==false && this.serviceCallsInProgress ===false )
-      .subscribe(async (makeClearCall) => {
-        if(makeClearCall){
-          this.clearCallInProgress=true;
-          this.clearCallsToMake=false;
-          console.log("calling clear subscribe!");
-
-          const assignmentId = this.root.assignmentStore.assignment!.id;
-          const itemsToClear = [...this.contentSelectionMap].filter(item => item[1].syncedState===LearnContentState.selected && item[1].userState==='not-selected');      
-          let r = MicrosoftLearnService.clearAssignmentLearnContent(assignmentId)
-          this.handelClearCallResponse(r, itemsToClear);
-        }
-      })
+    toObservable(
+      () => this.clearCallsToMake === true && this.clearCallInProgress === false && this.serviceCallsInProgress === false
+    ).subscribe(async makeClearCall => {
+      if (makeClearCall) {
+        this.clearCallInProgress = true;
+        this.clearCallsToMake = false;
+        console.log('calling clear subscribe!');
+        const assignmentId = this.root.assignmentStore.assignment!.id;
+        const itemsToClear = [...this.contentSelectionMap].filter(
+          ([contentUid, contentProps]) =>
+            contentProps.syncedState === LearnContentState.selected &&
+            contentProps.userState === LearnContentState.notSelected
+        );
+        let promise = MicrosoftLearnService.clearAssignmentLearnContent(assignmentId);
+        this.handelClearCallResponse(promise, itemsToClear);
+      }
+    });
   }
 
-  filterUnsynced = ([contentUid, contentProps]: [string, ContentSelectionProps]) => contentProps.syncedState!==contentProps.userState && !contentProps.callsInProgress;
+  isItemUnsynced = ([contentUid, contentProps]: [string, ContentSelectionProps]) =>
+    contentProps.syncedState !== contentProps.userState &&
+    contentProps.callStatus !== 'in-progress' &&
+    contentProps.callStatus !== 'error';
 
-  async handelClearCallResponse (promise: Promise<ServiceError|null>, itemsToClear: [string, ContentSelectionProps][]){
+  async handelClearCallResponse(
+    promise: Promise<ServiceError | null>,
+    itemsToClear: [string, ContentSelectionProps][]
+  ) {
     let serviceError = await promise;
-    this.clearCallInProgress=false;
-    if(serviceError===null){
-      console.log("handling clear call")
-      itemsToClear.forEach(item => {
-        let previousState  = this.contentSelectionMap.get(item[0])!!;
-        this.contentSelectionMap.set(item[0], {...previousState, syncedState: LearnContentState.notSelected});
-      })
+    this.clearCallInProgress = false;
+    if (serviceError === null) {
+      console.log('handling clear call');
+      itemsToClear.forEach(([contentUid, contentProps]) => {
+        let previousState = this.contentSelectionMap.get(contentUid)!!;
+        this.contentSelectionMap.set(contentUid, { ...previousState, syncedState: LearnContentState.notSelected });
+      });
     } else {
       this.hasServiceError = serviceError;
     }
-
   }
 
-  async makeServiceCall ([contentUid, contentProps]: [string, ContentSelectionProps], assignmentId: string){
-    switch(contentProps.userState){
-      case LearnContentState.selected: return {contentUid, contentProps, error: await MicrosoftLearnService.saveAssignmentLearnContent(assignmentId, contentUid)}
-      case LearnContentState.notSelected: return {contentUid, contentProps, error: await MicrosoftLearnService.removeAssignmentLearnContent(assignmentId, contentUid)}
+  async makeToggleServiceCall([contentUid, contentProps]: [string, ContentSelectionProps], assignmentId: string) {
+    switch (contentProps.userState) {
+      case LearnContentState.selected:
+        return {
+          contentUid,
+          contentProps,
+          error: await MicrosoftLearnService.saveAssignmentLearnContent(assignmentId, contentUid)
+        };
+      case LearnContentState.notSelected:
+        return {
+          contentUid,
+          contentProps,
+          error: await MicrosoftLearnService.removeAssignmentLearnContent(assignmentId, contentUid)
+        };
     }
   }
 
-  async handleResponse (promise: Promise<{contentUid: string, contentProps: ContentSelectionProps, error: ServiceError | null}>, assignmentId: string){
-    console.log("inside response")
-    let resp = await promise
-    if(resp.error!==null){
-      this.hasServiceError =resp.error;
-      this.contentSelectionMap.set(resp.contentUid, {...this.contentSelectionMap.get(resp.contentUid)!!, callsInProgress: false});
+  async handleToggleServiceCallResponse(
+    promise: Promise<{ contentUid: string; contentProps: ContentSelectionProps; error: ServiceError | null }>,
+    assignmentId: string
+  ) {
+    console.log('inside response');
+    let response = await promise;
+    if (response.error !== null) {
+      this.hasServiceError = response.error;
+      this.contentSelectionMap.set(response.contentUid, {
+        ...this.contentSelectionMap.get(response.contentUid)!!,
+        callStatus: 'error'
+      });
     } else {
-      let currentContentState = this.contentSelectionMap.get(resp.contentUid)!!;
-      this.contentSelectionMap.set(resp.contentUid, {...currentContentState, syncedState: resp.contentProps.userState});
+      let currentContentState = this.contentSelectionMap.get(response.contentUid)!!;
+      this.contentSelectionMap.set(response.contentUid, {
+        ...currentContentState,
+        syncedState: response.contentProps.userState
+      });
 
-      if (currentContentState.userState!==resp.contentProps.userState){
-        let x = this.makeServiceCall([resp.contentUid, this.contentSelectionMap.get(resp.contentUid)!!], assignmentId)
-        this.handleResponse(x, assignmentId);
-      } else{
-        this.contentSelectionMap.set(resp.contentUid, {...this.contentSelectionMap.get(resp.contentUid)!!, callsInProgress: false});
+      if (currentContentState.userState !== response.contentProps.userState) {
+        let promise = this.makeToggleServiceCall(
+          [response.contentUid, this.contentSelectionMap.get(response.contentUid)!!],
+          assignmentId
+        );
+        this.handleToggleServiceCallResponse(promise, assignmentId);
+      } else {
+        this.contentSelectionMap.set(response.contentUid, {
+          ...this.contentSelectionMap.get(response.contentUid)!!,
+          callStatus: 'success'
+        });
       }
     }
   }
@@ -178,28 +234,39 @@ export class MicrosoftLearnStore extends ChildStore {
 
   @action
   toggleItemSelection(learnContentUid: string): void {
-    const assignmentId = this.root.assignmentStore.assignment!.id;
     let previousState = this.contentSelectionMap.get(learnContentUid);
-
     if (previousState && previousState.userState === LearnContentState.selected) {
-      this.contentSelectionMap.set(learnContentUid, {...previousState, userState: LearnContentState.notSelected});
-    } else if(previousState) {
-      this.contentSelectionMap.set(learnContentUid, {...previousState, userState: LearnContentState.selected});
+      this.contentSelectionMap.set(learnContentUid, {
+        ...previousState,
+        callStatus: previousState?.callStatus === 'error' ? 'success' : previousState?.callStatus,
+        userState: LearnContentState.notSelected
+      });
+    } else if (previousState) {
+      this.contentSelectionMap.set(learnContentUid, {
+        ...previousState,
+        callStatus: previousState?.callStatus === 'error' ? 'success' : previousState?.callStatus,
+        userState: LearnContentState.selected
+      });
     } else {
-      this.contentSelectionMap.set(learnContentUid, {userState: LearnContentState.selected, syncedState: LearnContentState.notSelected, callsInProgress: false});
+      this.contentSelectionMap.set(learnContentUid, {
+        userState: LearnContentState.selected,
+        syncedState: LearnContentState.notSelected,
+        callStatus: 'success'
+      });
     }
   }
 
   @action
   clearAssignmentLearnContent(): void {
     debounceTime(500);
-    this.clearCallsToMake=true;
-    const itemsToClear = [...this.contentSelectionMap].filter(item => item[1].userState===LearnContentState.selected);
-    itemsToClear.forEach(item =>       
+    this.clearCallsToMake = true;
+    const itemsToClear = [...this.contentSelectionMap].filter(item => item[1].userState === LearnContentState.selected);
+    itemsToClear.forEach(item =>
       this.contentSelectionMap.set(item[0], {
-      ...item[1],
-      userState: LearnContentState.notSelected
-    }))
+        ...item[1],
+        userState: LearnContentState.notSelected
+      })
+    );
   }
 
   @action
@@ -220,7 +287,6 @@ export class MicrosoftLearnStore extends ChildStore {
     this.catalog = { contents: items, products, roles, levels };
     this.isLoadingCatalog = false;
     this.filteredCatalogContent = allItems;
-
     this.filterStore.initializeFilters(this.catalog, searchParams);
   }
 
