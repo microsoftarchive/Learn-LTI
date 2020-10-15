@@ -27,7 +27,7 @@ const StudentViewLearnItemsListInner = ({ styles }: IStylesOnly<StudentViewLearn
 
   return useObserver(() => {
 
-    const syncedContentsToDisplay = [...learnStore.contentSelectionMap].filter(value => value[1].callsInProgress===0 && value[1].syncedState==='selected' && value[1].error === null).map(item => item[0]);
+    const syncedContentsToDisplay = [...learnStore.contentSelectionMap].filter(value => !value[1].callsInProgress && value[1].syncedState==='selected').map(item => item[0]);
 
     return (
     <div className={classes.root}>

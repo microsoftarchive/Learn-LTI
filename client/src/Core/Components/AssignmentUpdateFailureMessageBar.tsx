@@ -45,7 +45,7 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   
   return useObserver(() => {
     const isAssignmentSynced = !learnStore.hasServiceError && assignmentLinksStore.isSynced && assignmentStore.isSynced;
-    const isCallInProgress = learnStore.isLoadingCatalog? 0 : assignmentLinksStore.serviceCallInProgress + _.sum([...learnStore.contentSelectionMap.values()].map(item => item.callsInProgress)) + assignmentStore.serviceCallInProgress;
+    const isCallInProgress = learnStore.isLoadingCatalog? 0 : assignmentLinksStore.serviceCallInProgress + _.sum([...learnStore.contentSelectionMap.values()].map(item => item.callsInProgress)) + (learnStore.clearCallInProgress ? 1 : 0) + (learnStore.clearCallsToMake? 1 : 0) + assignmentStore.serviceCallInProgress;
     const hasError = getServiceError();
     const errorMessage = getErrorMessage(hasError, isAssignmentSynced);
 

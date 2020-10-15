@@ -55,7 +55,7 @@ const MicrosoftLearnSelectedItemsListInner = ({
           <Text variant="medium" className={classes.title}>
             {`Selected Tutorials (${selectedItems.length || '0'})`}
           </Text>
-          {(learnStore.contentSelectionMap.size===0 || learnStore.isLoadingCatalog) && (
+          {(learnStore.isLoadingCatalog) && (
             <Spinner size={SpinnerSize.small} className={classes.spinner} />
           )}
           <MicrosoftLearnRemoveSelectedItemsButtonInHeader />
