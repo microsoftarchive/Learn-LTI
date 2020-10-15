@@ -129,7 +129,6 @@ export class MicrosoftLearnStore extends ChildStore {
         )
       )
       .subscribe(serviceCallPromises => {
-        console.log('inside contentid change subscribe');
         serviceCallPromises.forEach(promise => {
           this.handleToggleServiceCallResponse(promise, this.root.assignmentStore.assignment?.id!!);
         });
@@ -141,13 +140,9 @@ export class MicrosoftLearnStore extends ChildStore {
       if (makeClearCall) {
         this.clearCallInProgress = true;
         this.clearCallsToMake = false;
-        console.log('calling clear subscribe!');
         const assignmentId = this.root.assignmentStore.assignment!.id;
         const itemsToClear = [...this.contentSelectionMap].filter(
-          ([contentUid, contentProps]) =>
-            contentProps.syncedState === LearnContentState.selected &&
-            contentProps.userState === LearnContentState.notSelected
-        );
+          ([contentUid, contentProps]) => contentProps.syncedState === LearnContentState.selected);
         let promise = MicrosoftLearnService.clearAssignmentLearnContent(assignmentId);
         this.handelClearCallResponse(promise, itemsToClear);
       }
@@ -156,24 +151,27 @@ export class MicrosoftLearnStore extends ChildStore {
 
   isItemUnsynced = ([contentUid, contentProps]: [string, ContentSelectionProps]) =>
     contentProps.syncedState !== contentProps.userState &&
-    contentProps.callStatus !== 'in-progress' &&
-    contentProps.callStatus !== 'error';
+    contentProps.callStatus === 'success'
 
   async handelClearCallResponse(
     promise: Promise<ServiceError | null>,
     itemsToClear: [string, ContentSelectionProps][]
   ) {
     let serviceError = await promise;
-    this.clearCallInProgress = false;
     if (serviceError === null) {
-      console.log('handling clear call');
       itemsToClear.forEach(([contentUid, contentProps]) => {
         let previousState = this.contentSelectionMap.get(contentUid)!!;
         this.contentSelectionMap.set(contentUid, { ...previousState, syncedState: LearnContentState.notSelected });
       });
     } else {
       this.hasServiceError = serviceError;
+      itemsToClear.forEach(([contentUid, contentProps]) => {
+        let previousState = this.contentSelectionMap.get(contentUid)!!;
+        this.contentSelectionMap.set(contentUid, { ...previousState, callStatus: 'error' });
+      });
+
     }
+    this.clearCallInProgress = false;
   }
 
   async makeToggleServiceCall([contentUid, contentProps]: [string, ContentSelectionProps], assignmentId: string) {
@@ -197,7 +195,6 @@ export class MicrosoftLearnStore extends ChildStore {
     promise: Promise<{ contentUid: string; contentProps: ContentSelectionProps; error: ServiceError | null }>,
     assignmentId: string
   ) {
-    console.log('inside response');
     let response = await promise;
     if (response.error !== null) {
       this.hasServiceError = response.error;
