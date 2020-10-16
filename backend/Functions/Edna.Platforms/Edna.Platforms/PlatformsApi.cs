@@ -142,10 +142,10 @@ namespace Edna.Platforms
 
         private bool ValidatePermission(HttpRequest req)
         {
-#if DEBUG
+            #if DEBUG
             // For debug purposes, there is no authentication.
             return true;
-#endif
+            #endif
 
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
                 return false;
