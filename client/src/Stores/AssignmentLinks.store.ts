@@ -21,6 +21,7 @@ export class AssignmentLinksStore extends ChildStore {
   @observable serviceCallInProgress: number = 0;
   @observable isSynced: boolean | null = null; 
   @observable hasServiceError: ServiceError | null = null;
+  @observable addOrUpdateCallInProgress: string[] = []; 
 
   initialize(): void {
     toObservable(() => this.root.assignmentStore.assignment)
@@ -47,7 +48,7 @@ export class AssignmentLinksStore extends ChildStore {
       .subscribe((links: AssignmentLinkDto[]) => {
         this.assignmentLinks = links;
         this.syncedAssignmentLinks=links;
-        this.isSynced=true;
+        this.isSynced=true;        
         this.isLoading = false;
       });
 
@@ -66,6 +67,7 @@ export class AssignmentLinksStore extends ChildStore {
     const assignmentId = this.root.assignmentStore.assignment!.id;
 
     this.serviceCallInProgress++; 
+    this.addOrUpdateCallInProgress.push(assignmentLink.id)
     AssignmentLinksService.updateAssignmentLink(assignmentLink, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null) {
@@ -73,6 +75,7 @@ export class AssignmentLinksStore extends ChildStore {
     } else {
       this.hasServiceError = hasErrors;
     }
+    this.addOrUpdateCallInProgress = this.addOrUpdateCallInProgress.filter(linkId=>linkId!==assignmentLink.id)
     this.serviceCallInProgress--; 
     this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
   })
@@ -85,6 +88,7 @@ export class AssignmentLinksStore extends ChildStore {
     this.assignmentLinks = updatedLinks;
 
     this.serviceCallInProgress++; 
+    this.addOrUpdateCallInProgress.push(editedLink.id);
     AssignmentLinksService.updateAssignmentLink(editedLink, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null) {
@@ -92,6 +96,7 @@ export class AssignmentLinksStore extends ChildStore {
     } else {
       this.hasServiceError = hasErrors;
     }
+    this.addOrUpdateCallInProgress = this.addOrUpdateCallInProgress.filter(linkId=>linkId!==editedLink.id);
     this.serviceCallInProgress--; 
     this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
   })
