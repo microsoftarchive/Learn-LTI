@@ -33,7 +33,7 @@ type ContentSelectionProps = {
   userState: LearnContentState;
   syncedState: LearnContentState;
   callStatus: CallStatus;
-};
+}
 
 export class MicrosoftLearnStore extends ChildStore {
   @observable isLoadingCatalog: boolean | null = null;
@@ -166,7 +166,7 @@ export class MicrosoftLearnStore extends ChildStore {
     if (serviceError === null) {
       itemsToClear.forEach(([contentUid, contentProps]) => {
         let previousState = this.contentSelectionMap.get(contentUid)!!;
-        this.contentSelectionMap.set(contentUid, { ...previousState, syncedState: LearnContentState.notSelected });
+        this.contentSelectionMap.set(contentUid, { ...previousState, callStatus: CallStatus.success, syncedState: LearnContentState.notSelected });
       });
     } else {
       this.hasServiceError = serviceError;
@@ -213,7 +213,7 @@ export class MicrosoftLearnStore extends ChildStore {
         syncedState: response.contentProps.userState
       });
 
-      if (currentContentState.userState !== response.contentProps.userState) {
+      if (currentContentState.userState !== response.contentProps.userState && !this.clearCallsToMake) {
         let promise = this.makeToggleServiceCall(
           [response.contentUid, this.contentSelectionMap.get(response.contentUid)!!],
           assignmentId
