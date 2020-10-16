@@ -3,7 +3,7 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import _ from 'lodash';
 import { ChildStore } from './Core';
 import { AssignmentLink } from '../Models/AssignmentLink.model';
@@ -19,9 +19,12 @@ export class AssignmentLinksStore extends ChildStore {
   @observable isLoading = true;
   @observable syncedAssignmentLinks: AssignmentLink[] = [];
   @observable serviceCallInProgress: number = 0;
-  @observable isSynced: boolean | null = null; 
   @observable hasServiceError: ServiceError | null = null;
   @observable addOrUpdateCallInProgress: string[] = []; 
+
+  @computed get isSynced(): boolean {
+    return _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0; 
+  }  
 
   initialize(): void {
     toObservable(() => this.root.assignmentStore.assignment)
@@ -48,7 +51,6 @@ export class AssignmentLinksStore extends ChildStore {
       .subscribe((links: AssignmentLinkDto[]) => {
         this.assignmentLinks = links;
         this.syncedAssignmentLinks=links;
-        this.isSynced=true;        
         this.isLoading = false;
       });
 
@@ -56,18 +58,24 @@ export class AssignmentLinksStore extends ChildStore {
       .subscribe(publishStatus => {
         if(publishStatus==='Published'){
           this.assignmentLinks = this.syncedAssignmentLinks
-          this.isSynced = true;          
+        }
+      })
+    
+    toObservable(() => this.serviceCallInProgress)
+      .subscribe(serviceCallInProgress => {
+        if(serviceCallInProgress===0 && this.root.assignmentStore.assignment?.publishStatus==='Published'){
+          this.assignmentLinks = this.syncedAssignmentLinks
         }
       })
   }
 
   @action
   addAssignmentLink(assignmentLink: AssignmentLink): void {
+    this.serviceCallInProgress++; 
     this.assignmentLinks = [...this.assignmentLinks, assignmentLink];
     const assignmentId = this.root.assignmentStore.assignment!.id;
-
-    this.serviceCallInProgress++; 
     this.addOrUpdateCallInProgress.push(assignmentLink.id)
+
     AssignmentLinksService.updateAssignmentLink(assignmentLink, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null) {
@@ -77,18 +85,17 @@ export class AssignmentLinksStore extends ChildStore {
     }
     this.addOrUpdateCallInProgress = this.addOrUpdateCallInProgress.filter(linkId=>linkId!==assignmentLink.id)
     this.serviceCallInProgress--; 
-    this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
   })
   }
 
   @action
   editAssignmentLink(editedLink: AssignmentLink): void {
+    this.serviceCallInProgress++; 
     const updatedLinks = this.assignmentLinks.map(link => (link.id === editedLink.id ? editedLink : link));
     const assignmentId = this.root.assignmentStore.assignment!.id;
     this.assignmentLinks = updatedLinks;
-
-    this.serviceCallInProgress++; 
     this.addOrUpdateCallInProgress.push(editedLink.id);
+
     AssignmentLinksService.updateAssignmentLink(editedLink, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null) {
@@ -98,18 +105,16 @@ export class AssignmentLinksStore extends ChildStore {
     }
     this.addOrUpdateCallInProgress = this.addOrUpdateCallInProgress.filter(linkId=>linkId!==editedLink.id);
     this.serviceCallInProgress--; 
-    this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
   })
   }
 
   @action
   deleteAssignmentLink(assignmentLinkId: string): void {
-    this.syncedAssignmentLinks = this.assignmentLinks;
+    this.serviceCallInProgress++; 
     const updatedLinks = _.filter(this.assignmentLinks, link => link.id !== assignmentLinkId);
     const assignmentId = this.root.assignmentStore.assignment!.id;
     this.assignmentLinks = updatedLinks;
 
-    this.serviceCallInProgress++; 
     AssignmentLinksService.deleteAssignmentLink(assignmentLinkId, assignmentId)
     .then(hasErrors => {
     if(hasErrors === null) {
@@ -118,7 +123,7 @@ export class AssignmentLinksStore extends ChildStore {
       this.hasServiceError = hasErrors;
     }
     this.serviceCallInProgress--; 
-    this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
+    // this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
   })
   }
 }
