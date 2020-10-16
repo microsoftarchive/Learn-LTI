@@ -9,7 +9,6 @@ import { AssignmentService } from '../Services/Assignment.service';
 import { Assignment } from '../Models/Assignment.model';
 import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
 import { toObservable } from '../Core/Utils/Mobx/toObservable';
-import _ from 'lodash';
 import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 export class AssignmentStore extends ChildStore {
@@ -20,7 +19,6 @@ export class AssignmentStore extends ChildStore {
   @observable syncedDescription: string | undefined;
   @observable syncedDeadline: Date | undefined;
   @observable serviceCallInProgress: number = 0;
-  @observable isSynced: boolean | null = null;
   @observable hasServiceError: ServiceError | null = null;
 
   initialize(): void {
@@ -28,7 +26,6 @@ export class AssignmentStore extends ChildStore {
       .subscribe(newPublishStatus => {
         if(this.assignment && newPublishStatus === 'Published' && this.syncedDeadline && this.syncedDescription){
           this.assignment =  { ...this.assignment, deadline: new Date(this.syncedDeadline), description: this.syncedDescription };
-          this.isSynced=true;
           this.hasServiceError=null;
         }
       })
@@ -52,7 +49,6 @@ export class AssignmentStore extends ChildStore {
     this.assignment = deadline ? { ...assignment, deadline: new Date(deadline) } : assignment;
     this.syncedDescription = assignment.description;
     this.syncedDeadline = assignment.deadline;
-    this.isSynced = true;
   }
 
   @action
@@ -68,7 +64,6 @@ export class AssignmentStore extends ChildStore {
           this.hasServiceError = hasErrors;
         }
         this.serviceCallInProgress--;
-        this.isSynced=_.isEqual(this.syncedDeadline,this.assignment?.deadline);
       })
     }
   }
@@ -86,7 +81,6 @@ export class AssignmentStore extends ChildStore {
           this.hasServiceError = hasErrors;
         }
         this.serviceCallInProgress--;
-        this.isSynced=_.isEqual(this.syncedDescription,this.assignment?.description);
       })
     
     }
