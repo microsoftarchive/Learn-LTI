@@ -86,12 +86,6 @@ namespace Edna.AssignmentLinks
             string linkId,
             [User] UsersClient usersClient)
         {
-            string linkJson = await req.ReadAsStringAsync();
-            AssignmentLinkDto linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
-
-            if (linkId != linkDto.Id)
-                return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
-
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -108,6 +102,12 @@ namespace Edna.AssignmentLinks
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
+
+            string linkJson = await req.ReadAsStringAsync();
+            AssignmentLinkDto linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
+
+            if (linkId != linkDto.Id)
+                return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
 
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");
 

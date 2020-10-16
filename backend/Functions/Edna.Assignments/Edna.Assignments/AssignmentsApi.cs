@@ -146,12 +146,6 @@ namespace Edna.Assignments
 
         private async Task<IActionResult> ChangePublishStatus(HttpRequest req, CloudTable table, IAsyncCollector<AssignmentEntity> assignmentEntityCollector, string assignmentId, UsersClient usersClient, PublishStatus newPublishStatus)
         {
-            AssignmentEntity assignmentEntity = await FetchAssignment(table, assignmentId);
-            if (assignmentEntity == null)
-                return new NotFoundResult();
-
-            AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
-
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -168,6 +162,12 @@ namespace Edna.Assignments
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
+
+            AssignmentEntity assignmentEntity = await FetchAssignment(table, assignmentId);
+            if (assignmentEntity == null)
+                return new NotFoundResult();
+
+            AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
 
             assignmentEntity.PublishStatus = newPublishStatus.ToString();
             assignmentEntity.ETag = "*";
