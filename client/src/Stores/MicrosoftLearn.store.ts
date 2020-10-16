@@ -23,10 +23,16 @@ enum LearnContentState {
   notSelected = 'not-selected'
 }
 
+enum CallStatus {
+  success = 'success',
+  inProgress = 'in-progress',
+  error = 'error'
+}
+
 type ContentSelectionProps = {
   userState: LearnContentState;
   syncedState: LearnContentState;
-  callStatus: 'in-progress' | 'error' | 'success';
+  callStatus: CallStatus;
 };
 
 export class MicrosoftLearnStore extends ChildStore {
@@ -39,7 +45,7 @@ export class MicrosoftLearnStore extends ChildStore {
   @observable hasServiceError: ServiceError | null = null;
 
   @computed get serviceCallsInProgress(): boolean {
-    return _.sumBy([...this.contentSelectionMap.values()].map(item => item.callStatus === 'in-progress')) !== 0;
+    return _.sumBy([...this.contentSelectionMap.values()].map(item => item.callStatus === CallStatus.inProgress)) !== 0;
   }
 
   @computed get unSyncedItems() {
@@ -88,7 +94,7 @@ export class MicrosoftLearnStore extends ChildStore {
           this.contentSelectionMap.set(item.contentUid, {
             userState: LearnContentState.selected,
             syncedState: LearnContentState.selected,
-            callStatus: 'success'
+            callStatus: CallStatus.success
           })
         );
       });
@@ -97,7 +103,7 @@ export class MicrosoftLearnStore extends ChildStore {
       [...this.contentSelectionMap]
         .filter(([contentUid, contentProps]) => contentProps.syncedState !== contentProps.userState)
         .forEach(([contentUid, contentProps]) =>
-          this.contentSelectionMap.set(contentUid, { ...contentProps, userState: contentProps.syncedState, callStatus: 'success' })
+          this.contentSelectionMap.set(contentUid, { ...contentProps, userState: contentProps.syncedState, callStatus: CallStatus.success })
         );
     };
     toObservable(() => this.root.assignmentStore.assignment?.publishStatus).subscribe(publishStatus => {
@@ -118,14 +124,14 @@ export class MicrosoftLearnStore extends ChildStore {
     toObservable(() => this.unSyncedItems)
       .pipe(
         debounceTime(500),
-        filter(unSyncedContentItems => unSyncedContentItems.length > 0),
-        tap(unSyncedContentItems =>
-          unSyncedContentItems.forEach(([contentUid, contentProps]) =>
-            this.contentSelectionMap.set(contentUid, { ...contentProps, callStatus: 'in-progress' })
+        filter(unSyncedItems => unSyncedItems.length > 0),
+        tap(unSyncedItems =>
+          unSyncedItems.forEach(([contentUid, contentProps]) =>
+            this.contentSelectionMap.set(contentUid, { ...contentProps, callStatus: CallStatus.inProgress })
           )
         ),
-        map(unSyncedContentItems =>
-          unSyncedContentItems.map(item => this.makeToggleServiceCall(item, this.root.assignmentStore.assignment?.id!!))
+        map(unSyncedItems =>
+          unSyncedItems.map(item => this.makeToggleServiceCall(item, this.root.assignmentStore.assignment?.id!!))
         )
       )
       .subscribe(serviceCallPromises => {
@@ -140,10 +146,9 @@ export class MicrosoftLearnStore extends ChildStore {
       if (makeClearCall) {
         this.clearCallInProgress = true;
         this.clearCallsToMake = false;
-        const assignmentId = this.root.assignmentStore.assignment!.id;
         const itemsToClear = [...this.contentSelectionMap].filter(
           ([contentUid, contentProps]) => contentProps.syncedState === LearnContentState.selected);
-        let promise = MicrosoftLearnService.clearAssignmentLearnContent(assignmentId);
+        let promise = MicrosoftLearnService.clearAssignmentLearnContent(this.root.assignmentStore.assignment!.id);
         this.handelClearCallResponse(promise, itemsToClear);
       }
     });
@@ -151,7 +156,7 @@ export class MicrosoftLearnStore extends ChildStore {
 
   isItemUnsynced = ([contentUid, contentProps]: [string, ContentSelectionProps]) =>
     contentProps.syncedState !== contentProps.userState &&
-    contentProps.callStatus === 'success'
+    contentProps.callStatus === CallStatus.success
 
   async handelClearCallResponse(
     promise: Promise<ServiceError | null>,
@@ -167,9 +172,8 @@ export class MicrosoftLearnStore extends ChildStore {
       this.hasServiceError = serviceError;
       itemsToClear.forEach(([contentUid, contentProps]) => {
         let previousState = this.contentSelectionMap.get(contentUid)!!;
-        this.contentSelectionMap.set(contentUid, { ...previousState, callStatus: 'error' });
+        this.contentSelectionMap.set(contentUid, { ...previousState, callStatus: CallStatus.error });
       });
-
     }
     this.clearCallInProgress = false;
   }
@@ -200,7 +204,7 @@ export class MicrosoftLearnStore extends ChildStore {
       this.hasServiceError = response.error;
       this.contentSelectionMap.set(response.contentUid, {
         ...this.contentSelectionMap.get(response.contentUid)!!,
-        callStatus: 'error'
+        callStatus: CallStatus.error
       });
     } else {
       let currentContentState = this.contentSelectionMap.get(response.contentUid)!!;
@@ -218,15 +222,10 @@ export class MicrosoftLearnStore extends ChildStore {
       } else {
         this.contentSelectionMap.set(response.contentUid, {
           ...this.contentSelectionMap.get(response.contentUid)!!,
-          callStatus: 'success'
+          callStatus: CallStatus.success
         });
       }
     }
-  }
-
-  @action
-  removeItemSelection(learnContentUid: string): void {
-    this.toggleItemSelection(learnContentUid);
   }
 
   @action
@@ -235,20 +234,20 @@ export class MicrosoftLearnStore extends ChildStore {
     if (previousState && previousState.userState === LearnContentState.selected) {
       this.contentSelectionMap.set(learnContentUid, {
         ...previousState,
-        callStatus: previousState?.callStatus === 'error' ? 'success' : previousState?.callStatus,
+        callStatus: previousState?.callStatus === CallStatus.error ? CallStatus.success : previousState?.callStatus,
         userState: LearnContentState.notSelected
       });
     } else if (previousState) {
       this.contentSelectionMap.set(learnContentUid, {
         ...previousState,
-        callStatus: previousState?.callStatus === 'error' ? 'success' : previousState?.callStatus,
+        callStatus: previousState?.callStatus === CallStatus.error ? CallStatus.success : previousState?.callStatus,
         userState: LearnContentState.selected
       });
     } else {
       this.contentSelectionMap.set(learnContentUid, {
         userState: LearnContentState.selected,
         syncedState: LearnContentState.notSelected,
-        callStatus: 'success'
+        callStatus: CallStatus.success
       });
     }
   }

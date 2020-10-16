@@ -78,7 +78,7 @@ const MicrosoftLearnSelectedItemInner = ({
           styles={buttonClass}
           iconProps={{ iconName: 'ErrorBadge' }}
           onClick={() => {
-            learnStore.removeItemSelection(item.uid);
+            learnStore.toggleItemSelection(item.uid);
           }}
         />
       </div>
