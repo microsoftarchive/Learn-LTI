@@ -23,7 +23,6 @@ import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
 import { MotionDurations, MotionTimings } from '@uifabric/fluent-theme';
 import { PublishStatusDialog } from './PublishStatusDialog';
-import _ from 'lodash';
 
 type PublishActionButtonsStyles = SimpleComponentStyles<'root'>;
 interface EditButtonStyleProps {

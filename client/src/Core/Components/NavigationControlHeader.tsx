@@ -6,7 +6,6 @@
 import { SpinnerSize } from '@fluentui/react';
 import { Spinner } from '@fluentui/react';
 import { FontSizes, FontWeights, mergeStyles, MessageBarType, styled } from '@fluentui/react';
-import _ from 'lodash';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import { PublishControlArea } from '../../Features/PublishAssignment/PublishControlArea';

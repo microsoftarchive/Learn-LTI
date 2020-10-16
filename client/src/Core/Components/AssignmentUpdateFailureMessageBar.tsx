@@ -1,5 +1,4 @@
 import { AnimationClassNames, IMessageBarStyles, MessageBar, MessageBarType, styled } from '@fluentui/react';
-import _ from 'lodash';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import { useStore } from '../../Stores/Core';
