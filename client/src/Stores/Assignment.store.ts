@@ -27,9 +27,16 @@ export class AssignmentStore extends ChildStore {
     toObservable(() => this.assignment?.publishStatus)
       .subscribe(newPublishStatus => {
         if(this.assignment && newPublishStatus === 'Published' && this.syncedDeadline && this.syncedDescription){
-          this.assignment.deadline = this.syncedDeadline;
-          this.assignment.description = this.syncedDescription;
+          this.assignment =  { ...this.assignment, deadline: new Date(this.syncedDeadline), description: this.syncedDescription };
           this.isSynced=true;
+          this.hasServiceError=null;
+        }
+      })
+
+    toObservable(() => this.serviceCallInProgress)
+      .subscribe(serviceCallInProgress => {
+        if(serviceCallInProgress===0 && this.assignment?.publishStatus==='Published' && this.syncedDeadline && this.syncedDescription && this.assignment){
+          this.assignment =  { ...this.assignment, deadline: new Date(this.syncedDeadline), description: this.syncedDescription };
         }
       })
   }

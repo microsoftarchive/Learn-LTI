@@ -31,25 +31,30 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   const learnStore = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
 
-  const getServiceError = () =>
-  {
-      if(learnStore.hasServiceError) {
-        return learnStore.hasServiceError;
-      }else if(assignmentLinksStore.hasServiceError) {
-        return assignmentLinksStore.hasServiceError;
-      }else if(assignmentStore.hasServiceError) {
-        return assignmentStore.hasServiceError;
-      }
-      return null;
-  }
-  
+  const getServiceError = () => {
+    if (learnStore.hasServiceError) {
+      return learnStore.hasServiceError;
+    } else if (assignmentLinksStore.hasServiceError) {
+      return assignmentLinksStore.hasServiceError;
+    } else if (assignmentStore.hasServiceError) {
+      return assignmentStore.hasServiceError;
+    }
+    return null;
+  };
+
   return useObserver(() => {
     const isAssignmentSynced = !learnStore.hasServiceError && assignmentLinksStore.isSynced && assignmentStore.isSynced;
-    const isCallInProgress = learnStore.isLoadingCatalog? 0 : assignmentLinksStore.serviceCallInProgress + _.sum([...learnStore.contentSelectionMap.values()].map(item => item.callStatus==='in-progress')) + (learnStore.clearCallInProgress ? 1 : 0) + (learnStore.clearCallsToMake? 1 : 0) + assignmentStore.serviceCallInProgress;
+    const learnStoreCallsInProgress =
+      !learnStore.isLoadingCatalog &&
+      (learnStore.serviceCallsInProgress || learnStore.clearCallInProgress || learnStore.clearCallsToMake)
+        ? 1
+        : 0;
+    const isCallInProgress =
+      learnStoreCallsInProgress + assignmentLinksStore.serviceCallInProgress + assignmentStore.serviceCallInProgress > 0;
     const hasError = getServiceError();
     const errorMessage = getErrorMessage(hasError, isAssignmentSynced);
 
-    if ( isCallInProgress === 0 && (hasError !== null || isAssignmentSynced === false)) {
+    if (isCallInProgress && (hasError !== null || isAssignmentSynced === false)) {
       return (
         <MessageBar messageBarType={MessageBarType.warning} isMultiline={true} className={classes.root}>
           {errorMessage}

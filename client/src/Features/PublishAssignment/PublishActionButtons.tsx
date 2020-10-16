@@ -39,9 +39,17 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
   const learnStore = useStore('microsoftLearnStore');
 
   const isAssignmentSynced = assignmentLinksStore.isSynced &&  !learnStore.hasServiceError && assignmentStore.isSynced;
-  const isCallInProgress = learnStore.isLoadingCatalog? 0 : assignmentLinksStore.serviceCallInProgress + _.sum([...learnStore.contentSelectionMap.values()].map(item => item.callStatus==='in-progress')) + (learnStore.clearCallInProgress ? 1 : 0) + (learnStore.clearCallsToMake? 1 : 0) + assignmentStore.serviceCallInProgress;
+  const learnStoreCallsInProgress =
+    !learnStore.isLoadingCatalog &&
+    (learnStore.serviceCallsInProgress || learnStore.clearCallInProgress || learnStore.clearCallsToMake)
+      ? 1
+      : 0;
+  const isCallInProgress =
+    learnStoreCallsInProgress + assignmentLinksStore.serviceCallInProgress + assignmentStore.serviceCallInProgress > 0;
+
   const mainPublishSubtext = 'You are about to Publish the assignment and make it visible to the students.\nAre you sure you want to proceed?'
-  const warningText = isCallInProgress > 0 ? 'Some parts of the assignment are still updating. We recommend you to please wait for a few seconds before publishing.' :
+  
+  const warningText = isCallInProgress ? 'Some parts of the assignment are still updating. We recommend you to please wait for a few seconds before publishing.' :
     isAssignmentSynced===false ?  'Some parts of the assignment were not updated properly, but you are about to publish and make the assignment visible to the students. Head to the Preview page to see the saved state of the assignment which will be visible to the students.' : null;
   
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);

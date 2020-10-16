@@ -58,6 +58,7 @@ export class AssignmentLinksStore extends ChildStore {
       .subscribe(publishStatus => {
         if(publishStatus==='Published'){
           this.assignmentLinks = this.syncedAssignmentLinks
+          this.hasServiceError=null;
         }
       })
     
