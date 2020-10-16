@@ -195,12 +195,12 @@ namespace Edna.Platforms
             {
                 Encoding enc = Encoding.UTF8;
                 string allowedUsers = Environment.GetEnvironmentVariable("AllowedUsers");
-                Byte[] result = hash.ComputeHash(enc.GetBytes(allowedUsers??String.Empty));
+                Byte[] result = hash.ComputeHash(enc.GetBytes(allowedUsers ?? String.Empty));
 
                 foreach (Byte b in result)
                     platformID.Append(b.ToString("x2"));
             }
-            return platformID.ToString().Substring(0,8);
+            return platformID.ToString().Substring(0, 8);
 
         }
     }

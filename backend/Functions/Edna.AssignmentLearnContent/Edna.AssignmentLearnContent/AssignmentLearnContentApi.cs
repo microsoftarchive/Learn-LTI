@@ -83,7 +83,8 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            if (!isSystemCallOrUserWithValidEmail)
             {
                 _logger.LogError("Could not get user email.");
                 return new BadRequestErrorMessageResult("Could not get user email.");
@@ -95,7 +96,7 @@ namespace Edna.AssignmentLearnContent
             {
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
-                if(user == null || !user.Role.Equals("teacher"))
+                if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
 
@@ -121,7 +122,8 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            if (!isSystemCallOrUserWithValidEmail)
             {
                 _logger.LogError("Could not get user email.");
                 return new BadRequestErrorMessageResult("Could not get user email.");
@@ -158,7 +160,8 @@ namespace Edna.AssignmentLearnContent
             string assignmentId,
             [User] UsersClient usersClient)
         {
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            if (!isSystemCallOrUserWithValidEmail)
             {
                 _logger.LogError("Could not get user email.");
                 return new BadRequestErrorMessageResult("Could not get user email.");

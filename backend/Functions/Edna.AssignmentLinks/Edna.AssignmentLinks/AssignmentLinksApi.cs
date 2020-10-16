@@ -86,13 +86,8 @@ namespace Edna.AssignmentLinks
             string linkId,
             [User] UsersClient usersClient)
         {
-            string linkJson = await req.ReadAsStringAsync();
-            AssignmentLinkDto linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
-
-            if (linkId != linkDto.Id)
-                return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
-
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            if (!isSystemCallOrUserWithValidEmail)
             {
                 _logger.LogError("Could not get user email.");
                 return new BadRequestErrorMessageResult("Could not get user email.");
@@ -107,6 +102,12 @@ namespace Edna.AssignmentLinks
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
+
+            string linkJson = await req.ReadAsStringAsync();
+            AssignmentLinkDto linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
+
+            if (linkId != linkDto.Id)
+                return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
 
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");
 
@@ -131,7 +132,8 @@ namespace Edna.AssignmentLinks
             string assignmentId,
             [User] UsersClient usersClient)
         {
-            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            if (!isSystemCallOrUserWithValidEmail)
             {
                 _logger.LogError("Could not get user email.");
                 return new BadRequestErrorMessageResult("Could not get user email.");

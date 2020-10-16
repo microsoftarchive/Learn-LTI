@@ -21,17 +21,6 @@ process {
     # GLOBALS
     $VALID_FUNCTIONS =  @("LearnContent", "Links", "Assignments", "Connect", "Platforms", "Users")
     $VALID_CLIENT = "learnclient"
-
-    # TODO: Move helpers to common file
-    function Write-Log {
-        param(
-            [Parameter(Mandatory)]
-            [string]$Message
-        ) 
-        $now = (Get-Date).ToString();
-        Write-Host "[$now] - $Message";
-    }
-
     function Write-Title {
         param(
             [Parameter(Mandatory)]
@@ -116,6 +105,8 @@ process {
         }
     }
     
+    . .\Write-Log.ps1   # Resolves Write-Log function
+
     Write-Title 'Gathering Deployment Info'
     $resources = Get-DeployedResourceInfo -ResourceGroupName $ResourceGroupName -AppName $AppName
     Write-Title 'Deployment Info Gathered'
