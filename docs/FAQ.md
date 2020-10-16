@@ -14,7 +14,7 @@ The deployment step which failed should be easily identified and debugged.
 
 If the error is related to an Azure region please try to redeploy to a suitable alternative region.
 
-### Unathorized 410 Error
+### Unathorized 401 Error
 
 An Unauthorized (401) Exception occurred when access the Moodle's LTI services.
 
