@@ -123,7 +123,6 @@ export class AssignmentLinksStore extends ChildStore {
       this.hasServiceError = hasErrors;
     }
     this.serviceCallInProgress--; 
-    // this.isSynced = _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id').length === 0;  
   })
   }
 }
