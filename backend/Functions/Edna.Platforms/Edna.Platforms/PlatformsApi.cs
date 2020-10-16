@@ -29,6 +29,7 @@ namespace Edna.Platforms
     {
         private const string PlatformsTableName = "Platforms";
 
+        private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
         private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
 
@@ -141,22 +142,23 @@ namespace Edna.Platforms
 
         private bool ValidatePermission(HttpRequest req)
         {
-            #if DEBUG
+#if DEBUG
             // For debug purposes, there is no authentication.
             return true;
-            #endif
+#endif
 
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
                 return false;
 
-            string clientAuthenticationType = HttpClaimsExtension.GetClientAuthenticationType(claims);
-
-            if (clientAuthenticationType == "2")
+            // By checking appidacr claim, we can know if the call was made by a user or by the system.
+            // https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens
+            string appidacr = claims.FirstOrDefault(claim => claim.Type == "appidacr")?.Value;
+            if (appidacr == "2")
                 return true;
 
-            if (clientAuthenticationType == "0")
+            if (appidacr == "0")
             {
-                if (!HttpClaimsExtension.TryGetUserEmails(claims, out List<string> userEmails))
+                if (!TryGetUserEmails(claims, out List<string> userEmails))
                 {
                     _logger.LogError("Could not get any user email / uid for the current user.");
                     return false;
@@ -168,6 +170,24 @@ namespace Edna.Platforms
             return false;
         }
 
+        private bool TryGetUserEmails(IEnumerable<Claim> claims, out List<string> userEmails)
+        {
+            userEmails = new List<string>();
+            if (claims == null)
+                return false;
+
+            Claim[] claimsArray = claims.ToArray();
+
+            userEmails = PossibleEmailClaimTypes
+                .Select(claimType => claimsArray.FirstOrDefault(claim => claim.Type == claimType))
+                .Where(claim => claim != null)
+                .Select(claim => claim.Value)
+                .Distinct()
+                .ToList();
+
+            return userEmails.Any();
+        }
+
         private string GeneratePlatformID()
         {
             StringBuilder platformID = new StringBuilder();
@@ -175,12 +195,12 @@ namespace Edna.Platforms
             {
                 Encoding enc = Encoding.UTF8;
                 string allowedUsers = Environment.GetEnvironmentVariable("AllowedUsers");
-                Byte[] result = hash.ComputeHash(enc.GetBytes(allowedUsers??String.Empty));
+                Byte[] result = hash.ComputeHash(enc.GetBytes(allowedUsers ?? String.Empty));
 
                 foreach (Byte b in result)
                     platformID.Append(b.ToString("x2"));
             }
-            return platformID.ToString().Substring(0,8);
+            return platformID.ToString().Substring(0, 8);
 
         }
     }

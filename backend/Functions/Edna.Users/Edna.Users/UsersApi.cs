@@ -3,10 +3,8 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
@@ -55,39 +53,24 @@ namespace Edna.Users
             if (req.Headers == null)
                 return new BadRequestErrorMessageResult("No headers are presented in the request.");
 
-            if (!req.Headers.TryGetTokenClaims(out Claim[] claims))
+            if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
+                return new BadRequestErrorMessageResult("Could not get user email.");
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (assignment.LtiVersion != LtiAdvantageVersionString)
             {
-                _logger.LogError("Error in sent JWT.");
-                return new BadRequestErrorMessageResult("Error in sent JWT.");
+                Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
+                return new OkObjectResult(_mapper.Map<MemberDto>(userMembership));
             }
 
-            string clientAuthenticationType = HttpClaimsExtension.GetClientAuthenticationType(claims);
+            Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
+            Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
 
-            if (clientAuthenticationType == "0")
-            {
-                if (!HttpClaimsExtension.TryGetUserEmails(claims, out List<String> userEmails))
-                {
-                    _logger.LogError("Could not get user email.");
-                    return new BadRequestErrorMessageResult("Could not get user email.");
-                }
+            if (member == null)
+                _logger.LogError("User not enrolled.");
 
-                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
-                if (assignment.LtiVersion != LtiAdvantageVersionString)
-                {
-                    Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
-                    return new OkObjectResult(_mapper.Map<MemberDto>(userMembership));
-                }
-
-                Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
-                Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
-
-                if (member == null)
-                    _logger.LogError("User not enrolled.");
-
-                return new OkObjectResult(_mapper.Map<MemberDto>(member));
-            }
-            return new BadRequestErrorMessageResult("Wrong Client Authentication type");
+            return new OkObjectResult(_mapper.Map<MemberDto>(member));
         }
 
         [FunctionName(nameof(GetAllUsers))]

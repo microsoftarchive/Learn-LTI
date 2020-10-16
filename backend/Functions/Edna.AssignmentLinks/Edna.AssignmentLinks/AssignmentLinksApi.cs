@@ -21,7 +21,6 @@ using Edna.Utils.Http;
 using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
-using System.Security.Claims;
 
 namespace Edna.AssignmentLinks
 {
@@ -87,37 +86,28 @@ namespace Edna.AssignmentLinks
             string linkId,
             [User] UsersClient usersClient)
         {
-            if (!req.Headers.TryGetTokenClaims(out Claim[] claims))
-            {
-                _logger.LogError("Error in sent JWT.");
-                return new BadRequestErrorMessageResult("Error in sent JWT.");
-            }
-
-            string clientAuthenticationType = HttpClaimsExtension.GetClientAuthenticationType(claims);
-
-            if (clientAuthenticationType != "0" && clientAuthenticationType != "2")
-                return new BadRequestErrorMessageResult("Wrong Client Authentication type");
-            else if (clientAuthenticationType == "0")
-            {
-                if (!HttpClaimsExtension.TryGetUserEmails(claims, out List<String> userEmails))
-                {
-                    _logger.LogError("Could not get user email.");
-                    return new BadRequestErrorMessageResult("Could not get user email.");
-                }
-
-                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
-                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
-                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
-                if (user == null || !user.Role.Equals("teacher"))
-                    return new UnauthorizedResult();
-            }
-
             string linkJson = await req.ReadAsStringAsync();
             AssignmentLinkDto linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
 
             if (linkId != linkDto.Id)
                 return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
+
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            if (!isSystemCallOrUserWithValidEmail)
+            {
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
+            }
+
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
+            if (userEmails.Count > 0)
+            {
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                if (user == null || !user.Role.Equals("teacher"))
+                    return new UnauthorizedResult();
+            }
 
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");
 
@@ -142,26 +132,17 @@ namespace Edna.AssignmentLinks
             string assignmentId,
             [User] UsersClient usersClient)
         {
-            if (!req.Headers.TryGetTokenClaims(out Claim[] claims))
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            if (!isSystemCallOrUserWithValidEmail)
             {
-                _logger.LogError("Error in sent JWT.");
-                return new BadRequestErrorMessageResult("Error in sent JWT.");
+                _logger.LogError("Could not get user email.");
+                return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
-            string clientAuthenticationType = HttpClaimsExtension.GetClientAuthenticationType(claims);
+            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
-            if (clientAuthenticationType != "0" && clientAuthenticationType != "2")
-                return new BadRequestErrorMessageResult("Wrong Client Authentication type");
-            else if (clientAuthenticationType == "0")
+            if (userEmails.Count > 0)
             {
-                if (!HttpClaimsExtension.TryGetUserEmails(claims, out List<String> userEmails))
-                {
-                    _logger.LogError("Could not get user email.");
-                    return new BadRequestErrorMessageResult("Could not get user email.");
-                }
-
-                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))

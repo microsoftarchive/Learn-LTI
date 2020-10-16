@@ -15,26 +15,45 @@ namespace Edna.Utils.Http
     {
         private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
 
-        public static string GetClientAuthenticationType(Claim[] claims, Action<string> logAction = null)
+        public static bool TryGetUserEmails(this IHeaderDictionary headers, out List<string> userEmails, Action<string> logAction = null)
         {
+            userEmails = new List<string>();
+            if (!headers.TryGetTokenClaims(out Claim[] claims, logAction))
+            {
+                logAction?.Invoke("Error in sent JWT");
+                return false;
+            }
+
+            return CheckCallValidity(claims, out userEmails, logAction);
+        }
+
+        private static bool CheckCallValidity(Claim[] claims, out List<string> userEmails, Action<string> logAction = null)
+        {
+            userEmails = new List<string>();
+
             // By checking appidacr claim, we can know if the call was made by a user or by the system.
             // https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens
             string appidacr = claims.FirstOrDefault(claim => claim.Type == "appidacr")?.Value;
 
-            if(appidacr != "0" && appidacr != "2")
-                logAction?.Invoke("this is neither a valid call from user nor a valid server to server call");
+            switch (appidacr)
+            {
+                case "0":
+                    return ParseUserEmailsFromClaims(claims, out userEmails);
 
-            return appidacr;
+                case "2":
+                    return true;
+
+                default:
+                    logAction?.Invoke("this is neither a valid call from user nor a valid server to server call");
+                    return false;
+            }
         }
 
-        public static bool TryGetUserEmails(Claim[] claims, out List<String> userEmails)
+        private static bool ParseUserEmailsFromClaims(Claim[] claims, out List<String> userEmails)
         {
-            userEmails = new List<string>();
-            if (claims == null)
-                return false;
-
+            Claim[] claimsArray = claims.ToArray();
             userEmails = PossibleEmailClaimTypes
-                .Select(claimType => claims.FirstOrDefault(claim => claim.Type == claimType))
+                .Select(claimType => claimsArray.FirstOrDefault(claim => claim.Type == claimType))
                 .Where(claim => claim != null)
                 .Select(claim => claim.Value)
                 .Distinct()
