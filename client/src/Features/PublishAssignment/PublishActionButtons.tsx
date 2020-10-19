@@ -48,7 +48,7 @@ const PublishActionButtonsInner = ({ styles }: IStylesOnly<PublishActionButtonsS
 
   const mainPublishSubtext = 'You are about to Publish the assignment and make it visible to the students.\nAre you sure you want to proceed?'
   
-  const warningText = isCallInProgress ? 'Some parts of the assignment are still updating. We recommend you to please wait for a few seconds before publishing.' :
+  const warningText = isCallInProgress ? 'Some parts of the assignment are still updating. We recommend you to please wait for a few seconds. Publishing now may lead to some inconsistencies.' :
   hasError ?  'Some parts of the assignment were not updated properly, but you are about to publish and make the assignment visible to the students. Head to the Preview page to see the saved state of the assignment which will be visible to the students.' : null;
   
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);

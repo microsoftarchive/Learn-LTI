@@ -22,18 +22,24 @@ export class AssignmentStore extends ChildStore {
   @observable hasServiceError: ServiceError | null = null;
 
   initialize(): void {
+
+    const updateAssignmentFromSyncedState = () => {
+      if(this.assignment)
+        this.assignment =  { ...this.assignment, deadline: this.syncedDeadline!!, description: this.syncedDescription!! };
+    }
+
     toObservable(() => this.assignment?.publishStatus)
       .subscribe(newPublishStatus => {
-        if(this.assignment && newPublishStatus === 'Published' && this.syncedDeadline && this.syncedDescription){
-          this.assignment =  { ...this.assignment, deadline: new Date(this.syncedDeadline), description: this.syncedDescription };
+        if(newPublishStatus === 'Published'){
+          updateAssignmentFromSyncedState();
           this.hasServiceError=null;
         }
       })
 
     toObservable(() => this.serviceCallInProgress)
       .subscribe(serviceCallInProgress => {
-        if(serviceCallInProgress===0 && this.assignment?.publishStatus==='Published' && this.syncedDeadline && this.syncedDescription && this.assignment){
-          this.assignment =  { ...this.assignment, deadline: new Date(this.syncedDeadline), description: this.syncedDescription };
+        if(serviceCallInProgress===0 && this.assignment?.publishStatus==='Published' ){
+          updateAssignmentFromSyncedState();
         }
       })
   }
@@ -49,6 +55,9 @@ export class AssignmentStore extends ChildStore {
     this.assignment = deadline ? { ...assignment, deadline: new Date(deadline) } : assignment;
     this.syncedDescription = assignment.description;
     this.syncedDeadline = assignment.deadline;
+
+    console.log("synced date", this.syncedDeadline);
+    console.log("synced desc", this.syncedDescription);
   }
 
   @action
