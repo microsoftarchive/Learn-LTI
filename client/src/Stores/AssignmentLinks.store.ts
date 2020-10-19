@@ -46,22 +46,22 @@ export class AssignmentLinksStore extends ChildStore {
       )
       .subscribe((links: AssignmentLinkDto[]) => {
         this.assignmentLinks = links;
-        this.syncedAssignmentLinks=links;
+        this.syncedAssignmentLinks = links;
         this.isLoading = false;
       });
 
     toObservable(() => this.root.assignmentStore.assignment?.publishStatus)
       .subscribe(publishStatus => {
         if(publishStatus==='Published'){
-          this.assignmentLinks = this.syncedAssignmentLinks
-          this.hasServiceError=null;
+          this.assignmentLinks = this.syncedAssignmentLinks;
+          this.hasServiceError = null;
         }
       })
     
     toObservable(() => this.serviceCallInProgress)
       .subscribe(serviceCallInProgress => {
-        if(serviceCallInProgress===0 && this.root.assignmentStore.assignment?.publishStatus==='Published'){
-          this.assignmentLinks = this.syncedAssignmentLinks
+        if(serviceCallInProgress === 0 && this.root.assignmentStore.assignment?.publishStatus === 'Published'){
+          this.assignmentLinks = this.syncedAssignmentLinks;
         }
       })
   }
@@ -80,7 +80,7 @@ export class AssignmentLinksStore extends ChildStore {
     } else {
       this.hasServiceError = hasErrors;
     }
-    this.addOrUpdateCallInProgress = this.addOrUpdateCallInProgress.filter(linkId=>linkId!==assignmentLink.id)
+    this.addOrUpdateCallInProgress = this.addOrUpdateCallInProgress.filter(linkId => linkId !== assignmentLink.id)
     this.serviceCallInProgress--; 
   })
   }
@@ -100,7 +100,7 @@ export class AssignmentLinksStore extends ChildStore {
     } else {
       this.hasServiceError = hasErrors;
     }
-    this.addOrUpdateCallInProgress = this.addOrUpdateCallInProgress.filter(linkId=>linkId!==editedLink.id);
+    this.addOrUpdateCallInProgress = this.addOrUpdateCallInProgress.filter(linkId => linkId !== editedLink.id);
     this.serviceCallInProgress--; 
   })
   }
