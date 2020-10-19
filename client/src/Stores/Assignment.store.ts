@@ -16,8 +16,8 @@ export class AssignmentStore extends ChildStore {
   @observable isChangingPublishState: boolean | null = null;
   @observable errorContent : ErrorPageContent | undefined = undefined;
   @observable pushlishStatusChangeError: ServiceError | null = null;
-  @observable syncedDescription: string | undefined;
-  @observable syncedDeadline: Date | undefined;
+  @observable syncedDescription: string | null = null;
+  @observable syncedDeadline: Date | null = null;
   @observable serviceCallInProgress: number = 0;
   @observable hasServiceError: ServiceError | null = null;
 
@@ -25,14 +25,14 @@ export class AssignmentStore extends ChildStore {
 
     const updateAssignmentFromSyncedState = () => {
       if(this.assignment)
-        this.assignment =  { ...this.assignment, deadline: this.syncedDeadline!!, description: this.syncedDescription!! };
-    }
+        this.assignment =  { ...this.assignment, deadline: this.syncedDeadline, description: this.syncedDescription!! };
+      }
 
     toObservable(() => this.assignment?.publishStatus)
       .subscribe(newPublishStatus => {
         if(newPublishStatus === 'Published'){
           updateAssignmentFromSyncedState();
-          this.hasServiceError=null;
+          this.hasServiceError=null;         
         }
       })
 
@@ -55,9 +55,6 @@ export class AssignmentStore extends ChildStore {
     this.assignment = deadline ? { ...assignment, deadline: new Date(deadline) } : assignment;
     this.syncedDescription = assignment.description;
     this.syncedDeadline = assignment.deadline;
-
-    console.log("synced date", this.syncedDeadline);
-    console.log("synced desc", this.syncedDescription);
   }
 
   @action

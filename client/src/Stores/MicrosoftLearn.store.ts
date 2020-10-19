@@ -81,10 +81,10 @@ export class MicrosoftLearnStore extends ChildStore {
       return assignmentLearnContent;
     };
 
-    toObservable(() => this.root.assignmentStore.assignment)
+    toObservable(() => this.root.assignmentStore.assignment?.id)
       .pipe(
-        filter(assignment => !!assignment),
-        map(assignment => assignment!.id),
+        filter(assignmentId => assignmentId!==undefined),
+        map(assignmentId => assignmentId!!),
         switchMap(getLearnContent),
         filter(assignmentLearnContent => !assignmentLearnContent.error),
         map(assignmentLearnContent => assignmentLearnContent as AssignmentLearnContentDto[])

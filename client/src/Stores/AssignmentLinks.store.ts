@@ -36,10 +36,10 @@ export class AssignmentLinksStore extends ChildStore {
       return links;
     }
 
-    toObservable(() => this.root.assignmentStore.assignment)
+    toObservable(() => this.root.assignmentStore.assignment?.id)
       .pipe(
-        filter(assignment => !!assignment),
-        map(assignment => assignment!.id),
+        filter(assignmentId => assignmentId!==undefined),
+        map(assignmentId => assignmentId!!),
         switchMap(getLinks),
         filter(links => !links.error),
         map(links => links as AssignmentLinkDto[])

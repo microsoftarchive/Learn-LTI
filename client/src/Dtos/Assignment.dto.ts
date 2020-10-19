@@ -7,7 +7,7 @@ import { PlatformPersonalizationDto } from './PlatformPersonalization.dto';
 
 export interface AssignmentDto {
   id: string;
-  deadline: Date;
+  deadline: Date | null;
   courseName: string;
   name: string;
   description: string;

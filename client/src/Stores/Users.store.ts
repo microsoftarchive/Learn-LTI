@@ -53,9 +53,9 @@ export class UsersStore extends ChildStore {
       }
       return user;
     }
-    const detailsFromAssignment = toObservable(() => this.root.assignmentStore.assignment).pipe(
-      filter(assignment => !!assignment),
-      map(assignment => assignment!.id),
+    const detailsFromAssignment = toObservable(() => this.root.assignmentStore.assignment?.id).pipe(
+      filter(assignmentId => assignmentId!==undefined),
+      map(assignmentId => assignmentId!!),      
       switchMap(getUser),
       filter(user => !user.error),
       map(user => user as UserDto),
