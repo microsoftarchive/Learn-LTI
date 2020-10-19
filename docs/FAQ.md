@@ -77,4 +77,20 @@ Please ensure that AAD sign for your LMS is enabled and you are signing into you
 
 ## Educator
 
-Under construction
+The cost of the service implementation is approximately $20 per month for the Azure infrastructure which is required for the Microsoft Learn LTI Application
+Costs can be assessed by using the [Azure Pricing Calculator]( https://azure.microsoft.com/pricing/calculator)
+
+## Help with setting up the Microsoft Learn LTI Application 
+
+We know many academic institutions may need help installing the [Microsoft Learn LTI Application](https://github.com/microsoft/Learn-LTI/blob/main/README.md) at your institution. 
+
+Microsoft and [Upwork](https://www.upwork.com/ppc/microsoft/azure/) have partnered to provide a curated talent pool of freelancers that have excellent customer ratings on Upwork and are verified by Microsoft to hold Azure certifications. These freelancers can provide assistance on a wide variety of Azure projects large and small. We have provided specific training to them on the Microsoft Learn LTI Application so they are well versed on installation requirements.
+
+If you would like support, here’s how to get started:
+
+-	Email [Brett Levert at UpWork](mailto:brettlevert@cloud.upwork.com) to express your interest 
+-	You will be assisted in creating a job post on Upwork’s platform for a freelancer to undertake the setup and installation.
+-	Within a few hours to a couple days, qualified freelancers will bid on your project
+-	Installation should only take 2-3 hours and cost anywhere from $150 - $300. Note: freelancers set their own rates so you should choose a free lancer based on cost and their experience)
+-	Once you accept a bid and hire a freelancer you’ll be on your way
+
