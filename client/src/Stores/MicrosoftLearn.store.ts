@@ -83,7 +83,7 @@ export class MicrosoftLearnStore extends ChildStore {
 
     toObservable(() => this.root.assignmentStore.assignment?.id)
       .pipe(
-        filter(assignmentId => assignmentId!==undefined),
+        filter(assignmentId => assignmentId !== undefined),
         map(assignmentId => assignmentId!!),
         switchMap(getLearnContent),
         filter(assignmentLearnContent => !assignmentLearnContent.error),
@@ -107,9 +107,9 @@ export class MicrosoftLearnStore extends ChildStore {
         );
     };
     toObservable(() => this.root.assignmentStore.assignment?.publishStatus).subscribe(publishStatus => {
-      if (publishStatus === 'Published' && this.serviceCallsInProgress===false) {
+      if (publishStatus === 'Published' && this.serviceCallsInProgress === false) {
         updateUserState();
-        this.hasServiceError=null;
+        this.hasServiceError = null;
       }
     });
     toObservable(() => this.serviceCallsInProgress).subscribe(serviceCallsInProgress => {
@@ -156,7 +156,7 @@ export class MicrosoftLearnStore extends ChildStore {
 
   isItemUnsynced = ([contentUid, contentProps]: [string, ContentSelectionProps]) =>
     contentProps.syncedState !== contentProps.userState &&
-    contentProps.callStatus === CallStatus.success
+    contentProps.callStatus === CallStatus.success;
 
   async handelClearCallResponse(
     promise: Promise<ServiceError | null>,

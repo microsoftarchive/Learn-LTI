@@ -32,13 +32,13 @@ export class AssignmentStore extends ChildStore {
       .subscribe(newPublishStatus => {
         if(newPublishStatus === 'Published'){
           updateAssignmentFromSyncedState();
-          this.hasServiceError=null;         
+          this.hasServiceError = null;         
         }
       })
 
     toObservable(() => this.serviceCallInProgress)
       .subscribe(serviceCallInProgress => {
-        if(serviceCallInProgress===0 && this.assignment?.publishStatus==='Published' ){
+        if(serviceCallInProgress === 0 && this.assignment?.publishStatus === 'Published' ){
           updateAssignmentFromSyncedState();
         }
       })

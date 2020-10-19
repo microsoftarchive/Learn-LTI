@@ -38,7 +38,7 @@ export class AssignmentLinksStore extends ChildStore {
 
     toObservable(() => this.root.assignmentStore.assignment?.id)
       .pipe(
-        filter(assignmentId => assignmentId!==undefined),
+        filter(assignmentId => assignmentId !== undefined),
         map(assignmentId => assignmentId!!),
         switchMap(getLinks),
         filter(links => !links.error),
@@ -52,7 +52,7 @@ export class AssignmentLinksStore extends ChildStore {
 
     toObservable(() => this.root.assignmentStore.assignment?.publishStatus)
       .subscribe(publishStatus => {
-        if(publishStatus==='Published'){
+        if(publishStatus === 'Published'){
           this.assignmentLinks = this.syncedAssignmentLinks;
           this.hasServiceError = null;
         }
