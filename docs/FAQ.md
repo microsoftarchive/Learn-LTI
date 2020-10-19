@@ -88,7 +88,7 @@ Microsoft and [Upwork](https://www.upwork.com/ppc/microsoft/azure/) have partner
 
 If you would like support, here’s how to get started:
 
--	Email [Brett Levert at UpWork](mailto:brettlevert@cloud.upwork.com) to express your interest 
+-	Email [Learn LTI](mailto:learnlti@microsoft.com.) to express your interest 
 -	You will be assisted in creating a job post on Upwork’s platform for a freelancer to undertake the setup and installation.
 -	Within a few hours to a couple days, qualified freelancers will bid on your project
 -	Installation should only take 2-3 hours and cost anywhere from $150 - $300. Note: freelancers set their own rates so you should choose a free lancer based on cost and their experience)
