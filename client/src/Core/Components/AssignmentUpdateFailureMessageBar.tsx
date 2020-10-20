@@ -3,13 +3,17 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { AnimationClassNames, IMessageBarStyles, MessageBar, MessageBarType, styled } from '@fluentui/react';
+import { AnimationClassNames, classNamesFunction, getTheme, IMessageBarStyles, ITheme, MessageBar, MessageBarType } from '@fluentui/react';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import { useStore } from '../../Stores/Core';
 import { ServiceError } from '../Utils/Axios/ServiceError';
-import { themedClassNames } from '../Utils/FluentUI';
-import { IStylesOnly, IThemeOnlyProps } from '../Utils/FluentUI/typings.fluent-ui';
+import { IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
+
+interface AssignmentUpdateFailureMessageBarStyleProps {
+  fade: 'fadeIn' | 'fadeOut';
+  theme: ITheme;
+}
 
 const getErrorMessage = (error: ServiceError | null) => {
   switch (error) {
@@ -29,7 +33,6 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   const assignmentStore = useStore('assignmentStore');
   const assignmentLinksStore = useStore('assignmentLinksStore');
   const learnStore = useStore('microsoftLearnStore');
-  const classes = themedClassNames(styles);
 
   return useObserver(() => {
     const learnStoreCallsInProgress =
@@ -42,9 +45,14 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
     const hasError = learnStore.hasServiceError || assignmentStore.hasServiceError || assignmentLinksStore.hasServiceError;
     const errorMessage = getErrorMessage(hasError);
 
-    if (!isCallInProgress && hasError !== null) {
+    const assignmentUpdateFailureMessageBarClass = classNamesFunction<AssignmentUpdateFailureMessageBarStyleProps, IMessageBarStyles>()(assignmentUpdateFailureMessageBarStyles, {
+      fade: isCallInProgress? 'fadeOut' : 'fadeIn', 
+      theme: getTheme()
+    })
+
+    if (hasError !== null) {
       return (
-        <MessageBar messageBarType={MessageBarType.warning} isMultiline={true} className={classes.root}>
+        <MessageBar messageBarType={MessageBarType.warning} isMultiline={true} styles={assignmentUpdateFailureMessageBarClass}>
           {errorMessage}
         </MessageBar>
       );
@@ -54,11 +62,8 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   });
 };
 
-const assignmentUpdateFailureMessageBarStyles = ({ theme }: IThemeOnlyProps): Partial<IMessageBarStyles> => ({
-  root: [AnimationClassNames.fadeIn200]
+const assignmentUpdateFailureMessageBarStyles = ({ fade, theme }: AssignmentUpdateFailureMessageBarStyleProps): Partial<IMessageBarStyles> => ({
+  root: [fade==='fadeIn'? AnimationClassNames.fadeIn500 : AnimationClassNames.fadeOut500]
 });
 
-export const AssignmentUpdateFailureMessageBar = styled(
-  AssignmentUpdateFailureMessageBarInner,
-  assignmentUpdateFailureMessageBarStyles
-);
+export const AssignmentUpdateFailureMessageBar = AssignmentUpdateFailureMessageBarInner
