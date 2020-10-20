@@ -58,7 +58,10 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
               <PagesRouter />
             </>
           ) : (
-            <StudentPage />
+            <>
+              <AssignmentUpdateFailureMessageBar/>
+              <StudentPage />
+            </>
           )}
         </div>
       )}
