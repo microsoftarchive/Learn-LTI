@@ -34,19 +34,6 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
 
   return useObserver(() => {
 
-    /*const learnStoreCallsInProgress =
-      !learnStore.isLoadingCatalog &&
-      (learnStore.serviceCallsInProgress || learnStore.clearCallInProgress || learnStore.clearCallsToMake)
-        ? 1
-        : 0;
-    const isCallInProgress =
-      learnStoreCallsInProgress + assignmentLinksStore.serviceCallInProgress + assignmentStore.serviceCallInProgress > 0;
-    const hasError = learnStore.hasServiceError || assignmentStore.hasServiceError || assignmentLinksStore.hasServiceError;
-    const errorMessage = getErrorMessage(hasError);
-    
-   const hasError = learnStore.hasServiceError || assignmentStore.hasServiceError || assignmentLinksStore.hasServiceError;
-   */
-
     const learnStoreErr = learnStore.itemsInErrorState.length !== 0 && learnStore.hasServiceError? learnStore.hasServiceError : null; 
     const learnStoreErrorMessage = getErrorMessage(learnStoreErr);
     const linkStoreErrorMessage = getErrorMessage(assignmentLinksStore.hasServiceError);
