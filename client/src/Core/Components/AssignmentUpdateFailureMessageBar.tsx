@@ -21,7 +21,7 @@ const getErrorMessage = (stores: Store[], error: ServiceError | null) => {
   const getStoreSpecificMessage = (store: Store) => {
     switch (store) {
       case 'links': return 'links';
-      case 'learn-content': return 'learn-content';
+      case 'learn-content': return 'Microsoft Learn content';
       case 'assignment': return 'description and deadline';
     }
   };
