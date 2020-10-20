@@ -27,23 +27,18 @@ const getErrorMessage = (stores: Store[], error: ServiceError | null) => {
   };
 
   let storesWithError = stores.map(store => getStoreSpecificMessage(store)).join(', ');
-  let message = `Sorry! an error was encountered, and we could not sync the assignment ${storesWithError} properly.`;
+  let message = `Sorry! An error was encountered, and we could not sync the assignment ${storesWithError} properly. `;
 
   switch (error) {
     case 'unauthorized':
       return message + 'It seems like you do not have sufficient permissions to perform this action.';
     case 'not found':
-      return (
-        message + 'We could not find what you were looking for. Please contact the server administrator or a teacher.'
-      );
+      return message + 'We could not find what you were looking for. Please contact the server administrator or a teacher.'
     case 'bad request':
       return message + 'The server could not process your request.';
     case 'internal error':
     case 'other':
-      return (
-        message +
-        'The server encountered an internal error and was unable to complete your request. Please contact the server administrator.'
-      );
+      return message + 'The server encountered an internal error and was unable to complete your request. Please contact the server administrator.'
   }
 };
 
@@ -54,14 +49,9 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
-    const learnStoreError =
-      learnStore.itemsInErrorState.length !== 0 && learnStore.hasServiceError ? learnStore.hasServiceError : null;
-    const linkStoreError =
-      assignmentLinksStore.unSyncedLinks.length !== 0 && assignmentLinksStore.hasServiceError
-        ? assignmentLinksStore.hasServiceError
-        : null;
-    const assignmentError =
-      !assignmentStore.isSynced && assignmentStore.hasServiceError ? assignmentStore.hasServiceError : null;
+    const learnStoreError = learnStore.itemsInErrorState.length !== 0 && learnStore.hasServiceError ? learnStore.hasServiceError : null;
+    const linkStoreError = assignmentLinksStore.unSyncedLinks.length !== 0 && assignmentLinksStore.hasServiceError ? assignmentLinksStore.hasServiceError : null;
+    const assignmentError = !assignmentStore.isSynced && assignmentStore.hasServiceError ? assignmentStore.hasServiceError : null;
 
     let errorMessageMap: Map<ServiceError, Store[]> = new Map<ServiceError, Store[]>();
 
@@ -99,7 +89,4 @@ const assignmentUpdateFailureMessageBarStyles = ({ theme }: IThemeOnlyProps): Pa
   root: [AnimationClassNames.fadeIn500]
 });
 
-export const AssignmentUpdateFailureMessageBar = styled(
-  AssignmentUpdateFailureMessageBarInner,
-  assignmentUpdateFailureMessageBarStyles
-);
+export const AssignmentUpdateFailureMessageBar = styled(AssignmentUpdateFailureMessageBarInner, assignmentUpdateFailureMessageBarStyles);

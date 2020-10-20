@@ -22,14 +22,14 @@ export class AssignmentStore extends ChildStore {
   @observable hasServiceError: ServiceError | null = null;
 
   @computed get isSynced(): boolean{
-    return this.syncedDeadline!==this.assignment?.deadline || this.syncedDescription!==this.assignment.description;
+    return this.syncedDeadline !== this.assignment?.deadline || this.syncedDescription !== this.assignment.description;
   }
 
   initialize(): void {
 
     const updateAssignmentFromSyncedState = () => {
       if(this.assignment)
-        this.assignment =  { ...this.assignment, deadline: this.syncedDeadline, description: this.syncedDescription!! };
+        this.assignment = { ...this.assignment, deadline: this.syncedDeadline, description: this.syncedDescription!! };
       }
 
     toObservable(() => this.assignment?.publishStatus)
@@ -69,7 +69,7 @@ export class AssignmentStore extends ChildStore {
       AssignmentService.updateAssignment(this.assignment)
       .then(hasErrors => {
         if(hasErrors === null) {
-          this.syncedDeadline=newDeadline;
+          this.syncedDeadline = newDeadline;
         }else {
           this.hasServiceError = hasErrors;
         }
