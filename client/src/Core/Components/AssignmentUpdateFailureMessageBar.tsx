@@ -11,18 +11,39 @@ import { ServiceError } from '../Utils/Axios/ServiceError';
 import { themedClassNames } from '../Utils/FluentUI';
 import { IStylesOnly, IThemeOnlyProps } from '../Utils/FluentUI/typings.fluent-ui';
 
+type Store = 'assignment' | 'links' | 'learn-content';
 
-const getErrorMessage = (error: ServiceError | null) => {
+const getErrorMessage = (stores: Store[], error: ServiceError | null) => {
+  if (error === null) {
+    return undefined;
+  }
+
+  const getStoreSpecificMessage = (store: Store) => {
+    switch (store) {
+      case 'links': return 'links';
+      case 'learn-content': return 'learn-content';
+      case 'assignment': return 'description and deadline';
+    }
+  };
+
+  let storesWithError = stores.map(store => getStoreSpecificMessage(store)).join(', ');
+  let message = `Sorry! an error was encountered, and we could not sync the assignment ${storesWithError} properly.`;
+
   switch (error) {
     case 'unauthorized':
-      return 'Sorry, but it seems like you do not have sufficient permissions to perform this action.';
+      return message + 'It seems like you do not have sufficient permissions to perform this action.';
     case 'not found':
-      return 'Sorry, we could not find what you were looking for. Please contact the server administrator or a teacher.';
+      return (
+        message + 'We could not find what you were looking for. Please contact the server administrator or a teacher.'
+      );
     case 'bad request':
-      return 'Sorry, but the server could not process your request.';
+      return message + 'The server could not process your request.';
     case 'internal error':
     case 'other':
-      return 'Sorry, the server encountered an internal error and was unable to complete your request. Please contact the server administrator.';
+      return (
+        message +
+        'The server encountered an internal error and was unable to complete your request. Please contact the server administrator.'
+      );
   }
 };
 
@@ -33,31 +54,40 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
+    const learnStoreError =
+      learnStore.itemsInErrorState.length !== 0 && learnStore.hasServiceError ? learnStore.hasServiceError : null;
+    const linkStoreError =
+      assignmentLinksStore.unSyncedLinks.length !== 0 && assignmentLinksStore.hasServiceError
+        ? assignmentLinksStore.hasServiceError
+        : null;
+    const assignmentError =
+      !assignmentStore.isSynced && assignmentStore.hasServiceError ? assignmentStore.hasServiceError : null;
 
-    const learnStoreErr = learnStore.itemsInErrorState.length !== 0 && learnStore.hasServiceError? learnStore.hasServiceError : null; 
-    const learnStoreErrorMessage = getErrorMessage(learnStoreErr);
-    const linkStoreErrorMessage = getErrorMessage(assignmentLinksStore.hasServiceError);
-    const assignmentStoreErrorMessage = getErrorMessage(assignmentStore.hasServiceError);
+    let errorMessageMap: Map<ServiceError, Store[]> = new Map<ServiceError, Store[]>();
 
-    let errorMsg = "";
-    if(learnStoreErrorMessage)
-    {
-      errorMsg = errorMsg + "\n" + learnStoreErrorMessage;
+    const getExistingStoresErrorMap = (err: ServiceError): Store[] => errorMessageMap.get(err) || [];
+
+    if (linkStoreError) {
+      errorMessageMap.set(linkStoreError, [...getExistingStoresErrorMap(linkStoreError), 'links']);
     }
-    if(linkStoreErrorMessage && linkStoreErrorMessage !== learnStoreErrorMessage)
-    {
-      errorMsg= errorMsg + "\n" + linkStoreErrorMessage;
+    if (learnStoreError) {
+      errorMessageMap.set(learnStoreError, [...getExistingStoresErrorMap(learnStoreError), 'learn-content']);
     }
-    if(assignmentStoreErrorMessage && assignmentStoreErrorMessage !== linkStoreErrorMessage && assignmentStoreErrorMessage !== learnStoreErrorMessage)
-    {
-      errorMsg = errorMsg + "\n" + assignmentStoreErrorMessage;
+    if (assignmentError) {
+      errorMessageMap.set(assignmentError, [...getExistingStoresErrorMap(assignmentError), 'assignment']);
     }
 
-    if (errorMsg !== "") {
+    if (learnStoreError || linkStoreError || assignmentError) {
       return (
-        <MessageBar messageBarType={MessageBarType.warning} isMultiline={true} className={classes.root}>
-          {errorMsg}
-        </MessageBar>
+        <>
+          {[...errorMessageMap].map(([serviceError, stores]) => {
+            return (
+              <MessageBar messageBarType={MessageBarType.warning} isMultiline={true} className={classes.root}>
+                {getErrorMessage(stores, serviceError)}
+              </MessageBar>
+            );
+          })}
+        </>
       );
     } else {
       return null;

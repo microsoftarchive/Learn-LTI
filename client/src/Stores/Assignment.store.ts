@@ -3,7 +3,7 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { ChildStore } from './Core';
 import { AssignmentService } from '../Services/Assignment.service';
 import { Assignment } from '../Models/Assignment.model';
@@ -20,6 +20,10 @@ export class AssignmentStore extends ChildStore {
   @observable syncedDeadline: Date | null = null;
   @observable serviceCallInProgress: number = 0;
   @observable hasServiceError: ServiceError | null = null;
+
+  @computed get isSynced(): boolean{
+    return this.syncedDeadline!==this.assignment?.deadline || this.syncedDescription!==this.assignment.description;
+  }
 
   initialize(): void {
 
