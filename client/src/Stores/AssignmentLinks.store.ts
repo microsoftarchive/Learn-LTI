@@ -3,7 +3,7 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import _ from 'lodash';
 import { ChildStore } from './Core';
 import { AssignmentLink } from '../Models/AssignmentLink.model';
@@ -21,6 +21,10 @@ export class AssignmentLinksStore extends ChildStore {
   @observable serviceCallInProgress: number = 0;
   @observable hasServiceError: ServiceError | null = null;
   @observable addOrUpdateCallInProgress: string[] = []; 
+
+  @computed get unSyncedLinks(): AssignmentLink[] {
+    return  _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id');
+  }
 
   initialize(): void {
     toObservable(() => this.root.assignmentStore.assignment)

@@ -48,10 +48,14 @@ export class MicrosoftLearnStore extends ChildStore {
     return _.sumBy([...this.contentSelectionMap.values()].map(item => item.callStatus === CallStatus.inProgress)) !== 0;
   }
 
-  @computed get unSyncedItems() {
+  @computed get unSyncedItems(): Array<[string, ContentSelectionProps]> {
     return [...this.contentSelectionMap].filter(
       item => this.clearCallInProgress === false && this.clearCallsToMake === false && this.isItemUnsynced(item)
     );
+  }
+
+  @computed get itemsInErrorState(): Array<[string, ContentSelectionProps]>{
+    return [...this.contentSelectionMap].filter(([contentUid, contentProps]) => contentProps.callStatus===CallStatus.error);
   }
 
   filterStore = new MicrosoftLearnFilterStore();

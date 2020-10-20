@@ -42,6 +42,10 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
         : 0;
     const isCallInProgress =
       learnStoreCallsInProgress + assignmentLinksStore.serviceCallInProgress + assignmentStore.serviceCallInProgress > 0;
+    
+    // use this instead of learnstore.hasServiceError
+    // const learnStoreErr = learnStore.itemsInErrorState.length!==0 && learnStore.hasServiceError? learnStore.hasServiceError : null; 
+    
     const hasError = learnStore.hasServiceError || assignmentStore.hasServiceError || assignmentLinksStore.hasServiceError;
     const errorMessage = getErrorMessage(hasError);
 
