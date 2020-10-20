@@ -168,4 +168,9 @@ process {
     }
     Write-Host 'App Registration Deleted Successfully'
     #endregion
+
+    Write-Title '======== Successfully Deleted Resources from Azure ==========='
+
+    Write-Log -Message "Clean-up Complete"
+
 }

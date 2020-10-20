@@ -24,10 +24,10 @@ namespace Edna.Utils.Http
                 return false;
             }
 
-            return CheckCallValidity(claims, out userEmails, logAction);
+            return GetClientAuthenticationType(claims, out userEmails, logAction);
         }
 
-        private static bool CheckCallValidity(Claim[] claims, out List<string> userEmails, Action<string> logAction = null)
+        private static bool GetClientAuthenticationType(Claim[] claims, out List<string> userEmails, Action<string> logAction = null)
         {
             userEmails = new List<string>();
 
