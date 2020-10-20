@@ -3,24 +3,21 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { AnimationClassNames, classNamesFunction, getTheme, IMessageBarStyles, ITheme, MessageBar, MessageBarType } from '@fluentui/react';
+import { AnimationClassNames, IMessageBarStyles, MessageBar, MessageBarType, styled } from '@fluentui/react';
 import { useObserver } from 'mobx-react-lite';
 import React from 'react';
 import { useStore } from '../../Stores/Core';
 import { ServiceError } from '../Utils/Axios/ServiceError';
-import { IStylesOnly } from '../Utils/FluentUI/typings.fluent-ui';
+import { themedClassNames } from '../Utils/FluentUI';
+import { IStylesOnly, IThemeOnlyProps } from '../Utils/FluentUI/typings.fluent-ui';
 
-interface AssignmentUpdateFailureMessageBarStyleProps {
-  fade: 'fadeIn' | 'fadeOut';
-  theme: ITheme;
-}
 
 const getErrorMessage = (error: ServiceError | null) => {
   switch (error) {
     case 'unauthorized':
       return 'Sorry, but it seems like you do not have sufficient permissions to perform this action.';
     case 'not found':
-      return 'Sorry, we could not find what you were looking for. Please contact the server administrator or the teacher.';
+      return 'Sorry, we could not find what you were looking for. Please contact the server administrator or a teacher.';
     case 'bad request':
       return 'Sorry, but the server could not process your request.';
     case 'internal error':
@@ -33,31 +30,46 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   const assignmentStore = useStore('assignmentStore');
   const assignmentLinksStore = useStore('assignmentLinksStore');
   const learnStore = useStore('microsoftLearnStore');
+  const classes = themedClassNames(styles);
 
   return useObserver(() => {
-    const learnStoreCallsInProgress =
+
+    /*const learnStoreCallsInProgress =
       !learnStore.isLoadingCatalog &&
       (learnStore.serviceCallsInProgress || learnStore.clearCallInProgress || learnStore.clearCallsToMake)
         ? 1
         : 0;
     const isCallInProgress =
       learnStoreCallsInProgress + assignmentLinksStore.serviceCallInProgress + assignmentStore.serviceCallInProgress > 0;
-    
-    // use this instead of learnstore.hasServiceError
-    // const learnStoreErr = learnStore.itemsInErrorState.length!==0 && learnStore.hasServiceError? learnStore.hasServiceError : null; 
-    
     const hasError = learnStore.hasServiceError || assignmentStore.hasServiceError || assignmentLinksStore.hasServiceError;
     const errorMessage = getErrorMessage(hasError);
+    
+   const hasError = learnStore.hasServiceError || assignmentStore.hasServiceError || assignmentLinksStore.hasServiceError;
+   */
 
-    const assignmentUpdateFailureMessageBarClass = classNamesFunction<AssignmentUpdateFailureMessageBarStyleProps, IMessageBarStyles>()(assignmentUpdateFailureMessageBarStyles, {
-      fade: isCallInProgress? 'fadeOut' : 'fadeIn', 
-      theme: getTheme()
-    })
+    const learnStoreErr = learnStore.itemsInErrorState.length !== 0 && learnStore.hasServiceError? learnStore.hasServiceError : null; 
+    const learnStoreErrorMessage = getErrorMessage(learnStoreErr);
+    const linkStoreErrorMessage = getErrorMessage(assignmentLinksStore.hasServiceError);
+    const assignmentStoreErrorMessage = getErrorMessage(assignmentStore.hasServiceError);
 
-    if (hasError !== null) {
+    let errorMsg = "";
+    if(learnStoreErrorMessage)
+    {
+      errorMsg = errorMsg + "\n" + learnStoreErrorMessage;
+    }
+    if(linkStoreErrorMessage && linkStoreErrorMessage !== learnStoreErrorMessage)
+    {
+      errorMsg= errorMsg + "\n" + linkStoreErrorMessage;
+    }
+    if(assignmentStoreErrorMessage && assignmentStoreErrorMessage !== linkStoreErrorMessage && assignmentStoreErrorMessage !== learnStoreErrorMessage)
+    {
+      errorMsg = errorMsg + "\n" + assignmentStoreErrorMessage;
+    }
+
+    if (errorMsg !== "") {
       return (
-        <MessageBar messageBarType={MessageBarType.warning} isMultiline={true} styles={assignmentUpdateFailureMessageBarClass}>
-          {errorMessage}
+        <MessageBar messageBarType={MessageBarType.warning} isMultiline={true} className={classes.root}>
+          {errorMsg}
         </MessageBar>
       );
     } else {
@@ -66,8 +78,11 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   });
 };
 
-const assignmentUpdateFailureMessageBarStyles = ({ fade, theme }: AssignmentUpdateFailureMessageBarStyleProps): Partial<IMessageBarStyles> => ({
-  root: [fade==='fadeIn'? AnimationClassNames.fadeIn500 : AnimationClassNames.fadeOut500]
+const assignmentUpdateFailureMessageBarStyles = ({ theme }: IThemeOnlyProps): Partial<IMessageBarStyles> => ({
+  root: [AnimationClassNames.fadeIn500]
 });
 
-export const AssignmentUpdateFailureMessageBar = AssignmentUpdateFailureMessageBarInner
+export const AssignmentUpdateFailureMessageBar = styled(
+  AssignmentUpdateFailureMessageBarInner,
+  assignmentUpdateFailureMessageBarStyles
+);
