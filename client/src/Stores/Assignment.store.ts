@@ -3,6 +3,7 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
+import _ from 'lodash';
 import { observable, action, computed } from 'mobx';
 import { ChildStore } from './Core';
 import { AssignmentService } from '../Services/Assignment.service';
@@ -22,7 +23,7 @@ export class AssignmentStore extends ChildStore {
   @observable hasServiceError: ServiceError | null = null;
 
   @computed get isSynced(): boolean{
-    return this.syncedDeadline === this.assignment?.deadline && this.syncedDescription === this.assignment.description;
+    return _.isEqual(this.syncedDeadline, this.assignment?.deadline) && _.isEqual(this.syncedDescription, this.assignment?.description);
   }
 
   initialize(): void {
