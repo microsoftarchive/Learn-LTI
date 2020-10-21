@@ -23,7 +23,7 @@ export class AssignmentLinksStore extends ChildStore {
   @observable addOrUpdateCallInProgress: string[] = []; 
 
   @computed get unSyncedLinks(): AssignmentLink[] {
-    return  _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, 'id');
+    return _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, ['id', 'displayText', 'description', 'url']);
   }
 
   initialize(): void {

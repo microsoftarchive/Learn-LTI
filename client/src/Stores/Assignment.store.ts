@@ -22,7 +22,7 @@ export class AssignmentStore extends ChildStore {
   @observable hasServiceError: ServiceError | null = null;
 
   @computed get isSynced(): boolean{
-    return this.syncedDeadline !== this.assignment?.deadline || this.syncedDescription !== this.assignment.description;
+    return this.syncedDeadline === this.assignment?.deadline && this.syncedDescription === this.assignment.description;
   }
 
   initialize(): void {
