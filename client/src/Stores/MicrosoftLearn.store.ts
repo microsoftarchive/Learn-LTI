@@ -151,7 +151,9 @@ export class MicrosoftLearnStore extends ChildStore {
         this.clearCallInProgress = true;
         this.clearCallsToMake = false;
         const itemsToClear = [...this.contentSelectionMap].filter(
-          ([contentUid, contentProps]) => contentProps.syncedState === LearnContentState.selected);
+          ([contentUid, contentProps]) => 
+          (contentProps.syncedState === LearnContentState.selected && contentProps.callStatus===CallStatus.success) ||
+          (contentProps.syncedState === LearnContentState.notSelected && contentProps.callStatus===CallStatus.error));
         let promise = MicrosoftLearnService.clearAssignmentLearnContent(this.root.assignmentStore.assignment!.id);
         this.handelClearCallResponse(promise, itemsToClear);
       }

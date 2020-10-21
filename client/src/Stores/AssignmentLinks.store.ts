@@ -66,6 +66,7 @@ export class AssignmentLinksStore extends ChildStore {
       .subscribe(serviceCallInProgress => {
         if(serviceCallInProgress === 0 && this.root.assignmentStore.assignment?.publishStatus === 'Published'){
           this.assignmentLinks = this.syncedAssignmentLinks;
+          // setTimeout(() => {this.hasServiceError = null}, 5000);
         }
       })
   }
