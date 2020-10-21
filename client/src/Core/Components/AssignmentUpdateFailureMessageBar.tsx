@@ -49,9 +49,9 @@ const AssignmentUpdateFailureMessageBarInner = ({ styles }: IStylesOnly<IMessage
   const classes = themedClassNames(styles);
 
   return useObserver(() => {
-    const learnStoreError = learnStore.itemsInErrorState.length !== 0 && learnStore.hasServiceError ? learnStore.hasServiceError : null;
-    const linkStoreError = assignmentLinksStore.unSyncedLinks.length !== 0 && assignmentLinksStore.hasServiceError ? assignmentLinksStore.hasServiceError : null;
-    const assignmentError = !assignmentStore.isSynced && assignmentStore.hasServiceError ? assignmentStore.hasServiceError : null;
+    const learnStoreError = learnStore.itemsInErrorState.length !== 0 && !learnStore.serviceCallsInProgress && learnStore.hasServiceError ? learnStore.hasServiceError : null;
+    const linkStoreError = !assignmentLinksStore.isSynced && assignmentLinksStore.serviceCallInProgress === 0 && assignmentLinksStore.hasServiceError ? assignmentLinksStore.hasServiceError : null;
+    const assignmentError = !assignmentStore.isSynced && assignmentStore.serviceCallInProgress === 0 && assignmentStore.hasServiceError ? assignmentStore.hasServiceError : null;
 
     let errorMessageMap: Map<ServiceError, Store[]> = new Map<ServiceError, Store[]>();
 

@@ -22,16 +22,8 @@ export class AssignmentLinksStore extends ChildStore {
   @observable hasServiceError: ServiceError | null = null;
   @observable addOrUpdateCallInProgress: string[] = []; 
 
-  @computed get unSyncedLinks(): AssignmentLink[] {
-    const linkComparer = (link1: AssignmentLink, link2: AssignmentLink) => {
-      return _.isEqual(link1, link2);
-    }
-    return _.uniqBy(
-        _.concat(
-          _.differenceWith(this.assignmentLinks, this.syncedAssignmentLinks, linkComparer), 
-          _.differenceWith(this.syncedAssignmentLinks, this.assignmentLinks, linkComparer)
-        ), 
-      'id');
+  @computed get isSynced(): boolean {
+    return _.isEqual(this.assignmentLinks,this.syncedAssignmentLinks);
   }
 
   initialize(): void {
