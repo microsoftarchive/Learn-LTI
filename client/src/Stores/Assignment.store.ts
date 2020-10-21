@@ -23,15 +23,20 @@ export class AssignmentStore extends ChildStore {
   @observable hasServiceError: ServiceError | null = null;
 
   @computed get isSynced(): boolean{
-    return _.isEqual(this.syncedDeadline, this.assignment?.deadline) && _.isEqual(this.syncedDescription, this.assignment?.description);
+    return _.isEqual(this.syncedDeadline,this.assignment?.deadline) && _.isEqual(this.syncedDescription, this.assignment?.description);
   }
 
   initialize(): void {
 
     const updateAssignmentFromSyncedState = () => {
       if(this.assignment)
-        this.assignment = { ...this.assignment, deadline: this.syncedDeadline, description: this.syncedDescription!! };
+      {
+        if(this.syncedDeadline)
+          this.assignment = { ...this.assignment, deadline: new Date(this.syncedDeadline)};  
+        if(this.syncedDescription)
+          this.assignment = { ...this.assignment, description: this.syncedDescription };
       }
+    }
 
     toObservable(() => this.assignment?.publishStatus)
       .subscribe(newPublishStatus => {
@@ -58,8 +63,8 @@ export class AssignmentStore extends ChildStore {
     }
     const { deadline } = assignment;
     this.assignment = deadline ? { ...assignment, deadline: new Date(deadline) } : assignment;
-    this.syncedDescription = assignment.description;
-    this.syncedDeadline = assignment.deadline;
+    this.syncedDescription = this.assignment.description;
+    this.syncedDeadline = this.assignment.deadline;
   }
 
   @action
@@ -87,7 +92,7 @@ export class AssignmentStore extends ChildStore {
       AssignmentService.updateAssignment(this.assignment)
       .then(hasErrors => {
         if(hasErrors === null) {
-          this.syncedDescription=newDescription;
+          this.syncedDescription = newDescription;
         }else {
           this.hasServiceError = hasErrors;
         }
