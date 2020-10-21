@@ -23,7 +23,7 @@ export class AssignmentStore extends ChildStore {
   @observable hasServiceError: ServiceError | null = null;
 
   @computed get isSynced(): boolean{
-    return _.isEqual(this.syncedDeadline,this.assignment?.deadline) && _.isEqual(this.syncedDescription, this.assignment?.description);
+    return _.isEqual(this.syncedDeadline, this.assignment?.deadline) && _.isEqual(this.syncedDescription, this.assignment?.description);
   }
 
   initialize(): void {
@@ -32,7 +32,7 @@ export class AssignmentStore extends ChildStore {
       if(this.assignment)
       {
         if(this.syncedDeadline)
-          this.assignment = { ...this.assignment, deadline: new Date(this.syncedDeadline)};  
+          this.assignment = { ...this.assignment, deadline: new Date(this.syncedDeadline) };  
         if(this.syncedDescription)
           this.assignment = { ...this.assignment, description: this.syncedDescription };
       }
