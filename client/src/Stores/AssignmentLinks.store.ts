@@ -23,7 +23,15 @@ export class AssignmentLinksStore extends ChildStore {
   @observable addOrUpdateCallInProgress: string[] = []; 
 
   @computed get unSyncedLinks(): AssignmentLink[] {
-    return _.differenceBy(this.assignmentLinks, this.syncedAssignmentLinks, ['id', 'displayText', 'description', 'url']);
+    const linkComparer = (link1: AssignmentLink, link2: AssignmentLink) => {
+      return _.isEqual(link1, link2);
+    }
+    return _.uniqBy(
+        _.concat(
+          _.differenceWith(this.assignmentLinks, this.syncedAssignmentLinks, linkComparer), 
+          _.differenceWith(this.syncedAssignmentLinks, this.assignmentLinks, linkComparer)
+        ), 
+      'id');
   }
 
   initialize(): void {
