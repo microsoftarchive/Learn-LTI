@@ -31,10 +31,7 @@ export class AssignmentStore extends ChildStore {
     const updateAssignmentFromSyncedState = () => {
       if(this.assignment)
       {
-        if(this.syncedDeadline)
-          this.assignment = { ...this.assignment, deadline: new Date(this.syncedDeadline) };  
-        if(this.syncedDescription)
-          this.assignment = { ...this.assignment, description: this.syncedDescription };
+        this.assignment = { ...this.assignment, deadline: this.syncedDeadline, description: this.syncedDescription!! };
       }
     }
 
