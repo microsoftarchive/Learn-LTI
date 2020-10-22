@@ -19,7 +19,7 @@ class AssignmentLinksServiceClass {
 
   public async updateAssignmentLink(assignmentLink: AssignmentLinkDto, assignmentId: string): Promise<ServiceError | null> {
     const response = await axios.post(
-      `${process.env.REACT_APP_EDNA_LINKS_SERVICE_URL}/assignments/${assignmentId}/links/${assignmentLink.id}`,
+      `${process.env.REACT_APP_EDNA_LINKS_SERVICE_URL}/assignments/${assignmentId}/links/linkid`,
       assignmentLink
     );
     return getServiceError(response);
@@ -27,7 +27,7 @@ class AssignmentLinksServiceClass {
 
   public async deleteAssignmentLink(assignmentLinkId: string, assignmentId: string): Promise<ServiceError | null> {
     const response = await axios.delete(
-      `${process.env.REACT_APP_EDNA_LINKS_SERVICE_URL}/assignments/${assignmentId}/links/${assignmentLinkId}`
+      `${process.env.REACT_APP_EDNA_LINKS_SERVICE_URL}/assignments/${assignmentId}/links/linkid`
     );
     return getServiceError(response);
   }

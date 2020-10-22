@@ -24,14 +24,14 @@ class MicrosoftLearnServiceClass {
 
   public async saveAssignmentLearnContent(assignmentId: string, learnContentUid: string): Promise<ServiceError | null> {
     const assignmentLearnServiceresponse = await axios.post(
-      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}/assignments/${assignmentId}/learn-content/${learnContentUid}`
+      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}/assignments/${assignmentId}/learn-content/contentuid`
     );
     return getServiceError(assignmentLearnServiceresponse);
   }
 
   public async removeAssignmentLearnContent(assignmentId: string, learnContentUid: string): Promise<ServiceError | null> {
     const assignmentLearnServiceresponse = await axios.delete(
-      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}/assignments/${assignmentId}/learn-content/${learnContentUid}`
+      `${process.env.REACT_APP_EDNA_LEARN_CONTENT}/assignments/${assignmentId}/learn-content/contentuid`
     );
     return getServiceError(assignmentLearnServiceresponse);
   }
