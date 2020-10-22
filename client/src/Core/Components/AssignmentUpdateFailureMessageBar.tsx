@@ -27,7 +27,7 @@ const getErrorMessage = (stores: Store[], error: ServiceError | null) => {
   };
 
   let storesWithError = stores.map(store => getStoreSpecificMessage(store)).join(', ');
-  let message = `Sorry! An error was encountered, and we could not sync the assignment's ${storesWithError} properly. `;
+  let message = `Sorry! An error was encountered, and we could not sync the assignment's ${storesWithError} properly. Head to the Preview page to see the saved state of the assignment. `;
 
   switch (error) {
     case 'unauthorized':
