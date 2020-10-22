@@ -26,6 +26,10 @@ export class AssignmentStore extends ChildStore {
     return _.isEqual(this.syncedDeadline, this.assignment?.deadline) && _.isEqual(this.syncedDescription, this.assignment?.description);
   }
 
+  @computed get isAssignmentPublished(): boolean  {
+    return this.assignment?.publishStatus === 'Published';
+  }
+
   initialize(): void {
 
     const updateAssignmentFromSyncedState = () => {
@@ -35,9 +39,9 @@ export class AssignmentStore extends ChildStore {
       }
     }
 
-    toObservable(() => this.assignment?.publishStatus)
-      .subscribe(newPublishStatus => {
-        if(newPublishStatus === 'Published'){
+    toObservable(() => this.isAssignmentPublished)
+      .subscribe(isAssignmentPublished => {
+        if(isAssignmentPublished === true){
           updateAssignmentFromSyncedState();
           this.hasServiceError = null;         
         }
