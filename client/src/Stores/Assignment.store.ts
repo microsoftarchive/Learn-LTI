@@ -60,8 +60,8 @@ export class AssignmentStore extends ChildStore {
     }
     const { deadline } = assignment;
     this.assignment = deadline ? { ...assignment, deadline: new Date(deadline) } : assignment;
-    this.syncedDescription = this.assignment.description;
-    this.syncedDeadline = this.assignment.deadline;
+    this.syncedDescription = assignment.description;
+    this.syncedDeadline = assignment.deadline;
   }
 
   @action
