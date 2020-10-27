@@ -29,7 +29,7 @@ enum CallStatus {
   error = 'error'
 }
 
-type ContentSelectionProps = {
+export type ContentSelectionProps = {
   userState: LearnContentState;
   syncedState: LearnContentState;
   callStatus: CallStatus;
@@ -45,7 +45,7 @@ export class MicrosoftLearnStore extends ChildStore {
   @observable hasServiceError: ServiceError | null = null;
 
   @computed get serviceCallsInProgress(): boolean {
-    return _.sumBy([...this.contentSelectionMap.values()].map(item => item.callStatus === CallStatus.inProgress)) !== 0;
+    return _.sumBy([...this.contentSelectionMap.values()].map(item => item.callStatus === CallStatus.inProgress? 1 : 0)) !== 0;
   }
 
   @computed get unSyncedItems(): Array<[string, ContentSelectionProps]> {
@@ -94,12 +94,13 @@ export class MicrosoftLearnStore extends ChildStore {
         map(assignmentLearnContent => assignmentLearnContent as AssignmentLearnContentDto[])
       )
       .subscribe(selectedItems => {
+        // TODO: remove this check after testing!
         selectedItems.forEach(item =>
-          this.contentSelectionMap.set(item.contentUid, {
+          {item.contentUid!=='contentuid' && this.contentSelectionMap.set(item.contentUid, {
             userState: LearnContentState.selected,
             syncedState: LearnContentState.selected,
             callStatus: CallStatus.success
-          })
+          })}
         );
       });
 
@@ -152,7 +153,7 @@ export class MicrosoftLearnStore extends ChildStore {
         this.clearCallsToMake = false;
         const itemsToClear = [...this.contentSelectionMap].filter(
           ([contentUid, contentProps]) => 
-          (contentProps.syncedState === LearnContentState.selected && contentProps.callStatus===CallStatus.success) ||
+          (contentProps.syncedState === LearnContentState.selected) ||
           (contentProps.syncedState === LearnContentState.notSelected && contentProps.callStatus===CallStatus.error));
         let promise = MicrosoftLearnService.clearAssignmentLearnContent(this.root.assignmentStore.assignment!.id);
         this.handelClearCallResponse(promise, itemsToClear);
