@@ -10,7 +10,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Edna.Bindings.User;
-using System.Net.Http;
 using Edna.Utils.Http;
 
 [assembly: FunctionsStartup(typeof(Startup))]
@@ -27,13 +26,7 @@ namespace Edna.AssignmentLearnContent
 
             builder.Services.AddHttpClient();
 
-            builder.Services.AddHttpClient("CustomClient")
-                .ConfigurePrimaryHttpMessageHandler(() => {
-                    var httpClientHandler = new HttpClientHandler();
-                    httpClientHandler.ServerCertificateCustomValidationCallback = new EdnaX509Validator().PerformX509Valiation;
-                    return httpClientHandler;
-                });
-
+            builder.Services.AddHttpClient(EdnaExternalHttpHandler.Name).ConfigurePrimaryHttpMessageHandler(() => new EdnaExternalHttpHandler());
 
             builder.Services.AddAutoMapper(GetType().Assembly);
         }

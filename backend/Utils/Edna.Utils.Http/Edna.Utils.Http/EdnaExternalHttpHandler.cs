@@ -8,8 +8,14 @@ using System.Text;
 
 namespace Edna.Utils.Http
 {
-    public class EdnaX509Validator
+    public class EdnaExternalHttpHandler: HttpClientHandler
     {
+        public static string Name = nameof(EdnaHttpHandler);
+        public EdnaExternalHttpHandler() : base()
+        {
+            ServerCertificateCustomValidationCallback = PerformX509Valiation;
+        }
+
         public bool PerformX509Valiation 
          (
             HttpRequestMessage req,

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Edna.Utils.Http;
 using IdentityModel.Client;
 using LtiAdvantage;
 using LtiAdvantage.NamesRoleProvisioningService;
@@ -62,7 +63,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
                 throw accessTokenResponse.Exception ?? new Exception($"Internal exception in the authentication flow to LMS: {accessTokenResponse.Error}");
             }
 
-            var httpClient = _httpClientFactory.CreateClient();
+            var httpClient = _httpClientFactory.CreateClient(EdnaExternalHttpHandler.Name);
             httpClient.SetBearerToken(accessTokenResponse.AccessToken);
 
             httpClient.DefaultRequestHeaders.Accept.Clear();
