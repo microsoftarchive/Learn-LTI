@@ -49,6 +49,7 @@
         "staticWebsite": "[toLower(concat('learnclient', replace(variables('uniqueIdentifier'),'-','')))]",
         "keyVaultName": "[toLower(concat('kv-', variables('uniqueIdentifier')))]",
         "StorageAccountSuffix": "[toLower(concat(variables('uniqueIdentifier')))]",
+        "AuditLogsStorageAccountName": "[toLower(concat('auditlogs' , variables('StorageAccountSuffix')))]",
         "keyName": "EdnaLiteDevKey",
         "cliResourceName": "DeployingAppRegisteration",
         "cliArg": "[concat(variables('keyVaultName'), ' ', variables('staticWebsite'), ' ',variables('location'), ' ',variables('ProjectNameSuffix'), ' ',variables('keyName'),' ',variables('resourceGroupName'))]",
@@ -354,6 +355,15 @@
             }
         },
         {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[variables('AuditLogsStorageAccountName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard_LRS"
+            }
+        },
+        {
             "type": "Microsoft.Insights/components",
             "apiVersion": "2018-05-01-preview",
             "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))]",
@@ -415,6 +425,25 @@
                     "defaultAction": "Allow",
                     "bypass": "AzureServices"
                 }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/providers/diagnosticSettings",
+            "apiVersion": "2017-05-01-preview",
+            "name": "[concat(variables('keyVaultName'), '/Microsoft.Insights/Send to all locations')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            ],
+            "properties": {
+                "storageAccountId": "[concat( '/subscriptions/', subscription().subscriptionId, '/resourceGroups/',  variables('resourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', variables('AuditLogsStorageAccountName'))]",
+                "logs": [
+                    {
+                        "category": "AuditEvent",
+                        "enabled": true,
+                        "RetentionEnabled": true,
+                        "RetentionInDays": 90
+                    }
+                ]
             }
         },
         {
