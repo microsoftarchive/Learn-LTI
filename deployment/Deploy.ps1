@@ -126,6 +126,8 @@ process {
             $SubscriptionListOutput = $SubscriptionList | Select-Object @{ l="Subscription Name"; e={ $_.name } }, "id", "isDefault"
             Write-Host ($SubscriptionListOutput | Out-String)
             $SubscriptionNameOrId = Read-Host 'Enter Subscription Name/ID from Above List'
+            #trimming the input for empty spaces, if any
+            $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
             Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
         }
 
@@ -143,6 +145,8 @@ process {
         if(!$LocationName) {
             Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
             $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+            #trimming the input for empty spaces, if any
+            $LocationName = $LocationName.Trim()
         }
         Write-Log -Message "User Provided Location Name: $LocationName"
 
