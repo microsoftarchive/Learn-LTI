@@ -15,6 +15,9 @@ namespace Edna.Utils.Http
             ServerCertificateCustomValidationCallback += PerformX509Valiation;
         }
 
+        // TODO:
+        // Validate beginning date
+        // Remove comments
         public bool PerformX509Valiation 
          (
             HttpRequestMessage req,
@@ -74,8 +77,6 @@ namespace Edna.Utils.Http
             {
                 throw e;
             }
-            //TODO:
-            // Validate beginning date
         }
     }
 }
