@@ -169,7 +169,7 @@ namespace Edna.Assignments
 
             AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
 
-            assignmentEntity.PublishStatus = newPublishStatus.ToString();
+            assignmentEntity.PublishStatus = newPublishStatus;
             assignmentEntity.ETag = "*";
 
             await assignmentEntityCollector.AddAsync(assignmentEntity);

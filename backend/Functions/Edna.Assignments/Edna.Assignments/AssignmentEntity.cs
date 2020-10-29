@@ -17,7 +17,7 @@ namespace Edna.Assignments
         public string LtiVersion { get; set; }
         public string ContextMembershipsUrl { get; set; }
         public string OAuthConsumerKey { get; set; }
-        public string PublishStatus { get; set; }
+        public PublishStatus PublishStatus { get; set; }
         public string PlatformId { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace Edna.Assignments
                 .ForMember(entity => entity.RowKey, expression => expression.MapFrom(dto => dto.ResourceLinkId))
                 .ReverseMap()
                 .ForMember(dto => dto.Id, expression => expression.MapFrom(entity => entity.ToAssignmentId()))
-                .ForMember(dto => dto.PublishStatus, expression => expression.MapFrom(assignment => string.IsNullOrEmpty(assignment.PublishStatus) ? PublishStatus.NotPublished.ToString() : assignment.PublishStatus));
+                .ForMember(dto => dto.PublishStatus, expression => expression.MapFrom(assignment => assignment.PublishStatus));
 
             CreateMap<Platform, PlatformPersonalizationDto>();
         }
