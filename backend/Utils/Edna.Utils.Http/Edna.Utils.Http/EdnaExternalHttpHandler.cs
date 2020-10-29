@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
-using System.Text.RegularExpressions;
 
 namespace Edna.Utils.Http
 {
@@ -25,15 +24,16 @@ namespace Edna.Utils.Http
          )
         {
             const string SERVER_AUTH_CERTIFICATE_USAGE_VALUE = "Server Authentication";
+            var disabledSignAlgos = new System.Collections.Generic.List<string>() { "sha1", "sha224" };
 
             try
             {
-                bool noPolicyError = err == SslPolicyErrors.None;
-                bool isNotExpierd = DateTime.Parse(cert2.GetExpirationDateString()) > System.DateTime.Now;
-                bool isChainVerified = chain.Build(cert2);
-                bool hasValidPublicKeySize = cert2.PublicKey.Key.KeySize >= 2048;
+                bool noPolicyError = err == SslPolicyErrors.None; // checks for NameMismatch as well as chain errors, and also when the certificate was not found!
+                bool isNotExpierd = DateTime.Parse(cert2.GetExpirationDateString()) > DateTime.Now; // Not expired
+                bool isChainVerified = chain.Build(cert2); // Chain verification: can remove as already done by the policy
+                bool hasValidPublicKeySize = cert2.PublicKey.Key.KeySize >= 2048; // key size permissible
 
-                var keyUsages = cert2.Extensions.OfType<X509KeyUsageExtension>().ToList();
+                var keyUsages = cert2.Extensions.OfType<X509KeyUsageExtension>().ToList(); // certificate used for server auth
                 bool userForServerAuth = keyUsages.FirstOrDefault(item => item.Oid.FriendlyName == SERVER_AUTH_CERTIFICATE_USAGE_VALUE) != null;
                 if (!userForServerAuth)
                 {
@@ -47,7 +47,7 @@ namespace Edna.Utils.Http
                     }
                 }
 
-                var chainStatus = chain.ChainStatus;
+                var chainStatus = chain.ChainStatus; // chain status revokation: happens when there is some chain error: can remove as already done by policy
                 bool chainIsNotRevoked = true;
                 foreach (X509ChainStatus status in chainStatus)
                 {
@@ -57,25 +57,25 @@ namespace Edna.Utils.Http
                     }
                 }
 
-                // TODO: Match domain name against hostname properly
-                //var certDnsName = cert2.GetNameInfo(X509NameType.DnsName, false);
-                //Regex rg = new Regex(@certDnsName);
-                //bool hostNameMached = rg.IsMatch(req.RequestUri.Host);
+                var signAlgo = cert2.SignatureAlgorithm.FriendlyName; // check if signing algo is not supported (recommended: >= sha256).
+                bool signAlgoIsEnabled = true;
+                foreach (var algo in disabledSignAlgos)
+                {
+                    if (signAlgo.Contains(algo))
+                    {
+                        signAlgoIsEnabled = false;
+                    }
+                }
 
-                Oid signAlgo = cert2.SignatureAlgorithm;
-
-                return noPolicyError && isNotExpierd && isChainVerified && hasValidPublicKeySize && userForServerAuth && chainIsNotRevoked;
+                bool serverCertificateIsValid = noPolicyError && isNotExpierd && isChainVerified && hasValidPublicKeySize && userForServerAuth && chainIsNotRevoked && signAlgoIsEnabled;
+                return serverCertificateIsValid;
             }
             catch (Exception e)
             {
                 throw e;
             }
-
             //TODO:
-            // Domain name
-            // Validity beginning date
-            // Hashing algorithm must be SHA256 and above
-
+            // Validate beginning date
         }
     }
 }
