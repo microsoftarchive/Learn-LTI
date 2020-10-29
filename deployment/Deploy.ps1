@@ -93,12 +93,9 @@ process {
                 $List
             )
             
-            $subscription = ($List | Where-Object { $_.name -ieq $NameOrId })
+            $subscription = ($List | Where-Object { ($_.name -ieq $NameOrId) -or ($_.id -ieq $NameOrId) })
             if(!$subscription) {
-                $subscription = ($List | Where-Object { $_.id -ieq $NameOrId })
-                if(!$subscription) {
-                    throw "Invalid Subscription Name/ID Entered."
-                }
+                throw "Invalid Subscription Name/ID Entered."
             }
             az account set --subscription $NameOrId
             #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
@@ -120,12 +117,12 @@ process {
         }
         elseif ($SubscriptionCount -eq 1) {
             $SubscriptionNameOrId = $SubscriptionList[0].id;
-            Write-Log -Message "Defaulting to Subscription Name/ID: $SubscriptionNameOrId"
+            Write-Log -Message "Defaulting to Subscription ID: $SubscriptionNameOrId"
         }
         else {
             $SubscriptionListOutput = $SubscriptionList | Select-Object @{ l="Subscription Name"; e={ $_.name } }, "id", "isDefault"
             Write-Host ($SubscriptionListOutput | Out-String)
-            $SubscriptionNameOrId = Read-Host 'Enter Subscription Name/ID from Above List'
+            $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List'
             #trimming the input for empty spaces, if any
             $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
             Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
