@@ -8,6 +8,8 @@ namespace Edna.Assignments
     public enum PublishStatus
     {
         NotPublished,
-        Published
+        Publishing,
+        Published,
+        Failed
     }
 }
