@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Edna.Utils.Http;
 using IdentityModel;
 using IdentityModel.Client;
 using LtiAdvantage.IdentityModel.Client;
@@ -50,7 +51,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             var request = new JwtClientCredentialsTokenRequest { Address = accessTokenEndpoint, ClientId = clientId, Jwt = jwt, Scope = scope };
 
             return await _httpClientFactory
-                .CreateClient()
+                .CreateClient(EdnaExternalHttpHandler.Name)
                 .RequestClientCredentialsTokenWithJwtAsync(request);
         }
 

@@ -24,8 +24,6 @@ namespace Edna.AssignmentLearnContent
 
             builder.AddUserBinding();
 
-            builder.Services.AddHttpClient();
-
             builder.Services.AddHttpClient(EdnaExternalHttpHandler.Name).ConfigurePrimaryHttpMessageHandler(() => new EdnaExternalHttpHandler());
 
             builder.Services.AddAutoMapper(GetType().Assembly);
