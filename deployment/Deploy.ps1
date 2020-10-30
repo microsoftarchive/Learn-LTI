@@ -249,7 +249,7 @@ process {
         $UsersUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.UsersFunctionName.value $EdnaKeyString
         
         #Setting index-document and 404-document in StaticWebsite
-        $se = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --auth-mode login
+        $se = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --only-show-errors
             
         Write-Host 'Resource Creation in Azure Completed Successfully'
 
