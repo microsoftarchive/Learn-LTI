@@ -203,7 +203,6 @@
                 "AssignmentsServiceUrl": "[concat('https://', 'assignments', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
                 "Lti1Secret": "LearnLTI",
                 "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('users' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('users' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
@@ -470,7 +469,7 @@
                 "AzCliVersion": "2.0.80",
                 "timeout": "PT30M",
                 "arguments": "[variables('cliArg')]",
-                "scriptContent": "az keyvault key create --vault-name $1 --name $5 --protection software;az storage blob service-properties update --account-name $2 --static-website --404-document index.html --index-document index.html;",
+                "scriptContent": "az account list",
                 "cleanupPreference": "OnSuccess",
                 "retentionInterval": "P1D"
             }
