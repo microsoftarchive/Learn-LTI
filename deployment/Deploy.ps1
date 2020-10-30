@@ -237,16 +237,21 @@ process {
         }
     
         #Creating EdnaLiteDevKey in keyVault and Updating the Config Entry EdnaLiteDevKey in the Function Config
-        $ke = az keyvault key create --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --protection software
+        $keyCreationOp = az keyvault key create --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --protection software
+        if(!$keyCreationOp) {
+            throw "Encountered an Error while creating Key in keyVault"
+        }
         $KeyVaultLink = $(az keyvault key show --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --query 'key.kid' -o json);
         $EdnaKeyString = @{ "EdnaKeyString"="$KeyVaultLink" }
         $ConnectUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.ConnectFunctionName.value $EdnaKeyString
         $PlatformsUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.PlatformsFunctionName.value $EdnaKeyString
         $UsersUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.UsersFunctionName.value $EdnaKeyString
 
-        #Setting index-document and 404-document in StaticWebsite
-        $se = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --only-show-errors
-
+        #Creating a Container in Static Website
+        $containerCreationOp = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --only-show-errors
+        if(!$containerCreationOp) {
+            throw "Encountered an Error while creating Container to host Static Website"
+        }
         Write-Host 'Resource Creation in Azure Completed Successfully'
 
         Write-Title 'STEP #9 - Updating AAD App'
