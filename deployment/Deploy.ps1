@@ -7,7 +7,6 @@
 param (
     [string]$ResourceGroupName = "MSLearnLTI",
     [string]$AppName = "MS-Learn-Lti-Tool-App",
-    [string]$IdentityName = "MSLearnLTI-Identity",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -192,34 +191,8 @@ process {
         Write-Host 'Resource Group Created Successfully'
         #endregion
 
-        #region Create new Managed Contrbuter for deploying resources via ARM template
-        Write-Title 'STEP #6 - Creating Managed Identity'
-
-        Write-Log -Message "Creating Managed Identity inside ResourceGroup [ $ResourceGroupName ] with Name [ $IdentityName ]"
-        $identityObj = (az identity create -g $ResourceGroupName -n $IdentityName) | ConvertFrom-Json
-        if(!$identityObj) {
-            throw "Error while creating Managed Identity inside ResourceGroup [ $ResourceGroupName ] with Name [ $IdentityName ]" 
-        }
-    
-        #It takes a few seconds for the Managed Identity to spin up and be available for further processing
-        Write-Log -Message "Sleeping for 30 seconds"
-        Start-Sleep -s 30
-        Write-Host 'Managed Identity Created Successfully'
-
-        Write-Title 'STEP #7 - Creating Role Assignment'
-    
-        $roleName = "Contributor"
-        Write-Log -Message "Assigning Role: $roleName to PrincipalID: $($identityObj.principalId)"
-        $roleAssignmentOp = az role assignment create --assignee-object-id $identityObj.principalId --assignee-principal-type ServicePrincipal --role $roleName
-        if(!$roleAssignmentOp) {
-            throw "Encountered an Error while creating Role Assignment"
-        }
-    
-        Write-Host 'Role Assignment Created Successfully';
-        #endregion
-
         #region Provision Resources inside Resource Group on Azure using ARM template
-        Write-Title 'STEP #8 - Creating Resources in Azure'
+        Write-Title 'STEP #6 - Creating Resources in Azure'
     
         $userObjectId = az ad signed-in-user show --query objectId
         #$userObjectId
@@ -227,7 +200,7 @@ process {
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $($appinfo.appId), IdentifiedURI: $($appinfo.identifierUris)"
-        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) identityName=$($IdentityName) userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
+        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
         if(!$deploymentOutput) {
             throw "Encountered an Error while deploying to Azure"
         }
@@ -258,7 +231,7 @@ process {
         }
         Write-Host 'Resource Creation in Azure Completed Successfully'
 
-        Write-Title 'STEP #9 - Updating AAD App'
+        Write-Title 'STEP #7 - Updating AAD App'
     
         $AppRedirectUrl = $deploymentOutput.properties.outputs.webClientURL.value
         Write-Log -Message "Updating App with ID: $($appinfo.appId) to Redirect URL: $AppRedirectUrl and also enabling Implicit Flow"
@@ -270,7 +243,7 @@ process {
 
         #region Build and Publish Function Apps
         . .\Install-Backend.ps1
-        Write-Title "STEP #10 - Installing the backend"
+        Write-Title "STEP #8 - Installing the backend"
     
         $BackendParams = @{
             SourceRoot="../backend";
@@ -287,7 +260,7 @@ process {
 
         #region Build and Publish Client Artifacts
         . .\Install-Client.ps1
-        Write-Title "STEP #11 - Updating client's .env.production file"
+        Write-Title "STEP #9 - Updating client's .env.production file"
     
         $ClientUpdateConfigParams = @{
             ConfigPath="../client/.env.production";
@@ -301,7 +274,7 @@ process {
         }
         Update-ClientConfig @ClientUpdateConfigParams
     
-        Write-Title 'STEP #12 - Installing the client'
+        Write-Title 'STEP #10 - Installing the client'
         $ClientInstallParams = @{
             SourceRoot="../client";
             StaticWebsiteStorageAccount=$deploymentOutput.properties.outputs.StaticWebSiteName.value
