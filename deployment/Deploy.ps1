@@ -9,8 +9,8 @@ param (
     [string]$AppName = "MS-Learn-Lti-Tool-App",
     [string]$IdentityName = "MSLearnLTI-Identity",
     [switch]$UseActiveAzureAccount,
-    [string]$SubscriptionName = $null,
-    [string]$LocationName=$null
+    [string]$SubscriptionNameOrId = $null,
+    [string]$LocationName = $null
 )
 
 process {
@@ -89,15 +89,15 @@ process {
 
         function Set-LtiActiveSubscription {
             param (
-                [string]$Name,
+                [string]$NameOrId,
                 $List
             )
             
-            $subscription = ($List | Where-Object { $_.name -ieq $Name })
+            $subscription = ($List | Where-Object { ($_.name -ieq $NameOrId) -or ($_.id -ieq $NameOrId) })
             if(!$subscription) {
-                throw "Invalid Subscription Name Entered."
+                throw "Invalid Subscription Name/ID Entered."
             }
-            az account set --subscription $Name
+            az account set --subscription $NameOrId
             #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
             
             Write-Output $subscription
@@ -112,21 +112,23 @@ process {
         if ($SubscriptionCount -eq 0) {
             throw "Please create at least ONE Subscription in your Azure Account"
         }
-        elseif ($SubscriptionName) {
-            Write-Log -Message "Using User provided Subscription Name: $SubscriptionName"            
+        elseif ($SubscriptionNameOrId) {
+            Write-Log -Message "Using User provided Subscription Name/ID: $SubscriptionNameOrId"            
         }
         elseif ($SubscriptionCount -eq 1) {
-            $SubscriptionName = $SubscriptionList[0].name;
-            Write-Log -Message "Defaulting to Subscription Name: $SubscriptionName"
+            $SubscriptionNameOrId = $SubscriptionList[0].id;
+            Write-Log -Message "Defaulting to Subscription ID: $SubscriptionNameOrId"
         }
         else {
             $SubscriptionListOutput = $SubscriptionList | Select-Object @{ l="Subscription Name"; e={ $_.name } }, "id", "isDefault"
             Write-Host ($SubscriptionListOutput | Out-String)
-            $SubscriptionName = Read-Host 'Enter Subscription Name from Above List'
-            Write-Log -Message "User Entered Subscription Name: $SubscriptionName"
+            $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List'
+            #trimming the input for empty spaces, if any
+            $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
+            Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
         }
 
-        $ActiveSubscription = Set-LtiActiveSubscription -Name $SubscriptionName -List $SubscriptionList
+        $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
         $UserEmailAddress = $ActiveSubscription.user.name
         #endregion
 
@@ -140,6 +142,8 @@ process {
         if(!$LocationName) {
             Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
             $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+            #trimming the input for empty spaces, if any
+            $LocationName = $LocationName.Trim()
         }
         Write-Log -Message "User Provided Location Name: $LocationName"
 
@@ -236,13 +240,17 @@ process {
             }
         }
     
-        #Updating the Config Entry EdnaLiteDevKey in the Function Config
-        $KeyVaultLink=$(az keyvault key show --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --query 'key.kid' -o json);
+        #Creating EdnaLiteDevKey in keyVault and Updating the Config Entry EdnaLiteDevKey in the Function Config
+        $ke = az keyvault key create --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --protection software
+        $KeyVaultLink = $(az keyvault key show --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --query 'key.kid' -o json);
         $EdnaKeyString = @{ "EdnaKeyString"="$KeyVaultLink" }
         $ConnectUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.ConnectFunctionName.value $EdnaKeyString
         $PlatformsUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.PlatformsFunctionName.value $EdnaKeyString
         $UsersUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.UsersFunctionName.value $EdnaKeyString
-    
+
+        #Setting index-document and 404-document in StaticWebsite
+        $se = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --only-show-errors
+
         Write-Host 'Resource Creation in Azure Completed Successfully'
 
         Write-Title 'STEP #9 - Updating AAD App'
