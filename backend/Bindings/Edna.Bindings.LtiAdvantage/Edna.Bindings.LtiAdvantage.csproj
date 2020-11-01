@@ -18,7 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ThirdParty\LtiAdvantage\LtiAdvantage.IdentityModel\LtiAdvantage.IdentityModel.csproj" />
     <ProjectReference Include="..\..\ThirdParty\LtiAdvantage\LtiAdvantage\LtiAdvantage.csproj" />
-    <ProjectReference Include="..\..\Utils\Edna.Utils.Http\Edna.Utils.Http\Edna.Utils.Http.csproj" />
   </ItemGroup>
 
 </Project>

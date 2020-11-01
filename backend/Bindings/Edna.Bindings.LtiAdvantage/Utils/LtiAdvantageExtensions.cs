@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Edna.Utils.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
@@ -23,7 +24,7 @@ namespace Edna.Bindings.LtiAdvantage.Utils
             if (!request.Form.TryGetValue("id_token", out var idTokenValue))
                 throw new NullReferenceException("No ID token is presented in the http request.");
 
-            using HttpClient client = new HttpClient();
+            using HttpClient client = new HttpClient(new EdnaExternalHttpHandler());
             string certsJsonString = await client.GetStringAsync(jwkSetUrl);
             JObject certsJObject = JObject.Parse(certsJsonString);
             JArray keysJToken = certsJObject["keys"] as JArray;

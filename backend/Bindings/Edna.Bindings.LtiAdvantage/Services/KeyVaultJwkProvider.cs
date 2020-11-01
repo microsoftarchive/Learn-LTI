@@ -3,7 +3,9 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
+using System.Net.Http;
 using System.Threading.Tasks;
+using Edna.Utils.Http;
 using IdentityModel.Jwk;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
@@ -18,8 +20,8 @@ namespace Edna.Bindings.LtiAdvantage.Services
         {
             AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
             KeyVaultSecurityKey.AuthenticationCallback keyVaultAuthCallback = new KeyVaultSecurityKey.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback);
-
-            KeyVaultClient client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(keyVaultAuthCallback));
+            EdnaExternalHttpHandler ednaExternalHttpHandler = new EdnaExternalHttpHandler();
+            KeyVaultClient client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(keyVaultAuthCallback), new HttpClient(ednaExternalHttpHandler));
             KeyBundle keyBundle = await client.GetKeyAsync(keyVaultIdentifier);
 
             JsonWebKey jwk = new JsonWebKey(keyBundle.Key.ToString());

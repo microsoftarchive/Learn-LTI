@@ -9,11 +9,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Edna.Utils.Http;
 using IdentityModel.Client;
 using LtiAdvantage;
 using LtiAdvantage.NamesRoleProvisioningService;
 using Microsoft.Extensions.Logging;
+using Edna.Utils.Http;
 using Newtonsoft.Json;
 
 namespace Edna.Bindings.LtiAdvantage.Services
