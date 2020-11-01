@@ -9,18 +9,12 @@ namespace Edna.Utils.Http
         public static string Name = nameof(EdnaHttpHandler);
         public EdnaExternalHttpHandler() : base()
         {
-            ServerCertificateCustomValidationCallback += PerformX509Valiation;
+            ServerCertificateCustomValidationCallback = PerformX509Valiation;
         }
 
-        public bool PerformX509Valiation 
-         (
-            HttpRequestMessage req,
-            X509Certificate2 certificate,
-            X509Chain chain,
-            SslPolicyErrors err
-         )
+        public bool PerformX509Valiation ( HttpRequestMessage req, X509Certificate2 cert, X509Chain chain, SslPolicyErrors err )
         {
-            return (err == SslPolicyErrors.None) && chain.Build(certificate);
+            return (err == SslPolicyErrors.None) && chain.Build(cert);
         }
     }
 }
