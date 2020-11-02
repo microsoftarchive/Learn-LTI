@@ -13,8 +13,8 @@ using IdentityModel.Client;
 using LtiAdvantage;
 using LtiAdvantage.NamesRoleProvisioningService;
 using Microsoft.Extensions.Logging;
-using Edna.Utils.Http;
 using Newtonsoft.Json;
+using Edna.Bindings.LtiAdvantage.Utils;
 
 namespace Edna.Bindings.LtiAdvantage.Services
 {

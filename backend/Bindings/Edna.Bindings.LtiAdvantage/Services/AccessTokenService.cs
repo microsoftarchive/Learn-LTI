@@ -9,7 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Edna.Utils.Http;
+using Edna.Bindings.LtiAdvantage.Utils;
 using IdentityModel;
 using IdentityModel.Client;
 using LtiAdvantage.IdentityModel.Client;
