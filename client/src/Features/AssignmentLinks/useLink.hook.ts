@@ -5,22 +5,24 @@
 
 import { AssignmentLink } from '../../Models/AssignmentLink.model';
 import { useState, useEffect } from 'react';
-import { isValidURL } from './AssignmentLinkEditor';
+import { isValidURL, ValidateDescLength, ValidateTitleLength } from './AssignmentLinkEditor';
 
 type useLinkReturnType = [AssignmentLink, (link: AssignmentLink) => void, boolean];
 
 export const useLink = (assignmentLink: AssignmentLink): useLinkReturnType => {
   const [link, setLink] = useState<AssignmentLink>(assignmentLink);
 
-  const isValidLink = (link: AssignmentLink) => {
-    return link.url.length>0 && isValidURL(link.url) && link.displayText.length<=500 && link.description.length<=1000;
-  }
+  const titleIsValid = ValidateTitleLength(link.displayText) === "";
+  const descIsValid = ValidateDescLength(link.description) === "";
+  const urlIsValid = isValidURL(link.url) && link.url.length>0;
 
-  const [canSave, setCanSave] = useState(isValidLink(link))
+  const isValidLink = titleIsValid && urlIsValid && descIsValid;
+
+  const [canSave, setCanSave] = useState(isValidLink)
 
   useEffect(() => {
-    setCanSave(isValidLink(link));
-  }, [link]);
+    setCanSave(isValidLink);
+  }, [link, isValidLink]);
 
   return [link, setLink, canSave];
 };
