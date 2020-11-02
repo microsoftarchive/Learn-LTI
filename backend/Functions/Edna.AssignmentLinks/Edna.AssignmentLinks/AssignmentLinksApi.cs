@@ -109,6 +109,15 @@ namespace Edna.AssignmentLinks
             if (linkId != linkDto.Id)
                 return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
 
+            bool isValidURL = Uri.IsWellFormedUriString(linkDto.Url, UriKind.Absolute);
+            bool isValidTitle = linkDto.DisplayText.Length <= 500;
+            bool isValidDesc = linkDto.Description.Length <= 1000;
+
+            if (!(isValidDesc && isValidURL && isValidTitle))
+            {
+                return new BadRequestErrorMessageResult("The provided link field values are not valid");
+            }
+
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");
 
             AssignmentLinkEntity assignmentLinkEntity = _mapper.Map<AssignmentLinkEntity>(linkDto);
