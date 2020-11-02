@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { AssignmentLink } from '../../Models/AssignmentLink.model';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { isValidURL, ValidateDescLength, ValidateTitleLength } from './AssignmentLinkEditor';
 
 type useLinkReturnType = [AssignmentLink, (link: AssignmentLink) => void, boolean];
@@ -12,16 +12,19 @@ type useLinkReturnType = [AssignmentLink, (link: AssignmentLink) => void, boolea
 export const useLink = (assignmentLink: AssignmentLink): useLinkReturnType => {
   const [link, setLink] = useState<AssignmentLink>(assignmentLink);
 
-  const titleIsValid = (text: string) => ValidateTitleLength(text) === "";
-  const descIsValid = (text: string) => ValidateDescLength(text) === "";
-  const urlIsValid = (url: string) => isValidURL(url) && url.length>0;
+  const isValidLink = useCallback((link: AssignmentLink) => {
 
-  const isValidLink = () => titleIsValid(link.displayText) && urlIsValid(link.url) && descIsValid(link.description);
+    const titleIsValid = (text: string) => ValidateTitleLength(text) === "";
+    const descIsValid = (text: string) => ValidateDescLength(text) === "";
+    const urlIsValid = (url: string) => isValidURL(url) && url.length>0;
 
-  const [canSave, setCanSave] = useState(isValidLink)
+    return  titleIsValid(link.displayText) && urlIsValid(link.url) && descIsValid(link.description);
+  }, [])
+
+  const [canSave, setCanSave] = useState(isValidLink(link))
 
   useEffect(() => {
-    setCanSave(isValidLink);
+    setCanSave(isValidLink(link));
   }, [link, isValidLink]);
 
   return [link, setLink, canSave];
