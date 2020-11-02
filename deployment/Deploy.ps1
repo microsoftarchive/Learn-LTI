@@ -204,7 +204,10 @@ process {
         if(!$deploymentOutput) {
             throw "Encountered an Error while deploying to Azure"
         }
-    
+        Write-Host 'Resource Creation in Azure Completed Successfully'
+        
+        Write-Title 'Step #7 - Updating KeyVault with LTI 1.3 Key'
+
         function Update-LtiFunctionAppSettings([string]$ResourceGroupName, [string]$FunctionAppName, [hashtable]$AppSettings) {
             Write-Log -Message "Updating App Settings for Function App [ $FunctionAppName ]: -"
             foreach ($it in $AppSettings.GetEnumerator()) {
@@ -224,14 +227,18 @@ process {
         $PlatformsUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.PlatformsFunctionName.value $EdnaKeyString
         $UsersUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.UsersFunctionName.value $EdnaKeyString
 
+        Write-Host 'Key Creation in KeyVault Completed Successfully'
+
+        Write-Title 'Step #8 - Enabling Static Website Container'
+
         #Creating a Container in Static Website
-        $containerCreationOp = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --only-show-errors
-        if(!$containerCreationOp) {
+        $containerEnableOp = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --only-show-errors
+        if(!$containerEnableOp) {
             throw "Encountered an Error while creating Container to host Static Website"
         }
-        Write-Host 'Resource Creation in Azure Completed Successfully'
+        Write-Host 'Static Website Container Enabled Successfully'
 
-        Write-Title 'STEP #7 - Updating AAD App'
+        Write-Title 'STEP #9 - Updating AAD App'
     
         $AppRedirectUrl = $deploymentOutput.properties.outputs.webClientURL.value
         Write-Log -Message "Updating App with ID: $($appinfo.appId) to Redirect URL: $AppRedirectUrl and also enabling Implicit Flow"
@@ -243,7 +250,7 @@ process {
 
         #region Build and Publish Function Apps
         . .\Install-Backend.ps1
-        Write-Title "STEP #8 - Installing the backend"
+        Write-Title "STEP #10 - Installing the backend"
     
         $BackendParams = @{
             SourceRoot="../backend";
@@ -260,7 +267,7 @@ process {
 
         #region Build and Publish Client Artifacts
         . .\Install-Client.ps1
-        Write-Title "STEP #9 - Updating client's .env.production file"
+        Write-Title "STEP #11 - Updating client's .env.production file"
     
         $ClientUpdateConfigParams = @{
             ConfigPath="../client/.env.production";
@@ -274,7 +281,7 @@ process {
         }
         Update-ClientConfig @ClientUpdateConfigParams
     
-        Write-Title 'STEP #10 - Installing the client'
+        Write-Title 'STEP #12 - Installing the client'
         $ClientInstallParams = @{
             SourceRoot="../client";
             StaticWebsiteStorageAccount=$deploymentOutput.properties.outputs.StaticWebSiteName.value
