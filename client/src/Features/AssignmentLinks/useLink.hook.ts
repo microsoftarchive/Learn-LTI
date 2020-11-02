@@ -12,11 +12,11 @@ type useLinkReturnType = [AssignmentLink, (link: AssignmentLink) => void, boolea
 export const useLink = (assignmentLink: AssignmentLink): useLinkReturnType => {
   const [link, setLink] = useState<AssignmentLink>(assignmentLink);
 
-  const titleIsValid = ValidateTitleLength(link.displayText) === "";
-  const descIsValid = ValidateDescLength(link.description) === "";
-  const urlIsValid = isValidURL(link.url) && link.url.length>0;
+  const titleIsValid = (text: string) => ValidateTitleLength(text) === "";
+  const descIsValid = (text: string) => ValidateDescLength(text) === "";
+  const urlIsValid = (url: string) => isValidURL(url) && url.length>0;
 
-  const isValidLink = titleIsValid && urlIsValid && descIsValid;
+  const isValidLink = () => titleIsValid(link.displayText) && urlIsValid(link.url) && descIsValid(link.description);
 
   const [canSave, setCanSave] = useState(isValidLink)
 
