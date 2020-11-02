@@ -40,6 +40,8 @@
         "staticWebsite": "[toLower(concat('learnclient', replace(variables('uniqueIdentifier'),'-','')))]",
         "keyVaultName": "[toLower(concat('kv-', variables('uniqueIdentifier')))]",
         "StorageAccountSuffix": "[toLower(concat(variables('uniqueIdentifier')))]",
+        "KeyVaultAuditLogsStorageAccountName": "[toLower(concat('kv' , variables('StorageAccountSuffix'), 'auditlogs'))]",
+
         "readerRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
         "KVKeyPermissions": [
             "encrypt",
@@ -332,6 +334,15 @@
             }
         },
         {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[variables('KeyVaultAuditLogsStorageAccountName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard_LRS"
+            }
+        },
+        {
             "type": "Microsoft.Insights/components",
             "apiVersion": "2018-05-01-preview",
             "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))]",
@@ -381,6 +392,26 @@
                     "defaultAction": "Allow",
                     "bypass": "AzureServices"
                 }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/providers/diagnosticSettings",
+            "apiVersion": "2017-05-01-preview",
+            "name": "[concat(variables('keyVaultName'), '/Microsoft.Insights/Send to all locations')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('KeyVaultAuditLogsStorageAccountName'))]"
+            ],
+            "properties": {
+                "storageAccountId": "[concat( '/subscriptions/', subscription().subscriptionId, '/resourceGroups/',  variables('resourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', variables('KeyVaultAuditLogsStorageAccountName'))]",
+                "logs": [
+                    {
+                        "category": "AuditEvent",
+                        "enabled": true,
+                        "RetentionEnabled": true,
+                        "RetentionInDays": 90
+                    }
+                ]
             }
         },
         {
