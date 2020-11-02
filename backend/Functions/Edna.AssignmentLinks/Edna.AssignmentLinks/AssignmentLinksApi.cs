@@ -109,7 +109,8 @@ namespace Edna.AssignmentLinks
             if (linkId != linkDto.Id)
                 return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
 
-            bool isValidURL = Uri.IsWellFormedUriString(linkDto.Url, UriKind.Absolute);
+            Uri linkUri;
+            bool isValidURL = Uri.TryCreate(linkDto.Url, UriKind.Absolute, out linkUri) && (linkUri.Scheme == Uri.UriSchemeHttp || linkUri.Scheme == Uri.UriSchemeHttps);
             bool isValidTitle = linkDto.DisplayText.Length <= 500;
             bool isValidDesc = linkDto.Description.Length <= 1000;
 
