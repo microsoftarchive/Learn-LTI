@@ -26,5 +26,5 @@ namespace Edna.Bindings.LtiAdvantage
 
             return builder;
         }
-}
+    }
 }
