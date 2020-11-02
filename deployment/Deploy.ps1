@@ -192,7 +192,7 @@ process {
         Write-Host 'Resource Group Created Successfully'
         #endregion
 
-        #region Create new Managed Contrbuter for deploying resources via ARM template
+        #region Create new Managed Contributor for deploying resources via ARM template
         Write-Title 'STEP #6 - Creating Managed Identity'
 
         Write-Log -Message "Creating Managed Identity inside ResourceGroup [ $ResourceGroupName ] with Name [ $IdentityName ]"
