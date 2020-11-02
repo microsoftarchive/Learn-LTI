@@ -49,7 +49,7 @@
         "staticWebsite": "[toLower(concat('learnclient', replace(variables('uniqueIdentifier'),'-','')))]",
         "keyVaultName": "[toLower(concat('kv-', variables('uniqueIdentifier')))]",
         "StorageAccountSuffix": "[toLower(concat(variables('uniqueIdentifier')))]",
-        "AuditLogsStorageAccountName": "[toLower(concat('auditlogs' , variables('StorageAccountSuffix')))]",
+        "KeyVaultAuditLogsStorageAccountName": "[toLower(concat('auditlogskv' , variables('StorageAccountSuffix')))]",
         "keyName": "EdnaLiteDevKey",
         "cliResourceName": "DeployingAppRegisteration",
         "cliArg": "[concat(variables('keyVaultName'), ' ', variables('staticWebsite'), ' ',variables('location'), ' ',variables('ProjectNameSuffix'), ' ',variables('keyName'),' ',variables('resourceGroupName'))]",
@@ -356,7 +356,7 @@
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
-            "name": "[variables('AuditLogsStorageAccountName')]",
+            "name": "[variables('KeyVaultAuditLogsStorageAccountName')]",
             "location": "[variables('location')]",
             "sku": {
                 "name": "Standard_LRS"
@@ -431,10 +431,11 @@
             "apiVersion": "2017-05-01-preview",
             "name": "[concat(variables('keyVaultName'), '/Microsoft.Insights/Send to all locations')]",
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('KeyVaultAuditLogsStorageAccountName'))]"
             ],
             "properties": {
-                "storageAccountId": "[concat( '/subscriptions/', subscription().subscriptionId, '/resourceGroups/',  variables('resourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', variables('AuditLogsStorageAccountName'))]",
+                "storageAccountId": "[concat( '/subscriptions/', subscription().subscriptionId, '/resourceGroups/',  variables('resourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', variables('KeyVaultAuditLogsStorageAccountName'))]",
                 "logs": [
                     {
                         "category": "AuditEvent",
