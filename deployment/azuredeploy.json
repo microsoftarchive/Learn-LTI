@@ -49,7 +49,6 @@
         "ProjectNameSuffix": "[concat('-', variables('StorageAccountSuffix'))]",
         "staticWebsite": "[toLower(concat('learnclient', variables('StorageAccountSuffix')))]",
         "keyVaultName": "[toLower(concat('kv', variables('ProjectNameSuffix')))]",
-
         "KeyVaultAuditLogsStorageAccountName": "[toLower(concat('kv' , variables('StorageAccountSuffix'), 'auditlogs'))]",
         "keyName": "EdnaLiteDevKey",
         "cliResourceName": "DeployingAppRegisteration",
