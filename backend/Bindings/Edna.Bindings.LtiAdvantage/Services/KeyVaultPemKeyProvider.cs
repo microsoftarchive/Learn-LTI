@@ -23,8 +23,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
         {
             AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
             KeyVaultSecurityKey.AuthenticationCallback keyVaultAuthCallback = new KeyVaultSecurityKey.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback);
-            EdnaExternalHttpHandler ednaExternalHttpHandler = new EdnaExternalHttpHandler();
-            KeyVaultClient client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(keyVaultAuthCallback), new HttpClient(ednaExternalHttpHandler));
+            KeyVaultClient client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(keyVaultAuthCallback), EdnaExternalHttpClient.Create());
             KeyBundle keyBundle = await client.GetKeyAsync(keyVaultIdentifier);
 
             RSAParameters rsaParameters = keyBundle.Key.ToRSAParameters();
