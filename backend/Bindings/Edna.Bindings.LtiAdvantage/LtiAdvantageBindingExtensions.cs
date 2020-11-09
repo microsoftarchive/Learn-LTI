@@ -17,7 +17,7 @@ namespace Edna.Bindings.LtiAdvantage
         {
             builder.AddExtension<LtiAdvantageExtensionConfigProvider>();
 
-            builder.Services.AddHttpClient(nameof(EdnaExternalHttpHandler)).ConfigurePrimaryHttpMessageHandler(() => new EdnaExternalHttpHandler());
+            builder.Services.AddEdnaExternalHttpClientHandler();
 
             builder.Services.AddSingleton<NrpsClient.NrpsClientFactory>();
             builder.Services.AddSingleton<IAccessTokenService, AccessTokenService>();

@@ -6,12 +6,14 @@
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Edna.Bindings.LtiAdvantage.Utils
 {
     public class EdnaExternalHttpHandler : HttpClientHandler
     {
         public static string Name = nameof(EdnaExternalHttpHandler);
+
         public EdnaExternalHttpHandler() : base()
         {
             ServerCertificateCustomValidationCallback = PerformX509Valiation;

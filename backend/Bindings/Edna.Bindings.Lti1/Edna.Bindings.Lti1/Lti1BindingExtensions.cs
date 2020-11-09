@@ -15,7 +15,7 @@ namespace Edna.Bindings.Lti1
         {
             builder.AddExtension<Lti1BindingConfigProvider>();
             builder.Services.AddHttpClient();
-            builder.Services.AddHttpClient(nameof(EdnaExternalHttpHandler)).ConfigurePrimaryHttpMessageHandler(() => new EdnaExternalHttpHandler());
+            builder.Services.AddEdnaExternalHttpClientHandler();
             builder.Services.AddSingleton<Lti1MembershipClient>();
 
             return builder;
