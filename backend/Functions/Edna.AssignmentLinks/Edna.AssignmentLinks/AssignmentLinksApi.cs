@@ -21,6 +21,7 @@ using Edna.Utils.Http;
 using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Edna.AssignmentLinks
 {
@@ -109,21 +110,18 @@ namespace Edna.AssignmentLinks
             if (linkId != linkDto.Id)
                 return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
 
-            Uri linkUri;
-            bool isValidURL = Uri.TryCreate(linkDto.Url, UriKind.Absolute, out linkUri) && (linkUri.Scheme == Uri.UriSchemeHttp || linkUri.Scheme == Uri.UriSchemeHttps);
-            bool isValidTitle = linkDto.DisplayText.Length <= 500;
-            bool isValidDesc = linkDto.Description.Length <= 1000;
-
-            if (!(isValidDesc && isValidURL && isValidTitle))
-            {
-                return new BadRequestErrorMessageResult("The provided link field values are not valid");
-            }
-
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");
 
             AssignmentLinkEntity assignmentLinkEntity = _mapper.Map<AssignmentLinkEntity>(linkDto);
             assignmentLinkEntity.PartitionKey = assignmentId;
             assignmentLinkEntity.ETag = "*";
+
+            System.ComponentModel.DataAnnotations.ValidationContext context = new System.ComponentModel.DataAnnotations.ValidationContext(assignmentLinkEntity, null, null);
+            bool isValid = Validator.TryValidateObject(assignmentLinkEntity, context, new List<ValidationResult>(), true);
+            if (!isValid)
+            {
+                return new BadRequestErrorMessageResult("The provided link field values are not valid.");
+            }
 
             await linksCollector.AddAsync(assignmentLinkEntity);
             await linksCollector.FlushAsync();
