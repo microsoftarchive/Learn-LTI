@@ -6,7 +6,6 @@
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Edna.Bindings.LtiAdvantage.Utils
 {
