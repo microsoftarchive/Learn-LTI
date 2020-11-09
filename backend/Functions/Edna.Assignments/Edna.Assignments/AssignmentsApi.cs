@@ -23,6 +23,7 @@ using System;
 using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Edna.Assignments
 {
@@ -68,6 +69,13 @@ namespace Edna.Assignments
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
+            }
+
+            System.ComponentModel.DataAnnotations.ValidationContext context = new System.ComponentModel.DataAnnotations.ValidationContext(assignmentEntity, null, null);
+            bool isValid = Validator.TryValidateObject(assignmentEntity, context, new List<ValidationResult>(), true);
+            if (!isValid)
+            {
+                return new BadRequestErrorMessageResult("The provided description length is too long.");
             }
 
             TableOperation insertOrMergeAssignment = TableOperation.InsertOrMerge(assignmentEntity);
