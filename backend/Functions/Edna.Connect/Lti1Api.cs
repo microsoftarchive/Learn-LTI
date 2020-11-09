@@ -83,13 +83,5 @@ namespace Edna.Connect
                 OAuthConsumerKey = ltiRequest.ConsumerKey
             };
         }
-
-        //private LtiVersion LtiVersionToEnum(LtiRequest ltiRequest)
-        //{
-        //    if (ltiRequest.Version == "1.3.0")
-        //        return LtiVersion.LtiAdvantage;
-        //    else
-        //        return LtiVersion.Lti1;
-        //}
     }
 }

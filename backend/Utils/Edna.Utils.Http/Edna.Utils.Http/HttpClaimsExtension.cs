@@ -18,7 +18,6 @@ namespace Edna.Utils.Http
         public static bool TryGetUserEmails(this IHeaderDictionary headers, out List<string> userEmails, Action<string> logAction = null)
         {
             userEmails = new List<string>();
-
             if (!headers.TryGetTokenClaims(out Claim[] claims, logAction))
             {
                 logAction?.Invoke("Error in sent JWT");

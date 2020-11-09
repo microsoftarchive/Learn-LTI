@@ -145,14 +145,6 @@ namespace Edna.Connect
             };
         }
 
-        //private LtiVersion LtiVersionToEnum(LtiRequest ltiRequest)
-        //{
-        //    if (ltiRequest.Version == "1.3.0")
-        //        return LtiVersion.LtiAdvantage;
-        //    else
-        //        return LtiVersion.Lti1;
-        //}
-
         private async Task<bool> ValidateNonce(string nonce, string state, IDurableEntityClient entityClient)
         {
             EntityId nonceEntityId = new EntityId(nameof(Nonce), nonce);
