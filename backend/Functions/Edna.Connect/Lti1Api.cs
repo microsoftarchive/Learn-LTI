@@ -80,8 +80,7 @@ namespace Edna.Connect
                 CourseName = ltiRequest.ContextTitle,
                 LtiVersion = ltiRequest.Version,
                 ContextMembershipsUrl = ltiRequest.Parameters.FirstOrDefault(pair => pair.Key == "custom_context_memberships_url").Value,
-                OAuthConsumerKey = ltiRequest.ConsumerKey,
-                PublishStatus = PublishStatus.NotPublished
+                OAuthConsumerKey = ltiRequest.ConsumerKey
             };
         }
 

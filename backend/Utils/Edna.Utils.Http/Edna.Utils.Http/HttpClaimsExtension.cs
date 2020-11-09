@@ -19,11 +19,6 @@ namespace Edna.Utils.Http
         {
             userEmails = new List<string>();
 
-            #if DEBUG
-            // For debug purposes, there is no authentication.
-            return true;
-            #endif
-            
             if (!headers.TryGetTokenClaims(out Claim[] claims, logAction))
             {
                 logAction?.Invoke("Error in sent JWT");

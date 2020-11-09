@@ -141,8 +141,7 @@ namespace Edna.Connect
                 Name = ltiRequest.ResourceLink.Title,
                 CourseName = ltiRequest.Context.Title,
                 LtiVersion = ltiRequest.Version,
-                ContextMembershipsUrl = ltiRequest.NamesRoleService.ContextMembershipUrl,
-                PublishStatus = PublishStatus.NotPublished
+                ContextMembershipsUrl = ltiRequest.NamesRoleService.ContextMembershipUrl
             };
         }
 
