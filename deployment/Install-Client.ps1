@@ -162,6 +162,8 @@ function Install-Client {
         Write-ClientDebugLog -Message 'Uploading build content to the `$web storage container'
         # Turning Error only mode as this cmd shows a warning which causes misconception that user needs to sign in to azure cli
         $result = az storage blob upload-batch -s 'build' -d '$web' --account-name $StaticWebsiteStorageAccount --only-show-errors | ConvertFrom-Json
+        az storage logging update --log rwd --retention 30 --services b --account-name $StaticWebsiteStorageAccount --only-show-errors
+
         if(!$result) {
             throw "Failed to deploy Client App to $StaticWebsiteStorageAccount/`$web"
         }
