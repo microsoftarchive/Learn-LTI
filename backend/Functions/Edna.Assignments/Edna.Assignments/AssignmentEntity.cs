@@ -4,7 +4,6 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Edna.Assignments
@@ -13,8 +12,6 @@ namespace Edna.Assignments
     {
         public string Name { get; set; }
         public DateTime? Deadline { get; set; }
-
-        [StringLength(2000)]
         public string Description { get; set; }
         public string CourseName { get; set; }
         public string LtiVersion { get; set; }

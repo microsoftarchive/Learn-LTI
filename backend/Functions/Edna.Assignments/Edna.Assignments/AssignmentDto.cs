@@ -4,6 +4,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Edna.Assignments
 {
@@ -14,9 +15,11 @@ namespace Edna.Assignments
         public string ResourceLinkId { get; set; }
         public string Name { get; set; }
         public DateTime? Deadline { get; set; }
+        [StringLength(2000)]
         public string Description { get; set; }
         public string CourseName { get; set; }
         public string LtiVersion { get; set; }
+        [Url]
         public string ContextMembershipsUrl { get; set; }
         public string OAuthConsumerKey { get; set; }
         public string PublishStatus { get; set; }
