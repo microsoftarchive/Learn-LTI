@@ -32,7 +32,6 @@ namespace Edna.Assignments
     {
         private const string AssignmentsTableName = "Assignments";
         private const string AssignmentsRoutePath = "assignments";
-        private const string LtiAdvantageVersionString = "1.3.0";
 
         private readonly ILogger<AssignmentsApi> _logger;
         private readonly IMapper _mapper;
@@ -108,7 +107,7 @@ namespace Edna.Assignments
 
             AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
 
-            if (assignmentEntity.LtiVersion == LtiAdvantageVersionString)
+            if (assignmentEntity.LtiVersion == LtiVersion.LtiAdvantage.ToString())
             {
                 Platform platform = await platformsClient.GetPlatform(assignmentEntity.PlatformId);
                 assignmentDto.PlatformPersonalization = _mapper.Map<PlatformPersonalizationDto>(platform);

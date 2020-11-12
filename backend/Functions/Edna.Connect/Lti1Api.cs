@@ -78,10 +78,23 @@ namespace Edna.Connect
                 ResourceLinkId = ltiRequest.ResourceLinkId,
                 Name = ltiRequest.ResourceLinkTitle,
                 CourseName = ltiRequest.ContextTitle,
-                LtiVersion = ltiRequest.Version,
+                LtiVersion = GetLtiVersion(ltiRequest),
                 ContextMembershipsUrl = ltiRequest.Parameters.FirstOrDefault(pair => pair.Key == "custom_context_memberships_url").Value,
                 OAuthConsumerKey = ltiRequest.ConsumerKey
             };
+        }
+
+        private static string GetLtiVersion(LtiRequest ltiRequest)
+        {
+            switch(ltiRequest.Version)
+            {
+                case "1.0":
+                    return LtiVersion.Lti1.ToString();
+                case "1.3.0":
+                    return LtiVersion.LtiAdvantage.ToString();
+                default:
+                    return null;
+            }
         }
     }
 }
