@@ -54,6 +54,11 @@ namespace Edna.Assignments
             AssignmentEntity assignmentEntity = _mapper.Map<AssignmentEntity>(assignmentDto);
             assignmentEntity.ETag = "*";
 
+            #if !DEBUG
+            
+            //While debugging, authorization header is empty when this API gets called from either Lti1 API or LtiAdvantage API
+            // So to enable seamless debugging, putting this code in #if !DEBUG block
+            
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -70,6 +75,8 @@ namespace Edna.Assignments
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
+
+            #endif
 
             ValidationContext context = new ValidationContext(assignmentDto, null, null);
             if (!Validator.TryValidateObject(assignmentDto, context, new List<ValidationResult>(), true))
