@@ -24,6 +24,7 @@ using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
 using System.ComponentModel.DataAnnotations;
+using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace Edna.Assignments
 {
@@ -71,11 +72,11 @@ namespace Edna.Assignments
                     return new UnauthorizedResult();
             }
 
-            System.ComponentModel.DataAnnotations.ValidationContext context = new System.ComponentModel.DataAnnotations.ValidationContext(assignmentEntity, null, null);
-            bool isValid = Validator.TryValidateObject(assignmentEntity, context, new List<ValidationResult>(), true);
-            if (!isValid)
+            ValidationContext context = new ValidationContext(assignmentDto, null, null);
+            if (!Validator.TryValidateObject(assignmentDto, context, new List<ValidationResult>(), true))
             {
-                return new BadRequestErrorMessageResult("The provided description length is too long.");
+                _logger.LogError("One or more enteries are incorrect. The length of provided assignment name / course name / assignment description is too long.");
+                return new BadRequestErrorMessageResult("One or more enteries are incorrect.");
             }
 
             TableOperation insertOrMergeAssignment = TableOperation.InsertOrMerge(assignmentEntity);
@@ -175,10 +176,17 @@ namespace Edna.Assignments
             if (assignmentEntity == null)
                 return new NotFoundResult();
 
-            AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
-
             assignmentEntity.PublishStatus = newPublishStatus.ToString();
             assignmentEntity.ETag = "*";
+
+            AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
+
+            ValidationContext context = new ValidationContext(assignmentDto, null, null);
+            if (!Validator.TryValidateObject(assignmentDto, context, new List<ValidationResult>(), true))
+            {
+                _logger.LogError("One or more enteries are incorrect. Incorrect publish status entered.");
+                return new BadRequestErrorMessageResult("The publish status entered is incorrect.");
+            }
 
             await assignmentEntityCollector.AddAsync(assignmentEntity);
             await assignmentEntityCollector.FlushAsync();
