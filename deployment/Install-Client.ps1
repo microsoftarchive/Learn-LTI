@@ -163,15 +163,16 @@ function Install-Client {
         # Turning Error only mode as this cmd shows a warning which causes misconception that user needs to sign in to azure cli
         $result = az storage blob upload-batch -s 'build' -d '$web' --account-name $StaticWebsiteStorageAccount --only-show-errors | ConvertFrom-Json
         
-        try{
-            az storage logging update --log rwd --retention 30 --services b --account-name $StaticWebsiteStorageAccount --only-show-errors
-        } 
-        catch {
-            Write-Output "Could not enable logging for static website storage account"
-        }
-
         if(!$result) {
             throw "Failed to deploy Client App to $StaticWebsiteStorageAccount/`$web"
+        }
+
+        az storage logging update --log rwd --retention 30 --services b --account-name $StaticWebsiteStorageAccount --only-show-errors
+        
+        if($LASTEXITCODE -ne 0){
+            $errorMessage = "Failed to enable auditing for static website storage account This could be a security risk, please enable auditing for static website manually."
+            Write-Output $errorMessage
+            Write-ClientDebugLog -Message $errorMessage 
         }
 
         Write-Output "Client App Published Successfully"
