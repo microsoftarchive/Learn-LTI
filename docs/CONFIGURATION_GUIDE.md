@@ -207,10 +207,10 @@ Before the LTI Tool can be added to specific Blackboard Learn LMS Tenant, it nee
   * **Description**: give the tool a description. 
   * **Domain**: enter “Domain URL” from the Microsoft Learn LTI application’s registration page.
   * **My Integration supports LTI 1-3**: Enabled.
+![Config.Blackboard.1](/images/Config.Blackboard.1.png) 
   * **Login Initiation URL**: enter "Login URL" from the Microsoft Learn LTI application’s registration page.
   * **Tool Redirect URL(s)**: enter the "Launch URL" from Microsoft Learn LTI application’s registration page.
   * **Tool JWKS URL**: enter "Public JWK Set URL" from the Microsoft Learn LTI application’s registration page.
-![Config.Blackboard.1](/images/Config.Blackboard.1.png) 
 ![Config.Blackboard.2](/images/Config.Blackboard.2.png) 
 7. Click **Register application and generate API Key**.
 8. ⚠️ The secret is only shown once. Make note of the application key and secret and store them in a safe and secure location.
