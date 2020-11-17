@@ -106,6 +106,9 @@ namespace Edna.Connect
             await assignmentsCollector.AddAsync(assignment);
             await assignmentsCollector.FlushAsync();
 
+            if (string.IsNullOrEmpty(assignment.Id))
+                return new InternalServerErrorResult();
+
             string asStudentParam = "";
             if (ltiResourceLinkRequest.Roles.Contains(Role.ContextLearner) || ltiResourceLinkRequest.Roles.Contains(Role.InstitutionLearner))
             {
