@@ -226,12 +226,14 @@ Now you are ready to add the app as an LTI Provider in your Blackboard Learn LMS
 5. Enter the following information:
   * **Client ID**: enter the "Application ID" from the LTI key registration.
 6. Click **Submit**.
+![Config.Blackboard.3](/images/Config.Blackboard.3.png) 
 7. Ensure that **Tool Status** is set to **Approved**.
 8. Under Institution Policies:
   * Ensure that all **User Fields to Send** are selected.
   * **Allow grade service access**: Yes
   * **Allow Membership Service Access**: Yes
 9. Click **Submit**.
+![Config.Blackboard.4](/images/Config.Blackboard.4.png) 
 10. Select the newly registered tool and click **Manage Placements**.
 11. Click **Create Placements**.
 12. Enter the following information:
