@@ -147,7 +147,7 @@ namespace Edna.Connect
                 ContextMembershipsUrl = ltiRequest.NamesRoleService.ContextMembershipUrl
             };
         }
-        private static string GetLtiVersion(LtiRequest ltiRequest)
+        private string GetLtiVersion(LtiResourceLinkRequest ltiRequest)
         {
             switch (ltiRequest.Version)
             {
@@ -156,6 +156,7 @@ namespace Edna.Connect
                 case "1.3.0":
                     return LtiVersion.LtiAdvantage.ToString();
                 default:
+                    _logger.LogError($"unexpected LTI version - {ltiRequest.Version}");
                     return null;
             }
         }

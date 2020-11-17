@@ -84,15 +84,16 @@ namespace Edna.Connect
             };
         }
 
-        private static string GetLtiVersion(LtiRequest ltiRequest)
+        private string GetLtiVersion(LtiRequest ltiRequest)
         {
-            switch(ltiRequest.Version)
+            switch (ltiRequest.Version)
             {
                 case "1.0":
                     return LtiVersion.Lti1.ToString();
                 case "1.3.0":
                     return LtiVersion.LtiAdvantage.ToString();
                 default:
+                    _logger.LogError($"unexpected LTI version - {ltiRequest.Version}");
                     return null;
             }
         }
