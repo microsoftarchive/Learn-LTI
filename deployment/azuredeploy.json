@@ -45,10 +45,11 @@
         "location": "[resourceGroup().location]",
         "runtimeStack": "dotnet",
         "resourceGroupName": "[resourceGroup().name]",
-        "ProjectNameSuffix": "[concat('-', replace(variables('uniqueIdentifier'),'-',''))]",
-        "staticWebsite": "[toLower(concat('learnclient', replace(variables('uniqueIdentifier'),'-','')))]",
-        "keyVaultName": "[toLower(concat('kv-', variables('uniqueIdentifier')))]",
-        "StorageAccountSuffix": "[toLower(concat(variables('uniqueIdentifier')))]",
+        "StorageAccountSuffix": "[toLower(replace(variables('uniqueIdentifier'),'-',''))]",
+        "ProjectNameSuffix": "[concat('-', variables('StorageAccountSuffix'))]",
+        "staticWebsite": "[toLower(concat('learnclient', variables('StorageAccountSuffix')))]",
+        "keyVaultName": "[toLower(concat('kv', variables('ProjectNameSuffix')))]",
+        "KeyVaultAuditLogsStorageAccountName": "[toLower(concat('kv' , variables('StorageAccountSuffix'), 'auditlogs'))]",
         "keyName": "EdnaLiteDevKey",
         "cliResourceName": "DeployingAppRegisteration",
         "cliArg": "[concat(variables('keyVaultName'), ' ', variables('staticWebsite'), ' ',variables('location'), ' ',variables('ProjectNameSuffix'), ' ',variables('keyName'),' ',variables('resourceGroupName'))]",
@@ -203,7 +204,6 @@
                 "AssignmentsServiceUrl": "[concat('https://', 'assignments', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
                 "Lti1Secret": "LearnLTI",
                 "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('users' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('users' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
                 "FUNCTIONS_EXTENSION_VERSION": "~3",
@@ -354,6 +354,15 @@
             }
         },
         {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[variables('KeyVaultAuditLogsStorageAccountName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard_LRS"
+            }
+        },
+        {
             "type": "Microsoft.Insights/components",
             "apiVersion": "2018-05-01-preview",
             "name": "[concat(variables('functionList')[copyIndex('FunctionatIndex')] , variables('ProjectNameSuffix'))]",
@@ -418,6 +427,26 @@
             }
         },
         {
+            "type": "Microsoft.KeyVault/vaults/providers/diagnosticSettings",
+            "apiVersion": "2017-05-01-preview",
+            "name": "[concat(variables('keyVaultName'), '/Microsoft.Insights/Send to all locations')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('KeyVaultAuditLogsStorageAccountName'))]"
+            ],
+            "properties": {
+                "storageAccountId": "[concat( '/subscriptions/', subscription().subscriptionId, '/resourceGroups/',  variables('resourceGroupName'), '/providers/Microsoft.Storage/storageAccounts/', variables('KeyVaultAuditLogsStorageAccountName'))]",
+                "logs": [
+                    {
+                        "category": "AuditEvent",
+                        "enabled": true,
+                        "RetentionEnabled": true,
+                        "RetentionInDays": 90
+                    }
+                ]
+            }
+        },
+        {
             "type": "Microsoft.KeyVault/vaults/accessPolicies",
             "name": "[concat(variables('keyVaultName'), '/add')]",
             "apiVersion": "2019-09-01",
@@ -470,7 +499,7 @@
                 "AzCliVersion": "2.0.80",
                 "timeout": "PT30M",
                 "arguments": "[variables('cliArg')]",
-                "scriptContent": "az keyvault key create --vault-name $1 --name $5 --protection software;az storage blob service-properties update --account-name $2 --static-website --404-document index.html --index-document index.html;",
+                "scriptContent": "az account list",
                 "cleanupPreference": "OnSuccess",
                 "retentionInterval": "P1D"
             }
