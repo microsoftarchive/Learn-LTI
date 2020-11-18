@@ -50,11 +50,6 @@ const descriptionInputStyles = ({ theme }: IThemeOnlyProps): DescriptionInputSty
     {
       height: 100
     }
-  ],
-  fieldGroup: [
-    {
-      marginBottom: `calc(${theme.spacing.m} * 3)`
-    }
   ]
 });
 
