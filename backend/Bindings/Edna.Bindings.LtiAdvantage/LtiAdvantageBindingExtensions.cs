@@ -5,6 +5,7 @@
 
 using Edna.Bindings.LtiAdvantage.BindingConfigurations;
 using Edna.Bindings.LtiAdvantage.Services;
+using Edna.Bindings.LtiAdvantage.Utils;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +17,7 @@ namespace Edna.Bindings.LtiAdvantage
         {
             builder.AddExtension<LtiAdvantageExtensionConfigProvider>();
 
-            builder.Services.AddHttpClient();
+            builder.Services.AddEdnaExternalHttpClientHandler();
 
             builder.Services.AddSingleton<NrpsClient.NrpsClientFactory>();
             builder.Services.AddSingleton<IAccessTokenService, AccessTokenService>();
