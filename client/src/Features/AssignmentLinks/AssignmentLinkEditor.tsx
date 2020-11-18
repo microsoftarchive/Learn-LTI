@@ -18,7 +18,7 @@ interface AssignmentLinkEditorProps {
 }
 export type AssignmentLinkEditorStyles = SimpleComponentStyles<'root'>;
 
-const ValidateTextLength = (limit: number) => (text: string | undefined) => (text && text?.length < limit) || !text ? "" : "The entered text is too long.";
+const ValidateTextLength = (limit: number) => (text: string | undefined) => (text && text?.length <= limit) || !text ? "" : "The entered text is too long.";
 export const ValidateTitleLength = ValidateTextLength(500);
 export const ValidateDescLength = ValidateTextLength(1000);
 
