@@ -152,5 +152,6 @@ process {
     Write-Title '======== Successfully Deleted Resources from Azure ==========='
 
     Write-Log -Message "Clean-up Complete"
+    Write-Warning 'Please use a different ResourceGroup name on re-deployment!'
 
 }
