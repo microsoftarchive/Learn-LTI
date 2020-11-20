@@ -12,11 +12,13 @@ import {
   DefaultButton,
   IModalProps,
   IModalStyles,
-  IDialogStyles
+  IDialogStyles,
+  Icon
 } from '@fluentui/react';
 import { DIALOG_MIN_WIDTH, commonDialogContentProps } from '../../Core/Components/Common/Dialog/EdnaDialogStyles';
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
+import { FontSizes } from '@uifabric/fluent-theme';
 
 interface PublishStatusDialogProps {
   onApprove: () => void;
@@ -25,6 +27,7 @@ interface PublishStatusDialogProps {
   title: string;
   subText: string;
   approveButtonText: string;
+  warningText: string | null;
 }
 
 export const PublishStatusDialog = ({
@@ -34,6 +37,7 @@ export const PublishStatusDialog = ({
   title,
   subText,
   approveButtonText,
+  warningText,
   styles
 }: PublishStatusDialogProps & IStylesOnly<Partial<IDialogStyles>>): JSX.Element => {
   const [isDialogWindowVisible, setIsDialogWindowVisible] = useState<boolean>(true);
@@ -65,6 +69,13 @@ export const PublishStatusDialog = ({
         minWidth={DIALOG_MIN_WIDTH}
         subText={subText}
       >
+
+        {warningText && 
+          <div className='warning'>
+            <Icon className='warningIcon' iconName='WarningSolid'/>
+            <span className='warningText'> {warningText} </span>
+          </div>
+        } 
         <DialogFooter>
           <PrimaryButton onClick={onClickApprove} text={approveButtonText} />
           <DefaultButton onClick={onDismiss} text="Cancel" />
@@ -77,7 +88,24 @@ export const PublishStatusDialog = ({
 const modalStyle = (isDialogWindowVisible: boolean): Partial<IModalStyles> => ({
   main: [
     {
-      display: isDialogWindowVisible ? 'flex' : 'none'
+      display: isDialogWindowVisible ? 'flex' : 'none',
+      selectors: {
+        '.warning':{
+          display: 'flex', 
+          flexDirection: 'row',
+          selectors: {
+            '.warningIcon': {
+              fontSize: FontSizes.size32,
+              color: '#FFC100',
+              margin: 'auto'
+            },
+            '.warningText': {
+              fontSize: FontSizes.size12,
+              paddingLeft: '8px'
+            }
+          }
+        }    
+      }
     }
   ]
 });

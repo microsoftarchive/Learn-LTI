@@ -25,15 +25,19 @@ const StudentViewLearnItemsListInner = ({ styles }: IStylesOnly<StudentViewLearn
     }
   }, [learnStore]);
 
-  return useObserver(() => (
+  return useObserver(() => {
+
+    const syncedContentsToDisplay = [...learnStore.contentSelectionMap].filter(value => value[1].callStatus!=='in-progress' && value[1].syncedState==='selected').map(item => item[0]);
+
+    return (
     <div className={classes.root}>
-      {learnStore.selectedItems &&
-        learnStore.selectedItems.map(selectedItem => {
-          const contentItem = learnStore.catalog?.contents.get(selectedItem.contentUid);
+      { syncedContentsToDisplay.length>0 &&
+        syncedContentsToDisplay.map(selectedItem => {
+          const contentItem = learnStore.catalog?.contents.get(selectedItem);
 
           return contentItem ? (
             <a className={classes.linkWrapper} target="_blank" rel="noopener noreferrer" href={contentItem.url}>
-              <MicrosoftLearnItem key={selectedItem.contentUid} item={contentItem} styles={microsoftLearnItemStyles} />
+              <MicrosoftLearnItem key={selectedItem} item={contentItem} styles={microsoftLearnItemStyles} />
             </a>
           ) : !learnStore.catalog ? (
             <div className={classes.linkWrapper}>
@@ -42,7 +46,7 @@ const StudentViewLearnItemsListInner = ({ styles }: IStylesOnly<StudentViewLearn
           ) : null;
         })}
     </div>
-  ));
+  )});
 };
 
 const studentViewLearnItemsListStyles = ({ theme }: IThemeOnlyProps): StudentViewLearnItemsListStyles => {

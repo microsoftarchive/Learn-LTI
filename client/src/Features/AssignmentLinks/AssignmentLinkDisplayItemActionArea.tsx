@@ -20,6 +20,7 @@ import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { useStore } from '../../Stores/Core';
 import { AssignmentLink } from '../../Models/AssignmentLink.model';
 import { commonDialogContentProps, DIALOG_MIN_WIDTH } from '../../Core/Components/Common/Dialog/EdnaDialogStyles';
+import { useObserver } from 'mobx-react-lite';
 
 interface AssignmentLinkDisplayItemActionAreaProps {
   toggleEditMode: () => void;
@@ -42,10 +43,18 @@ const AssignmentLinkDisplayItemActionAreaInner = ({
     title: 'Delete Link'
   };
 
-  return (
+  return useObserver(() => (
     <div className={classes.root}>
-      <IconButton iconProps={{ iconName: 'Edit' }} onClick={toggleEditMode} />
-      <IconButton iconProps={{ iconName: 'Delete' }} onClick={() => setIsDialogOpen(true)}>
+      <IconButton 
+        iconProps={{ iconName: 'Edit' }}
+        onClick={toggleEditMode} 
+        disabled={assignmentLinksStore.addOrUpdateCallInProgress.includes(link.id)}
+      />
+      <IconButton 
+        iconProps={{ iconName: 'Delete' }} 
+        onClick={() => setIsDialogOpen(true)}
+        disabled={assignmentLinksStore.addOrUpdateCallInProgress.includes(link.id)}
+      >
         <Dialog
           hidden={!isDialogOpen}
           onDismiss={() => setIsDialogOpen(false)}
@@ -64,7 +73,7 @@ const AssignmentLinkDisplayItemActionAreaInner = ({
         </Dialog>
       </IconButton>
     </div>
-  );
+  ))
 };
 
 const assignmentLinkDisplayItemActionAreaStyles = ({

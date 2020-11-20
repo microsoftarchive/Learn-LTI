@@ -12,6 +12,7 @@ import { InputGroupWrapper } from '../../Core/Components/Common/InputGroupWrappe
 import { generalPageInputGroupChildrenStyleProps } from './GeneralPageStyles';
 import { datePickerBaseStyle } from '../../Core/Components/Common/Inputs/EdnaInputStyles';
 import { useStore } from '../../Stores/Core';
+import { useObserver } from 'mobx-react-lite';
 
 type DeadlineInputStyles = Partial<IDatePickerStyles>;
 
@@ -31,7 +32,7 @@ const DeadlineInputInner = ({ styles }: IStylesOnly<DeadlineInputStyles>): JSX.E
   const formatDate = (chosenDate?: Date): string => {
     return chosenDate ? moment(chosenDate).format('MMM DD YYYY') : '';
   };
-  return (
+  return useObserver(() => (
     <InputGroupWrapper styles={generalPageInputGroupChildrenStyleProps} label="Deadline">
       <DatePicker
         styles={combinedStyles}
@@ -43,7 +44,7 @@ const DeadlineInputInner = ({ styles }: IStylesOnly<DeadlineInputStyles>): JSX.E
         value={deadline || undefined}
       />
     </InputGroupWrapper>
-  );
+  ));
 };
 
 const deadlineInputStyles = ({ theme }: IThemeOnlyProps): DeadlineInputStyles => ({

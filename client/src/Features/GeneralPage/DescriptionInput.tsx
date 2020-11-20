@@ -11,6 +11,7 @@ import { generalPageInputGroupChildrenStyleProps } from './GeneralPageStyles';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { textFieldBaseStyle } from '../../Core/Components/Common/Inputs/EdnaInputStyles';
 import { useStore } from '../../Stores/Core';
+import { useObserver } from 'mobx-react-lite';
 
 type DescriptionInputStyles = Partial<ITextFieldStyles>;
 const DescriptionInputInner = ({ styles }: IStylesOnly<DescriptionInputStyles>): JSX.Element => {
@@ -21,7 +22,7 @@ const DescriptionInputInner = ({ styles }: IStylesOnly<DescriptionInputStyles>):
 
   const combinedStyles = mergeStyleSets(themedClassNames(textFieldBaseStyle), themedClassNames(styles));
 
-  return (
+  return useObserver(() => (
     <InputGroupWrapper
       label="Description"
       labelElementId={descriptionFieldId}
@@ -38,7 +39,7 @@ const DescriptionInputInner = ({ styles }: IStylesOnly<DescriptionInputStyles>):
         onChange={(_e, newValue) => setDescription(newValue || '')}
       />
     </InputGroupWrapper>
-  );
+  ));
 };
 
 const descriptionInputStyles = ({ theme }: IThemeOnlyProps): DescriptionInputStyles => ({

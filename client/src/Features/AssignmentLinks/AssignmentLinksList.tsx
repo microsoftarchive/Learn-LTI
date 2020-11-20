@@ -14,6 +14,7 @@ import { AssignmentLinkItemShimmer } from './AssignmentLinkItemShimmer';
 
 interface AssignmentLinksListProps {
   disableEdit?: boolean;
+  showSynced?: boolean;
 }
 export type AssignmentLinksListStyles = SimpleComponentStyles<'root' | 'itemsDividerSeparator'>;
 type AssignmentLinksListStylesProps = {
@@ -22,9 +23,12 @@ type AssignmentLinksListStylesProps = {
 
 const AssignmentLinksListInner = ({
   styles,
-  disableEdit
+  disableEdit,
+  showSynced
 }: AssignmentLinksListProps & IStylesOnly<AssignmentLinksListStyles>): JSX.Element => {
   const assignmentLinksStore = useStore('assignmentLinksStore');
+
+  const assignmentLinksToDisplay = showSynced? assignmentLinksStore.syncedAssignmentLinks : assignmentLinksStore.assignmentLinks;
 
   const classes = themedClassNames(styles);
 
@@ -35,7 +39,7 @@ const AssignmentLinksListInner = ({
           <AssignmentLinkItemShimmer />
         ) : (
           <>
-            {assignmentLinksStore.assignmentLinks.map((link, index) => (
+            { assignmentLinksToDisplay.map((link, index) => (
               <React.Fragment key={link.id}>
                 {index !== 0 && <Separator className={classes.itemsDividerSeparator} />}
                 <AssignmentLinkItem link={link} disableEdit={disableEdit} />

@@ -34,22 +34,23 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
   const learnStore = useStore('microsoftLearnStore');
 
   return useObserver(() => {
+    const syncedContentsToDisplay = [...learnStore.contentSelectionMap].filter(value => value[1].callStatus!=='in-progress' && value[1].syncedState==='selected').map(item => item[0]);
     const items: (StudentViewSectionProps & IStylesOnly<StudentViewSectionStyles>)[] = _.compact([
-      assignmentStore.assignment?.description && {
+      assignmentStore.syncedDescription && {
         title: 'Description',
-        textContent: assignmentStore.assignment.description
+        textContent: assignmentStore.syncedDescription
       },
-      assignmentStore.assignment?.deadline && {
+      assignmentStore.syncedDeadline && {
         title: 'Deadline',
-        textContent: formatDate(assignmentStore.assignment.deadline)
+        textContent: formatDate(assignmentStore.syncedDeadline)
       },
-      (assignmentLinksStore.isLoading || assignmentLinksStore.assignmentLinks.length > 0) && {
+      (assignmentLinksStore.isLoading || assignmentLinksStore.syncedAssignmentLinks.length > 0) && {
         title: 'Links',
         styles: linksSectionStyles,
-        content: <AssignmentLinksList disableEdit />
+        content: <AssignmentLinksList disableEdit showSynced/>
       },
-      learnStore.selectedItems &&
-        learnStore.selectedItems.length > 0 && {
+      syncedContentsToDisplay &&
+      syncedContentsToDisplay.length > 0 && {
           title: 'Tutorials',
           content: <StudentViewLearnItemsList />
         }

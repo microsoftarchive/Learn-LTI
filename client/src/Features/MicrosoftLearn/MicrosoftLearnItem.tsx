@@ -86,7 +86,8 @@ const MicrosoftLearnItemInner = ({
   );
 
   return useObserver(() => {
-    const isSelected = !!learnStore.selectedItems?.find(selectedItem => selectedItem.contentUid === item.uid);
+    const selectedItems = [...learnStore.contentSelectionMap].filter(item => item[1].userState==='selected');
+    const isSelected = !!selectedItems?.find(selectedItem => selectedItem[0] === item.uid);
     const classNames = classNamesFunction<MicrosoftLearnItemStylesProps, MicrosoftLearnItemStyles>()(styles, {
       theme: getTheme(),
       productDetails: productCatalogDetails,

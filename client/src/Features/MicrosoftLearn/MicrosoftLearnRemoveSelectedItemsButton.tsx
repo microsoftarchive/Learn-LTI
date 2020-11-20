@@ -20,6 +20,7 @@ import {
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { useStore } from '../../Stores/Core';
 import { commonDialogContentProps, DIALOG_MIN_WIDTH } from '../../Core/Components/Common/Dialog/EdnaDialogStyles';
+import { ContentSelectionProps } from '../../Stores/MicrosoftLearn.store';
 
 const MicrosoftLearnRemoveSelectedItemsButtonInner = ({
   styles
@@ -37,13 +38,17 @@ const MicrosoftLearnRemoveSelectedItemsButtonInner = ({
     microsoftLearnStore.clearAssignmentLearnContent();
     setIsDialogOpen(false);
   };
+  const userStateIsSelected = (item: [string, ContentSelectionProps]) => item[1].userState==='selected';
+  const syncedStateIsSelected = (item: [string, ContentSelectionProps]) => item[1].syncedState==='selected';
 
   return (
     <ActionButton
       iconProps={{ iconName: 'Delete' }}
       className={classes.root}
       onClick={() => setIsDialogOpen(true)}
-      disabled={!microsoftLearnStore.selectedItems || microsoftLearnStore.selectedItems?.length === 0}
+      disabled={microsoftLearnStore.contentSelectionMap.size===0 
+        || ([...microsoftLearnStore.contentSelectionMap].filter(userStateIsSelected)?.length === 0 
+        && [...microsoftLearnStore.contentSelectionMap].filter(syncedStateIsSelected)?.length === 0)}
     >
       Clear all Selected Tutorials
       <Dialog

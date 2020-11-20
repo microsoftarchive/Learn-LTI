@@ -17,6 +17,7 @@ import learnLogo from '../../Assets/icon_learn_062020.png';
 import { useQueryValue } from '../Hooks';
 import { ErrorPage } from './ErrorsPage';
 import { NavigationControlHeader } from './NavigationControlHeader';
+import { AssignmentUpdateFailureMessageBar } from './AssignmentUpdateFailureMessageBar';
 
 type MainLayoutStyles = SimpleComponentStyles<'root' | 'spinner' | 'content'>;
 
@@ -52,11 +53,15 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
         <div className={classes.content}>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
+              <AssignmentUpdateFailureMessageBar/>
               <NavigationControlHeader/>
               <PagesRouter />
             </>
           ) : (
-            <StudentPage />
+            <>
+              <AssignmentUpdateFailureMessageBar/>
+              <StudentPage />
+            </>
           )}
         </div>
       )}

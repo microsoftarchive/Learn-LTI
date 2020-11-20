@@ -47,23 +47,24 @@ const MicrosoftLearnSelectedItemsListInner = ({
 
   return useObserver(() => {
     const classes = themedClassNames(styles);
+    const selectedItems = [...learnStore.contentSelectionMap].filter(item => item[1].userState==='selected')
 
     return (
       <div className={classes.root}>
         <div className={classes.header}>
           <Text variant="medium" className={classes.title}>
-            {`Selected Tutorials (${learnStore?.selectedItems?.length || '0'})`}
+            {`Selected Tutorials (${selectedItems.length || '0'})`}
           </Text>
-          {(!learnStore.selectedItems || learnStore.isLoadingCatalog) && (
+          {(learnStore.isLoadingCatalog) && (
             <Spinner size={SpinnerSize.small} className={classes.spinner} />
           )}
           <MicrosoftLearnRemoveSelectedItemsButtonInHeader />
         </div>
-        {learnStore.selectedItems && learnStore.selectedItems.length > 0 && (
+        {selectedItems.length > 0 && (
           <div className={classes.list}>
-            {learnStore.selectedItems?.map(item =>
+            {selectedItems.map(item =>
               learnStore.catalog ? (
-                <MicrosoftLearnSelectedItem key={item.contentUid} itemId={item.contentUid} />
+                <MicrosoftLearnSelectedItem key={item[0]} itemId={item[0]} />
               ) : (
                 <MicrosoftLearnSelectedItemShimmer />
               )
