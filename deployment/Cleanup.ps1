@@ -7,7 +7,6 @@
 param (
     [string]$ResourceGroupName = "MSLearnLTI",
     [string]$AppName = "MS-Learn-Lti-Tool-App",
-    [string]$IdentityName = "MSLearnLTI-Identity",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null
 )
@@ -127,30 +126,9 @@ process {
 
     $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
     #endregion
-
-    #region Delete Managed Identity, if Exists
-    $Identity = ((az identity list --resource-group $ResourceGroupName) | ConvertFrom-Json) | Where-Object { $_.name -ieq $IdentityName }
-    if (!$Identity) {
-        throw "Unable to find a managed identity with name [ $IdentityName ]"
-    }
-
-    Write-Title 'STEP #3 - Remove Identity as Contributor from Subscription'
-    az role assignment delete --assignee "$($Identity.principalId)" --role 'Contributor'
-    if ($LASTEXITCODE -ne 0) {
-        throw "Unable to remove Identity [ $IdentityName ] as Contributor"
-    }
-    Write-Host 'Identity as Contributor from Subscription Removed Successfully'
-    
-    Write-Title 'STEP #4 - Delete Managed Identity'
-    az identity delete --name $IdentityName --resource-group $ResourceGroupName
-    if ($LASTEXITCODE -ne 0) {
-        throw "Unable to delete Managed Identity [ $IdentityName ]"
-    }
-    Write-Host 'Managed Identity Deleted Successfully'
-    #endregion
     
     #region Delete Resource Group, if Exists
-    Write-Title 'STEP #5 - Delete Resource Group'
+    Write-Title 'STEP #3 - Delete Resource Group'
     az group delete --name $ResourceGroupName --yes
     if ($LASTEXITCODE -ne 0) {
         throw "Unable to delete Resource Group [ $ResourceGroupName ] and its Child Resources"
@@ -159,7 +137,7 @@ process {
     #endregion
 
     #region Delete App Registration, if Exists
-    Write-Title 'STEP #6 - Delete App Registration'
+    Write-Title 'STEP #4 - Delete App Registration'
     $AppInfo = (az ad app list --display-name $AppName) | ConvertFrom-Json
     if (!$AppInfo) {
         throw "Unable to find App Registration with Name [ $AppName ]"
