@@ -5,27 +5,35 @@
 
 import React from 'react';
 import { IThemeOnlyProps, SimpleComponentStyles, IStylesOnly } from '../../Core/Utils/FluentUI/typings.fluent-ui';
-import { styled, Text, FontWeights, FontSizes } from '@fluentui/react';
+import { styled, Text, FontWeights, FontSizes, TooltipHost, FontIcon } from '@fluentui/react';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 
 export interface StudentViewSectionProps {
   title: string;
   textContent?: string;
   content?: JSX.Element;
+  alertMessage?: string;
 }
-export type StudentViewSectionStyles = SimpleComponentStyles<'root' | 'title' | 'textContent'>;
+export type StudentViewSectionStyles = SimpleComponentStyles<'root' | 'title' | 'textContent' | 'alertMessageToolTip'>;
 
 const StudentViewSectionInner = ({
   content,
   title,
   textContent,
+  alertMessage,
   styles
 }: StudentViewSectionProps & IStylesOnly<StudentViewSectionStyles>): JSX.Element => {
   const classes = themedClassNames(styles);
   return (
     <div className={classes.root}>
       <Text block variant="mediumPlus" className={classes.title}>
-        {title}
+        {title}      
+      <TooltipHost content={alertMessage}>
+        <FontIcon
+          iconName="Warning"
+          className={classes.alertMessageToolTip}
+        />
+      </TooltipHost>
       </Text>
       {textContent && (
         <Text block variant="medium" className={classes.textContent}>
@@ -52,6 +60,13 @@ const studentViewSectionStyles = ({ theme }: IThemeOnlyProps): StudentViewSectio
       color: theme.palette.neutralPrimary,
       lineHeight: FontSizes.mediumPlus,
       whiteSpace: 'pre-wrap'
+    }
+  ],
+  alertMessageToolTip: [
+    {
+      margin: theme.spacing.s2,
+      fontSize: FontSizes.small,
+      color: 'orange'
     }
   ]
 });

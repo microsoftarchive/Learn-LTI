@@ -62,7 +62,6 @@ namespace Edna.AssignmentLinks
 
             IEnumerable<AssignmentLinkDto> assignmentLinkDtos = sameAssignmentLinks
                 .OrderBy(linkEntity => linkEntity.Timestamp.Ticks)
-                .Where(linkEntity => Guid.TryParse(linkEntity.RowKey, out Guid result))
                 .Select(_mapper.Map<AssignmentLinkDto>);
 
             return new OkObjectResult(assignmentLinkDtos);
