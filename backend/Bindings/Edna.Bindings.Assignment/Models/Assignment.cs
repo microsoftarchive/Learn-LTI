@@ -27,7 +27,7 @@ namespace Edna.Bindings.Assignment.Models
         [StringLength(100)]
         public string CourseName { get; set; }
 
-        [EnumDataType(typeof(LtiVersion))]
+        [EnumDataType(typeof(LtiVersionClass.LtiVersion))]
         public object LtiVersion { get; set; }
 
         [Url]

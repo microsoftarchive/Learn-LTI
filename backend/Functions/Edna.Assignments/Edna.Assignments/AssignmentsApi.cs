@@ -82,7 +82,7 @@ namespace Edna.Assignments
             if (!Validator.TryValidateObject(assignmentDto, context, new List<ValidationResult>(), true))
             {
                 _logger.LogError("One or more enteries are incorrect. The length of provided assignment name / course name / assignment description is too long.");
-                return new BadRequestErrorMessageResult("One or more enteries are incorrect.");
+                return new BadRequestErrorMessageResult("One or more enteries are incorrect. The length of provided assignment name / course name / assignment description is too long.");
             }
 
             TableOperation insertOrMergeAssignment = TableOperation.InsertOrMerge(assignmentEntity);

@@ -56,7 +56,7 @@ namespace Edna.Users
 
             _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
-            if (assignment.LtiVersion.ToString() != LtiVersion.LtiAdvantage.ToString())
+            if (assignment.LtiVersion.ToString() != LtiVersionClass.LtiVersion.LtiAdvantage.ToString())
             {
                 Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
                 return new OkObjectResult(_mapper.Map<MemberDto>(userMembership));
@@ -81,7 +81,7 @@ namespace Edna.Users
         {
             _logger.LogInformation("Getting all users");
 
-            if (assignment.LtiVersion.ToString() != LtiVersion.LtiAdvantage.ToString())
+            if (assignment.LtiVersion.ToString() != LtiVersionClass.LtiVersion.LtiAdvantage.ToString())
             {
                 IEnumerable<Membership> allMemberships = await membershipClient.GetAllMembers(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId);
                 return new OkObjectResult(allMemberships.Select(_mapper.Map<MemberDto>));

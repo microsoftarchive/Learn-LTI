@@ -143,22 +143,9 @@ namespace Edna.Connect
                 ResourceLinkId = ltiRequest.ResourceLink.Id,
                 Name = ltiRequest.ResourceLink.Title,
                 CourseName = ltiRequest.Context.Title,
-                LtiVersion = GetLtiVersion(ltiRequest),
+                LtiVersion = LtiVersionClass.GetLtiVersion(ltiRequest.Version),
                 ContextMembershipsUrl = ltiRequest.NamesRoleService.ContextMembershipUrl
             };
-        }
-        private string GetLtiVersion(LtiResourceLinkRequest ltiRequest)
-        {
-            switch (ltiRequest.Version)
-            {
-                case "1.0":
-                    return LtiVersion.Lti1.ToString();
-                case "1.3.0":
-                    return LtiVersion.LtiAdvantage.ToString();
-                default:
-                    _logger.LogError($"unexpected LTI version - {ltiRequest.Version}");
-                    return null;
-            }
         }
 
         private async Task<bool> ValidateNonce(string nonce, string state, IDurableEntityClient entityClient)
