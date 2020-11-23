@@ -28,12 +28,12 @@ const StudentViewSectionInner = ({
     <div className={classes.root}>
       <Text block variant="mediumPlus" className={classes.title}>
         {title}      
-      <TooltipHost content={alertMessage}>
+      {alertMessage && <TooltipHost content={alertMessage}>
         <FontIcon
           iconName="Warning"
           className={classes.alertMessageToolTip}
         />
-      </TooltipHost>
+      </TooltipHost>}
       </Text>
       {textContent && (
         <Text block variant="medium" className={classes.textContent}>
