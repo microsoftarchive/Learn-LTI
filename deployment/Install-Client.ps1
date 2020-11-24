@@ -152,6 +152,15 @@ function Install-Client {
             throw 'Errors while creating Optimized Production Build'
         }
 
+        az storage logging update --log rwd --retention 30 --services b --account-name $StaticWebsiteStorageAccount --only-show-errors
+        # Checking if the command for enabling logs of storage account failed
+        if($LASTEXITCODE -ne 0){
+            $manualStepsURL = "https://docs.microsoft.com/en-us/azure/storage/common/storage-monitor-storage-account#configure-logging"
+            $errorMessage = "Failed to enable auditing for static website storage account This could be a security risk. Please enable auditing for static website manually by following the steps at " + $manualStepsURL
+            Write-Output $errorMessage
+            Write-ClientDebugLog -Message $errorMessage 
+        }
+
         Write-ClientDebugLog -Message "Deploying as a Static Web App in Storage Account [ $StaticWebsiteStorageAccount ]"
 
         Write-ClientDebugLog -Message 'Delete existing content in `$web storage container (Just in case of a redeploy)'
@@ -165,14 +174,6 @@ function Install-Client {
         
         if(!$result) {
             throw "Failed to deploy Client App to $StaticWebsiteStorageAccount/`$web"
-        }
-
-        az storage logging update --log rwd --retention 30 --services b --account-name $StaticWebsiteStorageAccount --only-show-errors
-        
-        if($LASTEXITCODE -ne 0){
-            $errorMessage = "Failed to enable auditing for static website storage account This could be a security risk, please enable auditing for static website manually."
-            Write-Output $errorMessage
-            Write-ClientDebugLog -Message $errorMessage 
         }
 
         Write-Output "Client App Published Successfully"
