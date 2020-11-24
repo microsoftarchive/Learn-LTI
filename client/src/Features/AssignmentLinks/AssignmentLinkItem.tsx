@@ -58,7 +58,8 @@ const assignmentLinkItemStyles = ({ theme }: IThemeOnlyProps): AssignmentLinkIte
       justifyContent: 'space-between',
       paddingTop: theme.spacing.l1,
       paddingBottom: theme.spacing.l1,
-      overflowWrap: 'break-word'
+      wordWrap: 'break-word',
+      wordBreak: 'break-word',
     }
   ]
 });
