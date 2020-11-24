@@ -51,7 +51,8 @@ const studentViewSectionStyles = ({ theme }: IThemeOnlyProps): StudentViewSectio
     {
       color: theme.palette.neutralPrimary,
       lineHeight: FontSizes.mediumPlus,
-      whiteSpace: 'pre-wrap'
+      whiteSpace: 'pre-wrap',
+      overflowWrap: 'anywhere'
     }
   ]
 });
