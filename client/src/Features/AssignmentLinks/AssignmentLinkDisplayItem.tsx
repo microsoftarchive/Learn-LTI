@@ -46,11 +46,10 @@ export const assignmentLinkDisplayItemStyles = ({ theme }: IThemeOnlyProps): Ass
     ],
     displayText: [
       mergeStyles(baseTextStyle, {
-        color: theme.palette.themePrimary,
-        overflowWrap: 'anywhere'
+        color: theme.palette.themePrimary
       })
     ],
-    descriptionText: [mergeStyles(baseTextStyle, { color: theme.palette.neutralPrimary, overflowWrap: 'anywhere' })]
+    descriptionText: [mergeStyles(baseTextStyle, { color: theme.palette.neutralPrimary })]
   };
 };
 
