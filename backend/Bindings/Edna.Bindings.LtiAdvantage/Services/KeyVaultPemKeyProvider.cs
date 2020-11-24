@@ -5,9 +5,11 @@
 
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Edna.Bindings.LtiAdvantage.Utils;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Azure.Services.AppAuthentication;
@@ -21,8 +23,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
         {
             AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
             KeyVaultSecurityKey.AuthenticationCallback keyVaultAuthCallback = new KeyVaultSecurityKey.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback);
-
-            KeyVaultClient client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(keyVaultAuthCallback));
+            KeyVaultClient client = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(keyVaultAuthCallback), EdnaExternalHttpClient.Create());
             KeyBundle keyBundle = await client.GetKeyAsync(keyVaultIdentifier);
 
             RSAParameters rsaParameters = keyBundle.Key.ToRSAParameters();

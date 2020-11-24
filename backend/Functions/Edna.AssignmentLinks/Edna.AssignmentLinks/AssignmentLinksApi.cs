@@ -21,6 +21,7 @@ using Edna.Utils.Http;
 using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace Edna.AssignmentLinks
 {
@@ -123,6 +124,13 @@ namespace Edna.AssignmentLinks
             AssignmentLinkEntity assignmentLinkEntity = _mapper.Map<AssignmentLinkEntity>(linkDto);
             assignmentLinkEntity.PartitionKey = assignmentId;
             assignmentLinkEntity.ETag = "*";
+
+            System.ComponentModel.DataAnnotations.ValidationContext context = new System.ComponentModel.DataAnnotations.ValidationContext(assignmentLinkEntity, null, null);
+            bool isValid = Validator.TryValidateObject(assignmentLinkEntity, context, new List<ValidationResult>(), true);
+            if (!isValid)
+            {
+                return new BadRequestErrorMessageResult("The provided link field values are not valid.");
+            }
 
             await linksCollector.AddAsync(assignmentLinkEntity);
             await linksCollector.FlushAsync();
