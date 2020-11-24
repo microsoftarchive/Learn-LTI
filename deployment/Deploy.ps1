@@ -7,7 +7,6 @@
 param (
     [string]$ResourceGroupName = "MSLearnLTI",
     [string]$AppName = "MS-Learn-Lti-Tool-App",
-    [string]$IdentityName = "MSLearnLTI-Identity",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -192,34 +191,8 @@ process {
         Write-Host 'Resource Group Created Successfully'
         #endregion
 
-        #region Create new Managed Contributor for deploying resources via ARM template
-        Write-Title 'STEP #6 - Creating Managed Identity'
-
-        Write-Log -Message "Creating Managed Identity inside ResourceGroup [ $ResourceGroupName ] with Name [ $IdentityName ]"
-        $identityObj = (az identity create -g $ResourceGroupName -n $IdentityName) | ConvertFrom-Json
-        if(!$identityObj) {
-            throw "Error while creating Managed Identity inside ResourceGroup [ $ResourceGroupName ] with Name [ $IdentityName ]" 
-        }
-    
-        #It takes a few seconds for the Managed Identity to spin up and be available for further processing
-        Write-Log -Message "Sleeping for 30 seconds"
-        Start-Sleep -s 30
-        Write-Host 'Managed Identity Created Successfully'
-
-        Write-Title 'STEP #7 - Creating Role Assignment'
-    
-        $roleName = "Contributor"
-        Write-Log -Message "Assigning Role: $roleName to PrincipalID: $($identityObj.principalId)"
-        $roleAssignmentOp = az role assignment create --assignee-object-id $identityObj.principalId --assignee-principal-type ServicePrincipal --role $roleName
-        if(!$roleAssignmentOp) {
-            throw "Encountered an Error while creating Role Assignment"
-        }
-    
-        Write-Host 'Role Assignment Created Successfully';
-        #endregion
-
         #region Provision Resources inside Resource Group on Azure using ARM template
-        Write-Title 'STEP #8 - Creating Resources in Azure'
+        Write-Title 'STEP #6 - Creating Resources in Azure'
     
         $userObjectId = az ad signed-in-user show --query objectId
         #$userObjectId
@@ -227,11 +200,14 @@ process {
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $($appinfo.appId), IdentifiedURI: $($appinfo.identifierUris)"
-        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) identityName=$($IdentityName) userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
+        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
         if(!$deploymentOutput) {
             throw "Encountered an Error while deploying to Azure"
         }
-    
+        Write-Host 'Resource Creation in Azure Completed Successfully'
+        
+        Write-Title 'Step #7 - Updating KeyVault with LTI 1.3 Key'
+
         function Update-LtiFunctionAppSettings([string]$ResourceGroupName, [string]$FunctionAppName, [hashtable]$AppSettings) {
             Write-Log -Message "Updating App Settings for Function App [ $FunctionAppName ]: -"
             foreach ($it in $AppSettings.GetEnumerator()) {
@@ -241,17 +217,26 @@ process {
         }
     
         #Creating EdnaLiteDevKey in keyVault and Updating the Config Entry EdnaLiteDevKey in the Function Config
-        $ke = az keyvault key create --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --protection software
-        $KeyVaultLink = $(az keyvault key show --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --query 'key.kid' -o json);
+        $keyCreationOp = (az keyvault key create --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --protection software) | ConvertFrom-Json;
+        if(!$keyCreationOp) {
+            throw "Encountered an Error while creating Key in keyVault"
+        }
+        $KeyVaultLink = $keyCreationOp.key.kid
         $EdnaKeyString = @{ "EdnaKeyString"="$KeyVaultLink" }
         $ConnectUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.ConnectFunctionName.value $EdnaKeyString
         $PlatformsUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.PlatformsFunctionName.value $EdnaKeyString
         $UsersUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.UsersFunctionName.value $EdnaKeyString
 
-        #Setting index-document and 404-document in StaticWebsite
-        $se = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --only-show-errors
+        Write-Host 'Key Creation in KeyVault Completed Successfully'
 
-        Write-Host 'Resource Creation in Azure Completed Successfully'
+        Write-Title 'Step #8 - Enabling Static Website Container'
+
+        #Creating a Container in Static Website
+        $containerEnableOp = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --only-show-errors
+        if(!$containerEnableOp) {
+            throw "Encountered an Error while creating Container to host Static Website"
+        }
+        Write-Host 'Static Website Container Enabled Successfully'
 
         Write-Title 'STEP #9 - Updating AAD App'
     

@@ -48,7 +48,7 @@ namespace Edna.AssignmentLearnContent
         public async Task<IActionResult> GetLearnCatalog(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "learn-catalog")] HttpRequest req)
         {
-            using HttpClient client = _httpClientFactory.CreateClient();
+            using HttpClient client = _httpClientFactory.CreateClient(EdnaExternalHttpHandler.Name);
             string catalogString = await client.GetStringAsync($"https://docs.microsoft.com/api/learn/catalog?clientId={LearnContentUrlIdentifierValue}");
 
             JObject catalogJObject = JsonConvert.DeserializeObject<JObject>(catalogString);

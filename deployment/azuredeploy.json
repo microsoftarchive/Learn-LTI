@@ -10,14 +10,6 @@
             "type": "string",
             "defaultValue": "api://10ef1e6b-1171-4888-92d5-c661b428796b"
         },
-        "utcValue": {
-            "type": "string",
-            "defaultValue": "[utcNow()]"
-        },
-        "identityName": {
-            "type": "string",
-            "defaultValue": "MSLearnLTI-Identity"
-        },
         "userEmailAddress": {
             "type": "string",
             "defaultValue": "user@microsoft.com"
@@ -50,11 +42,6 @@
         "staticWebsite": "[toLower(concat('learnclient', variables('StorageAccountSuffix')))]",
         "keyVaultName": "[toLower(concat('kv', variables('ProjectNameSuffix')))]",
         "KeyVaultAuditLogsStorageAccountName": "[toLower(concat('kv' , variables('StorageAccountSuffix'), 'auditlogs'))]",
-        "keyName": "EdnaLiteDevKey",
-        "cliResourceName": "DeployingAppRegisteration",
-        "cliArg": "[concat(variables('keyVaultName'), ' ', variables('staticWebsite'), ' ',variables('location'), ' ',variables('ProjectNameSuffix'), ' ',variables('keyName'),' ',variables('resourceGroupName'))]",
-        "contributorRoleAssignmentId": "[guid(concat(resourceGroup().id, 'contributor'))]",
-        "contributorRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
         "readerRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
         "KVKeyPermissions": [
             "encrypt",
@@ -145,8 +132,7 @@
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')))]",
-                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+                "[resourceId('Microsoft.Web/sites', concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')))]"
             ],
             "properties": {
                 "enabled": "[if(equals(concat(variables('functionList')[copyIndex('FunctionatIndex')], variables('ProjectNameSuffix')),concat('connect', variables('ProjectNameSuffix'))), 'false', 'true')]",
@@ -170,8 +156,7 @@
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat('connect' , variables('ProjectNameSuffix')))]",
-                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+                "[resourceId('Microsoft.Web/sites', concat('connect' , variables('ProjectNameSuffix')))]"
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
@@ -196,8 +181,7 @@
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat('users', variables('ProjectNameSuffix')))]",
-                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+                "[resourceId('Microsoft.Web/sites', concat('users', variables('ProjectNameSuffix')))]"
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
@@ -221,8 +205,7 @@
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat('assignments' , variables('ProjectNameSuffix')))]",
-                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+                "[resourceId('Microsoft.Web/sites', concat('assignments' , variables('ProjectNameSuffix')))]"
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
@@ -245,8 +228,7 @@
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat('platforms' , variables('ProjectNameSuffix')))]",
-                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+                "[resourceId('Microsoft.Web/sites', concat('platforms' , variables('ProjectNameSuffix')))]"
             ],
             "properties": {
                 "AllowedUsers": "[parameters('userEmailAddress')]",
@@ -269,8 +251,7 @@
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat('links' , variables('ProjectNameSuffix')))]",
-                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+                "[resourceId('Microsoft.Web/sites', concat('links' , variables('ProjectNameSuffix')))]"
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
@@ -292,8 +273,7 @@
             "type": "Microsoft.Web/sites/config",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat('learncontent' , variables('ProjectNameSuffix')))]",
-                "[resourceId('Microsoft.Resources/deploymentScripts', variables('cliResourceName'))]"
+                "[resourceId('Microsoft.Web/sites', concat('learncontent' , variables('ProjectNameSuffix')))]"
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
@@ -392,18 +372,6 @@
                 "tenantId": "[variables('tenantId')]",
                 "accessPolicies": [
                     {
-                        "objectId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
-                        "tenantId": "[variables('tenantId')]",
-                        "permissions": {
-                            "keys": [
-                                "All"
-                            ],
-                            "secrets": [
-                                "All"
-                            ]
-                        }
-                    },
-                    {
                         "objectId": "[parameters('userObjectId')]",
                         "tenantId": "[variables('tenantId')]",
                         "permissions": {
@@ -474,54 +442,6 @@
                         }
                     }
                 ]
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deploymentScripts",
-            "apiVersion": "2019-10-01-preview",
-            "name": "[variables('cliResourceName')]",
-            "location": "[resourceGroup().location]",
-            "kind": "AzureCLI",
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('staticWebsite'))]",
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',parameters('identityName'))]"
-            ],
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',parameters('identityName'))]": {
-                    }
-                }
-            },
-            "properties": {
-                "forceUpdateTag": "[parameters('utcValue')]",
-                "AzCliVersion": "2.0.80",
-                "timeout": "PT30M",
-                "arguments": "[variables('cliArg')]",
-                "scriptContent": "az account list",
-                "cleanupPreference": "OnSuccess",
-                "retentionInterval": "P1D"
-            }
-        },
-        {
-            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-            "name": "[parameters('identityName')]",
-            "apiVersion": "2018-11-30",
-            "location": "[resourceGroup().location]"
-        },
-        {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2018-09-01-preview",
-            "name": "[variables('contributorRoleAssignmentId')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities',parameters('identityName'))]"
-            ],
-            "properties": {
-                "roleDefinitionId": "[variables('contributorRoleDefinitionId')]",
-                "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('identityName')), '2018-11-30').principalId]",
-                "scope": "[resourceGroup().id]",
-                "principalType": "ServicePrincipal"
             }
         },
         {

@@ -18,6 +18,25 @@ interface AssignmentLinkEditorProps {
 }
 export type AssignmentLinkEditorStyles = SimpleComponentStyles<'root'>;
 
+const ValidateTextLength = (limit: number) => (text: string | undefined) => (text && text?.length <= limit) || !text ? "" : "The entered text is too long.";
+export const ValidateTitleLength = ValidateTextLength(500);
+export const ValidateDescLength = ValidateTextLength(1000);
+
+export const isValidURL = (value: string | undefined) => {
+  if(value){
+    try {
+      let url = new URL(value);
+      if (url.protocol!=='http:' && url.protocol!=='https:') {
+        return false;
+      }
+    } catch (_) {
+      return false;  
+    }
+  }  
+  return true;
+}
+const ValidateURL = (value: string | undefined) => isValidURL(value)? '' : 'Invalid URL';
+
 const AssignmentLinkEditorInner = ({
   styles,
   link,
@@ -34,12 +53,15 @@ const AssignmentLinkEditorInner = ({
         value={link?.displayText || ''}
         styles={themedClassNames(textFieldBaseStyle)}
         onChange={(_e, newValue) => onChangeTextField('displayText', newValue || '')}
+        onGetErrorMessage={ValidateTitleLength}
       />
       <TextField
         value={link?.url || ''}
         placeholder="URL"
         styles={themedClassNames(urlInputStyle)}
         onChange={(_e, newValue) => onChangeTextField('url', newValue || '')}
+        onGetErrorMessage={ValidateURL}
+        validateOnFocusOut={true}
       />
       <TextField
         value={link?.description || ''}
@@ -48,6 +70,7 @@ const AssignmentLinkEditorInner = ({
         multiline
         resizable={false}
         onChange={(_e, newValue) => onChangeTextField('description', newValue || '')}
+        onGetErrorMessage={ValidateDescLength}
       />
     </div>
   );

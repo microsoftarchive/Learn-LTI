@@ -14,6 +14,7 @@ using LtiAdvantage;
 using LtiAdvantage.NamesRoleProvisioningService;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Edna.Bindings.LtiAdvantage.Utils;
 
 namespace Edna.Bindings.LtiAdvantage.Services
 {
@@ -62,7 +63,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
                 throw accessTokenResponse.Exception ?? new Exception($"Internal exception in the authentication flow to LMS: {accessTokenResponse.Error}");
             }
 
-            var httpClient = _httpClientFactory.CreateClient();
+            var httpClient = _httpClientFactory.CreateClient(EdnaExternalHttpHandler.Name);
             httpClient.SetBearerToken(accessTokenResponse.AccessToken);
 
             httpClient.DefaultRequestHeaders.Accept.Clear();
