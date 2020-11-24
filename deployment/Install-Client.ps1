@@ -155,7 +155,7 @@ function Install-Client {
         az storage logging update --log rwd --retention 30 --services b --account-name $StaticWebsiteStorageAccount --only-show-errors
         # Checking if the command for enabling logs of storage account failed
         if($LASTEXITCODE -ne 0){
-            $manualStepsURL = "https://docs.microsoft.com/en-us/azure/storage/common/storage-monitor-storage-account#configure-logging"
+            $manualStepsURL = "https://aka.ms/learn-lti-audit-client"
             $errorMessage = "Failed to enable auditing for static website storage account This could be a security risk. Please enable auditing for static website manually by following the steps at " + $manualStepsURL
             Write-Output $errorMessage
             Write-ClientDebugLog -Message $errorMessage 
