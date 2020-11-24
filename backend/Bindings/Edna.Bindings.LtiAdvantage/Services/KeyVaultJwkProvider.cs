@@ -6,6 +6,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Edna.Bindings.LtiAdvantage.Utils;
+using Edna.Utils.Http;
 using IdentityModel.Jwk;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
