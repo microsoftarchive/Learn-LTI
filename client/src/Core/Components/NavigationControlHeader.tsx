@@ -45,8 +45,10 @@ const navigationControlHeaderStyle = ({ theme }: IThemeOnlyProps): NavigationCon
         backgroundColor: theme.palette.neutralLighterAlt,
         lineHeight: FontSizes.xxLarge,
         paddingLeft: `calc(${theme.spacing.l1} * 1.6)`,
+        paddingRight: `calc(${theme.spacing.l1} * 1.6)`,
         paddingBottom: `calc(${theme.spacing.l1} * 0.5)`,
-        paddingTop: `calc(${theme.spacing.l1} * 1.5)`
+        paddingTop: `calc(${theme.spacing.l1} * 1.5)`,
+        overflowWrap: 'break-word'
       }
     ],
 

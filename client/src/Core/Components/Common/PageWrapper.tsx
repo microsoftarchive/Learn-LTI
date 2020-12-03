@@ -46,7 +46,8 @@ const pageWrapperStyles = ({ theme }: IThemeOnlyProps): PageWrapperStyles => ({
     {
       color: theme.palette.neutralPrimary,
       lineHeight: FontSizes.xxLarge,
-      marginTop: `calc(${theme.spacing.l1} + ${theme.spacing.s1})`
+      marginTop: `calc(${theme.spacing.l1} + ${theme.spacing.s1})`,
+      overflowWrap: 'break-word'
     }
   ],
   content: [

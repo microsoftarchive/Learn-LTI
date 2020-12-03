@@ -57,7 +57,9 @@ const assignmentLinkItemStyles = ({ theme }: IThemeOnlyProps): AssignmentLinkIte
       flexDirection: 'row',
       justifyContent: 'space-between',
       paddingTop: theme.spacing.l1,
-      paddingBottom: theme.spacing.l1
+      paddingBottom: theme.spacing.l1,
+      wordWrap: 'break-word',
+      wordBreak: 'break-word',
     }
   ]
 });
