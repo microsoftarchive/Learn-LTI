@@ -78,7 +78,7 @@ namespace Edna.Connect
                 ResourceLinkId = ltiRequest.ResourceLinkId,
                 Name = ltiRequest.ResourceLinkTitle,
                 CourseName = ltiRequest.ContextTitle,
-                LtiVersion = ltiRequest.Version,
+                LtiVersion = LtiVersionClass.GetLtiVersion(ltiRequest.Version),
                 ContextMembershipsUrl = ltiRequest.Parameters.FirstOrDefault(pair => pair.Key == "custom_context_memberships_url").Value,
                 OAuthConsumerKey = ltiRequest.ConsumerKey
             };

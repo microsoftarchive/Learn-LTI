@@ -23,6 +23,8 @@ using System;
 using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
+using System.ComponentModel.DataAnnotations;
+using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace Edna.Assignments
 {
@@ -30,7 +32,6 @@ namespace Edna.Assignments
     {
         private const string AssignmentsTableName = "Assignments";
         private const string AssignmentsRoutePath = "assignments";
-        private const string LtiAdvantageVersionString = "1.3.0";
 
         private readonly ILogger<AssignmentsApi> _logger;
         private readonly IMapper _mapper;
@@ -53,6 +54,11 @@ namespace Edna.Assignments
             AssignmentEntity assignmentEntity = _mapper.Map<AssignmentEntity>(assignmentDto);
             assignmentEntity.ETag = "*";
 
+            #if !DEBUG
+            
+            //While debugging, authorization header is empty when this API gets called from either Lti1 API or LtiAdvantage API
+            // So to enable seamless debugging, putting this code in #if !DEBUG block
+            
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -60,14 +66,23 @@ namespace Edna.Assignments
                 return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
-            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
             if (userEmails.Count > 0)
             {
+                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
                 User[] allUsers = await usersClient.GetAllUsers(assignmentDto.Id);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
+            }
+
+            #endif
+
+            ValidationContext context = new ValidationContext(assignmentDto, null, null);
+            if (!Validator.TryValidateObject(assignmentDto, context, new List<ValidationResult>(), true))
+            {
+                _logger.LogError("One or more enteries are incorrect. The length of provided assignment name / course name / assignment description is too long.");
+                return new BadRequestErrorMessageResult("One or more enteries are incorrect. The length of provided assignment name / course name / assignment description is too long.");
             }
 
             TableOperation insertOrMergeAssignment = TableOperation.InsertOrMerge(assignmentEntity);
@@ -99,7 +114,7 @@ namespace Edna.Assignments
 
             AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
 
-            if (assignmentEntity.LtiVersion == LtiAdvantageVersionString)
+            if (assignmentEntity.LtiVersion == LtiVersion.LtiAdvantage.ToString())
             {
                 Platform platform = await platformsClient.GetPlatform(assignmentEntity.PlatformId);
                 assignmentDto.PlatformPersonalization = _mapper.Map<PlatformPersonalizationDto>(platform);
@@ -153,10 +168,10 @@ namespace Edna.Assignments
                 return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
-            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
             if (userEmails.Count > 0)
             {
+                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
@@ -167,10 +182,17 @@ namespace Edna.Assignments
             if (assignmentEntity == null)
                 return new NotFoundResult();
 
-            AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
-
             assignmentEntity.PublishStatus = newPublishStatus.ToString();
             assignmentEntity.ETag = "*";
+
+            AssignmentDto assignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
+
+            ValidationContext context = new ValidationContext(assignmentDto, null, null);
+            if (!Validator.TryValidateObject(assignmentDto, context, new List<ValidationResult>(), true))
+            {
+                _logger.LogError("One or more enteries are incorrect. Incorrect publish status entered.");
+                return new BadRequestErrorMessageResult("The publish status entered is incorrect.");
+            }
 
             await assignmentEntityCollector.AddAsync(assignmentEntity);
             await assignmentEntityCollector.FlushAsync();
