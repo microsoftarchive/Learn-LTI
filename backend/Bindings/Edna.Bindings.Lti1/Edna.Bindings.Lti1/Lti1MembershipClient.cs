@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Edna.Utils.Http;
 using LtiLibrary.NetCore.Clients;
 using LtiLibrary.NetCore.Common;
 using LtiLibrary.NetCore.Lis.v2;
@@ -29,7 +30,7 @@ namespace Edna.Bindings.Lti1
 
         public async Task<IEnumerable<Membership>> GetAllMembers(string membershipUrl, string key, string resourceLinkId)
         {
-            using (HttpClient httpClient = _httpClientFactory.CreateClient())
+            using (HttpClient httpClient = _httpClientFactory.CreateClient(EdnaExternalHttpHandler.Name))
             {
                 ClientResponse<List<Membership>> membershipResponse = await MembershipClient.GetMembershipAsync(httpClient, membershipUrl, key, ToolSecret, resourceLinkId);
 
