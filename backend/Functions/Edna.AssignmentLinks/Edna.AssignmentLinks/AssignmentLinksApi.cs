@@ -75,6 +75,8 @@ namespace Edna.AssignmentLinks
         {
             if (linkEntity == null)
                 return new NotFoundResult();
+            else if (!Guid.TryParse(linkEntity.RowKey, out Guid result))
+                return new BadRequestErrorMessageResult("The provided link Id is malformed.");
 
             return new OkObjectResult(_mapper.Map<AssignmentLinkDto>(linkEntity));
         }
@@ -94,10 +96,10 @@ namespace Edna.AssignmentLinks
                 return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
-            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
             if (userEmails.Count > 0)
             {
+                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
@@ -105,9 +107,16 @@ namespace Edna.AssignmentLinks
             }
 
             string linkJson = await req.ReadAsStringAsync();
-            AssignmentLinkDto linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
+            AssignmentLinkDto linkDto;
+            try
+            {
+                linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
+            } catch (Exception ex)
+            {
+                return new BadRequestErrorMessageResult("Could not create a valid link from the request. " + ex.Message);
+            }
 
-            if (linkId != linkDto.Id)
+            if (linkId != linkDto.Id.ToString())
                 return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
 
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");
@@ -147,10 +156,10 @@ namespace Edna.AssignmentLinks
                 return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
-            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
             if (userEmails.Count > 0)
             {
+                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))

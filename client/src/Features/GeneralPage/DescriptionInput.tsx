@@ -13,6 +13,9 @@ import { textFieldBaseStyle } from '../../Core/Components/Common/Inputs/EdnaInpu
 import { useStore } from '../../Stores/Core';
 
 type DescriptionInputStyles = Partial<ITextFieldStyles>;
+
+const ValidateDescLength = (text: string | undefined) => (text && text.length > 2500) ? "The entered text is too long." : "";
+
 const DescriptionInputInner = ({ styles }: IStylesOnly<DescriptionInputStyles>): JSX.Element => {
   const assignmentStore = useStore('assignmentStore');
   const [description, setDescription] = useState(assignmentStore.assignment?.description || '');
@@ -36,6 +39,7 @@ const DescriptionInputInner = ({ styles }: IStylesOnly<DescriptionInputStyles>):
         placeholder="Insert here the description of the pathway for your students"
         onBlur={() => assignmentStore.updateAssignmentDescription(description)}
         onChange={(_e, newValue) => setDescription(newValue || '')}
+        onGetErrorMessage={ValidateDescLength}
       />
     </InputGroupWrapper>
   );
@@ -45,11 +49,6 @@ const descriptionInputStyles = ({ theme }: IThemeOnlyProps): DescriptionInputSty
   field: [
     {
       height: 100
-    }
-  ],
-  fieldGroup: [
-    {
-      marginBottom: `calc(${theme.spacing.m} * 3)`
     }
   ]
 });

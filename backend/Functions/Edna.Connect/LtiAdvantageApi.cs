@@ -106,6 +106,9 @@ namespace Edna.Connect
             await assignmentsCollector.AddAsync(assignment);
             await assignmentsCollector.FlushAsync();
 
+            if (string.IsNullOrEmpty(assignment.Id))
+                return new InternalServerErrorResult();
+
             string asStudentParam = "";
             if (ltiResourceLinkRequest.Roles.Contains(Role.ContextLearner) || ltiResourceLinkRequest.Roles.Contains(Role.InstitutionLearner))
             {
@@ -140,7 +143,7 @@ namespace Edna.Connect
                 ResourceLinkId = ltiRequest.ResourceLink.Id,
                 Name = ltiRequest.ResourceLink.Title,
                 CourseName = ltiRequest.Context.Title,
-                LtiVersion = ltiRequest.Version,
+                LtiVersion = LtiVersionClass.GetLtiVersion(ltiRequest.Version),
                 ContextMembershipsUrl = ltiRequest.NamesRoleService.ContextMembershipUrl
             };
         }
