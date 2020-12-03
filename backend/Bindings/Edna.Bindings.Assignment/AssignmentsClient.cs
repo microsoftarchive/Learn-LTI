@@ -59,6 +59,8 @@ namespace Edna.Bindings.Assignment
             if (assignment == null)
                 throw new ArgumentNullException(nameof(assignment));
 
+            assignment.Id = null;
+
             HttpResponseMessage assignmentSaveResponse = await _httpClient.PostAsJsonAsync("assignments", assignment);
 
             if (!assignmentSaveResponse.IsSuccessStatusCode)

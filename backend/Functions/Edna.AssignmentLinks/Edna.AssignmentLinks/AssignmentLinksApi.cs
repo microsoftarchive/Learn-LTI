@@ -94,10 +94,10 @@ namespace Edna.AssignmentLinks
                 return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
-            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
             if (userEmails.Count > 0)
             {
+                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
@@ -147,10 +147,10 @@ namespace Edna.AssignmentLinks
                 return new BadRequestErrorMessageResult("Could not get user email.");
             }
 
-            _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
-
             if (userEmails.Count > 0)
             {
+                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
