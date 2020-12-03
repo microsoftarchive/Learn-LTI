@@ -75,6 +75,8 @@ namespace Edna.AssignmentLinks
         {
             if (linkEntity == null)
                 return new NotFoundResult();
+            else if (!Guid.TryParse(linkEntity.RowKey, out Guid result))
+                return new BadRequestErrorMessageResult("The provided link Id is malformed.");
 
             return new OkObjectResult(_mapper.Map<AssignmentLinkDto>(linkEntity));
         }
@@ -105,9 +107,16 @@ namespace Edna.AssignmentLinks
             }
 
             string linkJson = await req.ReadAsStringAsync();
-            AssignmentLinkDto linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
+            AssignmentLinkDto linkDto;
+            try
+            {
+                linkDto = JsonConvert.DeserializeObject<AssignmentLinkDto>(linkJson);
+            } catch (Exception ex)
+            {
+                return new BadRequestErrorMessageResult("Could not create a valid link from the request. " + ex.Message);
+            }
 
-            if (linkId != linkDto.Id)
+            if (linkId != linkDto.Id.ToString())
                 return new BadRequestErrorMessageResult("The provided link content doesn't match the path.");
 
             _logger.LogInformation($"Starting the save process of link with ID [{linkId}] to assignment [{assignmentId}].");

@@ -15,8 +15,11 @@ import { AssignmentLinkDto } from '../Dtos/AssignmentLink.dto';
 export class AssignmentLinksStore extends ChildStore {
   @observable assignmentLinks: AssignmentLink[] = [];
   @observable isLoading = true;
+  @observable areSomeLinksInvalid = false;
 
   initialize(): void {
+    const linksWithValidId = (link: AssignmentLinkDto) => link.id!=="00000000-0000-0000-0000-000000000000";
+
     toObservable(() => this.root.assignmentStore.assignment)
       .pipe(filter(assignment => !assignment))
       .subscribe(() => (this.assignmentLinks = []));
@@ -27,10 +30,12 @@ export class AssignmentLinksStore extends ChildStore {
         map(assignment => assignment!.id),
         switchMap(AssignmentLinksService.getAssignmentLinks),
         filter(links => !links.error),
-        map(links => links as AssignmentLinkDto[])
+        map(links => links as AssignmentLinkDto[]),
+        map(links => [...links])
       )
       .subscribe((links: AssignmentLinkDto[]) => {
-        this.assignmentLinks = links;
+        this.assignmentLinks = links.filter(linksWithValidId);
+        this.areSomeLinksInvalid = this.assignmentLinks.length !== links.length;
         this.isLoading = false;
       });
   }
