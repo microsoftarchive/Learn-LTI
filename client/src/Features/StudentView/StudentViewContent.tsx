@@ -37,7 +37,7 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
     const items: (StudentViewSectionProps & IStylesOnly<StudentViewSectionStyles>)[] = _.compact([
       assignmentStore.assignment?.description && {
         title: 'Description',
-        textContent: assignmentStore.assignment.description
+        textContent: assignmentStore.assignment.description.substring(0,2500)
       },
       assignmentStore.assignment?.deadline && {
         title: 'Deadline',

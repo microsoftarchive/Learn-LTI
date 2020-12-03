@@ -29,8 +29,6 @@ namespace Edna.Users
 {
     public class UsersApi
     {
-        private const string LtiAdvantageVersionString = "1.3.0";
-
         private readonly IMapper _mapper;
         private readonly ILogger<UsersApi> _logger;
 
@@ -58,7 +56,7 @@ namespace Edna.Users
 
             _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
-            if (assignment.LtiVersion != LtiAdvantageVersionString)
+            if (assignment.LtiVersion.ToString() != LtiVersionClass.LtiVersion.LtiAdvantage.ToString())
             {
                 Membership userMembership = await membershipClient.GetMemberByEmail(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId, userEmails);
                 return new OkObjectResult(_mapper.Map<MemberDto>(userMembership));
@@ -83,7 +81,7 @@ namespace Edna.Users
         {
             _logger.LogInformation("Getting all users");
 
-            if (assignment.LtiVersion != LtiAdvantageVersionString)
+            if (assignment.LtiVersion.ToString() != LtiVersionClass.LtiVersion.LtiAdvantage.ToString())
             {
                 IEnumerable<Membership> allMemberships = await membershipClient.GetAllMembers(assignment.ContextMembershipsUrl, assignment.OAuthConsumerKey, assignment.ResourceLinkId);
                 return new OkObjectResult(allMemberships.Select(_mapper.Map<MemberDto>));
