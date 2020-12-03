@@ -5,7 +5,7 @@
 
 using Edna.Bindings.LtiAdvantage.BindingConfigurations;
 using Edna.Bindings.LtiAdvantage.Services;
-using Edna.Bindings.LtiAdvantage.Utils;
+using Edna.Utils.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -5,7 +5,7 @@
 
 using System.Net.Http;
 
-namespace Edna.Bindings.LtiAdvantage.Utils
+namespace Edna.Utils.Http
 {
     public static class EdnaExternalHttpClient
     {

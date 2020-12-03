@@ -5,11 +5,10 @@
 
 using System;
 using System.IO;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Edna.Bindings.LtiAdvantage.Utils;
+using Edna.Utils.Http;
 using Microsoft.Azure.KeyVault;
 using Microsoft.Azure.KeyVault.Models;
 using Microsoft.Azure.Services.AppAuthentication;
