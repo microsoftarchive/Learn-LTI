@@ -14,7 +14,7 @@ using LtiAdvantage;
 using LtiAdvantage.NamesRoleProvisioningService;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Edna.Bindings.LtiAdvantage.Utils;
+using Edna.Utils.Http;
 
 namespace Edna.Bindings.LtiAdvantage.Services
 {

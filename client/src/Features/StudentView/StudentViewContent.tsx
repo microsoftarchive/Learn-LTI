@@ -37,7 +37,7 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
     const items: (StudentViewSectionProps & IStylesOnly<StudentViewSectionStyles>)[] = _.compact([
       assignmentStore.assignment?.description && {
         title: 'Description',
-        textContent: assignmentStore.assignment.description
+        textContent: assignmentStore.assignment.description.substring(0,2500)
       },
       assignmentStore.assignment?.deadline && {
         title: 'Deadline',
@@ -46,7 +46,8 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
       (assignmentLinksStore.isLoading || assignmentLinksStore.assignmentLinks.length > 0) && {
         title: 'Links',
         styles: linksSectionStyles,
-        content: <AssignmentLinksList disableEdit />
+        content: <AssignmentLinksList disableEdit />,
+        alertMessage: assignmentLinksStore.areSomeLinksInvalid ? "Some links were ill-formed, and therefore, were not rendered. Please contact the administrator or the teacher." : ""
       },
       learnStore.selectedItems &&
         learnStore.selectedItems.length > 0 && {

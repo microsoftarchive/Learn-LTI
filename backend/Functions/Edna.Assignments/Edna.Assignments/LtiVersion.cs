@@ -3,15 +3,11 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
-using System.Net.Http;
-
-namespace Edna.Bindings.LtiAdvantage.Utils
+namespace Edna.Assignments
 {
-    public static class EdnaExternalHttpClient
+    public enum LtiVersion
     {
-        public static HttpClient Create()
-        {
-            return new HttpClient(new EdnaExternalHttpHandler());
-        }
+        Lti1,
+        LtiAdvantage
     }
 }
