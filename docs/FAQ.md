@@ -32,6 +32,10 @@ We have seen this case where the Authorization header was not being forwarded to
 
 To resolve this see [Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization)
 
+## Reporting ##
+
+Microsoft Learn organizational Reporting is a service available to organizations to view Microsoft Learn training progress and achievements of the individuals within their tenant. This service is available to both enterprise customers and educational organizations.The system uses a service called Azure Data Share to extract, transform, and load (ETL) user progress data into data sets, which can then be processed further or displayed in visualization tools such as Power BI. Data sets can be stored to either Azure Data Lake, Azure Blob storage, Azure SQL database, or Azure Synapse SQL Pool. Organizations can create and manage their data share using Azure Data Share’s no-code UI.
+[Learn Organizational Reporting setup](https://docs.microsoft.com/en-us/learn/support/org-reporting)
 
 ## Troubleshooting
 
