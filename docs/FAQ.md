@@ -32,10 +32,33 @@ We have seen this case where the Authorization header was not being forwarded to
 
 To resolve this see [Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization)
 
-## Reporting ##
+## Reporting
 
 Microsoft Learn organizational Reporting is a service available to organizations to view Microsoft Learn training progress and achievements of the individuals within their tenant. This service is available to both enterprise customers and educational organizations.The system uses a service called Azure Data Share to extract, transform, and load (ETL) user progress data into data sets, which can then be processed further or displayed in visualization tools such as Power BI. Data sets can be stored to either Azure Data Lake, Azure Blob storage, Azure SQL database, or Azure Synapse SQL Pool. Organizations can create and manage their data share using Azure Data Share’s no-code UI.
 [Learn Organizational Reporting setup](https://docs.microsoft.com/en-us/learn/support/org-reporting)
+
+## Active Directory
+
+### Moodle 
+
+OpenID Connect Authentication Plugin
+The OpenID Connect plugin provides single-sign-on functionality using configurable identity providers, including Azure Active Directory. It is used as part of the Office 365 suite of plugins to connect to Azure Active Directory, but can be configured to provide SSO for other OpenID Connect providers as well.
+This is part of the suite of [Office 365 plugins for Moodle](https://moodle.org/plugins/browse.php?list=set&id=72)
+To follow active development on [o365 Moodle Microsoft GitHub](https://github.com/Microsoft/o365-moodle/)
+
+### Canvas 
+How to integrate Canvas with Azure Active Directory (Azure AD). Integrating Canvas with Azure AD provides you with the following benefits:
+You can control in Azure AD who has access to Canvas.
+You can enable your users to be automatically signed-in to Canvas (Single Sign-On) with their Azure AD accounts.
+You can manage your accounts in one central location - the Azure portal.
+[Tutorial: Azure Active Directory integration with Canvas](https://docs.microsoft.com/en-us/azure/active-directory/saas-apps/canvas-lms-tutorial)
+
+### Blackboard 
+How to integrate Blackboard Learn with Azure Active Directory (Azure AD). When you integrate Blackboard Learn with Azure AD, you can:
+Control in Azure AD who has access to Blackboard Learn.
+Enable your users to be automatically signed-in to Blackboard Learn with their Azure AD accounts.
+Manage your accounts in one central location - the Azure portal.
+[Tutorial: Azure Active Directory single sign-on (SSO) integration with Blackboard Learn] (https://docs.microsoft.com/en-us/azure/active-directory/saas-apps/blackboard-learn-tutorial)
 
 ## Troubleshooting
 
