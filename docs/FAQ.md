@@ -58,7 +58,7 @@ How to integrate Blackboard Learn with Azure Active Directory (Azure AD). When y
 Control in Azure AD who has access to Blackboard Learn.
 Enable your users to be automatically signed-in to Blackboard Learn with their Azure AD accounts.
 Manage your accounts in one central location - the Azure portal.
-[Tutorial: Azure Active Directory single sign-on (SSO) integration with Blackboard Learn] (https://docs.microsoft.com/en-us/azure/active-directory/saas-apps/blackboard-learn-tutorial)
+[Tutorial: Azure Active Directory single sign-on integration with Blackboard Learn](https://docs.microsoft.com/en-us/azure/active-directory/saas-apps/blackboard-learn-tutorial)
 
 ## Troubleshooting
 
