@@ -14,6 +14,14 @@ The deployment step which failed should be easily identified and debugged.
 
 If the error is related to an Azure region please try to redeploy to a suitable alternative region.
 
+If the error is related to missing subscription registration please make sure the following resource providers are registered in your subscription - 
+- Microsoft.Web
+- Microsoft.Storage
+- Microsoft.Insights
+- Microsoft.KeyVault
+- Microsoft.Authorization
+You can see the registration status and register a resource provider namespace by following this [documentation] (https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/error-register-resource-provider#solution-3---azure-portal)
+
 ### Unathorized 401 Error
 
 An Unauthorized (401) Exception occurred when access the Moodle's LTI services.
