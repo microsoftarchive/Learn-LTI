@@ -21,7 +21,7 @@ If the error is related to missing subscription registration please make sure th
 - Microsoft.KeyVault
 - Microsoft.Authorization
 
-You can see the registration status and register a resource provider namespace by following this [documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/error-register-resource-provider#solution-3---azure-portal)
+To see the registration status and register a resource provider namespace see [Resolve errors for resource provider registration](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/error-register-resource-provider#solution-3---azure-portal)
 
 ### Unathorized 401 Error
 
