@@ -20,6 +20,26 @@ Users access failing with http500 which essentially has been the source of the O
 
 The details provided at [Planning Active Directory SSO Applications](https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/plan-sso-deployment)
 
+## Steps if your an Office365/Microsoft365 institution but unsure of your Active Directory Details 
+
+Microsoft 365 uses Azure Active Directory (Azure AD) to manage user identities behind the scenes. Your Microsoft 365 subscription includes a free Azure AD subscription so that you can integrate your on-premises Active Directory Domain Services (AD DS) to synchronize user accounts and passwords or set up single sign-on. 
+
+Azure AD also offers other functionality, like managing integrated apps, that you can use to extend and customize your Microsoft 365 subscriptions.
+
+You can use the Azure AD deployment advisors for a guided setup and configuration experience in the Microsoft 365 admin center (you must be signed in to Microsoft 365):
+
+[Azure AD Connect advisor](https://aka.ms/aadconnectpwsync)
+[AD FS deployment advisor](https://aka.ms/adfsguidance)
+[Azure AD setup guide](https://aka.ms/aadpguidance)
+
+If you have a paid subscription to Microsoft 365, you also have a free Azure AD subscription. You can use Azure AD to create and manage user and group accounts. To activate this subscription, you have to complete a [one-time registration.](https://docs.microsoft.com/en-us/microsoft-365/compliance/use-your-free-azure-ad-subscription-in-office-365?view=o365-worldwide) Afterward, you can access Azure AD from your Microsoft 365 admin center.
+
+Don't go directly to azure.microsoft.com to sign up or you'll end up with a trial or paid subscription to Microsoft Azure that is separate from your free Azure AD subscription with Microsoft 365.
+
+With the free subscription you can synchronize with on-premises directories, set up single sign-on, and synchronize with many software as service applications.
+
+If you want enhanced AD DS functionality, bi-directional synchronization, and other management capabilities, you can upgrade your free subscription to a paid premium subscription. For the details, see [Azure Active Directory editions.](https://azure.microsoft.com/pricing/details/active-directory/)
+
 ## Troubleshooting Azure Resource Manager Deployments 
 
 In order to understand the issue in more detail, one way could be to go through the deployment details which could be accessed via Azure Portal.
