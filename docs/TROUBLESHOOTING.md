@@ -28,9 +28,9 @@ Azure AD also offers other functionality, like managing integrated apps, that yo
 
 You can use the Azure AD deployment advisors for a guided setup and configuration experience in the Microsoft 365 admin center (you must be signed in to Microsoft 365):
 
-[Azure AD Connect advisor](https://aka.ms/aadconnectpwsync)
-[AD FS deployment advisor](https://aka.ms/adfsguidance)
-[Azure AD setup guide](https://aka.ms/aadpguidance)
+- [Azure AD Connect advisor](https://aka.ms/aadconnectpwsync)
+- [AD FS deployment advisor](https://aka.ms/adfsguidance)
+- [Azure AD setup guide](https://aka.ms/aadpguidance)
 
 If you have a paid subscription to Microsoft 365, you also have a free Azure AD subscription. You can use Azure AD to create and manage user and group accounts. To activate this subscription, you have to complete a [one-time registration.](https://docs.microsoft.com/en-us/microsoft-365/compliance/use-your-free-azure-ad-subscription-in-office-365?view=o365-worldwide) Afterward, you can access Azure AD from your Microsoft 365 admin center.
 
