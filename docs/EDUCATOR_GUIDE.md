@@ -70,13 +70,13 @@ These steps are performed within the Microsoft Learn LTI application, and they a
    * **Add Link**: Include links to external sites and sources of information that you believe will help the students to gain more from the assignment.
 ![General](/images/Configurations.General.png)
 4. Click the **Microsoft Learn** tab.   
-![Tutorial](/images/Configurations.Tutorial.ClickBubble.png)
 5. From the Microsoft Learn tab, you can search for learning paths and modules from Microsoft Learn to add to your assignment.
+![Tutorial](/images/Configurations.Tutorial.ClickBubble.png)
 6. Select the learning paths and modules you want to add to your assignment. 
 ![Tutorial.Path](/images/Configurations.Tutorial.Path.png)
 7. From the top Navigation Bar, click **Preview**.
 8. Review the assignment to make sure it works as intended.
-![Preview](/images/View.Preview.PNG)
+![Preview](/images/View.Preview.png)
 9. Click **Publish** from the top right side of assignment.
 ![Publish](/images/View.Preview.Publish.png)
 10. A pop-up window will appear asking you to confirm that you wish to publish the assignment. Click the **Publish** button.
