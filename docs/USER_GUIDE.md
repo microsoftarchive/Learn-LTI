@@ -76,7 +76,7 @@ These steps are performed within the Microsoft Learn LTI application, and they a
 ![Tutorial.Path](/images/Configurations.Tutorial.Path.png)
 7. From the top Navigation Bar, click **Preview**.
 8. Review the assignment to make sure it works as intended.
-![Preview](/images/Preview.png)
+![Preview](/images/View.Preview.png)
 9. Click **Publish** from the top right side of assignment.
 ![Publish](/images/View.Preview.Publish.png)
 10. A pop-up window will appear asking you to confirm that you wish to publish the assignment. Click the **Publish** button.
