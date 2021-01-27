@@ -1,4 +1,16 @@
-# About
+[![GitHub license](https://img.shields.io/github/license/microsoft/Learn-LTI.svg)](https://github.com/microsoft/Learn-LTI/blob/master/LICENSE)
+[![GitHub contributors](https://img.shields.io/github/contributors/microsoft/Learn-LTI.svg)](https://GitHub.com/microsoft/Learn-LTI/graphs/contributors/)
+[![GitHub issues](https://img.shields.io/github/issues/microsoft/Learn-LTI.svg)](https://GitHub.com/microsoft/Learn-LTI/issues/)
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/microsoft/Learn-LTI.svg)](https://GitHub.com/microsoft/Learn-LTI/pull/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+
+[![GitHub watchers](https://img.shields.io/github/watchers/microsoft/Learn-LTI.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/microsoft/Learn-LTI/watchers/)
+[![GitHub forks](https://img.shields.io/github/forks/microsoft/Learn-LTI.svg?style=social&label=Fork&maxAge=2592000)](https://GitHub.com/microsoft/Learn-LTI/network/)
+[![GitHub stars](https://img.shields.io/github/stars/microsoft/Learn-LTI.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/microsoft/LEARN-LTI/stargazers/)
+
+# Microsoft Learn LTI Application 
+
+## About
 
 [Microsoft Learn](https://learn.microsoft.com/#/?WT.mc_id=learnlti-github-cxa) is a free, online training platform that provides interactive learning resources for Microsoft products and cutting edge technologies. Our goal is to empower students and educators to learn about technology through fun, guided, hands-on content aimed at specific learning goals. 
 
