@@ -1,12 +1,9 @@
 # Frequently Asked Questions
 
-## Deployment
-
-[See the deployment guide](DEPLOYMENT_GUIDE.MD)
-
 ### Issues in deployment
 
-In order to understand the issue in more detail, one way could be to go through the deployment details which could be accessed via Azure Portal.
+In order to understand the issue in more detail, one way could be to go through the deployment details which could be accessed via Azure Portal. Double check the setting with 
+[the deployment guide](/DEPLOYMENT_GUIDE.md)
 
 Go to Azure Portal -> Choose appropriate Subscription -> Select Resource Groups blade from Left Rail -> Choose appropriate Resource Group -> Select Deployments Blade from Left Rail.
 
