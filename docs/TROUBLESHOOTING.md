@@ -74,7 +74,7 @@ You could consider trying to re-deploy the same RG/Identity/AppName combination 
 We have seen a issue where the "Authorization" header was not being forwarded to the backend by AWS CloudFront. See the following documentation 
 [Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization)
 
-# Debugging Errors related to http500 indicated in Browser with Oops! Something went wrong.. We suggest you to our help page.
+# Debugging Errors related to http500 indicated in Browser with Oops! Something went wrong.. We suggest you go to our help page.
 
 ## Unable to open the Assignments page in Learn-LTI
 Users access failing with http500 which essentially has been the source of the Oops!something went wrong error message in the browser window.
