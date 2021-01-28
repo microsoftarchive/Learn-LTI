@@ -63,20 +63,20 @@ The steps for creating an assignment are slightly different depending on the LMS
 These steps are performed within the Microsoft Learn LTI application, and they are LMS agnostic.
 
 1. Click on the LTI link that you have just added to launch an instance of the Learn LTI tool. 
-2. Locate the **General** tab under **Configuration**.
+2. Locate the **General** tab.
 3. Enter the following information:
    * **Description**: Include a brief overview of the assignment and key learning objectives for your students.
    * **Deadline**: Use the calender to enter when you expect students to have completed the assignment.
    * **Add Link**: Include links to external sites and sources of information that you believe will help the students to gain more from the assignment.
-![General](/images/Configuration.General.PNG)
-4. Click the **MS Learn** under **Configuration**.   
+![General](/images/Configurations.General.png)
+4. Click the **Microsoft Learn** tab.   
+5. From the Microsoft Learn tab, you can search for learning paths and modules from Microsoft Learn to add to your assignment.
 ![Tutorial](/images/Configurations.Tutorial.ClickBubble.png)
-5. From the MS Learn tab, you can search for learning paths and modules from Microsoft Learn to add to your assignment.
 6. Select the learning paths and modules you want to add to your assignment. 
 ![Tutorial.Path](/images/Configurations.Tutorial.Path.png)
-7. On the left hand side, under **View**, click **Preview**.
+7. From the top Navigation Bar, click **Preview**.
 8. Review the assignment to make sure it works as intended.
-![Preview](/images/View.Preview.PNG)
-9. Under **View**, click **Publish**.
+![Preview](/images/View.Preview.png)
+9. Click **Publish** from the top right side of assignment.
 ![Publish](/images/View.Preview.Publish.png)
 10. A pop-up window will appear asking you to confirm that you wish to publish the assignment. Click the **Publish** button.
