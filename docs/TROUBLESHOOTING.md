@@ -10,11 +10,25 @@ If your deployment has an error look [here](https://docs.microsoft.com/azure/azu
 
 ## Missing Name Role Provisioning Service in LTI1.1
 
-NRPS is something that has been a part of LTIAdvantage Specification which, per my knowledge, is not available in LTI1.1 based Moodle.
+NRPS is something that has been a part of LTIAdvantage Specification this service is not available in LTI1.1 
+- Moodle implementation as such we recommed you update your moodle environment.
+- OpenEdx, There is work happening in the OpenEdX community see References for LTIAdvantage in OpenEdx
+• Is Anyone Working on LTI 1.3? - Development / Collaborative Proposals - Open edX discussions -https://discuss.openedx.org/t/is-anyone-working-on-lti-1-3/798/12
+• [TNL-7314] [BD-24] LTI Advantage & other improvements - JIRA (atlassian.net) - https://id.atlassian.com/login?continue=https%3A%2F%2Fopenedx.atlassian.net%2Flogin%3FredirectCount%3D1%26dest-url%3D%252Fbrowse%252FTNL-7314%26application%3Djira&application=jira
+• [BD-24] LTI v1.3 Improvements: Advantage Support - Open edX Community - Confluence - (atlassian.net) https://openedx.atlassian.net/wiki/spaces/COMM/pages/1545076784/BD-24+LTI+v1.3+Improvements+Advantage+Support
 
-## Unable to open the Assignments page in Learn-LTI
+## Error Unauthorized 401 when using Moodle
 
-Users access failing with http500 which essentially has been the source of the Oops! error message.
+An Unauthorized (401) Exception occurred when access the Moodle's LTI services.
+/mod/lti/services.php/CourseSection/39/bindings/2/memberships
+The problem can be related to your Apache Config. 
+Solution:
+Edit your httpd.conf file or alternatively in the vhosts file:
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+SetEnvIf Content-Type "(.*)" HTTP_CONTENT_TYPE=$1
+SetEnvIf Accept "(.*)" HTTP_ACCEPT=$1 
+
+Reference: https://moodle.org/mod/forum/discuss.php?d=389429
 
 ## Step by step guide to connect the SSO experience with AAD.
 
@@ -51,7 +65,7 @@ In order to understand the issue in more detail, one way could be to go through 
 - Select Deployments Blade from Left Rail.
 - The log will show which service deployments failed
 
-## Deployments and depolyment errors 
+## Azure Resources Deployments errors 
 
 You could consider trying to re-deploy the same RG/Identity/AppName combination by simply re-executing run.bat or deploy a new RG inside a different region than the one tried previously. Running the same script and resource group names will also create a error if the services and resources are already present for those regions and names.
 
@@ -61,6 +75,9 @@ We have seen a issue where the "Authorization" header was not being forwarded to
 [Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization)
 
 # Debugging Errors related to http500
+
+## Unable to open the Assignments page in Learn-LTI
+Users access failing with http500 which essentially has been the source of the Oops! error message.
 
 ## Azure Functions Tracing 
 
