@@ -69,55 +69,39 @@ Enable your users to be automatically signed-in to Blackboard Learn with their A
 Manage your accounts in one central location - the Azure portal.
 [Tutorial: Azure Active Directory single sign-on integration with Blackboard Learn](https://docs.microsoft.com/en-us/azure/active-directory/saas-apps/blackboard-learn-tutorial)
 
-## Troubleshooting
+## Cost Management
+The cost of the service implementation is approximately $20 per month for the Azure infrastructure which is required for the Microsoft Learn LTI Application. Costs can be assessed by using the [Azure Pricing Calculator]( https://azure.microsoft.com/pricing/calculator)
 
-### Azure Function Traces
+## What do you need to deploy the Microsoft Learn LTI Application
+Your Instititution will need to have 
+- Azure tenant 
+- Azure Subscription 
+- Azure Active Directory for user Authentication
 
-This should provide details related to the execution context and state of the function execution when it has returned http 204 error.
+## What LTI data will be passing from the LMS into Learn…
+We are only user membership service within LTI. We are using the membership service to gain a list of members of the course to surface in the Learn LTI Application. All Data resides in the institution as the Learn LTI Application is installed within your Azure Tenant. We are not transferring anything to MS Learn or from MS Learn to the institutional LMS see the [Architecure Diagram.](ARCHITECTURE_OVERVIEW.md)
 
-- Goto your Resource Group inside Azure and select Function App matching users-XXXXXXX.
-- Select Functions Blade in Left Hand Pane.
-- Select GetUserDetails afterwards.
-- Choose Monitor Blade in LHP and you should see the Invocation Traces.
-- Clicking on the failing trace should provide more details related to Server logs for that function invocation to help you.
+## How can we track user Microsoft Learn. 
+A user/student will login to Microsoft Learn using their Org AAD/microsoft365  user reporting to the institution is provided to only their Org account and this is done securly and we don't hold user details these are reconciled by the institution using Azure Data Services and [Microsoft Learn Organizational Reporting](https://docs.microsoft.com/en-us/learn/support/org-reporting)
 
-### Failures (Exceptions) in App Insights
+## Will the LTI be sharing gradebook or assessment data? 
+At this point Microsoft Learn does not support LTI Gradebook passback. Therefore your institution need to build a manual process for assessment of completed works. 
 
-Go to your Resource Group in the [Azure Portal](http://portal.azure.com) and select Application Insights resource matching users-XXXXXXX.
+## Azure Compliance 
+90 compliance certifications, including over 50 specific to global regions and countries, such as the US, the European Union, Germany, Japan, the United Kingdom, India, and China. And, get more than 35 compliance offerings specific to the needs of key industries, including health, government, finance, education, manufacturing, and media. Your emerging compliance needs are covered, too: Microsoft engages globally with governments, regulators, standards bodies, and non-governmental organizations. Explore [Azure compliance](https://docs.microsoft.com/en-us/compliance/regulatory/offering-home) you can find more details on [compliance](https://azure.microsoft.com/en-us/overview/trusted-cloud/compliance/)
 
-Select Failures Blade in LHP and then choose Exceptions Tab.
+## FERPA-protected Data
+Microsoft only validate the users/students to Microsoft Learn using their microsoft365/AAD usernames we store no other details related to the user apart from there login. It is the institution responsibility and reconcile users activity using the [Microsoft Learn Organizational Reporting](https://docs.microsoft.com/en-us/learn/support/org-reporting) the institition can build associated activity reports around there users/students. Again as the Learn LTI Application is installed, managed and operated by the Institution we recommend you read [this paper](https://azure.microsoft.com/en-us/resources/microsoft-azure-ferpa-implementation-guide/) as its helpful to those in educational organizations who need guidance and best practices in designing secure solutions on Azure. 
 
-The subsequent screen should indicate any exceptions that were thrown as a part of function execution and should provide more insights into what may have gone wrong on server when executing GetUserDetails api.
+## Public Health/HIPAA PCI/DSS as FISMA 
+The requirements are out of scope for Microsoft Learn. 
 
-If you encounter errors which you are unable to debug we request you to please share the above details with us in order for us to be able to help you in a better way.
-
-Since the details might contain some private information as well. Please feel free to reach out to us via email at learnlti@microsoft.com.
-
-### Failure is in Users Function App
-
-Function app which is not being able to find the user (signed-in via AAD) enrolled into the current course. 
-
-Please check that the return code for the API in the Chrome DevTools network tab is http204 (i.e. No-Content).
-
-In our experience, the only case when this happens is when user signs into Learn-LTI app with an onmicrosoft.com account which does not map to the email of any of the enrolled users of the course.
-
-## Configuration
-
-if you receive the following error.
-
-![Learnltiadd](../images/LearnLTIAADIssue.png)
-
-Ensure you are using an Azure AD connected account,
-
-Please ensure that AAD sign for your LMS is enabled and you are signing into your LMS with a AAD account.
-
-## Educator
-
-The cost of the service implementation is approximately $20 per month for the Azure infrastructure which is required for the Microsoft Learn LTI Application
-Costs can be assessed by using the [Azure Pricing Calculator]( https://azure.microsoft.com/pricing/calculator)
+## Microsoft Professional Certifications
+The purchasing of Microsoft Certification is processed via a learning partner as is the certification process and exam which sits outside of MS Learn API feature as we are simply bringing back modules, learning paths at this point. 
+For [non-students interested in technology](https://examregistration.microsoft.com/)
+For [students or instructors](http://www.certiport.com/locator)
 
 ## Help with setting up the Microsoft Learn LTI Application 
-
 We know many academic institutions may need help installing the [Microsoft Learn LTI Application](https://github.com/microsoft/Learn-LTI/blob/main/README.md) at your institution. 
 
 Microsoft and [Upwork](https://www.upwork.com/ppc/microsoft/azure/) have partnered to provide a curated talent pool of freelancers that have excellent customer ratings on Upwork and are verified by Microsoft to hold Azure certifications. These freelancers can provide assistance on a wide variety of Azure projects large and small. We have provided specific training to them on the Microsoft Learn LTI Application so they are well versed on installation requirements.
@@ -129,4 +113,3 @@ If you would like support, here’s how to get started:
 -	Within a few hours to a couple days, qualified freelancers will bid on your project
 -	Installation should only take 2-3 hours and cost anywhere from $150 - $300. Note: freelancers set their own rates so you should choose a free lancer based on cost and their experience)
 -	Once you accept a bid and hire a freelancer you’ll be on your way
-
