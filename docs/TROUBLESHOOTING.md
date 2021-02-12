@@ -8,7 +8,12 @@ If your **deployment fails and the resource group has been created**; an IT admi
 
 If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=learnlti-github-cxa) for common errors.
 
+## LMS Requirement for Secure Token SSL https 
+
+If you are deploying the service in a test environment please ensure that your test LMS environment had a valid SSL certificateinstalled we require all traffic to utilise SSL.
+
 ## Configuration
+
 If you receive the following error.
 
 ![Learnltiadd](../images/LearnLTIAADIssue.png)
@@ -16,6 +21,10 @@ If you receive the following error.
 Ensure you are using an Azure AD connected account,
 
 Please ensure that AAD sign for your LMS is enabled and you are signing into your LMS with a AAD account.
+
+## Canvas LMS Issuer 
+
+If your using on premise, hosted or cloud implementations of Canvas. Ensure you register the parameters back in the Learn LTI application's registration page. Please ensure you always state the  Issuer as https://canvas.instructure.com see the final steps in the Canvas instructions https://github.com/microsoft/Learn-LTI/blob/main/docs/CONFIGURATION_GUIDE.md 
 
 ## Missing Name Role Provisioning Service in LTI1.1
 
@@ -79,15 +88,18 @@ In order to understand the issue in more detail, one way could be to go through 
 You could consider trying to re-deploy the same RG/Identity/AppName combination by simply re-executing run.bat or deploy a new RG inside a different region than the one tried previously. Running the same script and resource group names will also create a error if the services and resources are already present for those regions and names.
 
 ## Using Hosted services on Cloudfront
+
 We have seen a issue where the "Authorization" header was not being forwarded to the backend by AWS CloudFront. See the following documentation 
 [Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization)
 
 ## Debugging Errors related to http500 indicated in Browser with Oops! Something went wrong.. We suggest you go to our help page.
+
 This results in you being unable to open the Assignments page in Learn-LTI. Users access failing with http500 which essentially has been the source of the Oops!something went wrong error message in the browser window.
 
 Please see browser logs if indicate that the membership call being sent to the LMS (Moodle) is returning a 401 Unauthorized and the Learn LTI tool in unable to get the course members from the LMS and hence the it is giving a 500 response. Please make sure that while configuring the tool in Moodle, Under Services, IMS LTI Names and Role Provisioning: `Use this service to retrieve members’ information as per privacy settings.` is selected as mentioned in the [Configuration Guide Learn](CONFIGURATION_GUIDE.md) 
 
 ## Azure Functions Tracing 
+
 This should provide details related to the execution context and state of the function execution when it has returned http 204 error.
 - Goto your Resource Group inside Azure and select Function App matching users-XXXXXXX.
 - Select Functions Blade in Left Hand Pane.
@@ -96,12 +108,14 @@ This should provide details related to the execution context and state of the fu
 - Clicking on the failing trace should provide more details related to Server logs for that function invocation to help you.
 
 ## Failures (Exceptions) in App Insights
+
 - Go to your Resource Group inside Azure and select Application Insights resource matching users-XXXXXXX.
 - Select Failures Blade in LHP and then choose Exceptions Tab.
 - The subsequent screen should indicate any exceptions that were thrown as a part of function execution and should provide more insights into what might've gone wrong on server when executing GetUserDetails api.
 - We'd request you to please share the above details with us in order for us to be able to help you in a better way. Since the details might contain some private information as well. Please feel free to reach out to us via email at learnlti@microsoft.com.
 
-### Failure is in Users Function App
+## Failure is in Users Function App
+
 Function app which is not being able to find the user (signed-in via AAD) enrolled into the current course. 
 
 Please check that the return code for the API in the Chrome DevTools network tab is http204 (i.e. No-Content).
@@ -109,4 +123,5 @@ Please check that the return code for the API in the Chrome DevTools network tab
 In our experience, the only case when this happens is when user signs into Learn-LTI app with an onmicrosoft.com account which does not map to the email of any of the enrolled users of the course.
 
 ## Raising a Issue
+
 If you are still having trouble, please raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa).
