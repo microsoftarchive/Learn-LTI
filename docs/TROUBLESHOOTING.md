@@ -18,9 +18,26 @@ If you receive the following error.
 
 ![Learnltiadd](../images/LearnLTIAADIssue.png)
 
-Ensure you are using an Azure AD connected account,
+Ensure you are using an Azure AD connected account. Please ensure that AAD sign for your LMS is enabled and you are signing into your LMS with a AAD account. The emails of the users in the LMS and AAD should match. Also please ensure the users are active on the course. 
 
-Please ensure that AAD sign for your LMS is enabled and you are signing into your LMS with a AAD account.
+## Moodle Users not active - Not Current
+
+All users need to be Active on a course if you see Not Current next to the status.
+
+![image](https://user-images.githubusercontent.com/2511341/108256622-a3406f80-7155-11eb-9ef2-b9b42faf324f.png)
+
+We have noticed that users having this issue 
+
+![ErrorNoValidUsers](https://user-images.githubusercontent.com/31847926/94229941-2b726e00-ff44-11ea-8343-30ad6bab348e.png)
+
+We have seen this where students/teacher may of been manually assigned or automatically assigned as showing  "Not Current". 
+
+![NotCurrent](https://user-images.githubusercontent.com/3178741/94397091-b8603600-0195-11eb-9e76-f0213684c1aa.png)
+
+The solution is simply make the students and teachers active and they can then log in. 
+To activate users: Click on the settings wheel in the top right hand corner and select "Enrollment methods" then click the crossed out eye to allow manual enrollment. 
+
+When you go back to the course participants they will show as active and users will be able to load the Learn LTI application.
 
 ## Canvas LMS Issuer 
 
