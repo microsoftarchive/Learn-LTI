@@ -12,13 +12,25 @@ If your deployment has an error look [here](https://docs.microsoft.com/azure/azu
 
 If you are deploying the service in a test environment please ensure that your test LMS environment had a valid SSL certificateinstalled we require all traffic to utilise SSL.
 
-## Configuration
+## LTI Application Login  error: You are not enrolled in this course
 
 If you receive the following error.
 
 ![Learnltiadd](../images/LearnLTIAADIssue.png)
 
-Ensure you are using an Azure AD connected account. Please ensure that AAD sign for your LMS is enabled and you are signing into your LMS with a AAD account. The emails of the users in the LMS and AAD should match. Also please ensure the users are active on the course. 
+User not registered on the LMS or logged into Web Browser with the incorrect account
+- Ensure you are using an Azure AD connected account and logged into their web browser with the same account they used to sign into the LMS. 
+- Please ensure that AAD sign for your LMS is enabled and you are signing into your LMS with a AAD account. 
+- The emails of the users in the LMS and AAD should match. 
+- Ensure the users are active on the course. 
+
+## LTI Application doesnt load error: Could not validate nonce.
+
+If you recieve a browser message 
+
+{"Message":"Could not validate nonce."}
+
+We have seen this is an intermittent issue, it usually happens if the user is trying to replay an old call or if the nonce and state value don't match. If the user simply refreshes the browser the page will load. 
 
 ## Moodle Users not active - Not Current
 
