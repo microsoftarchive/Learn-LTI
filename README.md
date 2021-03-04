@@ -10,6 +10,7 @@
 
 # Microsoft Learn LTI Application 
 
+![Learn LTI Application](/images/Learn-lti.png)
 ### About ###
 [Microsoft Learn](https://docs.microsoft.com/learn/?WT.mc_id=edna) is a free, online training platform that provides interactive learning resources for Microsoft products and cutting edge technologies. Our goal is to empower students and educators to learn about technology through fun, guided, hands-on content aimed at specific learning goals. 
 
