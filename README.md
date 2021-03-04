@@ -19,6 +19,8 @@ Educators and Institutions can leverage the LTI application to integrate Microso
 
 The Microsoft Learn LTI Application adheres to [v1.1](https://www.imsglobal.org/specs/ltiv1p1) and [v1.3](http://www.imsglobal.org/spec/lti/v1p3/) standards. For more specifics on the application itself, check out the [Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md).
 
+<iframe src="https://player.vimeo.com/video/518748389" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+
 ### Key Features: ###
 - **Single Sign-On** (SSO) - users only have to sign into their institution once to access the Learn LTI application
 - **LMS Pairing** - instructors can create, edit, and publish Learn-based assignments for their courses and populate their insitution's LMS with them easily
