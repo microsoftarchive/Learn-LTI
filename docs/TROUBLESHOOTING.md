@@ -79,7 +79,7 @@ Reference: https://moodle.org/mod/forum/discuss.php?d=389429
 
 ## Step by step guide to connect the SSO experience with AAD.
 
-The details provided at [Planning Active Directory SSO Applications](https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/plan-sso-deployment)
+The details provided at [Planning Active Directory SSO Applications](https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/plan-sso-deployment?WT.mc_id=edna)
 
 ## Steps if your an Office365/Microsoft365 institution but unsure of your Active Directory Details 
 
@@ -89,9 +89,9 @@ Azure AD also offers other functionality, like managing integrated apps, that yo
 
 You can use the Azure AD deployment advisors for a guided setup and configuration experience in the Microsoft 365 admin center (you must be signed in to Microsoft 365):
 
-- [Azure AD Connect advisor](https://aka.ms/aadconnectpwsync)
-- [AD FS deployment advisor](https://aka.ms/adfsguidance)
-- [Azure AD setup guide](https://aka.ms/aadpguidance)
+- [Azure AD Connect advisor](https://aka.ms/aadconnectpwsync?WT.mc_id=edna)
+- [AD FS deployment advisor](https://aka.ms/adfsguidance?WT.mc_id=edna)
+- [Azure AD setup guide](https://aka.ms/aadpguidance?WT.mc_id=edna)
 
 If you have a paid subscription to Microsoft 365, you also have a free Azure AD subscription. You can use Azure AD to create and manage user and group accounts. To activate this subscription, you have to complete a [one-time registration.](https://docs.microsoft.com/en-us/microsoft-365/compliance/use-your-free-azure-ad-subscription-in-office-365?view=o365-worldwide) Afterward, you can access Azure AD from your Microsoft 365 admin center.
 
@@ -99,7 +99,7 @@ Don't go directly to azure.microsoft.com to sign up or you'll end up with a tria
 
 With the free subscription you can synchronize with on-premises directories, set up single sign-on, and synchronize with many software as service applications.
 
-If you want enhanced AD DS functionality, bi-directional synchronization, and other management capabilities, you can upgrade your free subscription to a paid premium subscription. For the details, see [Azure Active Directory editions.](https://azure.microsoft.com/pricing/details/active-directory/)
+If you want enhanced AD DS functionality, bi-directional synchronization, and other management capabilities, you can upgrade your free subscription to a paid premium subscription. For the details, see [Azure Active Directory editions.](https://azure.microsoft.com/pricing/details/active-directory/?WT.mc_id=edna)
 
 ## Troubleshooting Azure Resource Manager Deployments 
 
@@ -119,7 +119,7 @@ You could consider trying to re-deploy the same RG/Identity/AppName combination 
 ## Using Hosted services on Cloudfront
 
 We have seen a issue where the "Authorization" header was not being forwarded to the backend by AWS CloudFront. See the following documentation 
-[Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization)
+[Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization?WT.mc_id=edna)
 
 ## Debugging Errors related to http500 indicated in Browser with Oops! Something went wrong.. We suggest you go to our help page.
 
