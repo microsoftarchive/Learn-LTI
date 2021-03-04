@@ -16,7 +16,7 @@ If you are deploying the service in a test environment please ensure that your t
 
 If you receive the following error.
 
-![Learnltiadd](../images/LearnLTIAADIssue.png)
+![Learnltiadd](./images/LearnLTIAADIssue.png)
 
 User not registered on the LMS or logged into Web Browser with the incorrect account
 - Ensure you are using an Azure AD connected account and logged into their web browser with the same account they used to sign into the LMS. 

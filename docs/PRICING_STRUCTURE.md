@@ -10,10 +10,10 @@ We estimate the total cost of these services to be **less than $20 USD per month
 
 ### Functions
 
-![Azure Functions](/images/Pricing.Functions.PNG)
+![Azure Functions](./images/Pricing.Functions.PNG)
 ### Storage
-![Azure Storage](/images/Pricing.Storage.PNG)
+![Azure Storage](./images/Pricing.Storage.PNG)
 ### Key Vault 
-![Azure Key Vault](/images/Pricing.KeyVault.PNG)
+![Azure Key Vault](./images/Pricing.KeyVault.PNG)
 
 

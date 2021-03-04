@@ -1,7 +1,7 @@
 # Architecture Overview
 
 
-![Architecture Overview](/images/Architecture.Overview.png)
+![Architecture Overview](./images/Architecture.Overview.png)
 
 
 The Microsoft Learn LTI Application pairs Institutional LMSs courses/modules with Microsoft Learn's Catalog API that connects students to Microsoft Learn content.
@@ -15,7 +15,7 @@ The Microsoft Learn LTI Application pairs Institutional LMSs courses/modules wit
 # Backend Infrastructure
 
 
-![Backend Infrastructure](/images/Architecture.Backend.png)
+![Backend Infrastructure](./images/Architecture.Backend.png)
 
 
 **The LTI call (with OAuth) does 4 things:**

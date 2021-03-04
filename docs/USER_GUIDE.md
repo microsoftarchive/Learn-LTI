@@ -22,13 +22,13 @@ The steps for creating an assignment are slightly different depending on the LMS
 1. Go to a course in your Moodle LMS.
 2. Click **Turn editing on**.
 3. Click **Add a new activity or resource**. 
-![UserGuide1](/images/UserGuide.1.PNG)
+![UserGuide1](./images/UserGuide.1.PNG)
 4. Select **External Tool**.
-![UserGuide2](/images/UserGuide.2.PNG)
+![UserGuide2](./images/UserGuide.2.PNG)
 5. Enter the following information:
    * **Activity name**: give the assignment a name of your choice.
    * **Preconfigured tool**: select the name of the tool you configured during deployment and configuration.
-![UserGuide3](/images/UserGuide.3.PNG)
+![UserGuide3](./images/UserGuide.3.PNG)
 7. Click **Save and return to course**. You will see the assignment created as an LTI link. 
 6. Click the LTI link and [configure](#Customize-Review-and-Publish-the-assignment) the assignment.
 
@@ -39,7 +39,7 @@ The steps for creating an assignment are slightly different depending on the LMS
 3. Click on **+Assignment** to add a new assignment.
 4. Enter assignment name and other details.
 5. Select **Submission Type** as **External Tool**.
-![UserGuide.Canvas.1](/images/UserGuide.Canvas.1.png)
+![UserGuide.Canvas.1](./images/UserGuide.Canvas.1.png)
 6. Select **Load This Tool In A New Tab**.
 7. Click **Find**.
 8. Select the name of the tool you configured during deployment and configuration and click **Select**.
@@ -52,9 +52,9 @@ The steps for creating an assignment are slightly different depending on the LMS
 1. Go to a course in your Blackboard LMS (Users who want to add an LTI Advantage tool to a course must have the **Instructor** role).
 2. Click on the 3 dots on the right.
 3. Click **Import Content**.
-![UserGuide.Blackboard.1](/images/UserGuide.Blackboard.1.png)
+![UserGuide.Blackboard.1](./images/UserGuide.Blackboard.1.png)
 4. Click **Content Market**.
-![UserGuide.Blackboard.2](/images/UserGuide.Blackboard.2.png)
+![UserGuide.Blackboard.2](./images/UserGuide.Blackboard.2.png)
 5. Locate the label for the Learn LTI tool and click the **+** icon. You will see the assignment created as an LTI link.
 6. Click the LTI link and [configure](#Customize-Review-and-Publish-the-assignment) the assignment.
 
@@ -68,15 +68,15 @@ These steps are performed within the Microsoft Learn LTI application, and they a
    * **Description**: Include a brief overview of the assignment and key learning objectives for your students.
    * **Deadline**: Use the calender to enter when you expect students to have completed the assignment.
    * **Add Link**: Include links to external sites and sources of information that you believe will help the students to gain more from the assignment.
-![General](/images/Configurations.General.png)
+![General](./images/Configurations.General.png)
 4. Click the **Microsoft Learn** tab.   
 5. From the Microsoft Learn tab, you can search for learning paths and modules from Microsoft Learn to add to your assignment.
-![Tutorial](/images/Configurations.Tutorial.ClickBubble.png)
+![Tutorial](./images/Configurations.Tutorial.ClickBubble.png)
 6. Select the learning paths and modules you want to add to your assignment. 
-![Tutorial.Path](/images/Configurations.Tutorial.Path.png)
+![Tutorial.Path](./images/Configurations.Tutorial.Path.png)
 7. From the top Navigation Bar, click **Preview**.
 8. Review the assignment to make sure it works as intended.
-![Preview](/images/View.Preview.png)
+![Preview](./images/View.Preview.png)
 9. Click **Publish** from the top right side of assignment.
-![Publish](/images/View.Preview.Publish.png)
+![Publish](./images/View.Preview.Publish.png)
 10. A pop-up window will appear asking you to confirm that you wish to publish the assignment. Click the **Publish** button.
