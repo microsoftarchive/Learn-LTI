@@ -119,7 +119,7 @@ You could consider trying to re-deploy the same RG/Identity/AppName combination 
 ## Using Hosted services on Cloudfront
 
 We have seen a issue where the "Authorization" header was not being forwarded to the backend by AWS CloudFront. See the following documentation 
-[Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization)
+[Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization?WT.mc_id=edna)
 
 ## Debugging Errors related to http500 indicated in Browser with Oops! Something went wrong.. We suggest you go to our help page.
 
