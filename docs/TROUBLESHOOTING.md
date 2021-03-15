@@ -8,15 +8,46 @@ If your **deployment fails and the resource group has been created**; an IT admi
 
 If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=learnlti-github-cxa) for common errors.
 
+## Check the Failed Deployment status and output
+
+From the Azure Portal, simply select deployments. See the following screenshot.
+
+![FailedDeployments](../images/FailedDeployment.png)
+
+## Purging Key Vaults 
+
+Your Azure Key Vault may be set to soft delete enabled. 
+
+As such if you encounter a issue in the deployment you will have to delete your resource and deploy again you may be presented with this following error.
+
+```
+ERROR: Deployment failed. Correlation ID: ************-****-****-**********. {
+  "error": {
+    "code": "ParentResourceNotFound",
+    "message": "Can not perform requested operation on nested resource. Parent resource 'kv-******' not found."
+```
+Due having soft delete enabled on the Key vault. The Key vault could not be recreated after the install initially fails.
+See more details on [Azure Key Vault recovery overview | Microsoft Docs](https://docs.microsoft.com/azure/key-vault/general/key-vault-recovery?tabs=azure-portal)
+
+Key Vault Recovery features are designed to prevent the accidental or malicious deletion of your key vault and secrets, keys, and certificate stored inside key-vault. So under soft delete the key vault is still available for 90 days after deletion therefore you need to purge the deleted Key Valut before it can be recreated.  
+
+### To purge a deleted Key vault
+
+- Go to key vaults-> manage deleted vault 
+- Select the kv and select purge
+
+See the following screenshot
+
+![KeyVaultPurge](../images/Keyvaultpurge.png)
 ## LMS Requirement for Secure Token SSL https 
 
-If you are deploying the service in a test environment please ensure that your test LMS environment had a valid SSL certificateinstalled we require all traffic to utilise SSL.
+If you are deploying the service in a test environment please ensure that your test LMS environment had a valid SSL certificate installed we require all traffic to utilise SSL.
 
 ## LTI Application Login  error: You are not enrolled in this course
 
 If you receive the following error.
 
-![Learnltiadd](./images/LearnLTIAADIssue.png)
+![Learnltiadd](../images/LearnLTIAADIssue.png)
 
 User not registered on the LMS or logged into Web Browser with the incorrect account
 - Ensure you are using an Azure AD connected account and logged into their web browser with the same account they used to sign into the LMS. 
@@ -51,7 +82,7 @@ To activate users: Click on the settings wheel in the top right hand corner and 
 
 When you go back to the course participants they will show as active and users will be able to load the Learn LTI application.
 
-## Canvas LMS Issuer 
+## Canvas LMS Issuer
 
 If your using on premise, hosted or cloud implementations of Canvas. Ensure you register the parameters back in the Learn LTI application's registration page. Please ensure you always state the  Issuer as https://canvas.instructure.com see the final steps in the Canvas instructions https://github.com/microsoft/Learn-LTI/blob/main/docs/CONFIGURATION_GUIDE.md 
 
@@ -79,7 +110,7 @@ Reference: https://moodle.org/mod/forum/discuss.php?d=389429
 
 ## Step by step guide to connect the SSO experience with AAD.
 
-The details provided at [Planning Active Directory SSO Applications](https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/plan-sso-deployment?WT.mc_id=edna)
+The details provided at [Planning Active Directory SSO Applications](https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/plan-sso-deployment)
 
 ## Steps if your an Office365/Microsoft365 institution but unsure of your Active Directory Details 
 
@@ -89,9 +120,9 @@ Azure AD also offers other functionality, like managing integrated apps, that yo
 
 You can use the Azure AD deployment advisors for a guided setup and configuration experience in the Microsoft 365 admin center (you must be signed in to Microsoft 365):
 
-- [Azure AD Connect advisor](https://aka.ms/aadconnectpwsync?WT.mc_id=edna)
-- [AD FS deployment advisor](https://aka.ms/adfsguidance?WT.mc_id=edna)
-- [Azure AD setup guide](https://aka.ms/aadpguidance?WT.mc_id=edna)
+- [Azure AD Connect advisor](https://aka.ms/aadconnectpwsync)
+- [AD FS deployment advisor](https://aka.ms/adfsguidance)
+- [Azure AD setup guide](https://aka.ms/aadpguidance)
 
 If you have a paid subscription to Microsoft 365, you also have a free Azure AD subscription. You can use Azure AD to create and manage user and group accounts. To activate this subscription, you have to complete a [one-time registration.](https://docs.microsoft.com/en-us/microsoft-365/compliance/use-your-free-azure-ad-subscription-in-office-365?view=o365-worldwide) Afterward, you can access Azure AD from your Microsoft 365 admin center.
 
@@ -99,7 +130,7 @@ Don't go directly to azure.microsoft.com to sign up or you'll end up with a tria
 
 With the free subscription you can synchronize with on-premises directories, set up single sign-on, and synchronize with many software as service applications.
 
-If you want enhanced AD DS functionality, bi-directional synchronization, and other management capabilities, you can upgrade your free subscription to a paid premium subscription. For the details, see [Azure Active Directory editions.](https://azure.microsoft.com/pricing/details/active-directory/?WT.mc_id=edna)
+If you want enhanced AD DS functionality, bi-directional synchronization, and other management capabilities, you can upgrade your free subscription to a paid premium subscription. For the details, see [Azure Active Directory editions.](https://azure.microsoft.com/pricing/details/active-directory/)
 
 ## Troubleshooting Azure Resource Manager Deployments 
 
