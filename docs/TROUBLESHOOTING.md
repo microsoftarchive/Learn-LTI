@@ -8,9 +8,40 @@ If your **deployment fails and the resource group has been created**; an IT admi
 
 If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=learnlti-github-cxa) for common errors.
 
+## Check the Failed Deployment status and output
+
+From the Azure Portal, simply select deployments. See the following screenshot.
+
+![FailedDeployments](../images/FailedDeployment.png)
+
+## Purging Key Vaults 
+
+Your Azure Key Vault may be set to soft delete enabled. 
+
+As such if you encounter a issue in the deployment you will have to delete your resource and deploy again you may be presented with this following error.
+
+```
+ERROR: Deployment failed. Correlation ID: ************-****-****-**********. {
+  "error": {
+    "code": "ParentResourceNotFound",
+    "message": "Can not perform requested operation on nested resource. Parent resource 'kv-******' not found."
+```
+Due having soft delete enabled on the Key vault. The Key vault could not be recreated after the install initially fails.
+See more details on [Azure Key Vault recovery overview | Microsoft Docs](https://docs.microsoft.com/azure/key-vault/general/key-vault-recovery?tabs=azure-portal)
+
+Key Vault Recovery features are designed to prevent the accidental or malicious deletion of your key vault and secrets, keys, and certificate stored inside key-vault. So under soft delete the key vault is still available for 90 days after deletion therefore you need to purge the deleted Key Valut before it can be recreated.  
+
+### To purge a deleted Key vault
+
+- Go to key vaults-> manage deleted vault 
+- Select the kv and select purge
+
+See the following screenshot
+
+![KeyVaultPurge](../images/Keyvaultpurge.png)
 ## LMS Requirement for Secure Token SSL https 
 
-If you are deploying the service in a test environment please ensure that your test LMS environment had a valid SSL certificateinstalled we require all traffic to utilise SSL.
+If you are deploying the service in a test environment please ensure that your test LMS environment had a valid SSL certificate installed we require all traffic to utilise SSL.
 
 ## LTI Application Login  error: You are not enrolled in this course
 
@@ -51,7 +82,7 @@ To activate users: Click on the settings wheel in the top right hand corner and 
 
 When you go back to the course participants they will show as active and users will be able to load the Learn LTI application.
 
-## Canvas LMS Issuer 
+## Canvas LMS Issuer
 
 If your using on premise, hosted or cloud implementations of Canvas. Ensure you register the parameters back in the Learn LTI application's registration page. Please ensure you always state the  Issuer as https://canvas.instructure.com see the final steps in the Canvas instructions https://github.com/microsoft/Learn-LTI/blob/main/docs/CONFIGURATION_GUIDE.md 
 
