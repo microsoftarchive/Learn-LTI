@@ -14,7 +14,7 @@ From the Azure Portal, simply select deployments. See the following screenshot.
 
 ![FailedDeployments](../images/FailedDeployment.png)
 
-## Purging Key Vaults 
+## Purging Key Vaults
 
 Your Azure Key Vault may be set to soft delete enabled. 
 
@@ -55,14 +55,18 @@ User not registered on the LMS or logged into Web Browser with the incorrect acc
 - The emails of the users in the LMS and AAD should match. 
 - Ensure the users are active on the course. 
 
-## LTI Application doesnt load error: Could not validate nonce.
+## LTI Application does not load error: {"Message":"Could not validate nonce."}
 
-If you recieve a browser message 
+If you receive a browser message: {"Message":"Could not validate nonce."}
 
-{"Message":"Could not validate nonce."}
+We have seen this is an intermittent issue, it usually happens if the user is trying to replay an old call or if the nonce and state value don't match. If the user simply refreshes the browser the page will load.
 
-We have seen this is an intermittent issue, it usually happens if the user is trying to replay an old call or if the nonce and state value don't match. If the user simply refreshes the browser the page will load. 
+## LTI Application does not load error: {"Message":"Could not validate request"}
 
+This issue is typically related to one of the following:
+- Check if you have a valid 3rd Party Signed SSL. This services requires a valid 3rd party SSL certificate, self signed SSL certificates are not valid. Please ensure your service is using https:// with a valid SSL certification. 
+- Check the Launch URL, please make sure that all the fields are correctly filled while registering the tool and filling tool's platform registration page. See https://github.com/microsoft/Learn-LTI/blob/main/docs/CONFIGURATION_GUIDE.md
+- Check the Azure Function/Azure Logs see https://github.com/microsoft/Learn-LTI/blob/main/docs/TROUBLESHOOTING.md#azure-functions-tracing  
 ## Moodle Users not active - Not Current
 
 All users need to be Active on a course if you see Not Current next to the status.
