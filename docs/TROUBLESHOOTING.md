@@ -14,6 +14,22 @@ From the Azure Portal, simply select deployments. See the following screenshot.
 
 ![FailedDeployments](../images/FailedDeployment.png)
 
+## Errors deploying install scripts
+
+Insufficient permissions if you try deploying the installation scripts from an account which is not your tenant AAD Admin or Azure Subscription Admin/Owner you will recieve an error
+
+*****
+ERROR: Directory permission is needed for the current user to register the application. For how to configure, please refer 'https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal'. Original error: Insufficient privileges to complete the operation.
+Transcript stopped, output file is C:\Users\Learn-LTI\deployment\Log\Transcript-05-01-2020-09-27-47.log
+Press any Key to Exit:
+*****
+To debug the error look at the Transcript-date-time.log file and the permissions error will be clearly shown.
+
+The personas/responsibilities for setup are:
+- Central IT (Azure tenant Owner, AAD Owner and have permissions to create service principals)
+- LMS (Learning Management System Owner who needs to configure the LTI Application)
+- Educator (who can provision learn modules into their course)
+
 ## Purging Key Vaults
 
 Your Azure Key Vault may be set to soft delete enabled. 
