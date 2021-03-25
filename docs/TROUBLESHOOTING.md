@@ -18,11 +18,11 @@ From the Azure Portal, simply select deployments. See the following screenshot.
 
 Insufficient permissions if you try deploying the installation scripts from an account which is not your tenant AAD Admin or Azure Subscription Admin/Owner you will recieve an error
 
-*****
+```
 ERROR: Directory permission is needed for the current user to register the application. For how to configure, please refer 'https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal'. Original error: Insufficient privileges to complete the operation.
 Transcript stopped, output file is C:\Users\Learn-LTI\deployment\Log\Transcript-05-01-2020-09-27-47.log
 Press any Key to Exit:
-*****
+```
 To debug the error look at the Transcript-date-time.log file and the permissions error will be clearly shown.
 
 The personas/responsibilities for setup are:
