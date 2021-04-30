@@ -41,6 +41,8 @@ To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will ne
 - LMS System that supports LTI v1.1 or v1.3
 - You need to be the **owner** of an Azure subscription
 - IT administrator privileges to create an Azure resource
+- [Getting Started Overview](https://techcommunity.microsoft.com/t5/educator-developer-blog/getting-started-with-the-microsoft-learn-lti-application/ba-p/2247034)
+- Microsoft Learn LTU application [Stakeholder/setup/presentation](./docs/Microsoft Learn LTI Application.pdf)
 
 # Table of Contents
 
@@ -53,6 +55,8 @@ To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will ne
 7. [Take it Further](./docs/TAKE_IT_FURTHER.md)
 8. [Frequently Asked Questions](./docs/FAQ.md)
 9. [Troubleshooting](./docs/TROUBLESHOOTING.md)
+10.[Security](./docs/SECURITY.md)
+11.[Privacy](./docs/PRIVACY.md)
 
 # Contributing
 
