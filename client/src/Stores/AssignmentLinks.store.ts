@@ -26,7 +26,7 @@ export class AssignmentLinksStore extends ChildStore {
 
     toObservable(() => this.root.assignmentStore.assignment)
       .pipe(
-        filter(assignment => !!assignment),
+        filter(assignment => assignment !== null),
         map(assignment => assignment!.id),
         switchMap(AssignmentLinksService.getAssignmentLinks),
         filter(links => !links.error),

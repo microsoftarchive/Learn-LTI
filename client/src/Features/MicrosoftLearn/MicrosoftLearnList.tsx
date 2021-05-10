@@ -22,14 +22,14 @@ const ListRow = ({
   index,
   style
 }: {
-  data: { numItemsPerRow: number; itemsData?: LearnContent[]; isLoadingCatalog: boolean };
+  data: { numItemsPerRow: number; itemsData?: LearnContent[] | null; isLoadingCatalog: boolean };
   index: number;
   style: CSSProperties | undefined;
 }): JSX.Element => {
   const classes = themedClassNames(microsoftLearnListStyles);
 
   const startIndex = index * numItemsPerRow;
-  const items = [];
+  const items: JSX.Element[] = [];
   for (let i = startIndex; i < startIndex + numItemsPerRow; i++) {
     items.push(
       <div className={classes.item} key={`rowKey${startIndex}itemKey${i}`}>

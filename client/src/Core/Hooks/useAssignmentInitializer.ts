@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 export const useAssignmentInitializer = (): void => {
   const assignmentStore = useStore('assignmentStore');
-  const { assignmentId } = useParams();
+  const { assignmentId } = useParams<{ assignmentId: string }>();
 
   useEffect(() => {
     assignmentStore.initializeAssignment(assignmentId);
