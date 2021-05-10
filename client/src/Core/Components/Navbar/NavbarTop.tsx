@@ -39,7 +39,7 @@ const NavbarTopInner = ({ styles }: IStylesOnly<NavbarTopStyles>): JSX.Element |
   queryParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam);
 
   const handleLinkClick = (item?: PivotItem, event?: MouseEvent): void => {
-    const pushToHistory = (item: PivotItem) => {
+    const pushToHistory = (item: PivotItem): void => {
       if (item.props && item.props.itemKey && item.props.headerText) {
         const { itemKey, headerText } = item.props;
         const queryParam = queryParamsMap.get(headerText);

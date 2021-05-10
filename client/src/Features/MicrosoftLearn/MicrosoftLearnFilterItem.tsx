@@ -14,17 +14,17 @@ interface SubItemNumberStyleProps {
   theme: ITheme;
 }
 
-const FilterItemInner = (props: FilterItemProps) => {
+const FilterItemInner = (props: FilterItemProps): JSX.Element => {
   const { filterStore } = useStore('microsoftLearnStore');
 
-  const itemInSelectedFilter = (subItemId: string | undefined) => {
+  const itemInSelectedFilter = (subItemId: string | undefined): boolean => {
     const selectedFilters = filterStore.selectedFilter[props.filterType];
     return subItemId ? selectedFilters?.includes(subItemId) : false;
   };
 
   const nSubItems = props.subItems ? props.subItems.length : 0;
 
-  const updateExpandedSet = () => {
+  const updateExpandedSet = (): void => {
     if (props.mainItem?.id && inExpanded(props.mainItem?.id)) {
       filterStore.collapseProducts(props.mainItem?.id);
     } else if (props.mainItem?.id) {
@@ -32,8 +32,8 @@ const FilterItemInner = (props: FilterItemProps) => {
     }
   };
 
-  const inExpanded = (id: string | undefined) => {
-    return id && filterStore.expandedProducts.includes(id);
+  const inExpanded = (id: string | undefined): boolean => {
+    return id ? filterStore.expandedProducts.includes(id) : false;
   };
 
   const checkboxClassName = classNamesFunction<SubItemNumberStyleProps, ICheckboxStyles>()(mainCheckboxStyles, {

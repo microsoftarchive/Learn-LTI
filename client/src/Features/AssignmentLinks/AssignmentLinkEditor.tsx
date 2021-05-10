@@ -23,7 +23,7 @@ const ValidateTextLength = (limit: number) => (text: string | undefined) =>
 export const ValidateTitleLength = ValidateTextLength(500);
 export const ValidateDescLength = ValidateTextLength(1000);
 
-export const isValidURL = (value: string | undefined) => {
+export const isValidURL = (value: string | undefined): boolean => {
   if (value) {
     try {
       const url = new URL(value);
@@ -36,7 +36,7 @@ export const isValidURL = (value: string | undefined) => {
   }
   return true;
 };
-const ValidateURL = (value: string | undefined) => (isValidURL(value) ? '' : 'Invalid URL');
+const ValidateURL = (value: string | undefined): string => (isValidURL(value) ? '' : 'Invalid URL');
 
 const AssignmentLinkEditorInner = ({
   styles,

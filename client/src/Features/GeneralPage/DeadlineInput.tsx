@@ -60,7 +60,15 @@ const deadlineInputStyles = ({ theme }: IThemeOnlyProps): DeadlineInputStyles =>
   ]
 });
 
-const deadlineLabelInputStyles = ({ theme }: IThemeOnlyProps) => ({
+const deadlineLabelInputStyles = ({
+  theme
+}: IThemeOnlyProps): {
+  label: [
+    {
+      marginTop: string;
+    }
+  ];
+} => ({
   label: [
     {
       marginTop: `calc(${theme.spacing.m} * 3)`

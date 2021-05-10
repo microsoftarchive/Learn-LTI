@@ -58,7 +58,7 @@ const NavbarLHPInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null
   queryParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam);
 
   const handleLinkClick = (event?: MouseEvent, item?: INavLink): void => {
-    const pushToHistory = (item: INavLink) => {
+    const pushToHistory = (item: INavLink): void => {
       const { url, name } = item;
       const queryParam = queryParamsMap.get(name);
       queryParam && queryParam.length > 0 ? history.push(`${url}?${queryParam}`) : history.push(`${url}`);

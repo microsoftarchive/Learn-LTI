@@ -16,7 +16,7 @@ export const TYPE_MAP = new Map<LearnType, LearnTypeFilterOption>([
   ['learningPath', { id: 'learningPath', name: 'Learning Path' }]
 ]);
 
-const SortByFilterNameAscComparer = (a: FilterOption, b: FilterOption) => {
+const SortByFilterNameAscComparer = (a: FilterOption, b: FilterOption): number => {
   if (a && b) {
     return a.name.localeCompare(b.name);
   } else if (a) {
@@ -25,13 +25,16 @@ const SortByFilterNameAscComparer = (a: FilterOption, b: FilterOption) => {
   return -1;
 };
 
-const createOptionsMapFromKeys = (keys: FilterOption[]) => {
-  const valueTransformer = (item: FilterOption) => [];
-  const keySelector = (item: FilterOption) => item;
+const createOptionsMapFromKeys = (keys: FilterOption[]): Map<FilterOption, FilterOption[]> => {
+  const valueTransformer = (_item: FilterOption): FilterOption[] => [];
+  const keySelector = (item: FilterOption): FilterOption => item;
   return toMap(keys, keySelector, valueTransformer);
 };
 
-export const getProductsToDisplay = (productId: string[] | undefined, productMap: Map<string, Product> | undefined) => {
+export const getProductsToDisplay = (
+  productId: string[] | undefined,
+  productMap: Map<string, Product> | undefined
+): Map<Product, Product[]> => {
   let products: Product[] = [];
   const productParentChildMap = new Map<Product, Product[]>();
 
@@ -54,7 +57,7 @@ export const getProductsToDisplay = (productId: string[] | undefined, productMap
 export function getFilterItemsToDisplay<T extends FilterOption>(
   ids: string[] | undefined,
   map: Map<string, T> | undefined
-) {
+): Map<FilterOption, FilterOption[]> {
   if (map != null) {
     const sortedItems = ids?.map(id => map.get(id)!!).sort(SortByFilterNameAscComparer);
     return createOptionsMapFromKeys(sortedItems || []);
@@ -69,8 +72,8 @@ export const getDisplayFilterTags = (
   selectedFilters: Filter,
   productsMap: Map<string, Product>,
   learnCatalog: Catalog | null
-) => {
-  const getIntersection = (type: FilterType) => {
+): FilterTag[] => {
+  const getIntersection = (type: FilterType): string[] => {
     const intersect = displayFilters[type].filter(item => selectedFilters[type]?.includes(item));
     if (type === FilterType.products) {
       intersect.map(productItem => productsMap.get(productItem)).filter(productItem => productItem?.parentId);
@@ -83,7 +86,7 @@ export const getDisplayFilterTags = (
     return intersect;
   };
 
-  const getTags = (_map: Map<string, FilterOption> | undefined, _type: FilterType) => {
+  const getTags = (_map: Map<string, FilterOption> | undefined, _type: FilterType): FilterTag[] => {
     let _tags: FilterTag[] = [];
     const _filters = getIntersection(_type);
     if (_map?.values()) {
@@ -102,7 +105,10 @@ export const getDisplayFilterTags = (
   return [...productTags, ...roleTags, ...levelTags, ...typeTags];
 };
 
-export const getDisplayFromSearch = (expressions: RegExp[], currentDisplay: Map<FilterOption, FilterOption[]>) => {
+export const getDisplayFromSearch = (
+  expressions: RegExp[],
+  currentDisplay: Map<FilterOption, FilterOption[]>
+): Map<FilterOption, FilterOption[]> => {
   const filteredDisplay: Map<FilterOption, FilterOption[]> = new Map<FilterOption, FilterOption[]>();
   [...currentDisplay.keys()].forEach(key => {
     const children = currentDisplay.get(key);

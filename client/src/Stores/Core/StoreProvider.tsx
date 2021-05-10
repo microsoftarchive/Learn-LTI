@@ -9,7 +9,7 @@ import { useLocalStore } from 'mobx-react-lite';
 
 export const StoreContext = createContext<RootStore | null>(null);
 
-export const StoreProvider = ({ children, rootStore }: PropsWithChildren<{ rootStore: RootStore }>) => {
+export const StoreProvider = ({ children, rootStore }: PropsWithChildren<{ rootStore: RootStore }>): JSX.Element => {
   const store = useLocalStore(() => ({ ...rootStore }));
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;

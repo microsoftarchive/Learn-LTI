@@ -13,6 +13,7 @@ import { FontWeights } from '@fluentui/react';
 import { IThemeOnlyProps, SimpleComponentStyles } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { TAB_SCREEN_SIZE } from './MicrosoftLearnPage';
+import { FilterOption } from './MicrosoftLearnFilterComponentProps';
 
 export type FilterComponentStyles = SimpleComponentStyles<
   'root' | 'title' | 'search' | 'optionsList' | 'subOptionsList' | 'filterItem'
@@ -20,10 +21,10 @@ export type FilterComponentStyles = SimpleComponentStyles<
 
 type FilterComponentTypes = FilterType.products | FilterType.roles | FilterType.levels | FilterType.types;
 
-export const FilterComponent = (props: { type: FilterComponentTypes; name: string }) => {
+export const FilterComponent = (props: { type: FilterComponentTypes; name: string }): JSX.Element => {
   const { filterStore, catalog } = useStore('microsoftLearnStore');
 
-  const getDisplayOptions = () => {
+  const getDisplayOptions = (): Map<FilterOption, FilterOption[]> => {
     switch (props.type) {
       case FilterType.products:
         return getProductsToDisplay(filterStore.displayFilter[props.type], catalog?.products);

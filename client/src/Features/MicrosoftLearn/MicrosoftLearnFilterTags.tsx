@@ -18,7 +18,7 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>): JSX.Element 
   const { filterStore, catalog } = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
 
-  const handleClick = (tag: FilterTag) => {
+  const handleClick = (tag: FilterTag): void => {
     if (tag.type === FilterType.products) {
       const catalogProducts = catalog && catalog.products ? Array.from(catalog.products.values()) : [];
       const subItems: string[] = catalogProducts

@@ -12,10 +12,10 @@ type useLinkReturnType = [AssignmentLink, (link: AssignmentLink) => void, boolea
 export const useLink = (assignmentLink: AssignmentLink): useLinkReturnType => {
   const [link, setLink] = useState<AssignmentLink>(assignmentLink);
 
-  const isValidLink = useCallback((link: AssignmentLink) => {
-    const titleIsValid = (text: string) => ValidateTitleLength(text) === '';
-    const descIsValid = (text: string) => ValidateDescLength(text) === '';
-    const urlIsValid = (url: string) => isValidURL(url) && url.length > 0;
+  const isValidLink = useCallback((link: AssignmentLink): boolean => {
+    const titleIsValid = (text: string): boolean => ValidateTitleLength(text) === '';
+    const descIsValid = (text: string): boolean => ValidateDescLength(text) === '';
+    const urlIsValid = (url: string): boolean => isValidURL(url) && url.length > 0;
 
     return titleIsValid(link.displayText) && urlIsValid(link.url) && descIsValid(link.description);
   }, []);

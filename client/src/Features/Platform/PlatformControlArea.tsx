@@ -13,8 +13,7 @@ import {
   AnimationClassNames,
   IModalStyles,
   Dialog,
-  Spinner,
-  ITheme
+  Spinner
 } from '@fluentui/react';
 import { AutohideMessageBar } from '../../Core/Components/AutohideMessageBar';
 import { useStore } from '../../Stores/Core';
@@ -25,10 +24,6 @@ interface PlatformControlAreaProps {
   onSaveRegirstrationClicked: () => void;
   showErrorMessage: boolean;
 }
-
-type PlatformControlAreaStylesProps = {
-  theme: ITheme;
-};
 
 export type PlatformControlAreaStyles = SimpleComponentStyles<'root' | 'messageBar' | 'spinner' | 'saveButton'>;
 

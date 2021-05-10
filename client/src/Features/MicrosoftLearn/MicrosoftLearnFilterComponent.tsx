@@ -22,7 +22,7 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element => {
   const [displayOptions, setDisplayOptions] = useState(props.filterOption);
 
   useEffect(() => {
-    const filterBySearchTerm = (stringExp: string) => {
+    const filterBySearchTerm = (stringExp: string): void => {
       if (stringExp && stringExp?.trim() !== '' && props.filterOption) {
         const regexs: RegExp[] = getRegexs(stringExp);
         const filteresDisplay = getDisplayFromSearch(regexs, props.filterOption);

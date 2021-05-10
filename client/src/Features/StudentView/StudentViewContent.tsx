@@ -80,7 +80,7 @@ const StudentViewContentInner = ({
   });
 };
 
-const studentViewContentStyles = ({ theme }: IThemeOnlyProps): StudentViewContentStyles => ({
+const studentViewContentStyles = (_theme: IThemeOnlyProps): StudentViewContentStyles => ({
   root: [{}]
 });
 
