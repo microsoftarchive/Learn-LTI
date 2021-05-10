@@ -51,7 +51,8 @@ export const FilterComponent = (props: { type: FilterComponentTypes; name: strin
               const target = event?.target as HTMLInputElement;
               const value = target.getAttribute('aria-describedby');
               if (value) {
-                let subItems: string[] = [...catalog?.products.values()]
+                const catalogProducts = catalog && catalog.products ? Array.from(catalog.products.values()) : [];
+                const subItems: string[] = catalogProducts
                   .filter(product => product.parentId && product.parentId === value)
                   .map(product => product.id);
                 target.checked

@@ -9,7 +9,8 @@ import { Filter } from '../../Models/Learn/Filter.model';
 import { FilterType } from '../../Models/Learn/FilterType.model';
 
 export function applySelectedFilter(catalog: Catalog | null, selectedFilters: Filter): LearnContent[] {
-  return getSearchTermFilteredLearnContent(getRegexs(selectedFilters.terms.join(' ')), [...catalog?.contents.values()])
+  const catalogContents = catalog && catalog.contents ? Array.from(catalog.contents.values()) : [];
+  return getSearchTermFilteredLearnContent(getRegexs(selectedFilters.terms.join(' ')), catalogContents)
     .filter(content => filterBy(selectedFilters.products, content.products))
     .filter(content => filterBy(selectedFilters.roles, content.roles))
     .filter(content => filterBy(selectedFilters.levels, content.levels))

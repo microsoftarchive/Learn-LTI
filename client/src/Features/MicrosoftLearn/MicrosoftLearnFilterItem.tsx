@@ -73,8 +73,8 @@ const FilterItemInner = (props: FilterItemProps) => {
           style={{ display: inExpanded(props.mainItem?.id) ? 'block' : 'none' }}
           className={props.styles.subOptionsList?.toString()}
         >
-          {props.subItems?.map(subItem => (
-            <span className={props.styles.filterItem?.toString()}>
+          {props.subItems?.map((subItem, i) => (
+            <span key={i} className={props.styles.filterItem?.toString()}>
               <Checkbox
                 value={subItem?.id}
                 onChange={event => {

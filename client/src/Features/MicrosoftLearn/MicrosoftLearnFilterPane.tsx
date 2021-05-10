@@ -128,8 +128,9 @@ const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
       case 'main':
         return (
           <>
-            {[FilterType.products, FilterType.roles, FilterType.levels, FilterType.types].map(filterType => (
+            {[FilterType.products, FilterType.roles, FilterType.levels, FilterType.types].map((filterType, i) => (
               <ActionButton
+                key={i}
                 onClick={() => dispatchPanelContent({ type: filterType })}
                 className={classes.mainPanelActionButtons}
               >
