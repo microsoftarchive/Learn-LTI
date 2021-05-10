@@ -38,9 +38,12 @@ module.exports = {
       }
     ],
     '@typescript-eslint/ban-ts-ignore': [0],
+    '@typescript-eslint/ban-ts-comment': [0],
     '@typescript-eslint/no-empty-interface': [2],
     '@typescript-eslint/no-use-before-define': [0],
     '@typescript-eslint/no-non-null-assertion': [0],
+    '@typescript-eslint/no-extra-non-null-assertion': [0],
+    '@typescript-eslint/ban-types': [0],
     '@typescript-eslint/no-unused-vars': [
       1,
       {
