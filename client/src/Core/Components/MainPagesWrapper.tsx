@@ -13,13 +13,9 @@ type MainPagesWrapperStyles = SimpleComponentStyles<'root'>;
 const MainPagesWrapperInner = ({
   styles,
   children
-}: PropsWithChildren<{}> & IStylesOnly<MainPagesWrapperStyles>): JSX.Element => {
+}: PropsWithChildren<unknown> & IStylesOnly<MainPagesWrapperStyles>): JSX.Element => {
   const classes = themedClassNames(styles);
-  return (
-    <div className={classes.root}>
-      {children}
-    </div>
-  );
+  return <div className={classes.root}>{children}</div>;
 };
 
 const MainPagesWrapperStyles = ({ theme }: IThemeOnlyProps): MainPagesWrapperStyles => ({

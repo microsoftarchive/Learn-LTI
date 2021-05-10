@@ -18,7 +18,10 @@ export type LearnTypeFilterOption = {
 };
 
 export type FilterOption = Product | Role | Level | LearnTypeFilterOption;
-type FilterItemClickHandler = ((event?: FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void);
+type FilterItemClickHandler = (
+  event?: FormEvent<HTMLElement | HTMLInputElement> | undefined,
+  checked?: boolean | undefined
+) => void;
 
 interface FilterCommonProps {
   styles: FilterComponentStyles;
@@ -31,9 +34,9 @@ export interface FilterComponentProps extends FilterCommonProps {
   filterName: string;
   filterOption: Map<FilterOption, FilterOption[]> | null;
   search: boolean;
-};
+}
 
 export interface FilterItemProps extends FilterCommonProps {
   mainItem: FilterOption;
   subItems: FilterOption[] | undefined;
-};
+}

@@ -48,8 +48,8 @@ export const FilterComponent = (props: { type: FilterComponentTypes; name: strin
             filterOption={displayOptions}
             search={true}
             mainItemClickHandler={event => {
-              let target = event?.target as HTMLInputElement;
-              let value = target.getAttribute('aria-describedby');
+              const target = event?.target as HTMLInputElement;
+              const value = target.getAttribute('aria-describedby');
               if (value) {
                 let subItems: string[] = [...catalog?.products.values()]
                   .filter(product => product.parentId && product.parentId === value)
@@ -60,9 +60,9 @@ export const FilterComponent = (props: { type: FilterComponentTypes; name: strin
               }
             }}
             subItemClickHandler={event => {
-              let target = event?.target as HTMLInputElement;
-              let type = FilterType.products;
-              let value = target.getAttribute('aria-describedby');
+              const target = event?.target as HTMLInputElement;
+              const type = FilterType.products;
+              const value = target.getAttribute('aria-describedby');
               if (target.checked && value) {
                 filterStore.addFilter(type, [value]);
               } else if (!target.checked && value) {
@@ -82,8 +82,8 @@ export const FilterComponent = (props: { type: FilterComponentTypes; name: strin
             filterOption={displayOptions}
             search={props.type === FilterType.roles ? true : false}
             mainItemClickHandler={event => {
-              let target = event?.target as HTMLInputElement;
-              let value = target.getAttribute('aria-describedby');
+              const target = event?.target as HTMLInputElement;
+              const value = target.getAttribute('aria-describedby');
               if (target.checked && value) {
                 filterStore.addFilter(props.type, [value]);
               } else if (!target.checked && value) {

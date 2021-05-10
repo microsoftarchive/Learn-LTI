@@ -87,7 +87,7 @@ export class MicrosoftLearnStore extends ChildStore {
   }
 
   @action
-  async initializeCatalog(searchParams: string = ''): Promise<void> {
+  async initializeCatalog(searchParams = ''): Promise<void> {
     this.isLoadingCatalog = true;
     const catalog = await MicrosoftLearnService.getCatalog();
     if (catalog.error) {

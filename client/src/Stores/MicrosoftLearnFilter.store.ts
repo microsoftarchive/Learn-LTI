@@ -24,7 +24,7 @@ export class MicrosoftLearnFilterStore extends ChildStore {
   productMap: Map<string, Product> = new Map<string, Product>();
 
   // We use H.createBrowserHistory() over useHistory() in order to avoid page reloads on URI updation.
-  history: H.History | null = null; 
+  history: H.History | null = null;
 
   @action
   public initializeFilters(catalog: Catalog, searchParams: string): void {
@@ -40,12 +40,15 @@ export class MicrosoftLearnFilterStore extends ChildStore {
     );
   }
 
-  updateExpandedProducts = (expanded: boolean) => (productId: string): void => {
-    expanded
-      ? this.expandedProducts.push(productId)
-      : (this.expandedProducts = this.expandedProducts.filter(expandedProductId => expandedProductId !== productId));
-    this.updateHistory();
-  };
+  updateExpandedProducts =
+    (expanded: boolean) =>
+    (productId: string): void => {
+      expanded
+        ? this.expandedProducts.push(productId)
+        : (this.expandedProducts = this.expandedProducts.filter(expandedProductId => expandedProductId !== productId));
+      this.updateHistory();
+    };
+
   @action expandProducts = this.updateExpandedProducts(true);
   @action collapseProducts = this.updateExpandedProducts(false);
 

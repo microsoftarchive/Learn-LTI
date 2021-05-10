@@ -15,7 +15,6 @@ import { useObserver } from 'mobx-react-lite';
 import _ from 'lodash';
 import { StudentViewLearnItemsList } from './StudentViewLearnItemsList';
 
-
 interface StudentViewContentProps {
   requirePublished?: boolean;
 }
@@ -26,7 +25,10 @@ const formatDate = (assignmentDate?: Date): string => {
   return assignmentDate ? moment(assignmentDate).format('MMMM DD YYYY') : '';
 };
 
-const StudentViewContentInner = ({ styles, requirePublished }: StudentViewContentProps & IStylesOnly<StudentViewContentStyles>): JSX.Element => {
+const StudentViewContentInner = ({
+  styles,
+  requirePublished
+}: StudentViewContentProps & IStylesOnly<StudentViewContentStyles>): JSX.Element => {
   const classes = themedClassNames(styles);
 
   const assignmentStore = useStore('assignmentStore');
@@ -37,7 +39,7 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
     const items: (StudentViewSectionProps & IStylesOnly<StudentViewSectionStyles>)[] = _.compact([
       assignmentStore.assignment?.description && {
         title: 'Description',
-        textContent: assignmentStore.assignment.description.substring(0,2500)
+        textContent: assignmentStore.assignment.description.substring(0, 2500)
       },
       assignmentStore.assignment?.deadline && {
         title: 'Deadline',
@@ -47,7 +49,9 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
         title: 'Links',
         styles: linksSectionStyles,
         content: <AssignmentLinksList disableEdit />,
-        alertMessage: assignmentLinksStore.areSomeLinksInvalid ? "Some links were ill-formed, and therefore, were not rendered. Please contact the administrator or the teacher." : ""
+        alertMessage: assignmentLinksStore.areSomeLinksInvalid
+          ? 'Some links were ill-formed, and therefore, were not rendered. Please contact the administrator or the teacher.'
+          : ''
       },
       learnStore.selectedItems &&
         learnStore.selectedItems.length > 0 && {
@@ -57,18 +61,21 @@ const StudentViewContentInner = ({ styles, requirePublished }: StudentViewConten
     ]);
 
     return (
-      <div className={classes.root}> {
-        requirePublished && assignmentStore.assignment?.publishStatus !== "Published"
-          ? <Text>This assignment is not yet Published</Text>
-          : items.length === 0
-            ? <Text>No info was entered for this assignment</Text>
-            : items.map(item => {
-                const itemSpecificStyles = themedClassNames(item.styles);
-                const baseStyles = themedClassNames(baseSectionStyles);
-                const styles = mergeStyleSets(baseStyles, itemSpecificStyles);
-                return <StudentViewSection key={item.title} {...item} styles={styles} />;
-              })
-      } </div>
+      <div className={classes.root}>
+        {' '}
+        {requirePublished && assignmentStore.assignment?.publishStatus !== 'Published' ? (
+          <Text>This assignment is not yet Published</Text>
+        ) : items.length === 0 ? (
+          <Text>No info was entered for this assignment</Text>
+        ) : (
+          items.map(item => {
+            const itemSpecificStyles = themedClassNames(item.styles);
+            const baseStyles = themedClassNames(baseSectionStyles);
+            const styles = mergeStyleSets(baseStyles, itemSpecificStyles);
+            return <StudentViewSection key={item.title} {...item} styles={styles} />;
+          })
+        )}{' '}
+      </div>
     );
   });
 };

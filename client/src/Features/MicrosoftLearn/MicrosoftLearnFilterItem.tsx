@@ -6,18 +6,11 @@
 import { FilterItemProps } from './MicrosoftLearnFilterComponentProps';
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
-import {
-  Checkbox,
-  ActionButton,
-  classNamesFunction,
-  getTheme,
-  ITheme,
-  ICheckboxStyles
-} from '@fluentui/react';
+import { Checkbox, ActionButton, classNamesFunction, getTheme, ITheme, ICheckboxStyles } from '@fluentui/react';
 import React from 'react';
 
 interface SubItemNumberStyleProps {
-  nSubItems: Number;
+  nSubItems: number;
   theme: ITheme;
 }
 
@@ -25,11 +18,11 @@ const FilterItemInner = (props: FilterItemProps) => {
   const { filterStore } = useStore('microsoftLearnStore');
 
   const itemInSelectedFilter = (subItemId: string | undefined) => {
-    let selectedFilters = filterStore.selectedFilter[props.filterType];
+    const selectedFilters = filterStore.selectedFilter[props.filterType];
     return subItemId ? selectedFilters?.includes(subItemId) : false;
   };
 
-  let nSubItems = props.subItems ? props.subItems.length : 0;
+  const nSubItems = props.subItems ? props.subItems.length : 0;
 
   const updateExpandedSet = () => {
     if (props.mainItem?.id && inExpanded(props.mainItem?.id)) {

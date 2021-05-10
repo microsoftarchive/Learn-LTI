@@ -27,10 +27,10 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>): JSX.Element 
     } else {
       filterStore.removeFilter(tag.type, [tag.id]);
     }
-  }
+  };
 
   return useObserver(() => {
-    let tags: FilterTag[] = getDisplayFilterTags(
+    const tags: FilterTag[] = getDisplayFilterTags(
       filterStore.displayFilter,
       filterStore.selectedFilter,
       filterStore.productMap,
@@ -43,7 +43,7 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>): JSX.Element 
             className={classes.tags}
             iconProps={{ iconName: 'StatusCircleErrorX' }}
             text={tag.name}
-            onClick={(event) => {
+            onClick={event => {
               event.preventDefault();
               handleClick(tag);
             }}

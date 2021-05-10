@@ -29,7 +29,7 @@ const FilterPaneLargeInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
   const classes = themedClassNames(styles);
 
   const noFiltersExist = () => {
-    let selectedFilters = filterStore.selectedFilter;
+    const selectedFilters = filterStore.selectedFilter;
     return (
       selectedFilters[FilterType.products].length === 0 &&
       selectedFilters[FilterType.roles].length === 0 &&

@@ -24,8 +24,8 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element => {
   useEffect(() => {
     const filterBySearchTerm = (stringExp: string) => {
       if (stringExp && stringExp?.trim() !== '' && props.filterOption) {
-        let regexs: RegExp[] = getRegexs(stringExp);
-        let filteresDisplay = getDisplayFromSearch(regexs, props.filterOption);
+        const regexs: RegExp[] = getRegexs(stringExp);
+        const filteresDisplay = getDisplayFromSearch(regexs, props.filterOption);
         setDisplayOptions(filteresDisplay);
       } else {
         setDisplayOptions(props.filterOption);
@@ -43,7 +43,7 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element => {
       <div className={props.styles.root?.toString()}>
         <form>
           <Text variant="medium" className={props.styles.title?.toString()}>
-            {props.filterName} 
+            {props.filterName}
           </Text>
           {props.search && (
             <SearchBox

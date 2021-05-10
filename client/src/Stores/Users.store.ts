@@ -29,7 +29,7 @@ export class UsersStore extends ChildStore {
   @observable userImageUrl = '';
   @observable participants: User[] | null = null;
   @observable account: Account | null = null;
-  @observable errorContent : ErrorPageContent | undefined = undefined;
+  @observable errorContent: ErrorPageContent | undefined = undefined;
 
   initialize(): void {
     const detailsFromPlatform = toObservable(
@@ -43,16 +43,15 @@ export class UsersStore extends ChildStore {
       map(account => this.accountToUserModel(account))
     );
 
-    const getUser =  async (assignmentId : string) : Promise<WithError<UserDto>> =>
-    {
+    const getUser = async (assignmentId: string): Promise<WithError<UserDto>> => {
       const user = await UsersService.getCurrentUserDetails(assignmentId);
-      if(user.error) {
+      if (user.error) {
         this.errorContent = ErrorPageContent.CreateFromServiceError(user.error);
-      } else if(!user) {
-        this.errorContent = {errorMsg : "You are not enrolled in this course.", icon : "BlockContact"};
+      } else if (!user) {
+        this.errorContent = { errorMsg: 'You are not enrolled in this course.', icon: 'BlockContact' };
       }
       return user;
-    }
+    };
     const detailsFromAssignment = toObservable(() => this.root.assignmentStore.assignment).pipe(
       filter(assignment => !!assignment),
       map(assignment => assignment!.id),

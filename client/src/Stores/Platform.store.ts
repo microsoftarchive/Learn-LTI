@@ -15,8 +15,8 @@ export class PlatformStore extends ChildStore {
   @observable platform: Platform | null = null;
   @observable saveResult: PlatformSaveResult | null = null;
   @observable isSaving = false;
-  @observable errorContent : ErrorPageContent | undefined = undefined;
-  
+  @observable errorContent: ErrorPageContent | undefined = undefined;
+
   @action
   async initializePlatform(): Promise<void> {
     const platforms = await PlatformService.getAllPlatforms();

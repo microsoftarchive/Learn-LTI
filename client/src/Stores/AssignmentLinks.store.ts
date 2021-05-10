@@ -18,7 +18,7 @@ export class AssignmentLinksStore extends ChildStore {
   @observable areSomeLinksInvalid = false;
 
   initialize(): void {
-    const linksWithValidId = (link: AssignmentLinkDto) => link.id!=="00000000-0000-0000-0000-000000000000";
+    const linksWithValidId = (link: AssignmentLinkDto) => link.id !== '00000000-0000-0000-0000-000000000000';
 
     toObservable(() => this.root.assignmentStore.assignment)
       .pipe(filter(assignment => !assignment))
