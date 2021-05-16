@@ -71,7 +71,7 @@ const publishSuccessMessageBarStyles = ({ theme }: IThemeOnlyProps): PublishSucc
       height: theme.spacing.l2,
       width: 'auto',
       marginLeft: theme.spacing.l2,
-      marginRight: theme.spacing.l2, 
+      marginRight: theme.spacing.l2,
       marginTop: `calc(${theme.spacing.s1} * 1.6)`
     })
   ]

@@ -27,7 +27,10 @@ const DeadlineInputInner = ({ styles }: IStylesOnly<DeadlineInputStyles>): JSX.E
   };
 
   const combinedStyles = mergeStyleSets(themedClassNames(datePickerBaseStyle), themedClassNames(styles));
-  const combinedLabelStyles = mergeStyleSets(themedClassNames(generalPageInputGroupChildrenStyleProps), themedClassNames(deadlineLabelInputStyles));
+  const combinedLabelStyles = mergeStyleSets(
+    themedClassNames(generalPageInputGroupChildrenStyleProps),
+    themedClassNames(deadlineLabelInputStyles)
+  );
 
   const formatDate = (chosenDate?: Date): string => {
     return chosenDate ? moment(chosenDate).format('MMM DD YYYY') : '';
@@ -57,7 +60,15 @@ const deadlineInputStyles = ({ theme }: IThemeOnlyProps): DeadlineInputStyles =>
   ]
 });
 
-const deadlineLabelInputStyles = ({ theme }: IThemeOnlyProps) => ({
+const deadlineLabelInputStyles = ({
+  theme
+}: IThemeOnlyProps): {
+  label: [
+    {
+      marginTop: string;
+    }
+  ];
+} => ({
   label: [
     {
       marginTop: `calc(${theme.spacing.m} * 3)`

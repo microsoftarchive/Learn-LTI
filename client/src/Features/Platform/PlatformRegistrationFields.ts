@@ -67,7 +67,7 @@ const toolSettingsFields: field[] = [
   {
     fieldLabel: 'Domain URL',
     fieldName: 'domainUrl',
-    helpText: "The Domain URL of the tool",
+    helpText: 'The Domain URL of the tool',
     disabled: true,
     isCopyable: true
   },
@@ -89,7 +89,8 @@ const toolSettingsFields: field[] = [
   {
     fieldLabel: 'Public JWK',
     fieldName: 'toolJwk',
-    helpText: 'The Json Web Key (JWK) representation of the Public Key to allow LMS to validate the messages that are sent by the tool.',
+    helpText:
+      'The Json Web Key (JWK) representation of the Public Key to allow LMS to validate the messages that are sent by the tool.',
     disabled: true,
     isCopyable: true,
     multiline: true
@@ -97,7 +98,8 @@ const toolSettingsFields: field[] = [
   {
     fieldLabel: 'Public JWK Set URL',
     fieldName: 'toolJwkSetUrl',
-    helpText: 'The URL providing the Json Web Key Set(JWKS) to allow LMS to validate the messages that are sent by the tool',
+    helpText:
+      'The URL providing the Json Web Key Set(JWKS) to allow LMS to validate the messages that are sent by the tool',
     disabled: true,
     isCopyable: true,
     multiline: false

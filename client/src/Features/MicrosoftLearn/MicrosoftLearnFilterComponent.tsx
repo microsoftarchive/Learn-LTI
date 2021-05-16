@@ -22,10 +22,10 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element => {
   const [displayOptions, setDisplayOptions] = useState(props.filterOption);
 
   useEffect(() => {
-    const filterBySearchTerm = (stringExp: string) => {
+    const filterBySearchTerm = (stringExp: string): void => {
       if (stringExp && stringExp?.trim() !== '' && props.filterOption) {
-        let regexs: RegExp[] = getRegexs(stringExp);
-        let filteresDisplay = getDisplayFromSearch(regexs, props.filterOption);
+        const regexs: RegExp[] = getRegexs(stringExp);
+        const filteresDisplay = getDisplayFromSearch(regexs, props.filterOption);
         setDisplayOptions(filteresDisplay);
       } else {
         setDisplayOptions(props.filterOption);
@@ -39,11 +39,12 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element => {
       return <div></div>;
     }
 
+    const displayOptionsKeys = displayOptions ? Array.from(displayOptions.keys()) : [];
     return (
       <div className={props.styles.root?.toString()}>
         <form>
           <Text variant="medium" className={props.styles.title?.toString()}>
-            {props.filterName} 
+            {props.filterName}
           </Text>
           {props.search && (
             <SearchBox
@@ -57,9 +58,10 @@ const FilterComponentInner = (props: FilterComponentProps): JSX.Element => {
           )}
 
           <div className={props.styles.optionsList?.toString()}>
-            {[...displayOptions?.keys()].length > 0
-              ? [...displayOptions?.keys()].map(item => (
+            {displayOptionsKeys.length > 0
+              ? displayOptionsKeys.map((item, i) => (
                   <MicrosoftLearnFilterItem
+                    key={i}
                     mainItem={item}
                     filterType={props.filterType}
                     subItems={displayOptions?.get(item)}

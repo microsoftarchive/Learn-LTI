@@ -37,22 +37,22 @@ const MainLayoutInner = ({ styles }: IStylesOnly<MainLayoutStyles>): JSX.Element
       />
       {!assignmentStore.assignment || !usersStore.userDetails ? (
         assignmentStore.errorContent !== undefined ? (
-          <ErrorPage {...assignmentStore.errorContent} /> 
+          <ErrorPage {...assignmentStore.errorContent} />
+        ) : usersStore.errorContent !== undefined ? (
+          <ErrorPage {...usersStore.errorContent} />
         ) : (
-        usersStore.errorContent !== undefined ? (
-          <ErrorPage {...usersStore.errorContent} /> 
-        ) : (
-        <Spinner
-          size={SpinnerSize.large}
-          className={classes.spinner}
-          label="Loading Assignment"
-          labelPosition="bottom"
-        />
-        ))) : (
+          <Spinner
+            size={SpinnerSize.large}
+            className={classes.spinner}
+            label="Loading Assignment"
+            labelPosition="bottom"
+          />
+        )
+      ) : (
         <div className={classes.content}>
           {usersStore.userDetails.role === 'teacher' && !asStudent ? (
             <>
-              <NavigationControlHeader/>
+              <NavigationControlHeader />
               <PagesRouter />
             </>
           ) : (
@@ -71,7 +71,7 @@ const mainLayoutStyle = ({ theme }: IThemeOnlyProps): MainLayoutStyles => {
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: theme.palette.neutralLighterAlt,
+        backgroundColor: theme.palette.neutralLighterAlt
       }
     ],
     spinner: [
@@ -92,7 +92,7 @@ const mainLayoutStyle = ({ theme }: IThemeOnlyProps): MainLayoutStyles => {
         width: '100%',
         overflow: 'hidden',
         height: '100%',
-        flexDirection:'column'
+        flexDirection: 'column'
       }
     ]
   };

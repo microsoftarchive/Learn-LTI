@@ -18,19 +18,20 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>): JSX.Element 
   const { filterStore, catalog } = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
 
-  const handleClick = (tag: FilterTag) => {
+  const handleClick = (tag: FilterTag): void => {
     if (tag.type === FilterType.products) {
-      let subItems: string[] = [...catalog?.products.values()]
-        .filter(product => product.parentId && product.parentId === tag.id)
+      const catalogProducts = catalog && catalog.products ? Array.from(catalog.products.values()) : [];
+      const subItems: string[] = catalogProducts
+        .filter(product => product && product.parentId && product.parentId === tag.id)
         .map(product => product.id);
       filterStore.removeFilter(tag.type, [...subItems, tag.id]);
     } else {
       filterStore.removeFilter(tag.type, [tag.id]);
     }
-  }
+  };
 
   return useObserver(() => {
-    let tags: FilterTag[] = getDisplayFilterTags(
+    const tags: FilterTag[] = getDisplayFilterTags(
       filterStore.displayFilter,
       filterStore.selectedFilter,
       filterStore.productMap,
@@ -38,12 +39,13 @@ const FilterTagsInner = ({ styles }: IStylesOnly<FilterTagStyles>): JSX.Element 
     );
     return (
       <div className={classes.root}>
-        {tags.map(tag => (
+        {tags.map((tag, i) => (
           <DefaultButton
+            key={i}
             className={classes.tags}
             iconProps={{ iconName: 'StatusCircleErrorX' }}
             text={tag.name}
-            onClick={(event) => {
+            onClick={event => {
               event.preventDefault();
               handleClick(tag);
             }}

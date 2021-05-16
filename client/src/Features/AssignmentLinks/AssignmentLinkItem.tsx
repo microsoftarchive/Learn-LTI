@@ -59,7 +59,7 @@ const assignmentLinkItemStyles = ({ theme }: IThemeOnlyProps): AssignmentLinkIte
       paddingTop: theme.spacing.l1,
       paddingBottom: theme.spacing.l1,
       wordWrap: 'break-word',
-      wordBreak: 'break-word',
+      wordBreak: 'break-word'
     }
   ]
 });

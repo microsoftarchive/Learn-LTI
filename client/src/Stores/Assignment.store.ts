@@ -12,7 +12,7 @@ import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
 export class AssignmentStore extends ChildStore {
   @observable assignment: Assignment | null = null;
   @observable isChangingPublishState: boolean | null = null;
-  @observable errorContent : ErrorPageContent | undefined = undefined;
+  @observable errorContent: ErrorPageContent | undefined = undefined;
 
   @action
   async initializeAssignment(assignmentId: string): Promise<void> {

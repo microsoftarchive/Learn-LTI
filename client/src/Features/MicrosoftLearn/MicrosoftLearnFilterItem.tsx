@@ -6,32 +6,25 @@
 import { FilterItemProps } from './MicrosoftLearnFilterComponentProps';
 import { useStore } from '../../Stores/Core';
 import { useObserver } from 'mobx-react-lite';
-import {
-  Checkbox,
-  ActionButton,
-  classNamesFunction,
-  getTheme,
-  ITheme,
-  ICheckboxStyles
-} from '@fluentui/react';
+import { Checkbox, ActionButton, classNamesFunction, getTheme, ITheme, ICheckboxStyles } from '@fluentui/react';
 import React from 'react';
 
 interface SubItemNumberStyleProps {
-  nSubItems: Number;
+  nSubItems: number;
   theme: ITheme;
 }
 
-const FilterItemInner = (props: FilterItemProps) => {
+const FilterItemInner = (props: FilterItemProps): JSX.Element => {
   const { filterStore } = useStore('microsoftLearnStore');
 
-  const itemInSelectedFilter = (subItemId: string | undefined) => {
-    let selectedFilters = filterStore.selectedFilter[props.filterType];
+  const itemInSelectedFilter = (subItemId: string | undefined): boolean => {
+    const selectedFilters = filterStore.selectedFilter[props.filterType];
     return subItemId ? selectedFilters?.includes(subItemId) : false;
   };
 
-  let nSubItems = props.subItems ? props.subItems.length : 0;
+  const nSubItems = props.subItems ? props.subItems.length : 0;
 
-  const updateExpandedSet = () => {
+  const updateExpandedSet = (): void => {
     if (props.mainItem?.id && inExpanded(props.mainItem?.id)) {
       filterStore.collapseProducts(props.mainItem?.id);
     } else if (props.mainItem?.id) {
@@ -39,8 +32,8 @@ const FilterItemInner = (props: FilterItemProps) => {
     }
   };
 
-  const inExpanded = (id: string | undefined) => {
-    return id && filterStore.expandedProducts.includes(id);
+  const inExpanded = (id: string | undefined): boolean => {
+    return id ? filterStore.expandedProducts.includes(id) : false;
   };
 
   const checkboxClassName = classNamesFunction<SubItemNumberStyleProps, ICheckboxStyles>()(mainCheckboxStyles, {
@@ -80,8 +73,8 @@ const FilterItemInner = (props: FilterItemProps) => {
           style={{ display: inExpanded(props.mainItem?.id) ? 'block' : 'none' }}
           className={props.styles.subOptionsList?.toString()}
         >
-          {props.subItems?.map(subItem => (
-            <span className={props.styles.filterItem?.toString()}>
+          {props.subItems?.map((subItem, i) => (
+            <span key={i} className={props.styles.filterItem?.toString()}>
               <Checkbox
                 value={subItem?.id}
                 onChange={event => {

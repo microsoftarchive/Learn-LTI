@@ -27,7 +27,7 @@ const PublishControlAreaInner = ({ styles }: IStylesOnly<PublishControlAreaStyle
 const publishControlAreaStyles = ({ theme }: IThemeOnlyProps): PublishControlAreaStyles => ({
   root: [
     {
-      position:'relative',
+      position: 'relative',
       padding: `calc(${theme.spacing.l1}*0.75) 0`,
       display: 'flex',
       flexDirection: 'row',

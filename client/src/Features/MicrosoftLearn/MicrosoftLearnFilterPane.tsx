@@ -8,6 +8,7 @@ import {
   ActionButton,
   DefaultButton,
   Icon,
+  IPanelProps,
   Panel,
   PanelType,
   PrimaryButton,
@@ -28,8 +29,8 @@ const FilterPaneLargeInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
   const { filterStore } = useStore('microsoftLearnStore');
   const classes = themedClassNames(styles);
 
-  const noFiltersExist = () => {
-    let selectedFilters = filterStore.selectedFilter;
+  const noFiltersExist = (): boolean => {
+    const selectedFilters = filterStore.selectedFilter;
     return (
       selectedFilters[FilterType.products].length === 0 &&
       selectedFilters[FilterType.roles].length === 0 &&
@@ -90,11 +91,14 @@ const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
   const [panelContentState, dispatchPanelContent] = useReducer(panelContentReducer, initialPanelContentState);
   const classes = themedClassNames(styles);
 
-  const kFormatter = (num: number | bigint | any) => {
-    return num > 999 ? (num / 1000).toFixed(1) + 'K' : num;
+  const kFormatter = (num: number): string => {
+    return num > 999 ? (num / 1000).toFixed(1) + 'K' : `${num}`;
   };
 
-  const backToMainFilters = (props: any, defaultRender: any) => {
+  const backToMainFilters = (
+    props?: IPanelProps,
+    defaultRender?: (props?: IPanelProps) => JSX.Element | null
+  ): JSX.Element | null => {
     if (panelContentState.panelContent === 'main') {
       return <>{defaultRender!(props)}</>;
     }
@@ -109,7 +113,7 @@ const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
     );
   };
 
-  const PanelFooterContent = (num: number | undefined) => {
+  const PanelFooterContent = (num: number | undefined): JSX.Element => {
     return (
       <div className={classes.filterPanelFooter}>
         <PrimaryButton
@@ -121,15 +125,16 @@ const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
     );
   };
 
-  const getPanelContent = () => {
-    const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const getPanelContent = (): JSX.Element | null => {
+    const capitalizeFirstLetter = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
 
     switch (panelContentState.panelContent) {
       case 'main':
         return (
           <>
-            {[FilterType.products, FilterType.roles, FilterType.levels, FilterType.types].map(filterType => (
+            {[FilterType.products, FilterType.roles, FilterType.levels, FilterType.types].map((filterType, i) => (
               <ActionButton
+                key={i}
                 onClick={() => dispatchPanelContent({ type: filterType })}
                 className={classes.mainPanelActionButtons}
               >
@@ -181,7 +186,7 @@ const FilterPaneSmallInner = ({ styles }: IStylesOnly<FilterPaneStyles>): JSX.El
 };
 
 // custom window resize hook
-const useWindowWidth = () => {
+const useWindowWidth = (): number => {
   const [width, setWidth] = useState(window.innerWidth);
   useEffect(() => {
     const debouncedHandleResize = debounce(function handleResize() {

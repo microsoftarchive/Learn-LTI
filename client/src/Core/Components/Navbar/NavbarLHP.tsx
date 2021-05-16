@@ -36,7 +36,7 @@ const NavbarLHPInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null
   const assignmentStore = useStore('assignmentStore');
   const history = useHistory();
   const location = useLocation();
-  const { filterStore } = useStore('microsoftLearnStore');  
+  const { filterStore } = useStore('microsoftLearnStore');
 
   const getMappedLinkGroups = (assignment: Assignment): INavLinkGroup[] =>
     _.map(getNavLinkGroups(assignment), group => ({
@@ -54,15 +54,15 @@ const NavbarLHPInner = ({ styles }: IStylesOnly<INavStyles>): JSX.Element | null
     }));
 
   // The following map can be extended to include other searchParams as well in future in case need be
-  let queryParamsMap = new Map<string, string>();
-  queryParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam);   
+  const queryParamsMap = new Map<string, string>();
+  queryParamsMap.set(pagesDisplayNames.MSLEARN, filterStore.learnFilterUriParam);
 
   const handleLinkClick = (event?: MouseEvent, item?: INavLink): void => {
-    const pushToHistory = (item: INavLink) => {
+    const pushToHistory = (item: INavLink): void => {
       const { url, name } = item;
       const queryParam = queryParamsMap.get(name);
-      queryParam && queryParam.length>0 ? history.push(`${url}?${queryParam}`) : history.push(`${url}`);
-    }
+      queryParam && queryParam.length > 0 ? history.push(`${url}?${queryParam}`) : history.push(`${url}`);
+    };
 
     event?.preventDefault();
     if (item) {

@@ -14,7 +14,8 @@ import { useStore } from '../../Stores/Core';
 
 type DescriptionInputStyles = Partial<ITextFieldStyles>;
 
-const ValidateDescLength = (text: string | undefined) => (text && text.length > 2500) ? "The entered text is too long." : "";
+const ValidateDescLength = (text: string | undefined): string =>
+  text && text.length > 2500 ? 'The entered text is too long.' : '';
 
 const DescriptionInputInner = ({ styles }: IStylesOnly<DescriptionInputStyles>): JSX.Element => {
   const assignmentStore = useStore('assignmentStore');
@@ -45,7 +46,7 @@ const DescriptionInputInner = ({ styles }: IStylesOnly<DescriptionInputStyles>):
   );
 };
 
-const descriptionInputStyles = ({ theme }: IThemeOnlyProps): DescriptionInputStyles => ({
+const descriptionInputStyles = (_theme: IThemeOnlyProps): DescriptionInputStyles => ({
   field: [
     {
       height: 100

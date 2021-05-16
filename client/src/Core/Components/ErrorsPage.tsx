@@ -11,7 +11,7 @@ import { ErrorPageContent } from './ErrorPageContent';
 
 type ErrorsPageStyles = SimpleComponentStyles<'root' | 'icon' | 'text' | 'error'>;
 
-const ErrorPageInner = ( {styles , errorMsg, icon } : ErrorPageContent & IStylesOnly<ErrorsPageStyles> ) : JSX.Element => {
+const ErrorPageInner = ({ styles, errorMsg, icon }: ErrorPageContent & IStylesOnly<ErrorsPageStyles>): JSX.Element => {
   const classes = themedClassNames(styles);
   return (
     <div className={classes.root}>
@@ -21,7 +21,9 @@ const ErrorPageInner = ( {styles , errorMsg, icon } : ErrorPageContent & IStyles
       </Text>
       <Text variant="medium" className={classes.error}>
         We suggest you to go to our&nbsp;
-        <a target='_blank' rel="noopener noreferrer" href="https://aka.ms/LearnLTI-help">help</a>
+        <a target="_blank" rel="noopener noreferrer" href="https://aka.ms/LearnLTI-help">
+          help
+        </a>
         &nbsp;page.
       </Text>
     </div>

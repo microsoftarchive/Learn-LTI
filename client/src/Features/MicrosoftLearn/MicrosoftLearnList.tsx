@@ -22,14 +22,14 @@ const ListRow = ({
   index,
   style
 }: {
-  data: { numItemsPerRow: number; itemsData?: LearnContent[]; isLoadingCatalog: boolean };
+  data: { numItemsPerRow: number; itemsData?: LearnContent[] | null; isLoadingCatalog: boolean };
   index: number;
   style: CSSProperties | undefined;
 }): JSX.Element => {
   const classes = themedClassNames(microsoftLearnListStyles);
 
   const startIndex = index * numItemsPerRow;
-  const items = [];
+  const items: JSX.Element[] = [];
   for (let i = startIndex; i < startIndex + numItemsPerRow; i++) {
     items.push(
       <div className={classes.item} key={`rowKey${startIndex}itemKey${i}`}>
@@ -65,13 +65,15 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
         {noVisibleItems ? (
           <Text className={classes.noResultsText}>No items match your search. Please refine your search criteria.</Text>
         ) : (
-
           <>
-            {filteredCatalogContent && filteredCatalogContent.length>0 &&
-              (<div className={classes.contentCount}>
-              <Text variant="mediumPlus" className='contentCountText'> {filteredCatalogContent.length.toLocaleString()} results from Microsoft Learn </Text>         
-              </div>)
-            }
+            {filteredCatalogContent && filteredCatalogContent.length > 0 && (
+              <div className={classes.contentCount}>
+                <Text variant="mediumPlus" className="contentCountText">
+                  {' '}
+                  {filteredCatalogContent.length.toLocaleString()} results from Microsoft Learn{' '}
+                </Text>
+              </div>
+            )}
             <AutoSizer>
               {({ height, width }): JSX.Element | null => {
                 if (autoSizerWidth === 0 || Math.abs(autoSizerWidth - width) > 25) {
@@ -80,7 +82,8 @@ const MicrosoftLearnListInner = ({ styles }: IStylesOnly<MicrosoftLearnListStyle
 
                 const numItemsPerRow = Math.floor(autoSizerWidth / FIXED_ITEM_WIDTH);
                 const rowCount = filteredCatalogContent
-                  ? Math.floor(filteredCatalogContent.length / numItemsPerRow) + (filteredCatalogContent.length % numItemsPerRow ? 1 : 0)
+                  ? Math.floor(filteredCatalogContent.length / numItemsPerRow) +
+                    (filteredCatalogContent.length % numItemsPerRow ? 1 : 0)
                   : 2;
                 return (
                   <FixedSizeList
@@ -135,7 +138,7 @@ const microsoftLearnListStyles = ({ theme }: IThemeOnlyProps): MicrosoftLearnLis
       marginLeft: theme.spacing.s1,
       marginBottom: theme.spacing.l1,
       selectors: {
-        '.contentCountText':{
+        '.contentCountText': {
           fontWeight: FontWeights.semibold
         }
       }

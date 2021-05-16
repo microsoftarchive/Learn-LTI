@@ -13,6 +13,7 @@ import { FontWeights } from '@fluentui/react';
 import { IThemeOnlyProps, SimpleComponentStyles } from '../../Core/Utils/FluentUI/typings.fluent-ui';
 import { themedClassNames } from '../../Core/Utils/FluentUI';
 import { TAB_SCREEN_SIZE } from './MicrosoftLearnPage';
+import { FilterOption } from './MicrosoftLearnFilterComponentProps';
 
 export type FilterComponentStyles = SimpleComponentStyles<
   'root' | 'title' | 'search' | 'optionsList' | 'subOptionsList' | 'filterItem'
@@ -20,10 +21,10 @@ export type FilterComponentStyles = SimpleComponentStyles<
 
 type FilterComponentTypes = FilterType.products | FilterType.roles | FilterType.levels | FilterType.types;
 
-export const FilterComponent = (props: { type: FilterComponentTypes; name: string }) => {
+export const FilterComponent = (props: { type: FilterComponentTypes; name: string }): JSX.Element => {
   const { filterStore, catalog } = useStore('microsoftLearnStore');
 
-  const getDisplayOptions = () => {
+  const getDisplayOptions = (): Map<FilterOption, FilterOption[]> => {
     switch (props.type) {
       case FilterType.products:
         return getProductsToDisplay(filterStore.displayFilter[props.type], catalog?.products);
@@ -48,10 +49,11 @@ export const FilterComponent = (props: { type: FilterComponentTypes; name: strin
             filterOption={displayOptions}
             search={true}
             mainItemClickHandler={event => {
-              let target = event?.target as HTMLInputElement;
-              let value = target.getAttribute('aria-describedby');
+              const target = event?.target as HTMLInputElement;
+              const value = target.getAttribute('aria-describedby');
               if (value) {
-                let subItems: string[] = [...catalog?.products.values()]
+                const catalogProducts = catalog && catalog.products ? Array.from(catalog.products.values()) : [];
+                const subItems: string[] = catalogProducts
                   .filter(product => product.parentId && product.parentId === value)
                   .map(product => product.id);
                 target.checked
@@ -60,9 +62,9 @@ export const FilterComponent = (props: { type: FilterComponentTypes; name: strin
               }
             }}
             subItemClickHandler={event => {
-              let target = event?.target as HTMLInputElement;
-              let type = FilterType.products;
-              let value = target.getAttribute('aria-describedby');
+              const target = event?.target as HTMLInputElement;
+              const type = FilterType.products;
+              const value = target.getAttribute('aria-describedby');
               if (target.checked && value) {
                 filterStore.addFilter(type, [value]);
               } else if (!target.checked && value) {
@@ -82,8 +84,8 @@ export const FilterComponent = (props: { type: FilterComponentTypes; name: strin
             filterOption={displayOptions}
             search={props.type === FilterType.roles ? true : false}
             mainItemClickHandler={event => {
-              let target = event?.target as HTMLInputElement;
-              let value = target.getAttribute('aria-describedby');
+              const target = event?.target as HTMLInputElement;
+              const value = target.getAttribute('aria-describedby');
               if (target.checked && value) {
                 filterStore.addFilter(props.type, [value]);
               } else if (!target.checked && value) {
