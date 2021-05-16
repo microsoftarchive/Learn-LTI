@@ -30,6 +30,11 @@ The personas/responsibilities for setup are:
 - LMS (Learning Management System Owner who needs to configure the LTI Application)
 - Educator (who can provision learn modules into their course)
 
+## Azure CLI Tool not installed 
+Exception.Message [ The term "az" is not recognized as a command applet name, function, script file, or executable program. Check the spelling of the name, or if a path exists, check that the path is correct and try again. ]
+
+To run the install you need the Azure Command Line Extension tool installed see Instructions at: https://docs.microsoft.com/cli/azure/install-azure-cli-windows?tabs=azure-cli for instructions. Please ensure you have all the prerequisites installed https://github.com/microsoft/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md#prerequisites
+
 ## Purging Key Vaults
 
 Your Azure Key Vault may be set to soft delete enabled. 
