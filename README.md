@@ -43,7 +43,7 @@ To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will ne
 - You need to be the **owner** of an Azure subscription
 - IT administrator privileges to create an Azure resource
 - [Getting Started Overview](https://techcommunity.microsoft.com/t5/educator-developer-blog/getting-started-with-the-microsoft-learn-lti-application/ba-p/2247034)
-- Microsoft Learn LTI application [Setup presentation](./docs/Microsoft%20Learn%20LTI%20Application.pdf) 
+- Microsoft Learn LTI application [Setup presentation](https://github.com/microsoft/Learn-LTI/blob/main/docs/Microsoft%20Learn%20LTI%20Application.pdf) 
 
 # Table of Contents
 
