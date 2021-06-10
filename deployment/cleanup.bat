@@ -6,4 +6,4 @@ REM ----------------------------------------------------------------------------
 
 REM Triggers Learn-LTI Cleanup process for bad installations 
 REM This script will remove all orphaned resources from your Azure Subscription which were associated to a failed deployment of the Microsoft Learn LTI Application.
-PowerShell.exe -ExecutionPolicy Bypass -File .\cleanup.ps1
+PowerShell.exe -ExecutionPolicy Bypass -File .\Cleanup.ps1
