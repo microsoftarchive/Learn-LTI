@@ -12,7 +12,7 @@ If your deployment has an error look [here](https://docs.microsoft.com/azure/azu
 
 To remove the services simply run the [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat) script located in the Deployment folder. This will run the [Cleanup.ps1](https://github.com/microsoft/Learn-LTI/blob/main/deployment/Cleanup.ps1) script which will remove all the deployed resources for the Learn LTI Application from your Azure Subscription. 
 
-To Manually remove resources simply remove the Microsoft Learn LTI resource groups  
+To Manually remove resources simply remove the Microsoft Learn LTI resource group and Microsoft Learn LTI Application Registration 
 - ResourceGroupName = "MSLearnLTI"
 - AppName = "MS-Learn-Lti-Tool-App"
 
