@@ -101,12 +101,12 @@ This issue is typically related to one of the following:
 After you have successfully installed the Learn LTI application by running the deployment steps you try to access the created Platform Registration Page results and recieve the message 'No sufficient permissions to view this page'.
 
 Solution:
-Go to the 'platforms' azure function inside of the resource group which was just created.
-Go to 'Configuration' one the left side
-Look into the 'AllowedUsers' environment variable.
-Verify the email address of the user you are logged in with is included in the environment variable (!THIS IS CASE SENSITIVE!)
-If it does not match or exist, update the environment variable and save the change.
-Wait a minute to let change take effect and retry!
+- Go to the 'platforms' azure function inside of the resource group which was just created.
+- Go to 'Configuration' one the left side
+- Look into the 'AllowedUsers' environment variable.
+- Verify the email address of the user you are logged in with is included in the environment variable (!THIS IS CASE SENSITIVE!)
+- If it does not match or exist, update the environment variable and save the change.
+- Wait a minute to let change take effect and retry!
 
 We have seen cases where the email address was added there but the case is different i.e. capital first letters while the email address of the login user had lowercase)
 
