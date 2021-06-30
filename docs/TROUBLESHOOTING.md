@@ -8,13 +8,42 @@ If your **deployment fails and the resource group has been created**; an IT admi
 
 If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=learnlti-github-cxa) for common errors.
 
+## Failed deployment or removing the services 
+
+To remove the services simply run the [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat) script located in the Deployment folder. This will run the [Cleanup.ps1](https://github.com/microsoft/Learn-LTI/blob/main/deployment/Cleanup.ps1) script which will remove all the deployed resources for the Learn LTI Application from your Azure Subscription. 
+
+To Manually remove resources simply remove the Microsoft Learn LTI resource group and Microsoft Learn LTI Application Registration 
+- ResourceGroupName = "MSLearnLTI"
+- AppName = "MS-Learn-Lti-Tool-App"
+
 ## Check the Failed Deployment status and output
 
 From the Azure Portal, simply select deployments. See the following screenshot.
 
 ![FailedDeployments](../images/FailedDeployment.png)
 
-## Purging Key Vaults 
+## Errors deploying install scripts
+
+Insufficient permissions if you try deploying the installation scripts from an account which is not your tenant AAD Admin or Azure Subscription Admin/Owner you will recieve an error
+
+```
+ERROR: Directory permission is needed for the current user to register the application. For how to configure, please refer 'https://docs.microsoft.com/azure/azure-resource-manager/resource-group-create-service-principal-portal'. Original error: Insufficient privileges to complete the operation.
+Transcript stopped, output file is C:\Users\Learn-LTI\deployment\Log\Transcript-05-01-2020-09-27-47.log
+Press any Key to Exit:
+```
+To debug the error look at the Transcript-date-time.log file and the permissions error will be clearly shown.
+
+The personas/responsibilities for setup are:
+- Central IT (Azure tenant Owner, AAD Owner and have permissions to create service principals)
+- LMS (Learning Management System Owner who needs to configure the LTI Application)
+- Educator (who can provision learn modules into their course)
+
+## Azure CLI Tool not installed 
+Exception.Message [ The term "az" is not recognized as a command applet name, function, script file, or executable program. Check the spelling of the name, or if a path exists, check that the path is correct and try again. ]
+
+To run the install you need the Azure Command Line Extension tool installed see Instructions at: https://docs.microsoft.com/cli/azure/install-azure-cli-windows?tabs=azure-cli for instructions. Please ensure you have all the prerequisites installed https://github.com/microsoft/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md#prerequisites
+
+## Purging Key Vaults
 
 Your Azure Key Vault may be set to soft delete enabled. 
 
@@ -55,13 +84,31 @@ User not registered on the LMS or logged into Web Browser with the incorrect acc
 - The emails of the users in the LMS and AAD should match. 
 - Ensure the users are active on the course. 
 
-## LTI Application doesnt load error: Could not validate nonce.
+## LTI Application does not load error: {"Message":"Could not validate nonce."}
 
-If you recieve a browser message 
+If you receive a browser message: {"Message":"Could not validate nonce."}
 
-{"Message":"Could not validate nonce."}
+We have seen this is an intermittent issue, it usually happens if the user is trying to replay an old call or if the nonce and state value don't match. If the user simply refreshes the browser the page will load.
 
-We have seen this is an intermittent issue, it usually happens if the user is trying to replay an old call or if the nonce and state value don't match. If the user simply refreshes the browser the page will load. 
+## LTI Application does not load error: {"Message":"Could not validate request"}
+
+This issue is typically related to one of the following:
+- Check if you have a valid 3rd Party Signed SSL. This services requires a valid 3rd party SSL certificate, self signed SSL certificates are not valid. Please ensure your service is using https:// with a valid SSL certification. 
+- Check the Launch URL, please make sure that all the fields are correctly filled while registering the tool and filling tool's platform registration page. See https://github.com/microsoft/Learn-LTI/blob/main/docs/CONFIGURATION_GUIDE.md
+- Check the Azure Function/Azure Logs see https://github.com/microsoft/Learn-LTI/blob/main/docs/TROUBLESHOOTING.md#azure-functions-tracing  
+## LTI Application does not load error: No sufficient permissions to view this page
+
+After you have successfully installed the Learn LTI application by running the deployment steps you try to access the created Platform Registration Page results and recieve the message 'No sufficient permissions to view this page'.
+
+Solution:
+- Go to the 'platforms' azure function inside of the resource group which was just created.
+- Go to 'Configuration' one the left side
+- Look into the 'AllowedUsers' environment variable.
+- Verify the email address of the user you are logged in with is included in the environment variable (!THIS IS CASE SENSITIVE!)
+- If it does not match or exist, update the environment variable and save the change.
+- Wait a minute to let change take effect and retry!
+
+We have seen cases where the email address was added there but the case is different i.e. capital first letters while the email address of the login user had lowercase)
 
 ## Moodle Users not active - Not Current
 
