@@ -6,7 +6,7 @@ The Microsoft Learn LTI Application uses three services, links to the pricing fo
 * [Azure Key Vault](https://azure.microsoft.com/pricing/details/key-vault/?WT.mc_id=learnlti-github-cxa)
 
 ### Summary
-We estimate the total cost of these services to be **less than $20 USD per month** per installation based on deployment and usage in line with that stipulated in the deployment guide.
+We estimate the total cost of these services to be **less than $20 USD per month** per Institution installation based on deployment and usage in line with that stipulated in the deployment guide. This a cost per institution installation not a cost per user.
 
 ### Functions
 
