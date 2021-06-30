@@ -174,11 +174,11 @@ The following steps show how to register the parameters back in the Learn LTI ap
 1. Open the tool registration page from your browser.
 2. Enter the following information:
   * **Display name**: give the tool a name of your choice. 
-  * **Issuer**: enter **https://canvas.instructure.com**
+  * **Issuer**: enter **https://canvas.instructure.com** (this should always be canvas.infrastructure.com not matter your tenant url)
   * **JWK Set URL**: enter https://[tenant-name].instructure.com/api/lti/security/jwks
   * **Access Token URL**: enter https://[tenant-name].instructure.com/login/oauth2/token 
   * **Authorization URL**: enter https://[tenant-name].instructure.com/api/lti/authorize_redirect 
-   NOTE: [tenant-name] is where your Canvas tenant name hosted by instructure. For example if the url of the LMS is https://canvas.instructure.com, then the [tenant-name] is "canvas". If you are using self-hosted Canvas, replace https://[tenant-name].instructure.com with your canvas URL.
+   NOTE: [tenant-name] is where your Canvas tenant name hosted by instructure. For example if the url of the LMS is https://canvas1.instructure.com, then the [tenant-name] is "canvas1". If you are using self-hosted Canvas, replace https://[tenant-name].instructure.com with your canvas URL.
   * **Client ID**: enter "Client ID" from the LTI key registration.
 3. Optionally, you can add your Institution name and logo on the registration page.
 4. Click **SAVE REGISTRATION**.
