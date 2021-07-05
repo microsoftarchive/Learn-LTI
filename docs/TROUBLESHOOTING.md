@@ -266,7 +266,7 @@ In our experience, the only case when this happens is when user signs into Learn
 
 The Deployment utilizes an ARM Azure Resource Manager Template this deploys the following Azure Services into your Azure Subscription
 
-![LearnltiARM](../images/AzureDeployVizualization.png)
+![LearnltiARM](../images/AzureDeployVizualize.png)
 ## Raising a Issue
 
 If you are still having trouble, please raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa).
