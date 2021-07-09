@@ -72,11 +72,19 @@ See the following screenshot
 
 ![KeyVaultPurge](../images/Keyvaultpurge.png)
 
-## LMS Requirement for Secure Token SSL https
+## LTI Application does not load error: {Message:"Oops Something went wrong"}
+
+LMS Requirement for Secure Token SSL https
 
 If you are deploying the service in a test environment please ensure that your test LMS environment had a valid SSL certificate installed we require all traffic to utilise SSL.
 
-## LTI Application Login  error: You are not enrolled in this course
+You will receive this error if you have are using http:// and not https:// for your LMS Environment. Oops something went wrong.
+
+![NoSSLDeployment](../images/Oopswentwrong.png)
+
+If you using a standard web server there a great tool for supporting installing SSL certs https://certbot.eff.org/lets-encrypt simply choose the web server and platform and it will give you instructions.
+
+## LTI Application Login error: You are not enrolled in this course
 
 If you receive the following error.
 
@@ -97,6 +105,7 @@ We have seen this is an intermittent issue, it usually happens if the user is tr
 ## LTI Application does not load error: {"Message":"Could not validate request"}
 
 This issue is typically related to one of the following:
+
 - Check if you have a valid 3rd Party Signed SSL. This services requires a valid 3rd party SSL certificate, self signed SSL certificates are not valid. Please ensure your service is using https:// with a valid SSL certification.
 - Check the Launch URL, please make sure that all the fields are correctly filled while registering the tool and filling tool's platform registration page. See https://github.com/microsoft/Learn-LTI/blob/main/docs/CONFIGURATION_GUIDE.md
 - Check the Azure Function/Azure Logs see https://github.com/microsoft/Learn-LTI/blob/main/docs/TROUBLESHOOTING.md#azure-functions-tracing
@@ -105,6 +114,7 @@ This issue is typically related to one of the following:
 After you have successfully installed the Learn LTI application by running the deployment steps you try to access the created Platform Registration Page results and recieve the message 'No sufficient permissions to view this page'.
 
 Solution:
+
 - Go to the 'platforms' azure function inside of the resource group which was just created.
 - Go to 'Configuration' one the left side
 - Look into the 'AllowedUsers' environment variable.
@@ -118,7 +128,15 @@ We have seen cases where the email address was added there but the case is diffe
 
 You can use Let’s Encrypt, if you don't have a valid SSL certificates for your development environment, Let Encrypt will allow you to setup a [Free SSL](https://letsencrypt.org/)
 
+If you using a standard web server there a great tool for supporting installing SSL certs https://certbot.eff.org/lets-encrypt simply choose the web server and platform and it will give you instructions.
+
 ## Moodle: Bitnami Image and setting up SSL
+
+If your moodle deployment does not have a valid SSL you will receive the following error Oops something went wrong 
+
+![NoSSLDeployment](../images/Oopswentwrong.png)
+
+You simply need to ensure your LMS installation has a valid DNS name and SSL 
 
 If you need help configuring your Bitnami HTTPS Configuration see the following [configure HTTPS certificates](https://docs.bitnami.com/aws/how-to/understand-bncert/)
 
