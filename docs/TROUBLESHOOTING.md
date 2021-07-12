@@ -1,4 +1,4 @@
-## For issues with the guides and tool
+# For issues with the guides and tool
 
 For any and all issues, please raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa) so we can help you.
 
@@ -144,6 +144,8 @@ You simply need to ensure your LMS installation has a valid DNS name and SSL
 
 If you need help configuring your Bitnami HTTPS Configuration see the following [configure HTTPS certificates](https://docs.bitnami.com/aws/how-to/understand-bncert/)
 
+If you still receive this error after these changes check *Failures (Exceptions) in App Insights* and if you see a 401 error see Solution: *Error Unauthorized 401 when using Moodle*
+
 ## Moodle: Users not active - Not Current
 
 All users need to be Active on a course if you see Not Current next to the status.
@@ -197,17 +199,45 @@ NRPS is something that has been a part of LTIAdvantage Specification this servic
 
 ## Error Unauthorized 401 when using Moodle
 
-An Unauthorized (401) Exception occurred when access the Moodle's LTI services.
-/mod/lti/services.php/CourseSection/39/bindings/2/memberships
-The problem can be related to your Apache Config.
-Solution:
+An Unauthorized (401) Exception occurred when access the Moodle's LTI services. The 401 error is found by running *Failures (Exceptions) in App Insights*
 
+See /mod/lti/services.php/CourseSection/39/bindings/2/memberships
+
+The problem can be related to your Apache Config.
+
+Solution:
 - Edit your httpd.conf file or alternatively in the vhosts file:
 - SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 - SetEnvIf Content-Type "(.*)" HTTP_CONTENT_TYPE=$1
 - SetEnvIf Accept "(.*)" HTTP_ACCEPT=$1
 
 Reference: https://moodle.org/mod/forum/discuss.php?d=389429
+
+## How to Edit your Httpd.conf file
+
+How To: Access and Edit Your httpd.conf
+
+For Apache VPServers running Linux. 
+
+- Login into your Putty. Putty SSH can be googled. Enter your username, then password and then type
+```Bash
+su -
+``
+-Copy this code
+```Bash
+vi /etc/httpd/conf/httpd.conf
+```
+To save a file and exit Vim:
+
+- Switch to command mode by pressing the ESC key.
+- Press : (colon) to open the prompt bar in the bottom left corner of the window.
+- Type x after the colon and hit Enter. This will save the changes and exit.
+
+To exit Vim without saving changes:
+
+- Switch to command mode by pressing the ESC key.
+- Press : (colon) to open the prompt bar in the bottom left corner of the window.
+- Type q! after the colon and hit Enter to exit without saving the changes.
 
 ## Step by step guide to connect the SSO experience with AAD
 
@@ -258,6 +288,8 @@ We have seen a issue where the "Authorization" header was not being forwarded to
 This results in you being unable to open the Assignments page in Learn-LTI. Users access failing with http500 which essentially has been the source of the Oops!something went wrong error message in the browser window.
 
 Please see browser logs if indicate that the membership call being sent to the LMS (Moodle) is returning a 401 Unauthorized and the Learn LTI tool in unable to get the course members from the LMS and hence the it is giving a 500 response. Please make sure that while configuring the tool in Moodle, Under Services, IMS LTI Names and Role Provisioning: `Use this service to retrieve members’ information as per privacy settings.` is selected as mentioned in the [Configuration Guide Learn](CONFIGURATION_GUIDE.md)
+
+# Troubleshooting Errors 
 
 ## Azure Functions Tracing
 
