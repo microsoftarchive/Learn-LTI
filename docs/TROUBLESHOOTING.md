@@ -219,12 +219,14 @@ How To: Access and Edit Your httpd.conf
 
 For Apache VPServers running Linux. 
 
-- Login into your Putty. Putty SSH can be googled. Enter your username, then password and then type
-```Bash
+Login into your Putty. Putty SSH can be googled. Enter your username, then password and then type
+
+```bash
 su -
-``
--Copy this code
-```Bash
+```
+Copy this code
+
+```bash
 vi /etc/httpd/conf/httpd.conf
 ```
 To save a file and exit Vim:
