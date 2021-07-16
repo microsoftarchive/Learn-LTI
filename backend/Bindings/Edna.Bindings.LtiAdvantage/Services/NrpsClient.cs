@@ -71,7 +71,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
 
             _logger.LogInformation("Getting members.");
             using var response = await httpClient.GetAsync(membershipUrl);
-
+            _logger.LogInformation(response.Content.ReadAsStringAsync());
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Could not get members.");
@@ -80,7 +80,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
 
             var content = await response.Content.ReadAsStringAsync();
             var membership = JsonConvert.DeserializeObject<MembershipContainer>(content);
-
+            
             return membership.Members
                 .OrderBy(m => m.FamilyName)
                 .ThenBy(m => m.GivenName);
