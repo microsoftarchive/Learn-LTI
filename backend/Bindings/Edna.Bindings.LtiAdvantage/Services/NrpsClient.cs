@@ -92,6 +92,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, membershipUrl);
             int count = 0;
             foreach (Member m in allMembers) {
+                count ++;
                 _logger.LogInformation("count = " + m.UserId);
             }
             
