@@ -89,14 +89,6 @@ namespace Edna.Bindings.LtiAdvantage.Services
         public async Task<Member> GetByEmail(string clientId, string tokenUrl, string membershipUrl, IEnumerable<string> userEmails)
         {
             // Looks like LTI 1.3 doesn't support querying by member identifiers
-            _logger.LogInformation("***The following infos are printed under the GetByEmail function.***");
-            _logger.LogInformation("platform.ClientId = ", clientId);
-            _logger.LogInformation("platform.AccessTokenUrl = ", tokenUrl);
-            _logger.LogInformation("assignment.ContextMembershipsUrl = ", membershipUrl);
-            foreach(string email in userEmails){
-               _logger.LogInformation("userEmails = ", email);
-            }
-            
             IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, membershipUrl);
             int count = 0;
             foreach (Member m in allMembers) {
