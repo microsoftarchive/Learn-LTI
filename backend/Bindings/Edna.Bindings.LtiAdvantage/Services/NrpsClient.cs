@@ -101,7 +101,9 @@ namespace Edna.Bindings.LtiAdvantage.Services
             int count = 0;
             foreach (Member m in allMembers) {
                 count ++;
-                _logger.LogInformation("Member Id No." + count + " = " + m.UserId);
+                _logger.LogInformation("No." + count + " Member UserId = " + m.UserId);
+                _logger.LogInformation("No." + count + " Member Email = " + m.Email);
+                _logger.LogInformation("********************");
             }
             
             return allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email??String.Empty).Equals(userEmail, StringComparison.OrdinalIgnoreCase)));
