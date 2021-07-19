@@ -64,10 +64,10 @@ namespace Edna.Users
 
             Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
             
-            _logger.LogInformation("platform.ClientId = ", platform.ClientId);
-            _logger.LogInformation("platform.AccessTokenUrl = ", platform.AccessTokenUrl);
-            _logger.LogInformation("assignment.ContextMembershipsUrl = ", assignment.ContextMembershipsUrl);
-            _logger.LogInformation("userEmails = ", userEmails);
+            _logger.LogInformation($"platform.ClientId = '{platform.ClientId}'.");
+            _logger.LogInformation($"platform.AccessTokenUrl = '{platform.AccessTokenUrl}'.");
+            _logger.LogInformation($"assignment.ContextMembershipsUrl = '{assignment.ContextMembershipsUrl}'.");
+            _logger.LogInformation($"userEmails = '{userEmails}'.");
             Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
 
             if (member == null)
