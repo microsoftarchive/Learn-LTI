@@ -18,7 +18,8 @@ Follow these steps to deploy the Microsoft Learn LTI tool:
 
 # Clone the repo
 1. Go to the [repo](http://github.com/microsoft/learn-lti) Click code button on the [repo](http://github.com/microsoft/learn-lti)
-2. Simply click the code button and select Open with GitHub Desktop or Download Zip to clone contents of the repo.
+![Clone Repo](https://github.com/microsoft/Learn-LTI/blob/main/images/clone.png)
+3. Simply click the code button and select Open with GitHub Desktop or Download Zip to clone contents of the repo.
 
 If you are using Git
 1. Open a command prompt
