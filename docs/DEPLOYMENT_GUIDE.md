@@ -17,17 +17,26 @@ To begin, you will need:
 Follow these steps to deploy the Microsoft Learn LTI tool:
 
 # Clone the repo
-1. Open Git
-2. Enter in the command in the Git console
-   * `git clone https://github.com/microsoft/Learn-LTI.git`
+1. Go to the [repo](http://github.com/microsoft/learn-lti) Click code button on the [repo](http://github.com/microsoft/learn-lti)
+![Clone Repo](images/clone.png)
+3. Simply click the code button and select Open with GitHub Desktop or Download Zip to clone contents of the repo.
 
-You have now cloned the repo.
+If you are using Git
+1. Open a command prompt
+2. Make a new directory **Learn-Lti**
+3. Move to **Learn-Lti** directory
+4. Use Git to clone the repo (You need [Git installed](https://git-scm.com/downloads)
+5. Enter in the command in the Git console
+   * `git clone https://github.com/microsoft/Learn-LTI.git`
+   * This will clone the repo into the current directory **Learn-Lti**
+
+You have now cloned the repo
 
 ## After Cloning
-* In the cloned repo, inside the deployment directory, execute the file **run.bat**.
+* In the cloned repo, inside the deployment directory **Learn-Lti**, execute the file **run.bat**.
 * run.bat bypasses signing requirements and runs Deploy.ps1 automatically.
 * You should now see the Microsoft Learn LTI Tool script popup.
-![run.start.png](./images/run.start.png)
+![run.start.png](images/run.start.png)
 
 # Deploy to Azure Subscription using the script
 
@@ -65,7 +74,7 @@ The following regions are supported:
 
 **Locate your region from the list above. Then type it into the script and hit "Enter".**
 
-![Deployment.1](./images/Deployment.1.jpg)
+![Deployment.1](images/Deployment.1.jpg)
 
 Your region determines three things:
 
@@ -83,7 +92,7 @@ The **Deploy.ps1** script will automatically provision and configure the require
 
 The Script will display the Tool Registration URL after completion. Please **copy the URL and keep it handy** since it will be required while configuring the tool in the LMS.
 
-![Deployment.4](./images/Deployment.4.PNG)
+![Deployment.4](images/Deployment.4.PNG)
 
 Open the tool registration page from your browser and take note of the following parameters. 
 
@@ -94,10 +103,11 @@ Open the tool registration page from your browser and take note of the following
 * Public JWK
 * Public JWK Set URL
 
-![Deployment.5](./images/Deployment.5.png)
+![Deployment.5](images/Deployment.5.png)
 
 **Congratulations!** Your instance of the tool should now be deployed on Azure! 
 
 If your **deployment failed**, click [here](./TROUBLESHOOTING.md) for help.
 
 Once the tool has been successfully deployed, the next step is to [configure the tool](./CONFIGURATION_GUIDE.md) on your institution's LMS.
+
