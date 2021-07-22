@@ -20,8 +20,10 @@ The steps for creating an assignment are slightly different depending on the LMS
 ## Create an assignment in Moodle leveraging Microsoft Learn LTI application
 
 1. Go to a course in your Moodle LMS.
-2. Click **Turn editing on**.
-3. Click **Add a new activity or resource**. 
+2. Ensure you are signed in, usuing a valid educator/teacher account NB.This account need to have an AAD account and Moodle Account with the same email address.
+3. Ensure that the course has participants of teachers or students and that you are a valid course participant.
+4. Click **Turn editing on**.
+5. Click **Add a new activity or resource**. 
 ![UserGuide1](/images/UserGuide.1.PNG)
 4. Select **External Tool**.
 ![UserGuide2](/images/UserGuide.2.PNG)
