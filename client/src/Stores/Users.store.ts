@@ -49,6 +49,8 @@ export class UsersStore extends ChildStore {
         this.errorContent = ErrorPageContent.CreateFromServiceError(user.error);
       } else if (!user) {
         this.errorContent = { errorMsg: 'You are not enrolled in this course.', icon: 'BlockContact' };
+      } else if (!user.givenName && !user.familyName) {
+        this.errorContent = { errorMsg: 'Please add a name for the user.', icon: 'BlockContact' };
       }
       return user;
     };
