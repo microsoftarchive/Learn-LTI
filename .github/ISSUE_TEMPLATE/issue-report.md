@@ -16,7 +16,7 @@ A clear and concise description of what the issue is.
 A clear and concise description of what you expect. What do you need more explanation on or what would you like to see included?
 
 **LMS (please complete the following information):**
- - Platfrom: [e.g. iPhone6]
+ - Platfrom: [e.g. Moodle, Canvas, Blackboard, Classara, OpenEdx, D2L etc]
  - Version [e.g. 22]
  - Installation [e.g. Self Hosted IaaS or Managed Service SaaS]
 
