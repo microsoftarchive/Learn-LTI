@@ -92,7 +92,12 @@ namespace Edna.Bindings.LtiAdvantage.Services
             IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, membershipUrl);
             int count = 0;
             foreach (Member m in allMembers) {
-                count ++;
+                count ++;       
+                string name = m.Email;
+                name = name.Substring(0, name.IndexOf("@"));
+                m.FamilyName = name;
+                m.GivenName = name;
+                _logger.LogInformation("No." + count + " Member name = " + m.FamilyName);
                 _logger.LogInformation("No." + count + " Member UserId = " + m.UserId);
                 _logger.LogInformation("No." + count + " Member Email = " + m.Email);
                 _logger.LogInformation("********************");
