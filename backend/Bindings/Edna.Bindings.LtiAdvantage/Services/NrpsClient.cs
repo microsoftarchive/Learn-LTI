@@ -93,10 +93,16 @@ namespace Edna.Bindings.LtiAdvantage.Services
             int count = 0;
             foreach (Member m in allMembers) {
                 count ++;       
+                m.FamilyName = "test";
+                m.GivenName = "test";
                 string name = m.Email;
-                name = name.Substring(0, name.IndexOf("@"));
-                m.FamilyName = name;
-                m.GivenName = name;
+                if (m.Email != null)
+                {            
+                    int Index = name.IndexOf("@");
+                    name = name.Substring(0, Index);
+                    m.FamilyName = name;
+                    m.GivenName = " ";
+                }
                 _logger.LogInformation("No." + count + " Member name = " + m.FamilyName);
                 _logger.LogInformation("No." + count + " Member UserId = " + m.UserId);
                 _logger.LogInformation("No." + count + " Member Email = " + m.Email);
