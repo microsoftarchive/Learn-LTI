@@ -4,7 +4,7 @@ authors:
 - family-names: "Stott"
   given-names: "Lee"
   orcid: "https://orcid.org/0000-0002-3715-0892"
-  title: "Mirosoft Learn LTI: Access the Microsoft Learn http://docs.microsoft.com/learn Catalog of Learning Paths and Modules directly from your Learning Management Systems using the Microsoft Learn LTI application"
+title: "Microsoft Learn LTI: Access the Microsoft Learn http://docs.microsoft.com/learn Catalog of Learning Paths and Modules directly from your Learning Management Systems using the Microsoft Learn LTI application"
 version: 1.0.0
 date-released: 2020-06-22
 url: "https://github.com/microsoft/learn-lti"
