@@ -1,0 +1,16 @@
+ YAML 1.2
+---
+authors: 
+  -
+    family-names: Stott
+    given-names: Lee
+    orcid: "https://orcid.org/0000-0002-3715-0892"
+  -
+    name:Microsoft Learn LTI Application
+cff-version: "1.1.0"
+date-released: 2020-06-22
+license: "BSD-3-Clause"
+message: "If you use this software, please cite it as below."
+repository-code: "https://github.com/microsoft/learn-lti"
+title: "Mirosoft Learn LTI: Access the Microsoft Learn http://docs.microsoft.com/learn Catalog of Learning Paths and Modules directly from your Learning Management Systems using the Microsoft Learn LTI application"
+version: "1.0"
