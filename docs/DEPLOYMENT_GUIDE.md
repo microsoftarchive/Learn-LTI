@@ -19,7 +19,7 @@ Follow these steps to deploy the Microsoft Learn LTI tool:
 # Clone the repo
 1. Open Git
 2. Enter in the command in the Git console
-   * `git clone https://github.com/microsoft/Learn-LTI.git`
+   * `git clone --branch edx.1 https://github.com/edX-MSLearn-LTI-Integration/Learn-LTI.git`
 
 You have now cloned the repo.
 
