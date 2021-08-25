@@ -39,7 +39,7 @@ Firstly, in the CMS Admin panel, enable the transfer of PII (incl. email) betwee
 --> adapted from - edx/xblock-lti-consumer#124
 ![Config_edx.1](/images/Config_edx.1.png)
 
-
+Then,
 1. Sign into Open edX Studio (I.e., the Content Management System of Open edX) with the admin account.
 2. Enable the LTI Consumer XBlock in Open edX Studio through the advanced settings based on the following steps:
    1. From the main page of a specific course, navigate to **Settings -> Advanced Settings** from the top menu.
@@ -64,7 +64,7 @@ Firstly, in the CMS Admin panel, enable the transfer of PII (incl. email) betwee
    * **OAuth Token URL** ->Access Token URL
    * **OIDC Callback URL** -> Authorizaton URL
    ![Config_edx.4](/images/Config_edx.4.png)
-10. Publish the unit where the LTI Component is located.
+11. Publish the unit where the LTI Component is located.
 
 
 ## Moodle LMS
