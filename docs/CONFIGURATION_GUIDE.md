@@ -37,7 +37,7 @@ Firstly, in the CMS Admin panel, enable the transfer of PII (incl. email) betwee
 3.	Make sure to set the override choice option to - Force On
 4.	For security reasons, edX only allows to transmit enrolment PII for courses with less than 1000 students per default. To change this set the LTI_NRPS_ACTIVE_ENROLLMENT_LIMIT Django setting to a lower/higher value.
 --> adapted from - edx/xblock-lti-consumer#124
-![Config_edx.1](/images/Config_edx.1.PNG)
+![Config.edx.1](/images/Config.edx.1.PNG)
 
 
 1. Sign into Open edX Studio (I.e., the Content Management System of Open edX) with the admin account.
