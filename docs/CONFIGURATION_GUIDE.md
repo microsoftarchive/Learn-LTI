@@ -20,7 +20,7 @@ If you are not the one who deployed the application, you need to obtain the para
 
 The configuration steps slightly differ depending on the LMS you are using. In general, they will involve registering the Microsoft Learn LTI application as an external tool in the LMS and registering the parameters of external tool back in the Microsoft Learn LTI application's registration page. The following examples show how to configure Microsoft Learn LTI application with three of the popular LMS.
 
-- [Open edX)(#Open-edX-LMS)
+- [Open edX](#Open-edX-LMS)
 - [Moodle](#Moodle-LMS)
 - [Canvas](#Canvas-LMS)
 - [Blackboard](#Blackboard-Learn-LMS)
