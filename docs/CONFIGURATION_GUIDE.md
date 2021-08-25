@@ -50,6 +50,7 @@ Then,
    3.	Click the **"Save changes"** button.
 3. Edit the unit in which you want to add the remote LTI tool and select **Advanced** from within the **Add New Component** section. Select **LTI Consumer**.
 4. Select **Edit** inside the newly created component.
+![Config_edx.7](/images/Config_edx.7.png)
 5. In the **LTI Version** field, select **LTI 1.3**.
 6. Enter the LTI 1.3 settings provided in the Learn Lti Registration form. For basic LTI 1.3 tools, you need to set the following settings:
    * **LTI 1.3 Tool Launch URL** (can also be called redirect url)
