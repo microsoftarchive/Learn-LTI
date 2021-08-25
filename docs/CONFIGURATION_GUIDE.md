@@ -37,36 +37,36 @@ Firstly, in the CMS Admin panel, enable the transfer of PII (incl. email) betwee
 3.	Make sure to set the override choice option to - Force On
 4.	For security reasons, edX only allows to transmit enrolment PII for courses with less than 1000 students per default. To change this set the LTI_NRPS_ACTIVE_ENROLLMENT_LIMIT Django setting to a lower/higher value.
 --> adapted from - edx/xblock-lti-consumer#124
-![Config.edx.1](/images/Config.edx.1.PNG)
+![Config_edx.1](/images/Config_edx.1.png)
 
 
 1. Sign into Open edX Studio (I.e., the Content Management System of Open edX) with the admin account.
 2. Enable the LTI Consumer XBlock in Open edX Studio through the advanced settings based on the following steps:
-   1.	From the main page of a specific course, navigate to **Settings -> Advanced Settings** from the top menu.
+   1. From the main page of a specific course, navigate to **Settings -> Advanced Settings** from the top menu.
    2.	Check for the **advanced_modules** policy key and add **"lti_consumer"** to the policy value list, per the below figure.
-   ![Config_edx.2](/images/Config_edx.2.PNG)
+   ![Config_edx.2](/images/Config_edx.2.png)
    3.	Click the **"Save changes"** button.
 3. Edit the unit in which you want to add the remote LTI tool and select **Advanced** from within the **Add New Component** section. Select **LTI Consumer**.
 4. Select **Edit** inside the newly created component.
 5. In the **LTI Version** field, select **LTI 1.3**.
 6. Enter the LTI 1.3 settings provided in the Learn Lti Registration form. For basic LTI 1.3 tools, you need to set the following settings:
-   •	LTI 1.3 Tool Launch URL (can also be called redirect url)
-   •	LTI 1.3 OIDC URL (can also be called login url)
-   •	LTI 1.3 Tool Public Key (a key provided by the LTI tool) The key will look similar to this example:
+   * LTI 1.3 Tool Launch URL (can also be called redirect url)
+   * LTI 1.3 OIDC URL (can also be called login url)
+   * LTI 1.3 Tool Public Key (a key provided by the LTI tool) The key will look similar to this example:
    
 -----BEGIN PUBLIC KEY-----abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345 abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345abcde12345-----END PUBLIC KEY-----
 
 You should paste the key from the tool directly into the configuration field. For more information about each setting, see the LTI Component Settings.
 
 7. Enable LTI NRPS through setting it to True. 
-![Config_edx.3](/images/Config_edx.3.PNG)
+![Config_edx.3](/images/Config_edx.3.png)
 9. Select **Save**.
 10. The Studio page will refresh and display LTI configuration required by the tool. Copy each of those values and follow the instructions provided by the tool to set them up.
-   •	Client -> Client ID
-   •	Keyset URL -> JWK Set URL
-   •	OAuth Token URL ->Access Token URL
-   •	OIDC Callback URL -> Authorizaton URL
-   ![Config_edx.4](/images/Config_edx.4.PNG)
+   * Client -> Client ID
+   * Keyset URL -> JWK Set URL
+   * OAuth Token URL ->Access Token URL
+   * OIDC Callback URL -> Authorizaton URL
+   ![Config_edx.4](/images/Config_edx.4.png)
 10. Publish the unit where the LTI Component is located.
 
 
