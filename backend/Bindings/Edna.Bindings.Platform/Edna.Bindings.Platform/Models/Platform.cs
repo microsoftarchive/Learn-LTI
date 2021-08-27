@@ -12,6 +12,7 @@ namespace Edna.Bindings.Platform.Models
         public string Issuer { get; set; }
         public string JwkSetUrl { get; set; }
         public string AccessTokenUrl { get; set; }
+        public string Audience { get; set; }
         public string AuthorizationUrl { get; set; }
         public string LoginUrl { get; set; }
         public string LaunchUrl { get; set; }

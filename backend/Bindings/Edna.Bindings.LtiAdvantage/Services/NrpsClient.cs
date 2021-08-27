@@ -52,11 +52,11 @@ namespace Edna.Bindings.LtiAdvantage.Services
             _logger = logger;
         }
         
-        public async Task<IEnumerable<Member>> Get(string clientId, string tokenUrl, string membershipUrl)
+        public async Task<IEnumerable<Member>> Get(string clientId, string tokenUrl, string audience, string membershipUrl)
         {
             _logger.LogInformation("Getting token for client ID: " + clientId);
 
-            TokenResponse accessTokenResponse = await _accessTokenService.GetAccessTokenAsync(clientId, tokenUrl, Constants.LtiScopes.Nrps.MembershipReadonly, _keyVaultKeyString);
+            TokenResponse accessTokenResponse = await _accessTokenService.GetAccessTokenAsync(clientId, tokenUrl, audience, Constants.LtiScopes.Nrps.MembershipReadonly, _keyVaultKeyString);
             if (accessTokenResponse.IsError)
             {
                 _logger.LogError($"Could not get access token. Error: {accessTokenResponse.Error}. Error Desc: {accessTokenResponse.ErrorDescription}. Type: {accessTokenResponse.ErrorType}");
@@ -86,18 +86,18 @@ namespace Edna.Bindings.LtiAdvantage.Services
                 .ThenBy(m => m.GivenName);
         }
 
-        public async Task<Member> GetByEmail(string clientId, string tokenUrl, string membershipUrl, IEnumerable<string> userEmails)
+        public async Task<Member> GetByEmail(string clientId, string tokenUrl, string audience, string membershipUrl, IEnumerable<string> userEmails)
         {
             // Looks like LTI 1.3 doesn't support querying by member identifiers
-            IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, membershipUrl);
+            IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, audience, membershipUrl);
 
             return allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email??String.Empty).Equals(userEmail, StringComparison.OrdinalIgnoreCase)));
         }
 
-        public async Task<Member> GetById(string clientId, string tokenUrl, string membershipUrl, string userId)
+        public async Task<Member> GetById(string clientId, string tokenUrl, string audience, string membershipUrl, string userId)
         {
             // Looks like LTI 1.3 doesn't support querying by member identifiers
-            IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, membershipUrl);
+            IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, audience, membershipUrl);
 
             return allMembers.FirstOrDefault(member => member.UserId.Equals(userId));
         }

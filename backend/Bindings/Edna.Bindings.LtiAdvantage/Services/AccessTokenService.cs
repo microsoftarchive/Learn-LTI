@@ -28,7 +28,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<TokenResponse> GetAccessTokenAsync(string clientId, string accessTokenEndpoint, string scope, string keyVaultKeyString)
+        public async Task<TokenResponse> GetAccessTokenAsync(string clientId, string accessTokenEndpoint, string audience, string scope, string keyVaultKeyString)
         {
             TokenResponse errorResponse = ValidateParameters((nameof(clientId), clientId), (nameof(accessTokenEndpoint), accessTokenEndpoint), (nameof(scope), scope), (nameof(keyVaultKeyString), keyVaultKeyString));
             if (errorResponse != null)
@@ -38,7 +38,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             var payload = new JwtPayload();
             payload.AddClaim(new Claim(JwtRegisteredClaimNames.Iss, clientId));
             payload.AddClaim(new Claim(JwtRegisteredClaimNames.Sub, clientId));
-            payload.AddClaim(new Claim(JwtRegisteredClaimNames.Aud, accessTokenEndpoint));
+            payload.AddClaim(new Claim(JwtRegisteredClaimNames.Aud, String.IsNullOrEmpty(audience) ? accessTokenEndpoint : audience));
             payload.AddClaim(new Claim(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64));
             payload.AddClaim(new Claim(JwtRegisteredClaimNames.Nbf, EpochTime.GetIntDate(DateTime.UtcNow.AddSeconds(-5)).ToString(), ClaimValueTypes.Integer64));
             payload.AddClaim(new Claim(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(DateTime.UtcNow.AddMinutes(5)).ToString(), ClaimValueTypes.Integer64));
