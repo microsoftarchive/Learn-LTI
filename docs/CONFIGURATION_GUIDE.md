@@ -45,7 +45,7 @@ The following steps show how to configure an LTI tool on a Open edX LMS.
    1. Add a course waffle flag from http://EDX-LMS-URL/admin/waffle_utils/waffleflagcourseoverridemodel/.
    2. Set waffle flag to - lti_consumer.lti_nrps_transmit_pii and set course key to your course key. : YOUR-COURSE-ID.
    3. Make sure to set the override choice option to - Force On
-   4. For security reasons, edX only allows to transmit enrolment PII for courses with less than 1000 students per default. To change this set the LTI_NRPS_ACTIVE_ENROLLMENT_LIMIT Django setting to a lower/higher value.
+   4. (optional) For security reasons, edX only allows to transmit enrolment PII for courses with less than 1000 students per default. To change this set the LTI_NRPS_ACTIVE_ENROLLMENT_LIMIT Django setting to a lower/higher value.
     --> adapted from - https://github.com/edx/xblock-lti-consumer/pull/124
     ![Config_edx.1](/images/Config_edx.1.png)
 6. Select **Edit** inside the newly created component.
