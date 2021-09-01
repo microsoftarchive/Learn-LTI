@@ -261,3 +261,74 @@ The following steps show how to register the parameters back in the Learn LTI ap
 4. Click **SAVE REGISTRATION**..
 
 You're all set. The Learn LTI tool is now configured on your Blackboard Learn LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
+
+## Brightspace LMS
+
+The following steps show how to configure the MS Learn LTI Tool on a Brightspace LMS.
+
+### LTI 1.1
+
+At this time, we do not support LTI 1.1 with Brightspace LMS.
+
+### LTI 1.3
+
+Before the Links to MSLearn LTI Links can be added to courses, It must be registered and deployed into the tenant. LTI 1.3 in Brightspace is known as LTI Advantage.
+
+1. Open your browser and go to your Brightspace environment as a superadmin.
+2. Click the gear at the top right corner and select **External Learning Tools**.
+3. Select the **LTI Advantage** Tab.
+4. Click the **New Deployment** button. 
+5. Click the *?* icon next to the Select Registered Tool Button. and in the resulting window Click the **Register** link.
+![Config.Brightspace.1](/images/Config.Brightspace.1.png) 
+6. Click **Register Tool** on the resulting page.
+7. In the next screen. Select **Standard**. 
+8. Enter the following information:
+  * **Name**: give the tool a name of your choice. For example: "Microsoft Learn".
+  * **Description**: give the tool a description. Optional.
+  * **Domain**: enter “Domain URL” from the Microsoft Learn LTI application’s registration page. Note: Put HTTPS:// in front of the domain.
+  * **Redirect URLs**: enter “Launch URL” from the Microsoft Learn LTI application’s registration page.
+  * **OpenID Connect Login URL**: enter “Login URL” from the Microsoft Learn LTI application’s registration page.
+  * **Redirect URLs**: enter “Launch URL” from the Microsoft Learn LTI application’s registration page.
+  * **Target Link URI**: enter “Launch URL” from the Microsoft Learn LTI application’s registration page.
+  * **Keyset URL**: enter “Public JWK Set URL” from the Microsoft Learn LTI application’s registration page.
+  * **Extensions**: Ensure at least Name and Role Provisioning Services is checked. 
+  * **Roles-> Send Institution Role**: Unchecked.
+![Config.Brightspace.2](/images/Config.Brightspace.2.png) 
+9. Once Registered, It will give you a set of Brightspace Registration Details. This Includes: 
+		Client Id, Brightspace Keyset URL, Brightspace OAuth2 Access Token URL, OpenID Connect Authentication Endpoint, Brightspace OAuth2 Audience, and Issuer.
+		You will need this information to register the platform back to the Learn LTI Application's registration page.
+10. Follow Steps 2-4 to return to the **New Deployment** page.
+11. Select the Newly Registered Tool 
+  * **Name**: give the tool Deployment a name of your choice. For example: "Microsoft Learn".
+  * **Tool**: Select the newly Registered Tool from the above step.
+  * **Extensions**: Check off the same boxes that you selected during tool registration, Minimum: Names and Role Provisioning Services.
+  * **Security Settings**: All Boxes Selected except Anonymous. It may be find to have less selected, however it was tested with the described settings.
+  * **Make Tool Available to:**: to control access to the tool if desired to limit scope of tool to either a particular course, org wide etc. Varies depending on desired outcome.
+12. Click **Create Deployment**
+13. Once created, return to the deployment details of the newly created page, and at the very bottom select View Links.
+![Config.Brightspace.3](/images/Config.Brightspace.3.png) 
+14. You can now create a **New Link**
+  * **URL**: Enter the Launch URL in here. 
+  * Other fields as desired.
+
+  Return to the Learn LTI Tool Registration Page
+15. Go to Learn LTI Application Registration Page. You will need the Output from the Tool Registration Step above. 
+  * **Display Name**: give the tool a name of your choice. For example: "Brightspace".
+  * **Issuer**: enter “Issuer” from the Previous Step's output.
+  * **JWK Set URL**: enter “Brightspace Keyset URL” from the Previous Step's output.
+  * **Access Token URL**: enter “Brightspace OAuth2 Access Token URL” from the Previous Step's output.
+  * **Authorization URL**: enter “OpenID Connect Authentication Endpoint” from the Previous Step's output.
+	Further Down.. 
+  * **Client ID**: enter “Client Id” from the Previous Step's output.
+  * **Audience**: enter “Brightspace OAuth2 Audience” from the Previous Step's output.
+	Fill in any of the optional fields at the bottom as desired.
+16. Click **Save Registration**.
+
+You are now Ready to test/use the tool as An external tool source. 
+Add an External Learning Tool as content to a course. and Click the link. if your role is a Teacher then it will launch the teacher interface, and if your role is a student it will show you
+no content has yet been published.
+
+You're all set. The Learn LTI tool is now configured on your Brightspace LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
+
+*Note: If You always see the student view in the tool and only see no content published, It is most likely because your user(s) have multiple roles assigned to them for that context. if a user is both 
+student and teacher role in a given course(context), then it will default to student.
