@@ -28,7 +28,7 @@ The configuration steps slightly differ depending on the LMS you are using. In g
 
 ## Open edX LMS
 
-The following steps show how to configure an LTI tool on a Open edX LMS.
+The following steps show how to configure an LTI tool on a Open edX LMS. If you haven't deployed Open edX, using [Azure quickstart template](https://github.com/Azure/azure-quickstart-templates/tree/master/application-workloads/opendx/openedx-tutor-lilac-ubuntu) is recommended.
 
 ### lTI 1.3
 
