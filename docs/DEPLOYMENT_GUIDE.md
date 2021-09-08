@@ -17,14 +17,23 @@ To begin, you will need:
 Follow these steps to deploy the Microsoft Learn LTI tool:
 
 # Clone the repo
-1. Open Git
-2. Enter in the command in the Git console
-   * `git clone https://github.com/microsoft/Learn-LTI.git`
+1. Go to the [repo](http://github.com/microsoft/learn-lti) Click code button on the [repo](http://github.com/microsoft/learn-lti)
+![Clone Repo](https://github.com/microsoft/Learn-LTI/blob/main/images/clone.png)
+3. Simply click the code button and select Open with GitHub Desktop or Download Zip to clone contents of the repo.
 
-You have now cloned the repo.
+If you are using Git
+1. Open a command prompt
+2. Make a new directory **Learn-Lti**
+3. Move to **Learn-Lti** directory
+4. Use Git to clone the repo (You need [Git installed](https://git-scm.com/downloads)
+5. Enter in the command in the Git console
+   * `git clone https://github.com/microsoft/Learn-LTI.git`
+   * This will clone the repo into the current directory **Learn-Lti**
+
+You have now cloned the repo
 
 ## After Cloning
-* In the cloned repo, inside the deployment directory, execute the file **run.bat**.
+* In the cloned repo, inside the deployment directory **Learn-Lti**, execute the file **run.bat**.
 * run.bat bypasses signing requirements and runs Deploy.ps1 automatically.
 * You should now see the Microsoft Learn LTI Tool script popup.
 ![run.start.png](/images/run.start.png)
