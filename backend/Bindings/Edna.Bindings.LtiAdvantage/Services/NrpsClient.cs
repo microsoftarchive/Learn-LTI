@@ -90,9 +90,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
         {
             // Looks like LTI 1.3 doesn't support querying by member identifiers
             IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, membershipUrl);
-            // int count = 0;
-            foreach (Member m in allMembers) {
-                // count ++;       
+            foreach (Member m in allMembers) {       
                 string name = m.Email;
                 if (m.Email != null)
                 {            
@@ -101,10 +99,6 @@ namespace Edna.Bindings.LtiAdvantage.Services
                     m.FamilyName = name;
                     m.GivenName = " ";
                 }
-                // _logger.LogInformation("No." + count + " Member name = " + m.FamilyName);
-                // _logger.LogInformation("No." + count + " Member UserId = " + m.UserId);
-                // _logger.LogInformation("No." + count + " Member Email = " + m.Email);
-                // _logger.LogInformation("********************");
             }
             
             return allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email??String.Empty).Equals(userEmail, StringComparison.OrdinalIgnoreCase)));
