@@ -17,6 +17,8 @@ To Manually remove resources simply remove the Microsoft Learn LTI resource grou
 - ResourceGroupName = "MSLearnLTI"
 - AppName = "MS-Learn-Lti-Tool-App"
 
+If you have changed the name of the Resource Group or AppName simply replace the actual names with the placeholder in the script.
+
 ## Check the Failed Deployment status and output
 
 From the Azure Portal, simply select deployments. See the following screenshot.
@@ -140,7 +142,7 @@ If your moodle deployment does not have a valid SSL you will receive the followi
 
 ![NoSSLDeployment](../images/Oopswentwrong.png)
 
-You simply need to ensure your LMS installation has a valid DNS name and SSL 
+You simply need to ensure your LMS installation has a valid DNS name and SSL. Use link for the [instructions Generate and Install a Let's Encrypt SSL Certificate for a Bitnami Application](https://docs.bitnami.com/aws/how-to/generate-install-lets-encrypt-ssl)
 
 If you need help configuring your Bitnami HTTPS Configuration see the following [configure HTTPS certificates](https://docs.bitnami.com/aws/how-to/understand-bncert/)
 
