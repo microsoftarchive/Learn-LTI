@@ -8,6 +8,23 @@ If your **deployment fails and the resource group has been created**; an IT admi
 
 If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=learnlti-github-cxa) for common errors.
 
+## Ensure you install all the prerequisties 
+
+“Errors while building Function App [ AssignmentLearnContent ]"
+
+see https://github.com/microsoft/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md
+
+To begin, you will need to install the Prerequisites and reboot your machine
+
+To begin, you will need:
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
+- [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
+- [Node.js](https://nodejs.org/en/download/)
+- [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
+- [Git](https://git-scm.com/downloads)
+- An Azure subscription
+
+
 ## Failed deployment or removing the services
 
 To remove the services simply run the [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat) script located in the Deployment folder. This will run the [Cleanup.ps1](https://github.com/microsoft/Learn-LTI/blob/main/deployment/Cleanup.ps1) script which will remove all the deployed resources for the Learn LTI Application from your Azure Subscription.
