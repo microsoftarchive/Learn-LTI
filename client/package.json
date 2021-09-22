@@ -13,7 +13,7 @@
     "@types/react-window": "^1.8.2",
     "@types/uuid": "^7.0.3",
     "@uifabric/fluent-theme": "^7.1.88",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "mobx": "^5.15.4",
     "mobx-react-lite": "^2.0.6",
     "mobx-utils": "^5.5.7",
