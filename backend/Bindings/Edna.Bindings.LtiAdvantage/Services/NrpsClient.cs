@@ -92,7 +92,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, membershipUrl);
             foreach (Member m in allMembers) {       
                 string name = m.Email;
-                if (m.Email != null)
+                if (m.Email != null && ( m.FamilyName == null || m.GivenName == null))
                 {            
                     int index = name.IndexOf("@");
                     name = name.Substring(0, index);
