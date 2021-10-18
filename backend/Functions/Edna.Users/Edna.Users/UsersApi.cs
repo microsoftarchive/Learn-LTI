@@ -75,7 +75,6 @@ namespace Edna.Users
             }
             
             Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
-            // Member member = await nrpsClient.GetById(platform.clientId, platform.AccessTokenUrl, assignment.ContextMembershipUrl, ***string userId***);
 
             if (member == null)
                 _logger.LogError("User not enrolled.");
