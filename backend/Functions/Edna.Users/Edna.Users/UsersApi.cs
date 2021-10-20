@@ -62,18 +62,7 @@ namespace Edna.Users
                 return new OkObjectResult(_mapper.Map<MemberDto>(userMembership));
             }
 
-            Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
-            
-            _logger.LogInformation($"platform.ClientId = '{platform.ClientId}'.");
-            _logger.LogInformation($"platform.AccessTokenUrl = '{platform.AccessTokenUrl}'.");
-            _logger.LogInformation($"assignment.ContextMembershipsUrl = '{assignment.ContextMembershipsUrl}'.");
-            
-            int count = 0;
-            foreach (string s in userEmails) {
-                count ++;
-                _logger.LogInformation($"No.{count} userEmails = '{s}'.");
-            }
-            
+            Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);                       
             Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
 
             if (member == null)
