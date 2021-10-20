@@ -71,7 +71,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
 
             _logger.LogInformation("Getting members.");
             using var response = await httpClient.GetAsync(membershipUrl);
-            _logger.LogInformation(await response.Content.ReadAsStringAsync());
+
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError("Could not get members.");
