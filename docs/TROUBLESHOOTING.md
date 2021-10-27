@@ -64,6 +64,34 @@ Exception.Message [ The term "az" is not recognized as a command applet name, fu
 
 To run the install you need the Azure Command Line Extension tool installed see Instructions at: https://docs.microsoft.com/cli/azure/install-azure-cli-windows?tabs=azure-cli for instructions. Please ensure you have all the prerequisites installed https://github.com/microsoft/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md#prerequisites
 
+## Wrong version of Azure CLI 
+
+Failure in Step 10.  Exception.Message [ Failed to deploy Function App [ AssignmentLearnContent ] ]
+
+### Sample Error Log
+
+- [INFO] - Publishing Project [ Edna.AssignmentLearnContent.csproj ] as FunctionApp
+- [INFO] - Building [ C:\Learn-Lti\Learn-LTI\backend\Functions\Edna.AssignmentLearnContent\Edna.AssignmentLearnContent ] --> [ Artifacts\AssignmentLearnContent ]
+- [INFO] - Zipping Artifacts [ Artifacts\AssignmentLearnContent ]/* --> [ Artifacts\AssignmentLearnContent.zip ]
+- [INFO] - Deploying to Azure Function App [ MSLearnLTI_R/learncontent-6bb6tvmyu ]
+- [ERROR] - Exception.Message [ Failed to deploy Function App [ AssignmentLearnContent ] ]
+- [ERROR] - Exception.Type [ System.Management.Automation.RuntimeException ]
+- [ERROR] - Error occurred while executing the Script. Please report the bug on Github (along with Error Message & Logs)
+
+The problem was in the Azure CLI version, although we require a version > 2.0.21.There has been a issue reported with 2.29.0. Upgrading to version 2.29.1 resolves the issue.
+
+## Debugging Errors from the deployment of Azure Functions 
+
+Debugging Errors from the deployment
+
+- Login to https://portal.azure.com
+- Browse to function app > Platform Features Tab
+- Click Deployment Options
+- Click on failed Deployment
+- Deployment status at the top is "Failed"
+
+The log should lists a number of steps that were all successful and provide more details on the failure hopefully this should identify a permission issue or error.
+
 ## Purging Key Vaults
 
 Your Azure Key Vault may be set to soft delete enabled. 
