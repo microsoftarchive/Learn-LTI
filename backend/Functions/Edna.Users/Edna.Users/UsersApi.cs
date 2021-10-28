@@ -62,7 +62,7 @@ namespace Edna.Users
                 return new OkObjectResult(_mapper.Map<MemberDto>(userMembership));
             }
 
-            Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
+            Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);                       
             Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, platform.Audience, assignment.ContextMembershipsUrl, userEmails);
 
             if (member == null)

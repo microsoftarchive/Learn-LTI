@@ -80,7 +80,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
 
             var content = await response.Content.ReadAsStringAsync();
             var membership = JsonConvert.DeserializeObject<MembershipContainer>(content);
-
+            
             return membership.Members
                 .OrderBy(m => m.FamilyName)
                 .ThenBy(m => m.GivenName);
@@ -89,8 +89,18 @@ namespace Edna.Bindings.LtiAdvantage.Services
         public async Task<Member> GetByEmail(string clientId, string tokenUrl, string audience, string membershipUrl, IEnumerable<string> userEmails)
         {
             // Looks like LTI 1.3 doesn't support querying by member identifiers
-            IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, audience, membershipUrl);
 
+            IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, audience, membershipUrl);
+            foreach (Member m in allMembers) {       
+                string name = m.Email;
+                if (m.Email != null && ( m.FamilyName == null || m.GivenName == null))
+                {            
+                    int index = name.IndexOf("@");
+                    name = name.Substring(0, index);
+                    m.FamilyName = name;
+                    m.GivenName = " ";
+                }
+            }
             return allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email??String.Empty).Equals(userEmail, StringComparison.OrdinalIgnoreCase)));
         }
 

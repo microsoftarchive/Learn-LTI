@@ -8,6 +8,23 @@ If your **deployment fails and the resource group has been created**; an IT admi
 
 If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=learnlti-github-cxa) for common errors.
 
+## Ensure you install all the prerequisties 
+
+“Errors while building Function App [ AssignmentLearnContent ]"
+
+see https://github.com/microsoft/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md
+
+To begin, you will need to install the Prerequisites and reboot your machine
+
+To begin, you will need:
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
+- [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
+- [Node.js](https://nodejs.org/en/download/)
+- [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
+- [Git](https://git-scm.com/downloads)
+- An Azure subscription
+
+
 ## Failed deployment or removing the services
 
 To remove the services simply run the [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat) script located in the Deployment folder. This will run the [Cleanup.ps1](https://github.com/microsoft/Learn-LTI/blob/main/deployment/Cleanup.ps1) script which will remove all the deployed resources for the Learn LTI Application from your Azure Subscription.
@@ -46,6 +63,34 @@ The personas/responsibilities for setup are:
 Exception.Message [ The term "az" is not recognized as a command applet name, function, script file, or executable program. Check the spelling of the name, or if a path exists, check that the path is correct and try again. ]
 
 To run the install you need the Azure Command Line Extension tool installed see Instructions at: https://docs.microsoft.com/cli/azure/install-azure-cli-windows?tabs=azure-cli for instructions. Please ensure you have all the prerequisites installed https://github.com/microsoft/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md#prerequisites
+
+## Wrong version of Azure CLI 
+
+Failure in Step 10.  Exception.Message [ Failed to deploy Function App [ AssignmentLearnContent ] ]
+
+### Sample Error Log
+
+- [INFO] - Publishing Project [ Edna.AssignmentLearnContent.csproj ] as FunctionApp
+- [INFO] - Building [ C:\Learn-Lti\Learn-LTI\backend\Functions\Edna.AssignmentLearnContent\Edna.AssignmentLearnContent ] --> [ Artifacts\AssignmentLearnContent ]
+- [INFO] - Zipping Artifacts [ Artifacts\AssignmentLearnContent ]/* --> [ Artifacts\AssignmentLearnContent.zip ]
+- [INFO] - Deploying to Azure Function App [ MSLearnLTI_R/learncontent-6bb6tvmyu ]
+- [ERROR] - Exception.Message [ Failed to deploy Function App [ AssignmentLearnContent ] ]
+- [ERROR] - Exception.Type [ System.Management.Automation.RuntimeException ]
+- [ERROR] - Error occurred while executing the Script. Please report the bug on Github (along with Error Message & Logs)
+
+The problem was in the Azure CLI version, although we require a version > 2.0.21.There has been a issue reported with 2.29.0. Upgrading to version 2.29.1 resolves the issue.
+
+## Debugging Errors from the deployment of Azure Functions 
+
+Debugging Errors from the deployment
+
+- Login to https://portal.azure.com
+- Browse to function app > Platform Features Tab
+- Click Deployment Options
+- Click on failed Deployment
+- Deployment status at the top is "Failed"
+
+The log should lists a number of steps that were all successful and provide more details on the failure hopefully this should identify a permission issue or error.
 
 ## Purging Key Vaults
 
