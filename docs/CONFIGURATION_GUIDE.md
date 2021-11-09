@@ -64,6 +64,7 @@ The following steps show how to configure an LTI tool on a Open edX LMS. If you 
 11. Select **Save**.
 12. The Studio page will refresh and display LTI configuration required by the tool. Copy each of those values and follow the instructions provided by the tool to set them up.
    * **Client** -> Client ID
+   * **Audience**: This can be left blank 
    * **Keyset URL** -> JWK Set URL
    * **OAuth Token URL** ->Access Token URL
    * **OIDC Callback URL** -> Authorizaton URL
@@ -147,6 +148,7 @@ The following steps show how to register the parameters back in the Learn LTI ap
  * **Access Token URL**: enter "Access token URL" from the LTI tool configuration details, from the Moodle LMS.
  * **Authorization URL**: enter "Authentication request URL" from the LTI tool configuration details, from the Moodle LMS.
  * **Client ID**: enter "Client ID" from the LTI tool configuration details, from the Moodle LMS.
+ * **Audience**: This can be left blank 
 ![Config.11](/images/Config.11.png)
 3. Optionally, you can add your Institution name and logo on the registration page.
 4. Click **SAVE REGISTRATION**.
@@ -227,6 +229,7 @@ The following steps show how to register the parameters back in the Learn LTI ap
   * **Authorization URL**: enter https://[tenant-name].instructure.com/api/lti/authorize_redirect 
    NOTE: [tenant-name] is where your Canvas tenant name hosted by instructure. For example if the url of the LMS is https://canvas1.instructure.com, then the [tenant-name] is "canvas1". If you are using self-hosted Canvas, replace https://[tenant-name].instructure.com with your canvas URL.
   * **Client ID**: enter "Client ID" from the LTI key registration.
+  * **Audience**: This can be left blank 
 3. Optionally, you can add your Institution name and logo on the registration page.
 4. Click **SAVE REGISTRATION**.
 
@@ -304,6 +307,7 @@ The following steps show how to register the parameters back in the Learn LTI ap
   * **Access Token URL**: enter https://developer.blackboard.com/api/v1/gateway/oauth2/jwttoken
   * **Authorization URL**: enter https://developer.blackboard.com/api/v1/gateway/oidcauth
   * **Client ID**: enter "Application ID" from the LTI key registration.
+  * **Audience**: This can be left blank 
 3. Optionally, you can add your Institution name and logo on the registration page.
 4. Click **SAVE REGISTRATION**..
 
