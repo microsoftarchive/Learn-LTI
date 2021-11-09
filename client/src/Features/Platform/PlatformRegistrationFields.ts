@@ -79,6 +79,13 @@ const toolSettingsFields: field[] = [
     isCopyable: false
   },
   {
+    fieldLabel: 'Audience',
+    fieldName: 'audience',
+    helpText: 'The Audience provided by the LMS for this specific registration. If Blank will use the endpoint URL.',
+    isRequired: false,
+    isCopyable: false
+  },
+  {
     fieldLabel: 'Public Key',
     fieldName: 'publicKey',
     helpText: 'The public part of the RSA key to allow LMS to validate the messages that are sent by the tool.',

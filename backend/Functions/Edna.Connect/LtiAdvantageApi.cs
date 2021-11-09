@@ -112,7 +112,7 @@ namespace Edna.Connect
             string asStudentParam = "";
             if (ltiResourceLinkRequest.Roles.Contains(Role.ContextLearner) || ltiResourceLinkRequest.Roles.Contains(Role.InstitutionLearner))
             {
-                Member launchingMember = await nrpsClient.GetById(platform.ClientId, platform.AccessTokenUrl, ltiResourceLinkRequest.NamesRoleService.ContextMembershipUrl, ltiResourceLinkRequest.UserId);
+                Member launchingMember = await nrpsClient.GetById(platform.ClientId, platform.AccessTokenUrl, platform.Audience, ltiResourceLinkRequest.NamesRoleService.ContextMembershipUrl, ltiResourceLinkRequest.UserId);
                 if (launchingMember != null && (launchingMember.Roles.Contains(Role.ContextInstructor) || launchingMember.Roles.Contains(Role.InstitutionInstructor)))
                     asStudentParam = "?asStudent";
             }

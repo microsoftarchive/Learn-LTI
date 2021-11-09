@@ -13,6 +13,7 @@ export interface PlatformDto {
   launchUrl: string;
   domainUrl: string;
   clientId: string;
+  audience: string;
   institutionName: string;
   logoUrl: string;
   publicKey: string;

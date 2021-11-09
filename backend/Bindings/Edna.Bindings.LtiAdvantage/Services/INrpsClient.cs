@@ -11,8 +11,8 @@ namespace Edna.Bindings.LtiAdvantage.Services
 {
     public interface INrpsClient
     {
-        Task<IEnumerable<Member>> Get(string clientId, string tokenUrl, string membershipUrl);
-        Task<Member> GetByEmail(string clientId, string tokenUrl, string membershipUrl, IEnumerable<string> userEmails);
-        Task<Member> GetById(string clientId, string tokenUrl, string membershipUrl, string userId);
+        Task<IEnumerable<Member>> Get(string clientId, string tokenUrl, string audience, string membershipUrl);
+        Task<Member> GetByEmail(string clientId, string tokenUrl, string audience, string membershipUrl, IEnumerable<string> userEmails);
+        Task<Member> GetById(string clientId, string tokenUrl, string audience, string membershipUrl, string userId);
     }
 }

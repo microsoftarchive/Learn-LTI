@@ -63,7 +63,7 @@ namespace Edna.Users
             }
 
             Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);                       
-            Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl, userEmails);
+            Member member = await nrpsClient.GetByEmail(platform.ClientId, platform.AccessTokenUrl, platform.Audience, assignment.ContextMembershipsUrl, userEmails);
 
             if (member == null)
                 _logger.LogError("User not enrolled.");
@@ -88,7 +88,7 @@ namespace Edna.Users
             }
 
             Platform platform = await platformsClient.GetPlatform(assignment.PlatformId);
-            IEnumerable<Member> allMembers = await nrpsClient.Get(platform.ClientId, platform.AccessTokenUrl, assignment.ContextMembershipsUrl);
+            IEnumerable<Member> allMembers = await nrpsClient.Get(platform.ClientId, platform.AccessTokenUrl, platform.Audience, assignment.ContextMembershipsUrl);
 
             return new OkObjectResult(allMembers.Select(_mapper.Map<MemberDto>));
         }
