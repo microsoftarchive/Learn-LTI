@@ -368,6 +368,11 @@ Please check that the return code for the API in the Chrome DevTools network tab
 
 In our experience, the only case when this happens is when user signs into Learn-LTI app with an onmicrosoft.com account which does not map to the email of any of the enrolled users of the course.
 
+## Testing the LTI Services responses using ZTest
+You can test the LTI responses from your LMS to ensure LTI messages/calls are being successfully recieved and sent by using ZTest link: https://ztest.cengage.info/ztest/
+
+Here are the steps for installing [ZTest Tool](ZTEST.md) (you can install ZTest by following the steps in the doc)
+
 ## Understanding what the Azuredeploy.json implements when running the run.bat/Deploy.ps1
 
 The Deployment utilizes an ARM Azure Resource Manager Template this deploys the following Azure Services into your Azure Subscription
