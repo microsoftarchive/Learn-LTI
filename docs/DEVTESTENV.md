@@ -20,17 +20,17 @@ The following guide has been developed to allow you to setup a DevTest Environme
     * Install and configure OpenID Connect plugin into Moodle (This plugin will enable single sign-on authentication via Azure active directory)
         * To download the OpenID Connect plugin, first download the Microsoft 365 Integration plugin from https://moodle.org/plugins/browse.php?list=set&id=72 into your local directory
 
-        ![Microsoft365](../images/Microsoft365.PNG)
+        ![Microsoft365](../images/Microsoft365.png)
 
         * Go to https://moodle.org/plugins/auth_oidc and download the OpenID Connect plugin into your local directory 
 
-        ![OpenIDConnect](../images/OpenIDConnect.PNG)
+        ![OpenIDConnect](../images/OpenIDConnect.png)
 
         * Log into your Moodle instance as an administrator and go to site administration 
         * Click on plugins and go to install plugins 
         * Use the "Install plugin from zip file feature" and install the Microsoft 365 Integration plugin followed by the OpenID Connect plugin
 
-        ![installplugins](../images/Install-plugins.PNG)
+        ![installplugins](../images/Install-plugins.png)
 
         * Next, go to Dashboard/Site administration/Plugins/Plugins Overview and scroll down to authentication. 
         * Enable the OAuth 2 and OpenID Connect plugins
@@ -42,7 +42,7 @@ The following guide has been developed to allow you to setup a DevTest Environme
         * Enter a name for your application (can be anything you want, but should let you know this is for Moodle).
         * Choose option applicable to your organisation in Supported account types section.
         * In Redirect URI (optional) section, select Web and put the redirect URI from the OpenID Connect authentication plugin configuration. Ensure there is a trailing slash for this URI - i.e. https://example.com/auth/oidc/
-         ![Redirect-URL](../images/Redirect-URL.PNG)
+         ![Redirect-URL](../images/Redirect-URL.png)
         * Click Register.
         * Within the application, locate the Application ID, note this value (write it down or copy it somewhere), and set it aside. You'll need it later.
         * Within the application, from the menu on the left, go to Certificates & secrets link in the Manage section.
@@ -50,14 +50,14 @@ The following guide has been developed to allow you to setup a DevTest Environme
             * Enter a description, and select a duration for "Expires".
             * Click Add.
             * A value will appear under Value, note this value (write it down or copy it somewhere) and set it aside. You'll need it later.
-            ![client-secret](../images/Client-secret.PNG)
+            ![client-secret](../images/Client-secret.png)
         * Within the application, click the API permissions link in the Manage section.
             * Click Add a permission button.
             * In Select an API section, choose Microsoft APIs tab, then choose Microsoft Graph.
             * Enable all permissions mentioned in the "Azure app permissions" section of https://docs.moodle.org/310/en/Microsoft_365#Enable_the_OpenID_Connect_Authentication_Plugin
         * Finally, add users to the application
             * Click on the app registration, within the overview leaf, click under "Managed application in local directory"
-            ![MoodleAppRegistration](../images/MoodleAppRegistration.PNG)
+            ![MoodleAppRegistration](../images/MoodleAppRegistration.png)
             * Click on "Assign users and groups"
             * Add users that exist in the current active directory (If there are no users in the current Active Directory, create users in the Active directory first)
     * Add the Client Secret Value and the Application ID into the settings page of OpenID Connect plugin (Found in /Dashboard/Site administration/Plugins/Plugins Overview)
