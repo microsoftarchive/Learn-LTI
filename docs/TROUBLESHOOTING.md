@@ -8,6 +8,9 @@ If your **deployment fails and the resource group has been created**; an IT admi
 
 If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=learnlti-github-cxa) for common errors.
 
+## Setting up a DevTest Moodle LMS Environment 
+If your looking at deploying the service for a DevTest Environment please follow the [DevTest Environment setup guide](DEVTESTENV.md)
+
 ## Ensure you install all the prerequisties 
 
 “Errors while building Function App [ AssignmentLearnContent ]"
