@@ -9,9 +9,7 @@
 ### Create a student account 
 Sign into the [Microsoft Learn](http://docs.microsoft.com/learn) using your academic account to access your academic profile page on the Learn website.
 
-If you have signed in with a general Microsoft account such as Hotmail, outlook or gmail you can add your academic address to this profile 
-
-Assume you have profile A (Academic email) and profile B (MSA Hotmail, Gmail, outlook). You are able to merge your completions and achievements of profile B into profile A by clicking "add account" on the [Edit Your Profile page] https://techprofile.microsoft.com/edit when signed into Profile A. 
+If you have signed in with a general Microsoft account such as Hotmail, outlook or gmail you can merge two existing profiles. Assume you have profile A (Academic email) and profile B (MSA Hotmail, Gmail, outlook). You are able to merge your completions and achievements of profile B into profile A by clicking "add account" on the [Edit Your Profile page](https://techprofile.microsoft.com/edit) when signed into Profile A. 
 
 After merging, only profile A will exist as both profiles learning history will be combined. The merging logic is as following:
 Your learning history and achievements will be merged, with duplicates removed, from profile B into profile A.
