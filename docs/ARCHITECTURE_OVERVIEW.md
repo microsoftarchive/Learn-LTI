@@ -10,7 +10,7 @@ The Microsoft Learn LTI Application pairs Institutional LMSs courses/modules wit
 * **AAD** - Azure Active Directory is a multi-tenant, cloud-based identity and access management service. What this service does in the context of Learn LTI Application is provide single sign-on and multi-factor authentication, NB. Ensure user account details of users in the LMS and AAD are the same to allow users to access the Learn LTI Application.
 * **Connect** - Provides endpoints between LMS v1.1 - 1.3 and Microsoft Learn LTI Application and Azure. Connect verifies Azure calls and serves as the management pipeline to Azure endpoints.
 * **Backend** - Makes the Azure calls to Microsoft Learn Catalog APIs and updates Storage.
-* **Storage** – Stores assignment information and tracks student progress with modules and callback URLs and does not store any personal student information.
+* **Storage** – Stores assignment information created within LTI application to which LMS course and tracks student progress of tasks created by the LTI Application, and callback URLs to learn content. This does not store any personal student information
 
 # Backend Infrastructure
 
