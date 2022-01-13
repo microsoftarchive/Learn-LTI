@@ -8,7 +8,7 @@
 ## Prerequisites
 To begin, you will need:
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
-- [DotNet Core SDK .NET Core 3.1](https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)
+- [DotNet Core SDK .NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)
 - [Node.js](https://nodejs.org/en/download/)
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
 - [Git](https://git-scm.com/downloads)
