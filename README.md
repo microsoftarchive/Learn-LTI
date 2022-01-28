@@ -47,7 +47,7 @@ To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will ne
 # Table of Contents
 
 ## Deployment Guides 
-- [Setting up Dev Test Environment setup](.docs/DEVTESTENV.md)
+- [Setting up Dev Test Environment setup](./docs/DEVTESTENV.md)
 - [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)
 - [Configuration Guide](./docs/CONFIGURATION_GUIDE.md)
 
