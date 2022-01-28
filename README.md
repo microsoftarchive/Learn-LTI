@@ -39,24 +39,37 @@ The following visual illustrates the workflow in full:
 To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will need:
 
 - LMS System that supports LTI v1.1 or v1.3
-- You need to be the **owner** of an Azure subscription
+- You need to be the **owner** of an Azure subscription if your an educator please contact your Institutional IT Department.
 - IT administrator privileges to create an Azure resource
 - [Getting Started Overview](https://techcommunity.microsoft.com/t5/educator-developer-blog/getting-started-with-the-microsoft-learn-lti-application/ba-p/2247034)
 - Microsoft Learn LTI application [Setup presentation](./docs/Microsoft%20Learn%20LTI%20Application.pdf) 
 
 # Table of Contents
 
-1. [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)
-2. [Configuration Guide](./docs/CONFIGURATION_GUIDE.md)
-3. [Educator Guide](./docs/USER_GUIDE.md)
-4. [Student Guide](./docs/STUDENT_GUIDE.md)
-5. [Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md)
-6. [Pricing Structure](./docs/PRICING_STRUCTURE.md)
-7. [Take it Further](./docs/TAKE_IT_FURTHER.md)
-8. [Frequently Asked Questions](./docs/FAQ.md)
-9. [Troubleshooting](./docs/TROUBLESHOOTING.md)
-10. [Security](./docs/SECURITY.md)
-11. [Privacy](./docs/PRIVACY.md)
+## Deloyment Guides 
+- [Setting up Dev Test Environment setup](.docs/DEVTESTENV.md)
+- [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)
+- [Configuration Guide](./docs/CONFIGURATION_GUIDE.md)
+
+## User Guides
+- [Educator Setting up a course guide](./docs/USER_GUIDE.md)
+- [Student Guide](./docs/STUDENT_GUIDE.md)
+
+## Overview Guides 
+- [Architecture Overview](./docs/ARCHITECTURE_OVERVIEW.md)
+- [Pricing Structure](./docs/PRICING_STRUCTURE.md)
+- [Open Source Contributions](./docs/TAKE_IT_FURTHER.md)
+
+## Troubleshooting 
+- [Troubleshooting](./docs/TROUBLESHOOTING.md)
+- [Frequently Asked Questions](./docs/FAQ.md)
+- [Using ZTest Tooling](./docs/ZTEST.md)
+
+## Security and Privacy
+- [Security Guide](./docs/SECURITY.md)
+- [Privacy Guide](./docs/PRIVACY.md)
+- [VPAT Guide](./docs/VPAT.md)
+- [Using ZTest Tooling](./docs/ZTEST.md)
 
 # Contributing
 
