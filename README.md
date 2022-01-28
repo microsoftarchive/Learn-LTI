@@ -68,7 +68,7 @@ To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will ne
 ## Security and Privacy
 - [Security Guide](./docs/SECURITY.md)
 - [Privacy Guide](./docs/PRIVACY.md)
-- [VPAT Guide](./docs/VPAT.md)
+- [VPAT Guide](./docs/VPAT.MD)
 - [Using ZTest Tooling](./docs/ZTEST.md)
 
 # Contributing
