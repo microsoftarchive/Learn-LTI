@@ -24,6 +24,7 @@ The configuration steps slightly differ depending on the LMS you are using. In g
 - [Moodle](#Moodle-LMS)
 - [Canvas](#Canvas-LMS)
 - [Blackboard](#Blackboard-Learn-LMS)
+- [Brightspace D2L](#Brightspace-D2L)
 
 
 ## Open edX LMS
@@ -313,7 +314,7 @@ The following steps show how to register the parameters back in the Learn LTI ap
 
 You're all set. The Learn LTI tool is now configured on your Blackboard Learn LMS and your Educators will be able to use it to bring Microsoft Learn content to their courses. Follow the [educator guide](./USER_GUIDE.md) to create assignments that use the Learn LTI tool.
 
-## Brightspace LMS
+## Brightspace D2L
 
 The following steps show how to configure the MS Learn LTI Tool on a Brightspace LMS.
 
