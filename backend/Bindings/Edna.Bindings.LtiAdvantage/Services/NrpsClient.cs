@@ -28,6 +28,8 @@ namespace Edna.Bindings.LtiAdvantage.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAccessTokenService _accessTokenService;
         private readonly ILogger _logger;
+        private const string nrpsNextLinkHeaderSubstring = "\"next\"";
+        private static Regex nrpsLinkHeaderRegex = new Regex("(?<=<)(.*?)(?=>;)");
 
         public class NrpsClientFactory
         {
@@ -123,7 +125,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             return allMembers.FirstOrDefault(member => member.UserId.Equals(userId));
         }
 
-        private static string GetNextMembershipUrlFromHeaders(HttpResponseHeaders headers)
+        private string GetNextMembershipUrlFromHeaders(HttpResponseHeaders headers)
         {
             string linkUrls = headers.TryGetValues("Link", out var values) ? values.FirstOrDefault() : null;
             if (string.IsNullOrEmpty(linkUrls))
@@ -132,7 +134,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             }
 
             string[] urls = linkUrls.Split(',');
-            string nextUrl = urls.FirstOrDefault(u => u.IndexOf("\"next\"", StringComparison.OrdinalIgnoreCase) >=0 );
+            string nextUrl = urls.FirstOrDefault(u => u.IndexOf(nrpsNextLinkHeaderSubstring, StringComparison.OrdinalIgnoreCase) >=0 );
 
             if (string.IsNullOrEmpty(nextUrl))
             {
@@ -140,11 +142,17 @@ namespace Edna.Bindings.LtiAdvantage.Services
             }
 
             // Regex to get the url from next url excluding < and >; characters.
-            Regex reg = new Regex("(?<=<)(.*?)(?=>;)");
-            Match matchResults = reg.Match(nextUrl);
-            if (matchResults.Success)
+            try
             {
-                return matchResults.Value;
+                Match matchResults = nrpsLinkHeaderRegex.Match(nextUrl);
+                if (matchResults.Success)
+                {
+                    return matchResults.Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to match the next-link-header value using regexp, returning null for next-nrps-url; exception: {ex.Message}");
             }
 
             return null;
