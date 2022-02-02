@@ -15,6 +15,7 @@ using LtiAdvantage.NamesRoleProvisioningService;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Edna.Utils.Http;
+using System.Text.RegularExpressions;
 
 namespace Edna.Bindings.LtiAdvantage.Services
 {
@@ -27,6 +28,8 @@ namespace Edna.Bindings.LtiAdvantage.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAccessTokenService _accessTokenService;
         private readonly ILogger _logger;
+        private const string nrpsNextLinkHeaderSubstring = "\"next\"";
+        private static Regex nrpsLinkHeaderRegex = new Regex("(?<=<)(.*?)(?=>;)");
 
         public class NrpsClientFactory
         {
@@ -51,7 +54,7 @@ namespace Edna.Bindings.LtiAdvantage.Services
             _accessTokenService = accessTokenService;
             _logger = logger;
         }
-        
+
         public async Task<IEnumerable<Member>> Get(string clientId, string tokenUrl, string audience, string membershipUrl)
         {
             _logger.LogInformation("Getting token for client ID: " + clientId);
@@ -70,18 +73,27 @@ namespace Edna.Bindings.LtiAdvantage.Services
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(Constants.MediaTypes.MembershipContainer));
 
             _logger.LogInformation("Getting members.");
-            using var response = await httpClient.GetAsync(membershipUrl);
+            List<Member> members = new List<Member>();
 
-            if (!response.IsSuccessStatusCode)
+            do
             {
-                _logger.LogError("Could not get members.");
-                throw new Exception(response.ReasonPhrase);
-            }
+                using var response = await httpClient.GetAsync(membershipUrl);
 
-            var content = await response.Content.ReadAsStringAsync();
-            var membership = JsonConvert.DeserializeObject<MembershipContainer>(content);
-            
-            return membership.Members
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Could not get members.");
+                    throw new Exception(response.ReasonPhrase);
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                var membership = JsonConvert.DeserializeObject<MembershipContainer>(content);
+                members.AddRange(membership.Members);
+
+                membershipUrl = GetNextMembershipUrlFromHeaders(response.Headers);
+            }
+            while (!string.IsNullOrEmpty(membershipUrl));
+
+            return members
                 .OrderBy(m => m.FamilyName)
                 .ThenBy(m => m.GivenName);
         }
@@ -91,17 +103,18 @@ namespace Edna.Bindings.LtiAdvantage.Services
             // Looks like LTI 1.3 doesn't support querying by member identifiers
 
             IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, audience, membershipUrl);
-            foreach (Member m in allMembers) {       
+            foreach (Member m in allMembers)
+            {
                 string name = m.Email;
-                if (m.Email != null && ( m.FamilyName == null || m.GivenName == null))
-                {            
+                if (m.Email != null && (m.FamilyName == null || m.GivenName == null))
+                {
                     int index = name.IndexOf("@");
                     name = name.Substring(0, index);
                     m.FamilyName = name;
                     m.GivenName = " ";
                 }
             }
-            return allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email??String.Empty).Equals(userEmail, StringComparison.OrdinalIgnoreCase)));
+            return allMembers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail, StringComparison.OrdinalIgnoreCase)));
         }
 
         public async Task<Member> GetById(string clientId, string tokenUrl, string audience, string membershipUrl, string userId)
@@ -110,6 +123,39 @@ namespace Edna.Bindings.LtiAdvantage.Services
             IEnumerable<Member> allMembers = await Get(clientId, tokenUrl, audience, membershipUrl);
 
             return allMembers.FirstOrDefault(member => member.UserId.Equals(userId));
+        }
+
+        private string GetNextMembershipUrlFromHeaders(HttpResponseHeaders headers)
+        {
+            string linkUrls = headers.TryGetValues("Link", out var values) ? values.FirstOrDefault() : null;
+            if (string.IsNullOrEmpty(linkUrls))
+            {
+                return null;
+            }
+
+            string[] urls = linkUrls.Split(',');
+            string nextUrl = urls.FirstOrDefault(u => u.IndexOf(nrpsNextLinkHeaderSubstring, StringComparison.OrdinalIgnoreCase) >=0 );
+
+            if (string.IsNullOrEmpty(nextUrl))
+            {
+                return null;
+            }
+
+            // Regex to get the url from next url excluding < and >; characters.
+            try
+            {
+                Match matchResults = nrpsLinkHeaderRegex.Match(nextUrl);
+                if (matchResults.Success)
+                {
+                    return matchResults.Value;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to match the next-link-header value using regexp, returning null for next-nrps-url; exception: {ex.Message}");
+            }
+
+            return null;
         }
     }
 }
