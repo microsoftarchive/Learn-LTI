@@ -14,6 +14,8 @@ To begin, you will need:
 - [Git](https://git-scm.com/downloads)
 - An Azure subscription
 
+**Note:** Please ensure you **reboot your machine** after the installation of the Prerequisities
+
 Follow these steps to deploy the Microsoft Learn LTI tool:
 
 # Clone the repo
