@@ -83,6 +83,17 @@ Failure in Step 10.  Exception.Message [ Failed to deploy Function App [ Assignm
 
 The problem was in the Azure CLI version, although we require a version > 2.0.21.There has been a issue reported with 2.29.0. Upgrading to version 2.29.1 resolves the issue.
 
+## Error with .Net Core SDK 
+
+When Deploying if you get stuck on Step 10. Please ensure you have at least version 3.1.100 of the .Net Core SDK x86 version installed
+![NetCoreSDKError](https://user-images.githubusercontent.com/3959829/166324637-d357169b-ee0d-4a50-bcfa-08fef04a3906.png)
+
+Please ensure you have the [DotNet Core SDK .NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa) installed
+
+Note: Please ensure you reboot your machine after the installation of the Prerequisites as environmental variable need to be set after the installation.
+
+If you have done this please uninstall your .NET Core SDK and reinstall the x86 version 3.1.100 and try again. 
+
 ## Debugging Errors from the deployment of Azure Functions 
 
 Debugging Errors from the deployment
