@@ -8,7 +8,7 @@
 ## Prerequisites
 To begin, you will need:
 - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
--- We currently reccomend using Microsoft CLI version 2.27 which was used for our latest testing. The most recent version of Azure CLI has deprecated commands that we will be addressing. 
+    * We currently reccomend using Microsoft CLI version 2.27 which was used with our latest deployment testing. The most recent version of Azure CLI has deprecated commands that we use and will address.  
 - [DotNet Core SDK .NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)
 - [Node.js](https://nodejs.org/en/download/)
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
