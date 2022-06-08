@@ -134,9 +134,9 @@ See the following screenshot
 ![KeyVaultPurge](../images/Keyvaultpurge.png)
 
 ### If your Key Vault has purge protection enabled
-Many key vaults use purge protection to ensure malicious actors cannot delete keys used for encryption. With purge protection, a soft deleted key vault cannot be pernamentally deleted until after a configured purge window. To prevent tampering, this setting cannot be disabled once it has been enabled. 
+With purge protection, a soft deleted key vault cannot be pernamentally deleted until after a configured purge window. This setting is generally reccomended to prevent malicious actors from deleting essesntial secrets. To further prevent tampering, purge protection cannot be disabled once it has been enabled. 
 
-However, Key vault names must be unique across Azure. If you attempt to create a key vault with the same name as before during a re-deploy of Azure, you will see errors such as 
+However, Key Vault names must be unique across Azure. If you attempt to create a Key Vault with the same name during a re-deploy of the LTI, you will see errors such as 
 
 ```bash
 "code": "VaultAlreadyExists",
