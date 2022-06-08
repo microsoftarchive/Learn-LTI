@@ -147,14 +147,14 @@ However, Key Vault names must be unique across Azure. If you attempt to create a
 This will happen if you deploy the LTI using our deploy script, and then attempt to redeploy using the same configuration again. The cleanup script will not be able to delete the purge protected Key Vault.  In this situation, you must force the deploy scripts to generate a new name for the key vault it creates. We reccomend one of the below two options.
 
 * In Deploy.ps1, modify the ResourceGroupName string to a new string such as MSLearnLTI_V1
-* In azuredeploy.json, change the "uniqueIdentifier" variable to create a new substring. We suggest appending a number after the resourceGroup().id. As an example, alter
+* In azuredeploy.json, change the "uniqueIdentifier" variable to create a new substring. We suggest appending a number surrounded by single quotes after the resourceGroup().id. As an example, alter
 ** 
 ```bash
 "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id),0,9)]",
 ```
 To 
 ```bash
-"uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, 1),0,9)]",
+"uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '1'),0,9)]",
 ```	
 
 
