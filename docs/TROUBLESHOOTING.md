@@ -39,6 +39,8 @@ To Manually remove resources simply remove the Microsoft Learn LTI resource grou
 
 If you have changed the name of the Resource Group or AppName simply replace the actual names with the placeholder in the script.
 
+Ensure you [purge your keyvault]( https://github.com/microsoft/Learn-LTI/blob/main/docs/TROUBLESHOOTING.md#purging-key-vaults) before running the setup script again 
+
 ## Check the Failed Deployment status and output
 
 From the Azure Portal, simply select deployments. See the following screenshot.
