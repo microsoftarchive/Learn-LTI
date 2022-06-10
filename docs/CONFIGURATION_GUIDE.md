@@ -78,7 +78,8 @@ The following steps show how to configure an LTI tool on a Open edX LMS. If you 
 The following steps show how to configure an LTI tool on a Moodle LMS.
 
 ### General 
-If this is a new Moodle installation without existing users, we recommend editing the "/etc/httpd/conf/httpd.conf" file on your Moodle VM to ensure connectivity with the LTI.
+If this is a new Moodle installation without existing users, we recommend editing the "httpd.conf" file on your Moodle VM to ensure connectivity with the LTI.
+This may be found in the "/etc/httpd/conf/" directory or in the "/opt/bitnami/apache2/" directory if you deployed Moodle using bitnami.
 
 - Edit your httpd.conf file or alternatively in the vhosts file:
 - SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
