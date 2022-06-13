@@ -135,6 +135,31 @@ See the following screenshot
 
 ![KeyVaultPurge](../images/Keyvaultpurge.png)
 
+### If your Key Vault has purge protection enabled
+With purge protection, a soft deleted key vault cannot be permanently deleted until after a configured purge window. This setting is generally reccomended to prevent malicious actors from deleting essesntial secrets. To further prevent tampering, purge protection cannot be disabled once it has been enabled. 
+
+However, Key Vault names must be unique across Azure. If you attempt to create a Key Vault with the same name during a re-deploy of the LTI, you will see errors such as 
+
+```bash
+"code": "VaultAlreadyExists",
+
+"message": "The vault name 'kv-******' is already in use. Vault names are globaly unique so it is possible that the name is already taken. If you are sure that the vault name was not taken then it is possible that a vault with the same name was recently deleted but not purged after being placed in a recoverable state. If the vault is in a recoverable state then the vault will need to be purged before reusing the name. For more information on soft delete and purging a vault follow this link https://go.microsoft.com/fwlink/?linkid=2147740."
+```
+
+This will happen if you deploy the LTI using our deploy script, and then attempt to redeploy using the same configuration again. The cleanup script will not be able to delete the purge protected Key Vault.  In this situation, you must force the deploy scripts to generate a new name for the key vault it creates. We reccomend one of the below two options.
+
+* In Deploy.ps1, modify the ResourceGroupName string to a new string such as MSLearnLTI_V1
+* In azuredeploy.json, change the "uniqueIdentifier" variable to create a new substring. We suggest appending a number surrounded by single quotes after the resourceGroup().id. As an example, alter
+** 
+```bash
+"uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id),0,9)]",
+```
+To 
+```bash
+"uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '1'),0,9)]",
+```	
+
+
 ## LTI Application does not load error: {Message:"Oops Something went wrong"}
 
 LMS Requirement for Secure Token SSL https

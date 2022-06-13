@@ -77,6 +77,41 @@ The following steps show how to configure an LTI tool on a Open edX LMS. If you 
 
 The following steps show how to configure an LTI tool on a Moodle LMS.
 
+### General 
+If this is a new Moodle installation without existing users, we recommend editing the "httpd.conf" file on your Moodle VM to ensure connectivity with the LTI.
+This may be found in the "/etc/httpd/conf/" directory or in the "/opt/bitnami/apache2/" directory if you deployed Moodle using bitnami.
+
+- Edit your httpd.conf file or alternatively in the vhosts file:
+- SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+- SetEnvIf Content-Type "(.*)" HTTP_CONTENT_TYPE=$1
+- SetEnvIf Accept "(.*)" HTTP_ACCEPT=$1
+
+
+#### For Apache VPServers running Linux. 
+
+Login into your Putty. Putty SSH can be googled. Enter your username, then password and then type
+
+```bash
+su -
+```
+Copy this code
+
+```bash
+vi /etc/httpd/conf/httpd.conf
+```
+To save a file and exit Vim:
+
+- Switch to command mode by pressing the ESC key.
+- Press : (colon) to open the prompt bar in the bottom left corner of the window.
+- Type x after the colon and hit Enter. This will save the changes and exit.
+
+To exit Vim without saving changes:
+
+- Switch to command mode by pressing the ESC key.
+- Press : (colon) to open the prompt bar in the bottom left corner of the window.
+- Type q! after the colon and hit Enter to exit without saving the changes.
+
+
 ### LTI 1.1
 1. Open your LMS and sign in with the admin account.
 2. Click **Site administration** from the left navigation pane.
