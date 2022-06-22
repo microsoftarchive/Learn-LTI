@@ -74,23 +74,51 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
           labelPosition="bottom"
         />
       ) : (
-        <div className={classes.content}>
-          <PlatformControlArea
-            styles={themedClassNames(publishControlAreaStyles)}
-            onSaveRegirstrationClicked={tryToSaveRegistration}
-            showErrorMessage={showErrorMessages}
-          />
-          <PageWrapper title="Platform Registration" styles={themedClassNames(pageWrapperStyles)}>
-            <PlatformRegistrationForm
-              updatePlatformData={data => setPlatformData(data)}
-              showErrors={showErrorMessages}
+        // should this div have the "className={classes.content}" too?
+        <div>
+
+          <label for="myCheck">Is this a b2c tenant? </label> 
+          <input type="checkbox" id="myCheck" onclick="showAdOrB2C()"></input>
+
+
+          <div id = "b2c_tenant" className={classes.content}> 
+              <p> Currently Empty will populate with b2c settings </p>
+          </div>
+
+
+          <div id = "ad_tenant" className={classes.content}>
+            <PlatformControlArea
+              styles={themedClassNames(publishControlAreaStyles)}
+              onSaveRegirstrationClicked={tryToSaveRegistration}
+              showErrorMessage={showErrorMessages}
             />
-          </PageWrapper>
+            <PageWrapper title="Platform Registration" styles={themedClassNames(pageWrapperStyles)}>
+              <PlatformRegistrationForm
+                updatePlatformData={data => setPlatformData(data)}
+                showErrors={showErrorMessages}
+              />
+            </PageWrapper>
+          </div>
+
         </div>
       )}
     </div>
   ));
 };
+
+function showAdOrB2C() {
+  var checkBox = document.getElementById("myCheck")! as HTMLInputElement;
+  var b2c_div = document.getElementById("b2c_tenant")!;
+  var ad_div = document.getElementById("ad_tenant")!;
+  
+  if (checkBox.checked == true){
+  	ad_div.style.display = "none";
+    b2c_div.style.display = "block";
+  } else {
+    ad_div.style.display = "block";
+     b2c_div.style.display = "none";
+  }
+}
 
 const platformPageStyle = ({ theme }: IThemeOnlyProps): PlatformPageStyles => ({
   root: [
