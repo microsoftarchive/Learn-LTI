@@ -76,19 +76,20 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
       ) : (
         // should this div have the "className={classes.content}" too?
         <div>
+          <label htmlFor="myCheck">Is·this·a·b2c·tenant?</label>
+          <input
+            type="checkbox"
+            id="myCheck"
+            onChange={() => {
+              showAdOrB2C();
+            }}
+          ></input>
 
-          <label htmlFor="myCheck">Is this a b2c tenant? </label> 
-          <input type="checkbox" id="myCheck" onChange={(e) => {
-            showAdOrB2C();
-          }} ></input>
-
-
-          <div id = "b2c_tenant" className={classes.content}> 
-              <p> Currently Empty will populate with b2c settings </p>
+          <div id="b2c_tenant" className={classes.content}>
+            <p> Currently Empty will populate with b2c settings </p>
           </div>
 
-
-          <div id = "ad_tenant" className={classes.content}>
+          <div id="ad_tenant" className={classes.content}>
             <PlatformControlArea
               styles={themedClassNames(publishControlAreaStyles)}
               onSaveRegirstrationClicked={tryToSaveRegistration}
@@ -101,7 +102,6 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
               />
             </PageWrapper>
           </div>
-
         </div>
       )}
     </div>
@@ -109,16 +109,16 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
 };
 
 function showAdOrB2C() {
-  var checkBox = document.getElementById("myCheck")! as HTMLInputElement;
-  var b2c_div = document.getElementById("b2c_tenant")!;
-  var ad_div = document.getElementById("ad_tenant")!;
-  
-  if (checkBox.checked == true){
-  	ad_div.style.display = "none";
-    b2c_div.style.display = "block";
+  const checkBox = document.getElementById('myCheck')! as HTMLInputElement;
+  const b2c_div = document.getElementById('b2c_tenant')!;
+  const ad_div = document.getElementById('ad_tenant')!;
+
+  if (checkBox.checked == true) {
+    ad_div.style.display = 'none';
+    b2c_div.style.display = 'block';
   } else {
-    ad_div.style.display = "block";
-     b2c_div.style.display = "none";
+    ad_div.style.display = 'block';
+    b2c_div.style.display = 'none';
   }
 }
 
