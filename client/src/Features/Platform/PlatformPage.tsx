@@ -77,8 +77,10 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
         // should this div have the "className={classes.content}" too?
         <div>
 
-          <label for="myCheck">Is this a b2c tenant? </label> 
-          <input type="checkbox" id="myCheck" onclick="showAdOrB2C()"></input>
+          <label htmlFor="myCheck">Is this a b2c tenant? </label> 
+          <input type="checkbox" id="myCheck" onChange={(e) => {
+            showAdOrB2C();
+          }} ></input>
 
 
           <div id = "b2c_tenant" className={classes.content}> 
