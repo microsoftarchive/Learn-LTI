@@ -45,3 +45,18 @@ Foreach-Object {
     ((Get-Content -path $_.FullName -Raw) -replace '<<FacebookSecret>>', $FacebookSecret) |  Set-Content -path ("./CustomPolicy/"+$_.Name)
 
 }
+
+
+# Connecting to the b2c tenant and uploading the custom policies to the b2c tenant
+Write-Title "STEP 4: Uploading the custom policies to the b2c tenant"
+
+$B2cTenantDomain = Read-Host "What is your B2C tenants domain (e.g. mytenant.onmicrosoft.com)?"
+Import-Module AzureADPreview
+Connect-AzureAD -Tenant $B2cTenantDomain
+# Order matters in the uploads - do not modify the order
+New-AzureADMSTrustFrameworkPolicy -InputFilePath "./CustomPolicy/TRUSTFRAMEWORKBASE.xml"
+New-AzureADMSTrustFrameworkPolicy -InputFilePath "./CustomPolicy/TRUSTFRAMEWORKLOCALIZATION.xml"
+New-AzureADMSTrustFrameworkPolicy -InputFilePath "./CustomPolicy/TRUSTFRAMEWORKEXTENSIONS.xml"
+New-AzureADMSTrustFrameworkPolicy -InputFilePath "./CustomPolicy/SIGNUP_SIGNIN.xml"
+New-AzureADMSTrustFrameworkPolicy -InputFilePath "./CustomPolicy/PROFILEEDIT.xml"
+New-AzureADMSTrustFrameworkPolicy -InputFilePath "./CustomPolicy/PASSWORDRESET.xml"

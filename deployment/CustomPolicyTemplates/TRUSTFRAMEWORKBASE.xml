@@ -531,12 +531,12 @@
                  OutputClaims, and if this is absent, Self-Asserted provider will prompt the user for otherMails. -->
             <OutputClaim ClaimTypeReferenceId="otherMails" />
           </OutputClaims>
-          <IncludeTechnicalProfile ReferenceId="AAD-Common" />
+          < ReferenceId="AAD-Common" />
           <UseTechnicalProfileForSessionManagement ReferenceId="SM-AAD" />
         </TechnicalProfile>
         <TechnicalProfile Id="AAD-UserReadUsingAlternativeSecurityId">
           <Metadata>
-            <Item Key="Operation">Read</Item>
+IncludeTechnicalProfile            <Item Key="Operation">Read</Item>
             <Item Key="RaiseErrorIfClaimsPrincipalDoesNotExist">true</Item>
           </Metadata>
           <InputClaims>
