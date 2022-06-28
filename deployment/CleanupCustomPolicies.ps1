@@ -1,3 +1,14 @@
+#region "Helper Functions"
+
+#function for making clear and distinct titles
+function Write-Title([string]$Title) {
+    Write-Host "`n`n============================================================="
+    Write-Host $Title
+    Write-Host "=============================================================`n`n"
+}
+#endregion
+
+
 # Connecting to the b2c tenant and removing the custom policies already uploaded to the b2c tenant
 Write-Title "Cleaning up the custom policies from the b2c tenant"
 
