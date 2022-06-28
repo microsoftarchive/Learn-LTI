@@ -1,6 +1,6 @@
-<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="a.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkLocalization" PublicPolicyUri="http://a.onmicrosoft.com/B2C_1A_TrustFrameworkLocalization" TenantObjectId="b">
+<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="playltib2c.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkLocalization" PublicPolicyUri="http://playltib2c.onmicrosoft.com/B2C_1A_TrustFrameworkLocalization">
   <BasePolicy>
-    <TenantId>a.onmicrosoft.com</TenantId>
+    <TenantId>playltib2c.onmicrosoft.com</TenantId>
     <PolicyId>B2C_1A_TrustFrameworkBase</PolicyId>
   </BasePolicy>
   <BuildingBlocks>
@@ -234,6 +234,7 @@
     </Localization>
   </BuildingBlocks>
 </TrustFrameworkPolicy>
+
 
 
 

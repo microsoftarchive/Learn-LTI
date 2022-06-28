@@ -1,6 +1,6 @@
-<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="a.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkExtensions" PublicPolicyUri="http://a.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions" TenantObjectId="b">
+<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="playltib2c.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkExtensions" PublicPolicyUri="http://playltib2c.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
   <BasePolicy>
-    <TenantId>a.onmicrosoft.com</TenantId>
+    <TenantId>playltib2c.onmicrosoft.com</TenantId>
     <PolicyId>B2C_1A_TrustFrameworkLocalization</PolicyId>
   </BasePolicy>
   <BuildingBlocks></BuildingBlocks>
@@ -56,7 +56,7 @@
       <TechnicalProfiles>
         <TechnicalProfile Id="Facebook-OAUTH">
           <Metadata>
-            <Item Key="client_id">447221790099527</Item>
+            <Item Key="client_id">550369626723173>></Item>
             <Item Key="scope">email public_profile</Item>
             <Item Key="ClaimsEndpoint">https://graph.facebook.com/me?fields=id,first_name,last_name,name,email</Item>
           </Metadata>
@@ -68,12 +68,12 @@
       <TechnicalProfiles>
         <TechnicalProfile Id="login-NonInteractive">
           <Metadata>
-            <Item Key="client_id">aa4dd984-98c2-4ef8-a62e-f38557106c34</Item>
-            <Item Key="IdTokenAudience">e04dd15b-db74-48f6-84ff-a78c8cf6646c</Item>
+            <Item Key="client_id">d210807a-4877-48f3-8f30-2c56687f13f4</Item>
+            <Item Key="IdTokenAudience">bb59a14f-263b-4a95-8d23-06f842008e14</Item>
           </Metadata>
           <InputClaims>
-            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="aa4dd984-98c2-4ef8-a62e-f38557106c34" />
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="e04dd15b-db74-48f6-84ff-a78c8cf6646c" />
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="d210807a-4877-48f3-8f30-2c56687f13f4" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="bb59a14f-263b-4a95-8d23-06f842008e14" />
           </InputClaims>
         </TechnicalProfile>
       </TechnicalProfiles>
@@ -167,6 +167,7 @@
     </UserJourney>
   </UserJourneys>
 </TrustFrameworkPolicy>
+
 
 
 
