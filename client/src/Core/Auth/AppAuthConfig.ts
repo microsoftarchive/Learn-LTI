@@ -18,7 +18,7 @@ const authLogCallback = (level: LogLevel, message: string, _containsPii: boolean
 const configuration: Configuration = {
   auth: {
     clientId: 'e5642ae2-5178-4b6f-9653-d80f6f47fcf0', // RB: don't hardcode
-    redirectUri: process.env.REACT_APP_EDNA_MAIN_URL!, 
+    redirectUri: process.env.REACT_APP_EDNA_MAIN_URL!,
     authority: b2cPolicies.authorities.signUpSignIn.authority,
     navigateToLoginRequestUrl: true,
     knownAuthorities: [b2cPolicies.authorityDomain]
