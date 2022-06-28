@@ -56,7 +56,7 @@
       <TechnicalProfiles>
         <TechnicalProfile Id="Facebook-OAUTH">
           <Metadata>
-            <Item Key="client_id">447221790099527</Item>
+            <Item Key="client_id"><<FacebookId>>>></Item>
             <Item Key="scope">email public_profile</Item>
             <Item Key="ClaimsEndpoint">https://graph.facebook.com/me?fields=id,first_name,last_name,name,email</Item>
           </Metadata>
@@ -68,12 +68,12 @@
       <TechnicalProfiles>
         <TechnicalProfile Id="login-NonInteractive">
           <Metadata>
-            <Item Key="client_id">aa4dd984-98c2-4ef8-a62e-f38557106c34</Item>
-            <Item Key="IdTokenAudience">e04dd15b-db74-48f6-84ff-a78c8cf6646c</Item>
+            <Item Key="client_id"><<ProxyIdentityExperienceFrameworkAppId>></Item>
+            <Item Key="IdTokenAudience"><<IdentityExperienceFrameworkAppId>></Item>
           </Metadata>
           <InputClaims>
-            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="aa4dd984-98c2-4ef8-a62e-f38557106c34" />
-            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="e04dd15b-db74-48f6-84ff-a78c8cf6646c" />
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="<<ProxyIdentityExperienceFrameworkAppId>>" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="<<IdentityExperienceFrameworkAppId>>" />
           </InputClaims>
         </TechnicalProfile>
       </TechnicalProfiles>
