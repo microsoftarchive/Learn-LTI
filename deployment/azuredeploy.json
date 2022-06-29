@@ -20,7 +20,7 @@
         }
     },
     "variables": {
-        "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id),0,9)]",
+        "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '5'),0,9)]",
         "functionList": [
             "connect",
             "assignments",

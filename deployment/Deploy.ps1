@@ -193,8 +193,15 @@ process {
 
         #region Provision Resources inside Resource Group on Azure using ARM template
         Write-Title 'STEP #6 - Creating Resources in Azure'
-    
+        
+        [int]$azver0= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[0]
+        [int]$azver1= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[1]
+        if( $azver0 -ge 2 && $azver1 -ge 37){
+        $userObjectId = az ad signed-in-user show --query id
+        }
+        else {
         $userObjectId = az ad signed-in-user show --query objectId
+        }
         #$userObjectId
     
         $templateFileName = "azuredeploy.json"
