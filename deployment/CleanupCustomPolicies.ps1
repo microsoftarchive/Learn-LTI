@@ -22,3 +22,15 @@ Remove-AzureADMSTrustFrameworkPolicy -Id B2C_1A_signup_signin
 Remove-AzureADMSTrustFrameworkPolicy -Id B2C_1A_TrustFrameworkBase
 Remove-AzureADMSTrustFrameworkPolicy -Id B2C_1A_TrustFrameworkExtensions
 Remove-AzureADMSTrustFrameworkPolicy -Id B2C_1A_TrustFrameworkLocalization
+
+
+# Cleaning up the keysets from the b2c tenant
+Write-Title "Cleaning up the keysets from the b2c tenant"
+$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+$headers.Add("Authorization", $access_token)
+
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets/B2C_1A_TokenSigningKeyContainer' -Method 'DELETE' -Headers $headers
+$response | ConvertTo-Json
+
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets/B2C_1A_TokenEncryptionKeyContainer' -Method 'DELETE' -Headers $headers
+$response | ConvertTo-Json

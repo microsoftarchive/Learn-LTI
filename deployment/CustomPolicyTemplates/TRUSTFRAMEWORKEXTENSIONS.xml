@@ -29,7 +29,7 @@
             <Item Key="ValidTokenIssuerPrefixes">https://login.microsoftonline.com/</Item>
           </Metadata>
           <CryptographicKeys>
-            <Key Id="client_secret" StorageReferenceId="B2C_1A_AADAppSecre" />
+            <Key Id="client_secret" StorageReferenceId="B2C_1A_AADAppSecret" />
           </CryptographicKeys>
           <OutputClaims>
             <OutputClaim ClaimTypeReferenceId="email" PartnerClaimType="email" />
