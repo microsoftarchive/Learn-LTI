@@ -12,6 +12,14 @@ function Write-Title([string]$Title) {
 function Write-Color($Color, [string]$Text) {
 	process{Write-Host $Text -ForegroundColor $Color}
 }
+
+function getNbfExp($num_months){
+	$start_date = Get-Date -Date "1970-01-01 00:00:00Z"
+	$date = Get-Date
+	$nbf = [math]::floor(($date - $start_date).TotalSeconds)
+	$exp = [math]::floor((($date - $start_date).TotalSeconds) + $num_months * 60 * 60 * 24 * 30)
+	return $nbf, $exp
+}
 #endregion
 
 #region "Importing Modules"
@@ -234,10 +242,9 @@ Write-Host "`nSuccessfully created the key signing container: "+$signing_contain
 #region "Generating the signing key"
 #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
 Write-Host "`nGenerating the signing key and uploading to the keyset`n"
-$start_date = Get-Date -Date "1970-01-01 00:00:00Z"
-$date = Get-Date
-$nbf = [math]::floor(($date - $start_date).TotalSeconds)
-$exp = [math]::floor($nbf + $num_months * 60 * 60 * 24 * 30)
+$arr = getNbfExp($num_months)
+$nbf = $arr[0]
+$exp = $arr[1]
 
 
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
@@ -280,11 +287,9 @@ Write-Host "Successfully created the key encryption container: $encryption_conta
 #region "Generating the encryption key"
 #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
 Write-Host "`nGenerating the encryption key and uploading to the keyset`n"
-$start_date = Get-Date -Date "1970-01-01 00:00:00Z"
-$date = Get-Date
-$nbf = [math]::floor(($date - $start_date).TotalSeconds)
-$exp = [math]::floor((($date - $start_date).TotalSeconds) + $num_months * 60 * 60 * 24 * 30)
-
+$arr = getNbfExp($num_months)
+$nbf = $arr[0]
+$exp = $arr[1]
 
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
@@ -325,10 +330,9 @@ Write-Host "Successfully created the key AADAppSecret container: $AADAppSecret_c
 
 #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
 Write-Host "`nGenerating the AADAppSecret key and uploading to the keyset`n"
-$start_date = Get-Date -Date "1970-01-01 00:00:00Z"
-$date = Get-Date
-$nbf = [math]::floor(($date - $start_date).TotalSeconds)
-$exp = [math]::floor((($date - $start_date).TotalSeconds) + $num_months * 60 * 60 * 24 * 30)
+$arr = getNbfExp($num_months)
+$nbf = $arr[0]
+$exp = $arr[1]
 
 #uploading the AADAppSecret key
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
@@ -354,7 +358,7 @@ Write-Host "Successfully uploaded the AADAppSecret key"
 Write-Title "STEP 10: Connecting to the b2c tenant"
 
 $B2cTenantDomain = $B2cTenantName+".onmicrosoft.com"
-Write-Host "Connecting to the tenant"
+Write-Host "Connecting to the tenant, please login via the popup Window"
 Connect-AzureAD -Tenant $B2cTenantDomain
 #endregion
 
