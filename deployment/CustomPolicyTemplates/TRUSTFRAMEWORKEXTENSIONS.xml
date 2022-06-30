@@ -16,7 +16,7 @@
           <Metadata>
             <Item Key="METADATA">https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration</Item>
             <!-- Update the Client ID below to the Application ID -->
-            <Item Key="client_id">ce332c27-6a9b-4bfe-abf8-8584c9cebbcc</Item>
+            <Item Key="client_id"><<MultiTenantAppID>></Item>
             <Item Key="response_types">code</Item>
             <Item Key="scope">openid profile</Item>
             <Item Key="response_mode">form_post</Item>

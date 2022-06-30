@@ -21,6 +21,7 @@ $B2cTenantName = Read-Host "What is the name of your b2c tenant?"
 $ProxyIdentityExperienceFrameworkAppId = Read-Host "What is the application ID of the ProxyIdentityExperienceFramework application you created?"
 $IdentityExperienceFrameworkAppId = Read-Host "What is the application ID of the IdentityExperienceFramework application you created?"
 $FacebookId = Read-Host "What is the application ID of the Facebook application you created?"
+$MultitenantAppID = Read-Host "What is the application ID of the Azure AD multi-tenant application that you registered earlier?"
 #endregion
 
 
@@ -44,6 +45,8 @@ Foreach-Object {
     ((Get-Content -path $_.FullName -Raw) -replace '<<IdentityExperienceFrameworkAppId>>', $IdentityExperienceFrameworkAppId) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
     
     ((Get-Content -path $_.FullName -Raw) -replace '<<FacebookId>>', $FacebookId) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+
+    ((Get-Content -path $_.FullName -Raw) -replace '<<MultiTenantAppID>>', $MultitenantAppID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
 
 }
 #endregion
@@ -113,7 +116,7 @@ $body = "{
 `n}"
 
 $response = Invoke-RestMethod ('https://graph.microsoft.com/beta/trustFramework/keySets/'+$signing_container_id+'/generateKey') -Method 'POST' -Headers $headers -Body $body
-$response | ConvertTo-Json
+
 Write-Host "Successfully generated the signing key"
 #endregion
 
@@ -159,9 +162,53 @@ $body = "{
 `n}"
 
 $response = Invoke-RestMethod ('https://graph.microsoft.com/beta/trustFramework/keySets/'+$encryption_container_id+'/generateKey') -Method 'POST' -Headers $headers -Body $body
-$response | ConvertTo-Json
 
 Write-Host "Successfully generated the encryption key"
+#endregion
+
+
+#region "STEP 5.C: Create the AADSecret keyset""
+Write-Title "STEP 5.B: Creating the AADAppSecret Key"
+
+#region "Creating the AADAppSecret keyset (container)""
+Write-Host "`nCreating the AADAppSecret keyset (container)`n"
+$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+$headers.Add("Authorization", $access_token)
+$headers.Add("Content-Type", "application/json")
+
+$body = "{`"id`":`"B2C_1A_AADAppSecret`"}"
+
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'POST' -Headers $headers -Body $body
+$AADAppSecret_container_id = $response.id
+
+Write-Host "Successfully created the key AADAppSecret container: "+$AADAppSecret_container_id
+#endregion
+Write-Host "`nCreating the AADAppSecret keyset (container)`n"
+
+#region "Uploading the AADAppSecret key"
+$clientSecret = Read-Host "What is the client secret that you recorded earlier?"
+
+#calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
+Write-Host "`nGenerating the AADAppSecret key and uploading to the keyset`n"
+$start_date = Get-Date -Date "1970-01-01 00:00:00Z"
+$date = Get-Date
+$nbf = [math]::floor(($date - $start_date).TotalSeconds)
+$exp = [math]::floor((($date - $start_date).TotalSeconds) + $num_months * 60 * 60 * 24 * 30)
+
+#uploading the AADAppSecret key
+$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+$headers.Add("Content-Type", "text/plain")
+
+$body = "{
+`n  `"use`": `"sig`",
+`n  `"k`": `""+$clientSecret+"`",
+`n  `"nbf`": "+$nbf+",
+`n  `"exp`": "+$exp+"
+`n}"
+
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets/'+$AADAppSecret_container_id+'/uploadSecret?Authorization='+$access_token+'&Content-type=application/json' -Method 'POST' -Headers $headers -Body $body
+
+Write-Host "Successfully uploaded the AADAppSecret key"
 #endregion
 
 #endregion 
