@@ -52,11 +52,7 @@ $ADAppManifest = "{
 Out-File -FilePath "manifest.json" -InputObject $ADAppManifest
 $MultiTenantAppID = (az ad app create --display-name $MultiTenantAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com/oauth2/authresp --optional-claims "@manifest.json" --query appId --output tsv --only-show-errors)
 
-$MultiTenantAppInfo = @{ 
-    AppID = $MultiTenantAppID
-    TenantID = $ADTenantName
-}
-$MultiTenantAppInfo | Export-Csv -Path $AppInfoCSVPath -NoTypeInformation -Append
+"$MultiTenantAppID,$ADTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # Create client secret
 Write-Host "Creating the client secret for $MultiTenantAppName"
@@ -94,11 +90,7 @@ Write-Title "STEP 3: Creating the B2C Web application"
 $B2cAppName = Read-Host "Please give a name for the web application to be created"
 $WebClientID = (az ad app create --display-name $B2cAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://jwt.ms --enable-access-token-issuance true --enable-id-token-issuance true --query appId --output tsv --only-show-errors)
 
-$WebAppInfo = @{ 
-    AppID = $WebClientID
-    TenantID = $B2cTenantName
-}
-$WebAppInfo | Export-Csv -Path $AppInfoCSVPath -NoTypeInformation -Append
+"$WebClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # create client secret
 Write-Host "Creating the client secret for $B2cAppName"
@@ -127,11 +119,7 @@ Write-Title "STEP 4: Creating the Identity Experience Framework application"
 $IEFAppName = "IdentityExperienceFramework"
 $IEFClientID = (az ad app create --display-name $IEFAppName --sign-in-audience AzureADMyOrg --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com --query appId --output tsv --only-show-errors)
 
-$IEFAppInfo = @{ 
-    AppID = $IEFClientID
-    TenantID = $B2cTenantName
-}
-$IEFClientID | Export-Csv -Path $AppInfoCSVPath -NoTypeInformation -Append
+"$IEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # set permissions for the IEF app
 Write-Host "Granting permissions to the IEF application"
@@ -171,11 +159,7 @@ Write-Title "STEP 5: Creating the Proxy Identity Experience Framework applicatio
 $ProxyIEFAppName = "ProxyIdentityExperienceFramework"
 $ProxyIEFClientID = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --query appId --output tsv --only-show-errors)
 
-$ProxyIEFAppInfo = @{ 
-    AppID = $ProxyIEFClientID
-    TenantID = $B2cTenantName
-}
-$ProxyIEFAppInfo | Export-Csv -Path $AppInfoCSVPath -NoTypeInformation -Append
+"$ProxyIEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 Write-Host "Granting permissions to the Proxy IEF application"
 $scope = (az ad sp show --id $ProxyIEFClientID --only-show-errors 2>$null)
