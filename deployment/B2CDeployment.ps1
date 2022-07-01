@@ -243,7 +243,7 @@ $keysets
 Write-Title "STEP 9.A: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
-    Write-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
+    Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
 }
 else{
     #region "Creating the signing keyset (container)"
@@ -294,7 +294,7 @@ else{
 Write-Title "STEP 9.B: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
-    Write-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
+    Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
 }
 else{
 #region "Creating the encryption keyset (container)"
@@ -344,7 +344,7 @@ Write-Host "Successfully generated and uploaded the encryption key"
 Write-Title "STEP 9.C: Creating the AADAppSecret Key"
 
 if($keysets -contains "B2C_1A_AADAppSecret"){
-    Write-Host "B2C_1A_AADAppSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
+    Read-Host "B2C_1A_AADAppSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
 }
 else{
     #region "Creating the AADAppSecret keyset (container)"
