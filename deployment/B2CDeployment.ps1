@@ -28,7 +28,7 @@ $B2cTenantName = Read-Host "Please enter your B2C tenant name"
 $ADTenantName = Read-Host "Please enter your AD tenant name"
 
 Write-Title "STEP 1: Create AD application"
-Write-Host "Please login via the pop-up window that has launched in your browser"
+Write-Host "Please login to $ADTenantName via the pop-up window that has launched in your browser"
 az login --tenant "$ADTenantName.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
 $MultiTenantAppName = Read-Host "Please give a name for the AD application to be created"
 $ADAppManifest = "{
@@ -77,7 +77,7 @@ Remove-Item manifest.json
 
 #region "STEP 2: login"
 Write-Title "STEP 2: Logging into the B2C Tenant" 
-Write-Host "Please login via the pop-up window that has launched in your browser"
+Write-Host "Please login to $B2cTenantName via the pop-up window that has launched in your browser"
 az login --tenant "$B2cTenantName.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
 #endregion
 
@@ -161,8 +161,8 @@ az ad app permission add --id $ProxyIEFClientID --api $IEFClientID --api-permiss
 #endregion
 
 
-#region "STEP 6: getting the values we want to replace from the templates"
-Write-Title "STEP 6: Getting values to use in the custom policies?"
+#region "STEP 6: (Optional) linking facebook apps"
+Write-Title "STEP 6: (Optional) linking facebook app"
 $HasFaceBookApp = ""
 while($HasFaceBookApp -ne "y" -and $HasFaceBookApp -ne "n"){
     $HasFaceBookApp = Read-Host "Do you have a facebook application set up that you'd like to link? (y/n)"

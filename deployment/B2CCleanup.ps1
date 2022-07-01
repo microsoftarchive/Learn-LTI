@@ -8,6 +8,8 @@ function Write-Title([string]$Title) {
 }
 #endregion
 
+#region "Deleting the generated applications"
+Write-Title "STEP 1: Deleting the generated applications"
 $AppInfoCSVPath = ".\AppInfo.csv"
 $AppInfo = Import-Csv -Path $AppInfoCSVPath -Header @("AppID", "TenantID")
 $LastTenantID = ""
@@ -16,16 +18,17 @@ foreach ($info in $AppInfo) {
     $tid = $info.TenantID
     if ($tid -ne $LastTenantID) {
         $LastTenantID = $tid
-        Write-Host "Please login via the pop-up window that has launched in your browser"
+        Write-Host "Please login to $tid via the pop-up window that has launched in your browser"
         az login --tenant "$tid.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
     }
+    Write-Host "Deleting $id from $tid"
     az ad app delete --id $id --only-show-errors
 }
-
+#endregion
 
 #region "Getting the token to be used in the HTML REQUESTS"
 # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
-Write-Title "Getting the token to be used in the HTML REQUESTS"
+Write-Title "STEP 2: Getting the token to be used in the HTML REQUESTS"
 
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -40,7 +43,7 @@ $access_token = "Bearer " + $access_token
 
 #region "Connecting to the b2c tenant and removing the custom policies already uploaded to the b2c tenant"
 #reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkpolicy-delete?view=graph-rest-beta&tabs=http
-Write-Title "Cleaning up the custom policies from the b2c tenant"
+Write-Title "STEP 3: Cleaning up the custom policies from the b2c tenant"
 
 $B2cTenantDomain = Read-Host "What is your B2C tenants domain (e.g. mytenant.onmicrosoft.com)?"
 
