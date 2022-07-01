@@ -173,7 +173,6 @@ process {
     
         Write-Host 'App Created Successfully'
         #endregion
-    
         #region Create New Resource Group in above Region
         Write-Title 'STEP #5 - Creating Resource Group'
     
@@ -203,7 +202,15 @@ process {
         $userObjectId = az ad signed-in-user show --query objectId
         }
         #$userObjectId
-    
+
+        [string]$dir = Get-Location
+        $dir = $dir + "/azuredeploy.json"
+        [string]$ran = Get-Random -Maximum 1000
+
+        $json = Get-Content $dir | ConvertFrom-Json
+        $json.variables.uniqueIdentifier = "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, $ran),0,9)]"
+        $json | ConvertTo-Json | Out-File $dir
+
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $($appinfo.appId), IdentifiedURI: $($appinfo.identifierUris)"
