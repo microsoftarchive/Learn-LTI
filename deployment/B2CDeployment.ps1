@@ -67,10 +67,7 @@ Read-Host "Press enter when ready to continue after recording the client secret"
 Write-Host "Granting permissions to the AD application"
 $profilePermission = "14dad69e-099b-42c9-810b-d002981feec1=Scope"
 $emailPermission = "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0=Scope"
-$scope = (az ad sp show --id $MultiTenantAppID --only-show-errors 2>$null)
-if ($null -eq $scope) {
-    az ad sp create --id $MultiTenantAppID --only-show-errors > $null
-}
+az ad sp create --id $MultiTenantAppID --only-show-errors 2>&1 > $null
 az ad app permission grant --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors > $null
 az ad app permission add --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --api-permissions $emailPermission $profilePermission --only-show-errors
 
@@ -105,10 +102,7 @@ Read-Host "Press enter when ready to continue after recording the client secret"
 Write-Host "Granting permissions to the B2C Web application"
 $openidPermission = "37f7f235-527c-4136-accd-4a02d197296e=Scope"
 $offlineAccessPermission = "7427e0e9-2fba-42fe-b0c0-848c9e6a8182=Scope"
-$scope = (az ad sp show --id $WebClientID --only-show-errors 2>$null)
-if ($null -eq $scope) {
-    az ad sp create --id $WebClientID --only-show-errors > $null
-}
+az ad sp create --id $WebClientID --only-show-errors 2>&1 > $null
 az ad app permission grant --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 #endregion
@@ -123,10 +117,7 @@ $IEFClientID = (az ad app create --display-name $IEFAppName --sign-in-audience A
 
 # set permissions for the IEF app
 Write-Host "Granting permissions to the IEF application"
-$scope = (az ad sp show --id $IEFClientID --only-show-errors 2>$null)
-if ($null -eq $scope) {
-    az ad sp create --id $IEFClientID --only-show-errors > $null
-}
+az ad sp create --id $IEFClientID --only-show-errors 2>&1 > $null
 az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 
@@ -162,10 +153,7 @@ $ProxyIEFClientID = (az ad app create --display-name $ProxyIEFAppName --sign-in-
 "$ProxyIEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 Write-Host "Granting permissions to the Proxy IEF application"
-$scope = (az ad sp show --id $ProxyIEFClientID --only-show-errors 2>$null)
-if ($null -eq $scope) {
-    az ad sp create --id $ProxyIEFClientID --only-show-errors > $null
-}
+az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1 > $null
 az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 az ad app permission grant --id $ProxyIEFClientID --api $IEFClientID --scope "user_impersonation" --only-show-errors > $null
