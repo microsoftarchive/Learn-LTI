@@ -12,22 +12,6 @@ function Write-Title([string]$Title) {
 function Write-Color($Color, [string]$Text) {
 	process{Write-Host $Text -ForegroundColor $Color}
 }
-
-function getNbfExp($num_months){
-	$start_date = Get-Date -Date "1970-01-01 00:00:00Z"
-	$date = Get-Date
-	$nbf = [math]::floor(($date - $start_date).TotalSeconds)
-	$exp = [math]::floor((($date - $start_date).TotalSeconds) + $num_months * 60 * 60 * 24 * 30)
-	return $nbf, $exp
-}
-#endregion
-
-#region "Importing Modules"
-# Write-Title "Importing Modules"
-# Write-Host "Importing Module AzureADPreview" # REQUIRES THE PREVIEW VERSION
-# Import-Module AzureADPreview
-# Write-Host "Importing Module Microsoft.Graph.Identity.SignIns"
-# Import-Module Microsoft.Graph.Identity.SignIns
 #endregion
 
 #region "STEP 1: Create Active Directory application"
@@ -163,7 +147,7 @@ az ad app permission add --id $ProxyIEFClientID --api $IEFClientID --api-permiss
 #region "STEP 6: getting the values we want to replace from the templates"
 Write-Title "STEP 6: Getting values to use in the custom policies?"
 $HasFaceBookApp = ""
-while($HasFaceBookApp -ne "Y" -and $HasFaceBookApp -ne "N"){
+while($HasFaceBookApp -ne "y" -and $HasFaceBookApp -ne "n"){
     $HasFaceBookApp = Read-Host "Do you have a facebook application set up that you'd like to link? (y/n)"
 }
 $FacebookId = "00000000-0000-0000-0000-000000000000" #default to meaningless placeholder value if app isn't set up
@@ -175,8 +159,7 @@ if($HasFaceBookApp -eq "y"){
 
 #region "STEP 7: looping through each CustomPolicyTemplate and creating bases of them in CustomTemplates"
 Write-Title "STEP 7: Creating template custom policies"
-Get-ChildItem ".\CustomPolicyTemplates\" | 
-Foreach-Object {
+Get-ChildItem ".\CustomPolicyTemplates\" | Foreach-Object {
     ((Get-Content -path $_.FullName -Raw)) | Set-Content -path (".\CustomPolicy\"+$_.Name)
 }
 #endregion
@@ -184,23 +167,36 @@ Foreach-Object {
 
 #region "STEP 8: looping through each CustomPolicy and replacing their placeholder values to generate the final custom policies"
 Write-Title "STEP 8: Replacing values in template custom policies to generate finalised custom policies"
-Get-ChildItem ".\CustomPolicy\" | 
-Foreach-Object {
-    ((Get-Content -path $_.FullName -Raw) -replace '<<B2CTenantName>>', $B2cTenantName) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
+    #ignore the gitkeep
+    if($_.Name -ne ".gitkeep"){
+        ((Get-Content -path $_.FullName -Raw) -replace '<<B2CTenantName>>', $B2cTenantName) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
 
-    ((Get-Content -path $_.FullName -Raw) -replace '<<ProxyIdentityExperienceFrameworkAppId>>', $ProxyIEFClientID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
-    
-    ((Get-Content -path $_.FullName -Raw) -replace '<<IdentityExperienceFrameworkAppId>>', $IEFClientID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
-    
-    ((Get-Content -path $_.FullName -Raw) -replace '<<FacebookId>>', $FacebookId) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+        ((Get-Content -path $_.FullName -Raw) -replace '<<ProxyIdentityExperienceFrameworkAppId>>', $ProxyIEFClientID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+        
+        ((Get-Content -path $_.FullName -Raw) -replace '<<IdentityExperienceFrameworkAppId>>', $IEFClientID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+        
+        ((Get-Content -path $_.FullName -Raw) -replace '<<FacebookId>>', $FacebookId) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
 
-    ((Get-Content -path $_.FullName -Raw) -replace '<<MultiTenantAppID>>', $MultitenantAppID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+        ((Get-Content -path $_.FullName -Raw) -replace '<<MultiTenantAppID>>', $MultitenantAppID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+    }
 
 }
 #endregion
 
-#region "STEP 9: Add signing and encryption keys for the IEF applications"
-Write-Title "STEP 9: Adding signing and encryption keys for the IEF applications"
+#region "STEP 9: Add signing and encryption keys and AADAppSecret for the IEF applications"
+
+#region "Function for calculating the not before and expiry datetimes for the keys"
+function getNbfExp($num_months){
+	$start_date = Get-Date -Date "1970-01-01 00:00:00Z"
+	$date = Get-Date
+	$nbf = [math]::floor(($date - $start_date).TotalSeconds)
+	$exp = [math]::floor((($date - $start_date).TotalSeconds) + $num_months * 60 * 60 * 24 * 30)
+	return $nbf, $exp
+}
+#endregion
+
+Write-Title "STEP 9: Adding signing and encryption keys and AADAppSecret for the IEF applications"
 
 $num_months = 0 
 while($num_months -le 0){
@@ -359,38 +355,58 @@ Write-Host "Successfully uploaded the AADAppSecret key"
 #endregion 
 #endregion
 
-
 #region "STEP 10: uploading the custom policies to the b2c tenant"
-#reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-trustframeworkpolicy?view=graph-rest-beta
+
+#region "Function for updating existing custom policy or uploading new custom policies"
+function CustomPolicyUpdateOrUpload($customPolicyName, $customPolicies, $access_token) {
+    process{
+        if($customPolicies -contains $customPolicyName){
+            $updateCustomPolicy = ""
+            while($UpdateCustomPolicy -ne "y" -and $UpdateCustomPolicy -ne "n"){
+                $UpdateCustomPolicy = Read-Host "$customPolicyName already exists, would you like to update it? ('y' recommended OR 'n') "
+            }
+            
+            if($UpdateCustomPolicy -eq "y"){
+                #reference: https://docs.microsoft.com/en-us/graph/api/trustframework-put-trustframeworkpolicy?view=graph-rest-beta
+                $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+                $headers.Add("Content-Type", "application/xml")
+                $headers.Add("Authorization", $access_token)
+                [string] $body = Get-Content "./CustomPolicy/$customPolicyName.xml"
+                $response = Invoke-RestMethod ('https://graph.microsoft.com/beta/trustFramework/policies/'+$customPolicyName+'/$value') -Method 'PUT' -Headers $headers -Body $body
+                $response | ConvertTo-Json
+            }
+        }
+        else{
+            #reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-trustframeworkpolicy?view=graph-rest-beta
+            Write-Host "$customPolicyName does not exist, so uploading it to a new custom policy on Azure"
+            $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+            $headers.Add("Authorization", $access_token)
+            $headers.Add("Content-Type", "application/xml")
+            [string] $body = Get-Content "./CustomPolicy/$customPolicyName.xml"
+            $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
+        }
+    }
+}
+#endregion
 
 Write-Title "STEP 10: Uploading the custom policies to the b2c tenant"
 
+#getting list of all users in the tenant
+Write-Host "Getting the list of all custom policies in the tenant"
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
-$headers.Add("Content-Type", "application/xml")
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'GET' -Headers $headers
+$customPolicies = $response.value
+$customPolicies = $customPolicies.id
+
+
+Write-Host "Uploading/updating each of the custom policies"
 
 # Order matters in the uploads - do not modify the order
-Write-Host "Uploading custom policy TRUSTFRAMEWORKBASE"
-[string] $body = Get-Content "./CustomPolicy/TRUSTFRAMEWORKBASE.xml"
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
-
-Write-Host "Uploading custom policy TRUSTFRAMEWORKLOCALIZATION"
-[string] $body = Get-Content "./CustomPolicy/TRUSTFRAMEWORKLOCALIZATION.xml"
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
-
-Write-Host "Uploading custom policy TRUSTFRAMEWORKEXTENSIONS"
-[string] $body = Get-Content "./CustomPolicy/TRUSTFRAMEWORKEXTENSIONS.xml"
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
-
-Write-Host "Uploading custom policy SIGNUP_SIGNIN"
-[string] $body = Get-Content "./CustomPolicy/SIGNUP_SIGNIN.xml"
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
-
-Write-Host "Uploading custom policy PROFILEEDIT"
-[string] $body = Get-Content "./CustomPolicy/PROFILEEDIT.xml"
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
-
-Write-Host "Uploading custom policy PASSWORDRESET"
-[string] $body = Get-Content "./CustomPolicy/PASSWORDRESET.xml"
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
+CustomPolicyUpdateOrUpload "B2C_1A_TrustFrameworkBase" $customPolicies $access_token
+CustomPolicyUpdateOrUpload "B2C_1A_TrustFrameworkLocalization" $customPolicies $access_token
+CustomPolicyUpdateOrUpload "B2C_1A_TrustFrameworkExtensions" $customPolicies $access_token
+CustomPolicyUpdateOrUpload "B2C_1A_signup_signin" $customPolicies $access_token
+CustomPolicyUpdateOrUpload "B2C_1A_ProfileEdit" $customPolicies $access_token
+CustomPolicyUpdateOrUpload "B2C_1A_PasswordReset" $customPolicies $access_token
 #endregion
