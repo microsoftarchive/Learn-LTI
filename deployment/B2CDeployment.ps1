@@ -16,7 +16,11 @@ function Write-Color($Color, [string]$Text) {
 
 #region "AppInfo CSV setup"
 $AppInfoCSVPath = ".\AppInfo.csv"
-Clear-Content $AppInfoCSVPath
+if (Test-Path $AppInfoCSVPath -PathType Leaf) {
+    Clear-Content $AppInfoCSVPath
+} else {
+    New-Item $AppInfoCSVPath > $null
+}
 #endregeion
 
 #region "STEP 1: Create Active Directory application"
