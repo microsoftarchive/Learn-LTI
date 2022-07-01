@@ -8,10 +8,19 @@ function Write-Title([string]$Title) {
 }
 #endregion
 
-
-
-
-
+$AppInfoCSVPath = ".\AppInfo.csv"
+$AppInfo = Import-Csv -Path $AppInfoCSVPath -Header @("AppID", "TenantID")
+$LastTenantID = ""
+foreach ($info in $AppInfo) {
+    $id = $info.AppID
+    $tid = $info.TenantID
+    if ($tid -ne $LastTenantID) {
+        $LastTenantID = $tid
+        Write-Host "Please login via the pop-up window that has launched in your browser"
+        az login --tenant "$tid.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
+    }
+    az ad app delete --id $id --only-show-errors
+}
 
 
 #region "Getting the token to be used in the HTML REQUESTS"
