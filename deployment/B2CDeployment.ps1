@@ -23,9 +23,9 @@ function getNbfExp($num_months){
 #endregion
 
 #region "Importing Modules"
-Write-Title "Importing Modules"
-Write-Host "Importing Module AzureADPreview" # REQUIRES THE PREVIEW VERSION
-Import-Module AzureADPreview
+# Write-Title "Importing Modules"
+# Write-Host "Importing Module AzureADPreview" # REQUIRES THE PREVIEW VERSION
+# Import-Module AzureADPreview
 # Write-Host "Importing Module Microsoft.Graph.Identity.SignIns"
 # Import-Module Microsoft.Graph.Identity.SignIns
 #endregion
@@ -224,7 +224,8 @@ while($num_months -le 0){
 #region "STEP 9.A: Create the signing key"
 Write-Title "STEP 9.A: Creating the Signing Key"
 
-#region "Creating the signing keyset (container)""
+#region "Creating the signing keyset (container)"
+#reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
 Write-Host "`nCreating the signing keyset (container)`n"
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
@@ -240,6 +241,7 @@ Write-Host "`nSuccessfully created the key signing container: "+$signing_contain
 #endregion
 
 #region "Generating the signing key"
+#reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkkeyset-generatekey?view=graph-rest-beta&tabs=http
 #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
 Write-Host "`nGenerating the signing key and uploading to the keyset`n"
 $arr = getNbfExp($num_months)
@@ -269,7 +271,8 @@ Write-Host "Successfully generated the signing key"
 #region "STEP 9.B: Create the encryption key"
 Write-Title "STEP 9.B: Creating the Signing Key"
 
-#region "Creating the encryption keyset (container)""
+#region "Creating the encryption keyset (container)"
+#reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
 Write-Host "`nCreating the signing keyset (container)`n"
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
@@ -285,6 +288,7 @@ Write-Host "Successfully created the key encryption container: $encryption_conta
 
 
 #region "Generating the encryption key"
+#reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkkeyset-generatekey?view=graph-rest-beta&tabs=http
 #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
 Write-Host "`nGenerating the encryption key and uploading to the keyset`n"
 $arr = getNbfExp($num_months)
@@ -309,10 +313,11 @@ Write-Host "Successfully generated the encryption key"
 #endregion
 
 
-#region "STEP 9.C: Create the AADSecret keyset""
+#region "STEP 9.C: Create the AADSecret keyset"
 Write-Title "STEP 9.C: Creating the AADAppSecret Key"
 
-#region "Creating the AADAppSecret keyset (container)""
+#region "Creating the AADAppSecret keyset (container)"
+#reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
 Write-Host "`nCreating the AADAppSecret keyset (container)`n"
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
@@ -327,7 +332,7 @@ Write-Host "Successfully created the key AADAppSecret container: $AADAppSecret_c
 #endregion
 
 #region "Uploading the AADAppSecret key"
-
+#reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkkeyset-uploadsecret?view=graph-rest-beta&tabs=https
 #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
 Write-Host "`nGenerating the AADAppSecret key and uploading to the keyset`n"
 $arr = getNbfExp($num_months)
@@ -354,33 +359,38 @@ Write-Host "Successfully uploaded the AADAppSecret key"
 #endregion 
 #endregion
 
-#region "STEP 10: Connecting to the b2c tenant"
-Write-Title "STEP 10: Connecting to the b2c tenant"
 
-$B2cTenantDomain = $B2cTenantName+".onmicrosoft.com"
-Write-Host "Connecting to the tenant, please login via the popup Window"
-Connect-AzureAD -Tenant $B2cTenantDomain
-#endregion
+#region "STEP 10: uploading the custom policies to the b2c tenant"
+#reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-trustframeworkpolicy?view=graph-rest-beta
 
-#region "STEP 11: uploading the custom policies to the b2c tenant"
-Write-Title "STEP 11: Uploading the custom policies to the b2c tenant"
+Write-Title "STEP 10: Uploading the custom policies to the b2c tenant"
+
+$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+$headers.Add("Authorization", $access_token)
+$headers.Add("Content-Type", "application/xml")
 
 # Order matters in the uploads - do not modify the order
 Write-Host "Uploading custom policy TRUSTFRAMEWORKBASE"
-New-AzureADMSTrustFrameworkPolicy -InputFilePath ($currentDir+"\CustomPolicy\TRUSTFRAMEWORKBASE.xml")
+[string] $body = Get-Content "./CustomPolicy/TRUSTFRAMEWORKBASE.xml"
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
 
 Write-Host "Uploading custom policy TRUSTFRAMEWORKLOCALIZATION"
-New-AzureADMSTrustFrameworkPolicy -InputFilePath ($currentDir+"\CustomPolicy\TRUSTFRAMEWORKLOCALIZATION.xml")
+[string] $body = Get-Content "./CustomPolicy/TRUSTFRAMEWORKLOCALIZATION.xml"
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
 
 Write-Host "Uploading custom policy TRUSTFRAMEWORKEXTENSIONS"
-New-AzureADMSTrustFrameworkPolicy -InputFilePath ($currentDir+"\CustomPolicy\TRUSTFRAMEWORKEXTENSIONS.xml")
+[string] $body = Get-Content "./CustomPolicy/TRUSTFRAMEWORKEXTENSIONS.xml"
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
 
 Write-Host "Uploading custom policy SIGNUP_SIGNIN"
-New-AzureADMSTrustFrameworkPolicy -InputFilePath ($currentDir+"\CustomPolicy\SIGNUP_SIGNIN.xml")
+[string] $body = Get-Content "./CustomPolicy/SIGNUP_SIGNIN.xml"
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
 
 Write-Host "Uploading custom policy PROFILEEDIT"
-New-AzureADMSTrustFrameworkPolicy -InputFilePath ($currentDir+"\CustomPolicy\PROFILEEDIT.xml")
+[string] $body = Get-Content "./CustomPolicy/PROFILEEDIT.xml"
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
 
 Write-Host "Uploading custom policy PASSWORDRESET"
-New-AzureADMSTrustFrameworkPolicy -InputFilePath ($currentDir+"\CustomPolicy\PASSWORDRESET.xml")
+[string] $body = Get-Content "./CustomPolicy/PASSWORDRESET.xml"
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies' -Method 'POST' -Headers $headers -Body $body
 #endregion
