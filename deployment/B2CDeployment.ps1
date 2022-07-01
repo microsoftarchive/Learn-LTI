@@ -202,6 +202,11 @@ Foreach-Object {
 #region "STEP 9: Add signing and encryption keys for the IEF applications"
 Write-Title "STEP 9: Adding signing and encryption keys for the IEF applications"
 
+$num_months = 0 
+while($num_months -le 0){
+	[uint16] $num_months = Read-Host "How many months do you want the keys to be valid for? (must be greater than 0)"
+}
+
 #region "Getting the token to be used in the GET/POST requests"
 # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
 Write-Host "Getting the token to be used in the GET/POST requests"
@@ -215,11 +220,6 @@ $response = Invoke-RestMethod 'https://login.microsoftonline.com/playltib2c.onmi
 $access_token = $response.access_token
 $access_token = "Bearer " + $access_token
 #endregion
-
-$num_months = 0 
-while($num_months -le 0){
-	[uint16] $num_months = Read-Host "How many months do you want the keys to be valid for? (must be greater than 0)"
-}
 
 #region "STEP 9.A: Create the signing key"
 Write-Title "STEP 9.A: Creating the Signing Key"
