@@ -57,13 +57,15 @@ Write-Host "Deleting B2C_1A_PasswordReset"
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies/B2C_1A_PasswordReset' -Method 'DELETE' -Headers $headers
 #endregion
 
-# Cleaning up the keysets from the b2c tenant
+#region "Cleaning up the keysets from the b2c tenant"
 Write-Title "Cleaning up the keysets from the b2c tenant"
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
 
+Write-Host "Deleting B2C_1A_TokenSigningKeyContainer keyset"
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets/B2C_1A_TokenSigningKeyContainer' -Method 'DELETE' -Headers $headers
-$response | ConvertTo-Json
-
+Write-Host "Deleting B2C_1A_TokenEncryptionKeyContainer keyset"
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets/B2C_1A_TokenEncryptionKeyContainer' -Method 'DELETE' -Headers $headers
-$response | ConvertTo-Json
+Write-Host "Deleting B2C_1A_AADAppSecret keyset"
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets/B2C_1A_AADAppSecret' -Method 'DELETE' -Headers $headers
+#endregion
