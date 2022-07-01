@@ -229,56 +229,74 @@ $access_token = $response.access_token
 $access_token = "Bearer " + $access_token
 #endregion
 
+#region "Getting the list of all custom policies in the tenant; to check if each keyset already exists prior to creating it"
+Write-Host "Getting the list of all custom policies in the tenant"
+$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+$headers.Add("Authorization", $access_token)
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'GET' -Headers $headers
+$keysets = $response.value
+$keysets = $keysets.id
+$keysets
+#endregion
+
 #region "STEP 9.A: Create the signing key"
 Write-Title "STEP 9.A: Creating the Signing Key"
 
-#region "Creating the signing keyset (container)"
-#reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
-Write-Host "`nCreating the signing keyset (container)`n"
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Authorization", $access_token)
-$headers.Add("Content-Type", "application/json")
+if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
+    Write-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
+}
+else{
+    #region "Creating the signing keyset (container)"
+    #reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
+    Write-Host "`nCreating the signing keyset (container)`n"
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization", $access_token)
+    $headers.Add("Content-Type", "application/json")
 
-$body = "{`"id`":`"B2C_1A_TokenSigningKeyContainer`"}"
+    $body = "{`"id`":`"B2C_1A_TokenSigningKeyContainer`"}"
 
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'POST' -Headers $headers -Body $body
-$response | ConvertTo-Json
-$signing_container_id = $response.id
+    $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'POST' -Headers $headers -Body $body
+    $response | ConvertTo-Json
+    $signing_container_id = $response.id
 
-Write-Host "`nSuccessfully created the key signing container: "+$signing_container_id+"`n"
-#endregion
+    Write-Host "`nSuccessfully created the key signing container: "+$signing_container_id+"`n"
+    #endregion
 
-#region "Generating the signing key"
-#reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkkeyset-generatekey?view=graph-rest-beta&tabs=http
-#calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
-Write-Host "`nGenerating the signing key and uploading to the keyset`n"
-$arr = getNbfExp($num_months)
-$nbf = $arr[0]
-$exp = $arr[1]
+    #region "Generating the signing key"
+    #reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkkeyset-generatekey?view=graph-rest-beta&tabs=http
+    #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
+    Write-Host "`nGenerating the signing key and uploading to the keyset`n"
+    $arr = getNbfExp($num_months)
+    $nbf = $arr[0]
+    $exp = $arr[1]
 
 
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Authorization", $access_token)
-$headers.Add("Content-Type", "application/json")
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization", $access_token)
+    $headers.Add("Content-Type", "application/json")
 
-$body = "{
-`n  `"use`": `"sig`",
-`n  `"kty`": `"RSA`",
-`n  `"nbf`": "+$nbf+",
-`n  `"exp`": "+$exp+",
-`n}"
+    $body = "{
+    `n  `"use`": `"sig`",
+    `n  `"kty`": `"RSA`",
+    `n  `"nbf`": "+$nbf+",
+    `n  `"exp`": "+$exp+",
+    `n}"
 
-$response = Invoke-RestMethod ('https://graph.microsoft.com/beta/trustFramework/keySets/'+$signing_container_id+'/generateKey') -Method 'POST' -Headers $headers -Body $body
+    $response = Invoke-RestMethod ('https://graph.microsoft.com/beta/trustFramework/keySets/'+$signing_container_id+'/generateKey') -Method 'POST' -Headers $headers -Body $body
 
-Write-Host "Successfully generated the signing key"
-#endregion
-
+    Write-Host "successfully generated and uploaded the signing key"
+    #endregion
+}
 #endregion
 
 
 #region "STEP 9.B: Create the encryption key"
 Write-Title "STEP 9.B: Creating the Signing Key"
 
+if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
+    Write-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
+}
+else{
 #region "Creating the encryption keyset (container)"
 #reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
 Write-Host "`nCreating the signing keyset (container)`n"
@@ -316,7 +334,8 @@ $body = "{
 
 $response = Invoke-RestMethod ("https://graph.microsoft.com/beta/trustFramework/keySets/$encryption_container_id/generateKey") -Method 'POST' -Headers $headers -Body $body
 
-Write-Host "Successfully generated the encryption key"
+Write-Host "Successfully generated and uploaded the encryption key"
+}
 #endregion
 #endregion
 
@@ -324,44 +343,49 @@ Write-Host "Successfully generated the encryption key"
 #region "STEP 9.C: Create the AADSecret keyset"
 Write-Title "STEP 9.C: Creating the AADAppSecret Key"
 
-#region "Creating the AADAppSecret keyset (container)"
-#reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
-Write-Host "`nCreating the AADAppSecret keyset (container)`n"
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Authorization", $access_token)
-$headers.Add("Content-Type", "application/json")
+if($keysets -contains "B2C_1A_AADAppSecret"){
+    Write-Host "B2C_1A_AADAppSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
+}
+else{
+    #region "Creating the AADAppSecret keyset (container)"
+    #reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
+    Write-Host "`nCreating the AADAppSecret keyset (container)`n"
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization", $access_token)
+    $headers.Add("Content-Type", "application/json")
 
-$body = "{`"id`":`"B2C_1A_AADAppSecret`"}"
+    $body = "{`"id`":`"B2C_1A_AADAppSecret`"}"
 
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'POST' -Headers $headers -Body $body
-$AADAppSecret_container_id = $response.id
+    $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'POST' -Headers $headers -Body $body
+    $AADAppSecret_container_id = $response.id
 
-Write-Host "Successfully created the key AADAppSecret container: $AADAppSecret_container_id"
-#endregion
+    Write-Host "Successfully created the key AADAppSecret container: $AADAppSecret_container_id"
+    #endregion
 
-#region "Uploading the AADAppSecret key"
-#reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkkeyset-uploadsecret?view=graph-rest-beta&tabs=https
-#calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
-Write-Host "`nGenerating the AADAppSecret key and uploading to the keyset`n"
-$arr = getNbfExp($num_months)
-$nbf = $arr[0]
-$exp = $arr[1]
+    #region "Uploading the AADAppSecret key"
+    #reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkkeyset-uploadsecret?view=graph-rest-beta&tabs=https
+    #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
+    Write-Host "`nGenerating the AADAppSecret key and uploading to the keyset`n"
+    $arr = getNbfExp($num_months)
+    $nbf = $arr[0]
+    $exp = $arr[1]
 
-#uploading the AADAppSecret key
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Authorization", $access_token)
-$headers.Add("Content-Type", "application/json")
+    #uploading the AADAppSecret key
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization", $access_token)
+    $headers.Add("Content-Type", "application/json")
 
-$body = "{
-`n  `"use`": `"sig`",
-`n  `"k`": `""+$MultiTenantClientSecret+"`",
-`n  `"nbf`": "+$nbf+",
-`n  `"exp`": "+$exp+"
-`n}"
+    $body = "{
+    `n  `"use`": `"sig`",
+    `n  `"k`": `""+$MultiTenantClientSecret+"`",
+    `n  `"nbf`": "+$nbf+",
+    `n  `"exp`": "+$exp+"
+    `n}"
 
-$response = Invoke-RestMethod "https://graph.microsoft.com/beta/trustFramework/keySets/$AADAppSecret_container_id/uploadSecret" -Method 'POST' -Headers $headers -Body $body
+    $response = Invoke-RestMethod "https://graph.microsoft.com/beta/trustFramework/keySets/$AADAppSecret_container_id/uploadSecret" -Method 'POST' -Headers $headers -Body $body
 
-Write-Host "Successfully uploaded the AADAppSecret key"
+    Write-Host "Successfully uploaded the AADAppSecret key"
+}
 #endregion
 
 #endregion 
