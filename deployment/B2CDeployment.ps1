@@ -21,7 +21,7 @@ $ADTenantName = Read-Host "Please enter your AD tenant name"
 Write-Title "STEP 1: Create AD application"
 Write-Host "Please login via the pop-up window that has launched in your browser"
 az login --tenant "$ADTenantName.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
-$ADAppName = Read-Host "Please give a name for the AD application to be created"
+$MultiTenantAppName = Read-Host "Please give a name for the AD application to be created"
 $ADAppManifest = "{
     `"idToken`": [
         {
@@ -41,22 +41,25 @@ $ADAppManifest = "{
     `"saml2Token`": []
 }"
 Out-File -FilePath "manifest.json" -InputObject $ADAppManifest
-$MultiTenantAppID = (az ad app create --display-name $ADAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com/oauth2/authresp --optional-claims "@manifest.json" --query appId --output tsv --only-show-errors)
+$MultiTenantAppID = (az ad app create --display-name $MultiTenantAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com/oauth2/authresp --optional-claims "@manifest.json" --query appId --output tsv --only-show-errors)
 
 # Create client secret
-Write-Host "Creating the client secret for $ADAppName"
-$ADClientSecretName = Read-Host "Please give a name for the client secret to be created"
-$ADClientSecretDuration = 1
-$ADClientSecret = (az ad app credential reset --id $MultiTenantAppID --append --display-name $ADClientSecretName --years $ADClientSecretDuration --query password --output tsv --only-show-errors)
+Write-Host "Creating the client secret for $MultiTenantAppName"
+$MultiTenantClientSecretName = Read-Host "Please give a name for the client secret to be created"
+$MultiTenantClientSecretDuration = 1
+$MultiTenantClientSecret = (az ad app credential reset --id $MultiTenantAppID --append --display-name $MultiTenantClientSecretName --years $MultiTenantClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Please take a moment to make a note of and protect the following client secret; as you will not be able to access it again."
-Write-Color "green" "Client secret for $ADAppName`: $ADClientSecret"
+Write-Color "green" "Client secret for $MultiTenantAppName`: $MultiTenantClientSecret"
 Read-Host "Press enter when ready to continue after recording the client secret"
 
 # grant permissions for the AD app
 Write-Host "Granting permissions to the AD application"
 $profilePermission = "14dad69e-099b-42c9-810b-d002981feec1=Scope"
 $emailPermission = "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0=Scope"
-az ad sp create --id $MultiTenantAppID --only-show-errors > $null
+$scope = (az ad sp show --id $MultiTenantAppID --only-show-errors 2>$null)
+if ($null -eq $scope) {
+    az ad sp create --id $MultiTenantAppID --only-show-errors > $null
+}
 az ad app permission grant --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors > $null
 az ad app permission add --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --api-permissions $emailPermission $profilePermission --only-show-errors
 
@@ -89,7 +92,10 @@ Read-Host "Press enter when ready to continue after recording the client secret"
 Write-Host "Granting permissions to the B2C Web application"
 $openidPermission = "37f7f235-527c-4136-accd-4a02d197296e=Scope"
 $offlineAccessPermission = "7427e0e9-2fba-42fe-b0c0-848c9e6a8182=Scope"
-az ad sp create --id $WebClientID --only-show-errors > $null
+$scope = (az ad sp show --id $WebClientID --only-show-errors 2>$null)
+if ($null -eq $scope) {
+    az ad sp create --id $WebClientID --only-show-errors > $null
+}
 az ad app permission grant --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 #endregion
@@ -102,7 +108,10 @@ $IEFClientID = (az ad app create --display-name $IEFAppName --sign-in-audience A
 
 # set permissions for the IEF app
 Write-Host "Granting permissions to the IEF application"
-az ad sp create --id $IEFClientID --only-show-errors > $null
+$scope = (az ad sp show --id $IEFClientID --only-show-errors 2>$null)
+if ($null -eq $scope) {
+    az ad sp create --id $IEFClientID --only-show-errors > $null
+}
 az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 
@@ -136,7 +145,10 @@ $ProxyIEFAppName = "ProxyIdentityExperienceFramework"
 $ProxyIEFClientID = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --query appId --output tsv --only-show-errors)
 
 Write-Host "Granting permissions to the Proxy IEF application"
-az ad sp create --id $ProxyIEFClientID --only-show-errors > $null
+$scope = (az ad sp show --id $ProxyIEFClientID --only-show-errors 2>$null)
+if ($null -eq $scope) {
+    az ad sp create --id $ProxyIEFClientID --only-show-errors > $null
+}
 az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 az ad app permission grant --id $ProxyIEFClientID --api $IEFClientID --scope "user_impersonation" --only-show-errors > $null
@@ -342,7 +354,7 @@ $headers.Add("Content-Type", "application/json")
 
 $body = "{
 `n  `"use`": `"sig`",
-`n  `"k`": `""+$ADClientSecret+"`",
+`n  `"k`": `""+$MultiTenantClientSecret+"`",
 `n  `"nbf`": "+$nbf+",
 `n  `"exp`": "+$exp+"
 `n}"
