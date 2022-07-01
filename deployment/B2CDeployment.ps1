@@ -207,6 +207,7 @@ Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
 function getNbfExp($num_months){
 	$start_date = Get-Date -Date "1970-01-01 00:00:00Z"
 	$date = Get-Date
+    $date = $date.ToUniversalTime()
 	$nbf = [math]::floor(($date - $start_date).TotalSeconds)
 	$exp = [math]::floor((($date - $start_date).TotalSeconds) + $num_months * 60 * 60 * 24 * 30)
 	return $nbf, $exp
