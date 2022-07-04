@@ -197,38 +197,48 @@ namespace Edna.AssignmentLearnContent
                 : new OkResult();
         }
 
+
+        #region "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES JSON TOKENS"
+        // function for getting all the assignmentLearnContent entities in the tenant (?)
         private async Task<List<AssignmentLearnContentEntity>> GetAllAssignmentLearnContentEntities(CloudTable assignmentLearnContentTable, string assignmentId)
         {
             TableQuery<AssignmentLearnContentEntity> assignmentSelectedLearnContentQuery = new TableQuery<AssignmentLearnContentEntity>()
                 .Where(
                     TableQuery.GenerateFilterCondition(nameof(TableEntity.PartitionKey), QueryComparisons.Equal, assignmentId)
-                );
+                ); // get all the entities with the same partition key as the assignmentId (?)
 
-            List<AssignmentLearnContentEntity> assignmentSelectedLearnContent = new List<AssignmentLearnContentEntity>();
-            TableContinuationToken continuationToken = new TableContinuationToken();
+            List<AssignmentLearnContentEntity> assignmentSelectedLearnContent = new List<AssignmentLearnContentEntity>(); // create an empty list of AssignmentLearnContentEntity
+
+            TableContinuationToken continuationToken = new TableContinuationToken(); // create a new empty TableContinuationToken
+
+            // loop through the assignmentLearnContentTable and add the entities to assignmentSelectedLearnContent
             do
             {
-                TableQuerySegment<AssignmentLearnContentEntity> querySegment = await assignmentLearnContentTable.ExecuteQuerySegmentedAsync(assignmentSelectedLearnContentQuery, continuationToken);
-                continuationToken = querySegment.ContinuationToken;
-                assignmentSelectedLearnContent.AddRange(querySegment.Results);
-            } while (continuationToken != null);
+                TableQuerySegment<AssignmentLearnContentEntity> querySegment = await assignmentLearnContentTable.ExecuteQuerySegmentedAsync(assignmentSelectedLearnContentQuery, continuationToken); // get the next segment of the assignmentLearnContentTable (?)
+                continuationToken = querySegment.ContinuationToken; // set the continuationToken to the next segment of the query
+                assignmentSelectedLearnContent.AddRange(querySegment.Results); // add the entities to the list
+            } while (continuationToken != null); //until there are no more continuation tokens
 
             return assignmentSelectedLearnContent;
         }
+        #endregion
 
+        #region "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES JSON TOKENS"
+        // takes in a JSON token for the content
         private void ChangeUrlQueryToEdnaIdentifier(JToken contentJToken)
         {
-            string url = contentJToken["url"]?.ToString();
-            if (string.IsNullOrEmpty(url))
+            string url = contentJToken["url"]?.ToString(); // get the url from the decoded JSON token
+            if (string.IsNullOrEmpty(url)) // if the url is null or empty, return
                 return;
 
-            Uri previousUri = new Uri(url);
-            NameValueCollection queryParams = previousUri.ParseQueryString();
-            queryParams[LearnContentUrlIdentifierKey] = LearnContentUrlIdentifierValue;
+            Uri previousUri = new Uri(url); //store the old url in a Uri object
+            NameValueCollection queryParams = previousUri.ParseQueryString(); //parse the query string of the old url into a NameValueCollection object
+            queryParams[LearnContentUrlIdentifierKey] = LearnContentUrlIdentifierValue; //add the "edna" identifier to the query string of the old url (defined at line 55)
 
-            UriBuilder newUriBuilder = new UriBuilder(url) { Query = queryParams.ToString() };
+            UriBuilder newUriBuilder = new UriBuilder(url) { Query = queryParams.ToString() }; // create a new UriBuilder object with the new url and the query string
 
-            contentJToken["url"] = newUriBuilder.Uri.ToString();
+            contentJToken["url"] = newUriBuilder.Uri.ToString(); //update the JSON tokens url with the newly generated url
         }
+        #endregion
     }
 }
