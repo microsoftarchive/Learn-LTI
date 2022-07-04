@@ -59,6 +59,7 @@ Write-Host "Creating the client secret for $MultiTenantAppName"
 $MultiTenantClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $MultiTenantClientSecretDuration = 1
 $MultiTenantClientSecret = (az ad app credential reset --id $MultiTenantAppID --append --display-name $MultiTenantClientSecretName --years $MultiTenantClientSecretDuration --query password --output tsv --only-show-errors)
+Write-Color "green" "Client ID for $MultiTenantAppName`: $MultiTenantAppID"
 Write-Color "green" "Please take a moment to make a note of and protect the following client secret; as you will not be able to access it again."
 Write-Color "green" "Client secret for $MultiTenantAppName`: $MultiTenantClientSecret"
 Read-Host "Press enter when ready to continue after recording the client secret"
@@ -94,6 +95,7 @@ Write-Host "Creating the client secret for $B2cAppName"
 $WebClientSecretName = Read-Host "Please give a the name for the client secret to be created"
 $WebClientSecretDuration = 1
 $WebClientSecret = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --query password --output tsv --only-show-errors)
+Write-Color "green" "Client ID for $B2cAppName`: $WebClientID"
 Write-Color "green" "Please take a moment to make a note of and protect the following client secret; as you will not be able to access it again."
 Write-Color "green" "Client secret for $B2cAppName`: $WebClientSecret"
 Read-Host "Press enter when ready to continue after recording the client secret"
@@ -172,6 +174,7 @@ Write-Host "Creating the client secret for $PermissionAppName"
 $PermissionClientSecretName = Read-Host "Please give a the name for the client secret to be created"
 $PermissionClientSecretDuration = 1
 $PermissionClientSecret = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --query password --output tsv --only-show-errors)
+Write-Color "green" "Client ID for $PermissionAppName`: $PermissionClientID"
 Write-Color "green" "Please take a moment to make a note of and protect the following client secret; as you will not be able to access it again."
 Write-Color "green" "Client secret for $PermissionAppName`: $PermissionClientSecret"
 Read-Host "Press enter when ready to continue after recording the client secret"
@@ -185,6 +188,8 @@ az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c00
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
 az ad app permission admin-consent --id $PermissionClientID --only-show-errors
+# sleep 3 seconds to finish the admin-consent step
+Start-Sleep -Seconds 3
 #endregion
 
 
