@@ -160,9 +160,36 @@ az ad app permission grant --id $ProxyIEFClientID --api $IEFClientID --scope "us
 az ad app permission add --id $ProxyIEFClientID --api $IEFClientID --api-permissions "$IEFScopeGUID=Scope" --only-show-errors
 #endregion
 
+#region "STEP 6: Create Permission Management app"
+Write-Title "STEP 6: Creating Permission Management application"
+$PermissionAppName = Read-Host "Please give a name for the permission management application to be created"
+$PermissionClientID = (az ad app create --display-name $PermissionAppName --sign-in-audience AzureADMyOrg --query appId --output tsv --only-show-errors)
 
-#region "STEP 6: (Optional) linking facebook apps"
-Write-Title "STEP 6: (Optional) linking facebook app"
+"$PermissionClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
+
+# create client secret
+Write-Host "Creating the client secret for $PermissionAppName"
+$PermissionClientSecretName = Read-Host "Please give a the name for the client secret to be created"
+$PermissionClientSecretDuration = 1
+$PermissionClientSecret = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --query password --output tsv --only-show-errors)
+Write-Color "green" "Please take a moment to make a note of and protect the following client secret; as you will not be able to access it again."
+Write-Color "green" "Client secret for $PermissionAppName`: $PermissionClientSecret"
+Read-Host "Press enter when ready to continue after recording the client secret"
+
+# set permissions for the web app
+Write-Host "Granting permissions to the B2C Permission Management application"
+$keysetRWPermission = "4a771c9a-1cf2-4609-b88e-3d3e02d539cd=Role"
+$policyRWPermission = "79a677f7-b79d-40d0-a36a-3e6f8688dd7a=Role"
+az ad sp create --id $PermissionClientID --only-show-errors 2>&1 > $null
+az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
+az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
+az ad app permission admin-consent --id $PermissionClientID --only-show-errors
+#endregion
+
+
+#region "STEP 7: (Optional) linking facebook apps"
+Write-Title "STEP 7: (Optional) linking facebook app"
 $HasFaceBookApp = ""
 while($HasFaceBookApp -ne "y" -and $HasFaceBookApp -ne "n"){
     $HasFaceBookApp = Read-Host "Do you have a facebook application set up that you'd like to link? (y/n)"
@@ -174,16 +201,16 @@ if($HasFaceBookApp -eq "y"){
 #endregion
 
 
-#region "STEP 7: looping through each CustomPolicyTemplate and creating bases of them in CustomTemplates"
-Write-Title "STEP 7: Creating template custom policies"
+#region "STEP 8: looping through each CustomPolicyTemplate and creating bases of them in CustomTemplates"
+Write-Title "STEP 8: Creating template custom policies"
 Get-ChildItem ".\CustomPolicyTemplates\" | Foreach-Object {
     ((Get-Content -path $_.FullName -Raw)) | Set-Content -path (".\CustomPolicy\"+$_.Name)
 }
 #endregion
 
 
-#region "STEP 8: looping through each CustomPolicy and replacing their placeholder values to generate the final custom policies"
-Write-Title "STEP 8: Replacing values in template custom policies to generate finalised custom policies"
+#region "STEP 9: looping through each CustomPolicy and replacing their placeholder values to generate the final custom policies"
+Write-Title "STEP 9: Replacing values in template custom policies to generate finalised custom policies"
 Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
     #ignore the gitkeep
     if($_.Name -ne ".gitkeep"){
@@ -201,7 +228,7 @@ Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
 }
 #endregion
 
-#region "STEP 9: Add signing and encryption keys and AADAppSecret for the IEF applications"
+#region "STEP 10: Add signing and encryption keys and AADAppSecret for the IEF applications"
 
 #region "Function for calculating the not before and expiry datetimes for the keys"
 function getNbfExp($num_months){
@@ -214,7 +241,7 @@ function getNbfExp($num_months){
 }
 #endregion
 
-Write-Title "STEP 9: Adding signing and encryption keys and AADAppSecret for the IEF applications"
+Write-Title "STEP 10: Adding signing and encryption keys and AADAppSecret for the IEF applications"
 
 $num_months = 0 
 while($num_months -le 0){
@@ -228,7 +255,7 @@ Write-Host "Getting the token to be used in the HTML REQUESTS"
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Content-Type", "application/x-www-form-urlencoded")
 
-$body = "client_id=a00baec5-65fc-4488-947f-8584625d47a5&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=qlA8Q~~IUVTBB.snchHBe2V1f6o_6m6-nNOgba0i&grant_type=client_credentials"
+$body = "client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
 
 $response = Invoke-RestMethod 'https://login.microsoftonline.com/playltib2c.onmicrosoft.com/oauth2/v2.0/token' -Method 'POST' -Headers $headers -Body $body
 $access_token = $response.access_token
@@ -245,8 +272,8 @@ $keysets = $keysets.id
 $keysets
 #endregion
 
-#region "STEP 9.A: Create the signing key"
-Write-Title "STEP 9.A: Creating the Signing Key"
+#region "STEP 10.A: Create the signing key"
+Write-Title "STEP 10.A: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
     Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -296,8 +323,8 @@ else{
 #endregion
 
 
-#region "STEP 9.B: Create the encryption key"
-Write-Title "STEP 9.B: Creating the Signing Key"
+#region "STEP 10.B: Create the encryption key"
+Write-Title "STEP 10.B: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
     Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -346,8 +373,8 @@ Write-Host "Successfully generated and uploaded the encryption key"
 #endregion
 
 
-#region "STEP 9.C: Create the AADSecret keyset"
-Write-Title "STEP 9.C: Creating the AADAppSecret Key"
+#region "STEP 10.C: Create the AADSecret keyset"
+Write-Title "STEP 10.C: Creating the AADAppSecret Key"
 
 if($keysets -contains "B2C_1A_AADAppSecret"){
     Read-Host "B2C_1A_AADAppSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -397,7 +424,7 @@ else{
 #endregion 
 #endregion
 
-#region "STEP 10: uploading the custom policies to the b2c tenant"
+#region "STEP 11: uploading the custom policies to the b2c tenant"
 
 #region "Function for updating existing custom policy or uploading new custom policies"
 function CustomPolicyUpdateOrUpload($customPolicyName, $customPolicies, $access_token) {
@@ -431,7 +458,7 @@ function CustomPolicyUpdateOrUpload($customPolicyName, $customPolicies, $access_
 }
 #endregion
 
-Write-Title "STEP 10: Uploading the custom policies to the b2c tenant"
+Write-Title "STEP 11: Uploading the custom policies to the b2c tenant"
 
 #getting list of all users in the tenant
 Write-Host "Getting the list of all custom policies in the tenant"
