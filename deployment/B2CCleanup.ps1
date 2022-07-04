@@ -30,8 +30,6 @@ $access_token = "Bearer " + $access_token
 #reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkpolicy-delete?view=graph-rest-beta&tabs=http
 Write-Title "STEP 2: Cleaning up the custom policies from the b2c tenant"
 
-$B2cTenantDomain = Read-Host "What is your B2C tenants domain (e.g. mytenant.onmicrosoft.com)?"
-
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
 
