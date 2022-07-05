@@ -1,5 +1,6 @@
 # B2C Cleanup User Docs
 
+Note: If the markdown is downloaded and viewed in an IDE the code blocks have been formatted to be coloured as they would in the terminal for easier viewing.
 ## Prerequisites
 
 * You should have already created on Azure:
