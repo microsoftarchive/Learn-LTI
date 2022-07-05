@@ -187,7 +187,7 @@ az ad sp create --id $PermissionClientID --only-show-errors 2>&1 > $null
 az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
-az ad app permission admin-consent --id $PermissionClientID --only-show-errors
+# az ad app permission admin-consent --id $PermissionClientID --only-show-errors
 # sleep 3 seconds to finish the admin-consent step
 Start-Sleep -Seconds 3
 #endregion
@@ -253,41 +253,41 @@ while($num_months -le 0){
 	[uint16] $num_months = Read-Host "How many months do you want the keys to be valid for? (must be greater than 0)"
 }
 
-#region "Getting the token to be used in the HTML REQUESTS"
-# relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
-Write-Host "Getting the token to be used in the HTML REQUESTS"
-
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Content-Type", "application/x-www-form-urlencoded")
-
-$body = "client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
-
-$response = Invoke-RestMethod 'https://login.microsoftonline.com/playltib2c.onmicrosoft.com/oauth2/v2.0/token' -Method 'POST' -Headers $headers -Body $body
-$access_token = $response.access_token
-$access_token = "Bearer " + $access_token
-#endregion
-
-#region "Getting the list of all custom policies in the tenant; to check if each keyset already exists prior to creating it"
-Write-Host "Getting the list of all custom policies in the tenant"
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Authorization", $access_token)
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'GET' -Headers $headers
-
+Write-Host "Getting the token to be used in the HTML Requests and the list of existing keysets to check for conflicts when creating new ones"
+$response = ""
+$keysets = ""
 while(1){
     try{
+        #region "Getting the token to be used in the HTML REQUESTS"
+        # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
+
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("Content-Type", "application/x-www-form-urlencoded")
+
+        $body = "client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
+
+        $response = Invoke-RestMethod 'https://login.microsoftonline.com/playltib2c.onmicrosoft.com/oauth2/v2.0/token' -Method 'POST' -Headers $headers -Body $body
+        $access_token = $response.access_token
+        $access_token = "Bearer " + $access_token
+        #endregion
+
+        #region "Getting the list of all custom policies in the tenant; to check if each keyset already exists prior to creating it"
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("Authorization", $access_token)
         $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'GET' -Headers $headers
+        $keysets = $response.value
+        $keysets = $keysets.id
+        #endregion
         break
     }
     catch{
-        Write-Color "Red" "Error getting the list of all custom policies in the tenant.`nDue to application permission not having been granted yet due to race-condition between granting admin-consent for the Permission Management Application and the subsequent steps prior to this point.`nWait a couple of minutes, grab a coffee; then press enter to retry."
-        Read-Host ""
+        Write-Color "Red" "Error due to admin-consent having not yet been granted; please copy and paste the yellow link into your browser to manually grant admin-consent then press enter."
+        $PMA_Page = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$PermissionClientID/isMSAApp~/false"
+        Write-Color "Yellow" "$PMA_Page"
+        Write-Host "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this."
+        Read-Host "Press enter after manually granting the admin consent permission"
     }
-    
-}
-
-$keysets = $response.value
-$keysets = $keysets.id
-$keysets
+}    
 #endregion
 
 #region "STEP 10.A: Create the signing key"

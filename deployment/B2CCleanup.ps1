@@ -16,7 +16,7 @@ $PermissionClientID = Read-Host "Please enter the client ID of the permission ma
 $PermissionClientSecret = Read-Host "Please enter the client secret of the permission management application" -AsSecureString
 #Converting from secure string to normal string
 $PermissionClientSecret = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PermissionClientSecret)
-$PermissionClientSecret = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr) 
+$PermissionClientSecret = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($PermissionClientSecret) 
 
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -56,7 +56,7 @@ $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/p
 #endregion
 
 #region "Cleaning up the keysets from the b2c tenant"
-Write-Title "Cleaning up the keysets from the b2c tenant"
+Write-Title "STEP 3: Cleaning up the keysets from the b2c tenant"
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
 
@@ -69,7 +69,7 @@ $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/k
 #endregion
 
 #region "Deleting the generated applications"
-Write-Title "STEP 3: Deleting the generated applications"
+Write-Title "STEP 4: Deleting the generated applications"
 $AppInfoCSVPath = ".\AppInfo.csv"
 $AppInfo = Import-Csv -Path $AppInfoCSVPath -Header @("AppID", "TenantID")
 $LastTenantID = ""
