@@ -272,6 +272,19 @@ Write-Host "Getting the list of all custom policies in the tenant"
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'GET' -Headers $headers
+
+while(1){
+    try{
+        $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'GET' -Headers $headers
+        break
+    }
+    catch{
+        Write-Color "Red" "Error getting the list of all custom policies in the tenant.`nDue to application permission not having been granted yet due to race-condition between granting admin-consent for the Permission Management Application and the subsequent steps prior to this point.`nWait a couple of minutes, grab a coffee; then press enter to retry."
+        Read-Host ""
+    }
+    
+}
+
 $keysets = $response.value
 $keysets = $keysets.id
 $keysets

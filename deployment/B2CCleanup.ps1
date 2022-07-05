@@ -13,7 +13,10 @@ function Write-Title([string]$Title) {
 Write-Title "STEP 1: Getting the token to be used in the HTML REQUESTS"
 
 $PermissionClientID = Read-Host "Please enter the client ID of the permission management application"
-$PermissionClientSecret = Read-Host "Please enter the client secret of the permission management application" -MaskInput
+$PermissionClientSecret = Read-Host "Please enter the client secret of the permission management application" -AsSecureString
+#Converting from secure string to normal string
+$PermissionClientSecret = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PermissionClientSecret)
+$PermissionClientSecret = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr) 
 
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Content-Type", "application/x-www-form-urlencoded")
