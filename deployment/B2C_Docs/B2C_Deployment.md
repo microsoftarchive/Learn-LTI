@@ -17,6 +17,9 @@ Note: If the markdown is downloaded and viewed in an IDE the code blocks have be
 |  Click "Open Powershell Window Here" to launch powershell with cd already set to Learn-Lti/Deployment  |
 
 * Type ".\B2CCleanup.ps1" into the newly launched Powershell then press enter 
+  * ![launch B2CDeployment.ps1](Svg/Deployment/00_start.svg)
+  * 
+  * 
   * <div style="color:white;background-color:black;font-family:'Consolas">(base) PS D:\Users\Username\Documents\Learn-LTI\deployment> <span style="color:yellow">.\B2CDeployment.ps1</span></div>
 
 ## Step 0:
