@@ -8,7 +8,7 @@ function Write-Title([string]$Title) {
 }
 #endregion
 
-#region "Getting the token to be used in the HTML REQUESTS"
+#region "STEP 1: Getting the token to be used in the HTML REQUESTS"
 # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
 Write-Title "STEP 1: Getting the token to be used in the HTML REQUESTS"
 
@@ -29,7 +29,7 @@ $access_token = "Bearer " + $access_token
 #endregion
 
 
-#region "Connecting to the b2c tenant and removing the custom policies already uploaded to the b2c tenant"
+#region "STEP 2: Connecting to the b2c tenant and removing the custom policies already uploaded to the b2c tenant"
 #reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkpolicy-delete?view=graph-rest-beta&tabs=http
 Write-Title "STEP 2: Cleaning up the custom policies from the b2c tenant"
 
@@ -55,7 +55,7 @@ Write-Host "Deleting B2C_1A_PasswordReset"
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies/B2C_1A_PasswordReset' -Method 'DELETE' -Headers $headers
 #endregion
 
-#region "Cleaning up the keysets from the b2c tenant"
+#region "STEP 3: Cleaning up the keysets from the b2c tenant"
 Write-Title "STEP 3: Cleaning up the keysets from the b2c tenant"
 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
 $headers.Add("Authorization", $access_token)
@@ -68,7 +68,7 @@ Write-Host "Deleting B2C_1A_AADAppSecret keyset"
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets/B2C_1A_AADAppSecret' -Method 'DELETE' -Headers $headers
 #endregion
 
-#region "Deleting the generated applications"
+#region "STEP 4: Deleting the generated applications"
 Write-Title "STEP 4: Deleting the generated applications"
 $AppInfoCSVPath = ".\AppInfo.csv"
 $AppInfo = Import-Csv -Path $AppInfoCSVPath -Header @("AppID", "TenantID")

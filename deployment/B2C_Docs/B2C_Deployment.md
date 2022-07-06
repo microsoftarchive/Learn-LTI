@@ -1,6 +1,10 @@
 # B2C Cleanup User Docs
 
-Note: If the markdown is downloaded and viewed in an IDE the code blocks have been formatted to be coloured as they would in the terminal for easier viewing.
+## Terminal screenshots key:
+* Red background = hidden B2C value
+* Orange background = hidden AD value
+* Pink background = user inputted value
+
 ## Prerequisites
 
 * You should have already created on Azure:
@@ -17,15 +21,12 @@ Note: If the markdown is downloaded and viewed in an IDE the code blocks have be
 |  Click "Open Powershell Window Here" to launch powershell with cd already set to Learn-Lti/Deployment  |
 
 * Type ".\B2CCleanup.ps1" into the newly launched Powershell then press enter 
-  * ![launch B2CDeployment.ps1](Svg/Deployment/00_start.svg)
-  * 
-  * 
-  * <div style="color:white;background-color:black;font-family:'Consolas">(base) PS D:\Users\Username\Documents\Learn-LTI\deployment> <span style="color:yellow">.\B2CDeployment.ps1</span></div>
+  * ![start script](Images/Deployment/00a_startScript.png)
 
-## Step 0:
+## Step 0: Enter tenant names
 
 * You will immediately be prompted to input the name of the B2C and AD tenants you have created: <br> 1. First, input the name of the B2C Tenant you have created<br> 2. Next, input the name of the Azure AD Tenant you have created
-  * <div style="color:white;background-color:black;font-family:'Consolas">Please enter your B2C tenant name: <span style="background-color:red">********</span><br>Please enter your AD tenant name: <span style="background-color:orange">********</span>div>
+  * ![input tenant names](Images/Deployment/00b_tenantNames.png)
 
 
 ## Step 1: Create AD application
@@ -33,7 +34,7 @@ Note: If the markdown is downloaded and viewed in an IDE the code blocks have be
 ### Login to AD Tenant via your browser
 
 * Your powershell will now prompt you that a pop-up window has launched in your browser and directing you to log in to your AD tenant through it
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 1: Create AD application<br>=============================================================<br>Please login to <span style="background-color:orange">********</span> via the pop-up window that has launched in your browser</div>
+    * ![Login to AD Prompt](Images/Deployment/01b_LoginPrompt.png)
 
 | ![Login to AD Tenant](Images/Deployment/01a_LoginTenant1.png) |
 |---|
@@ -42,17 +43,17 @@ Note: If the markdown is downloaded and viewed in an IDE the code blocks have be
 ### Creating the app and its secret
 
 * Return to your powershell Window, and you will now be prompted to give names for:<br>1. The AD Application to be created<br>2. The AD Applications Secret to be created<br>We suggest using a sensible name, such as "b2c_AD_app" and "b2c_AD_app_secret"
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 1: Create AD application<br>=============================================================<br>Please login to <span style="background-color:orange">********</span> via the pop-up window that has launched in your browser<br>Please give a name for the AD application to be created: <span style="background-color:magenta">b2c_AD_app</span><br>Creating the client secret for b2c_AD_app<br>Please give a name for the client secret to be created: <span style="background-color:magenta">b2c_AD_app_secret</span></div>
+    * ![Input app and secret name](Images/Deployment/01c_appName.png)
 
 ### Recording the secret value (important)
 * Upon successfully creating the app and its secret; the script will now output some important values in green and then pause until you next press Enter. <br>It is strongly recommended now that you take a moment to **store somewhere safe the ID of the app and the value for the secret** that has just been created for it; as this **secret value will no longer be accessible again**.<br>After recording these values press enter to continue with the script.
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 1: Create AD application<br>=============================================================<br>Please login to <span style="background-color:orange">********</span> via the pop-up window that has launched in your browser<br>Please give a name for the AD application to be created: b2c_AD_app<br>Creating the client secret for b2c_AD_app<br>Please give a name for the client secret to be created: b2c_AD_app_secret<br><span style="color:green">Client ID for b2c_AD_app: ********<br>Please take a moment to make a note of and protect the following client secret; as you will not be able to access it again.<br>Client secret for b2c_AD_app: ********</span><br>Press enter when ready to continue after recording the client secret:</div>
+    * ![record the secret](Images/Deployment/01d_secret.png)
 
 
 ## Step 2: Logging into the B2C tenant via your browser
 
 * Your powershell will now prompt you that a pop-up window has launched in your browser and directing you to login to your B2C tenant through it
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 2: Logging into the B2C Tenant<br>=============================================================<br>Please login to <span style="background-color:red">********</span> via the pop-up window that has launched in your browser</div>
+    * ![login prompt](Images/Deployment/02a_LoginPrompt.png)
 
 | ![Login to AD Tenant](Images/Deployment/01a_LoginTenant1.png) |
 |---|
@@ -63,13 +64,13 @@ Note: If the markdown is downloaded and viewed in an IDE the code blocks have be
 ### Creating the webapp and its secret
 
 * Return to your powershell Window, and you will now be prompted to give names for:<br>1. The B2C Web Application to be created<br>2. The B2C Web Applications Secret to be created<br>We suggest using a sensible name, such as "b2c_AD_webapp" and "b2c_AD_webapp_secret"
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 3: Creating the B2C Web Application<br>=============================================================<br>Please give a name for the web application to be created: <span style="background-color:magenta">b2c_AD_webapp</span><br>Creating the client secret for b2c_AD_app<br>Please give a name for the client secret to be created: <span style="background-color:magenta">b2c_AD_webapp_secret</span></div>
+    * ![name web app](Images/Deployment/03a_nameWebApp.png)
 
 
 ### Recording the secret value (important)
 
 * Upon successfully creating the webapp and its secret; the script will now output some important values in green and then pause until you next press Enter. <br>It is strongly recommended now that you take a moment to **store somewhere safe the ID of the app and the value for the secret** that has just been created for it; as this **secret value will no longer be accessible again**.<br>After recording these values press enter to continue with the script.
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 1: Create AD application<br>=============================================================<br>Please give a name for the web application to be created: b2c_AD_webapp<br>Creating the client secret for b2c_AD_webapp<br>Please give a name for the client secret to be created: b2c_AD_webapp_secret<br><span style="color:green">Client ID for b2c_AD_webapp: ********<br>Please take a moment to make a note of and protect the following client secret; as you will not be able to access it again.<br>Client secret for b2c_AD_webapp: ********</span><br>Press enter when ready to continue after recording the client secret:</div>
+    * ![record webapp secret](Images/Deployment/03b_secret.png)
 
 
 ## Steps 4 & 5: Creating the Identity Experience Framework & Proxy Identity Experience Framework Applications
@@ -82,13 +83,13 @@ Note: If the markdown is downloaded and viewed in an IDE the code blocks have be
 ### Creating the Permission Management Application and its secret
 
 * Return to your powershell Window, and you will now be prompted to give names for:<br>1. The B2C Permission Management Application to be created<br>2. The 2C Permission Management Applications Secret to be created<br>We suggest using a sensible name, such as "b2c_AD_PMA" and "b2c_AD_PMA_secret"
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 6: Creating Permission Management Application<br>=============================================================<br>Please give a name for the permission management application to be created: <span style="background-color:magenta">b2c_AD_PMA</span><br>Creating the client secret for b2c_AD_app<br>Please give a name for the client secret to be created: <span style="background-color:magenta">b2c_AD_PMA_secret</span></div>
+    * ![name the PMA](Images/Deployment/06a_namePMA.png)
 
 
 ### Recording the secret value (important)
 
 * Upon successfully creating the permission management app and its secret; the script will now output some important values in green and then pause until you next press Enter. <br>It is strongly recommended now that you take a moment to **store somewhere safe the ID of the app and the value for the secret** that has just been created for it; as this **secret value will no longer be accessible again**.<br>After recording these values press enter to continue with the script.
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 6: Creating Permission Management Application<br>=============================================================<br>Please give a name for the permission management application to be created: b2c_AD_PMA<br>Creating the client secret for b2c_AD_app<br>Please give a name for the client secret to be created: b2c_AD_PMA_secret<span style="color:green"><br>Client ID for b2c_AD_PMA: ********<br>Please take a moment to make a note of and protect the following client secret; as you will not be able to access it again.<br>Client secret for b2c_AD_PMA: ********</span><br>Press enter when ready to continue after recording the client secret:</div>
+    * ![secret PMA value](Images/Deployment/06b_secret.png)
 
 
 ## Step 7: (Optional) linking facebook app
@@ -96,13 +97,13 @@ Note: If the markdown is downloaded and viewed in an IDE the code blocks have be
 ### Don't link Facebook App
 
 * If you do not have a facebook application to link, simply input 'n' when prompted to skip this step
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 7: (Optional) linking facebook appApplication<br>=============================================================<br>Do you have a facebook application set up that you'd like to link? (y/n): <span style="background-color:magenta">n</span></div>
+    * ![Don't link FB](Images/Deployment/07_noFB.png)
 
 
 ### Link Facebook App
 
 * If you do have a facebook application to link, input 'y' when prompted then input the ID of the Facebook application you would like to lin
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 7: (Optional) linking facebook appApplication<br>=============================================================<br>Do you have a facebook application set up that you'd like to link? (y/n): <span style="background-color:magenta">y</span><br>What is the application ID of the Facebook application you created?: <span style="background-color:magenta">********</span> </div>
+    * ![Do link FB](Images/Deployment/07_yesFB.png)
 
 
 
@@ -116,13 +117,12 @@ Note: If the markdown is downloaded and viewed in an IDE the code blocks have be
 
 ### Input key duration
 * You will first be prompted to input how long you wish the created keys to be valid for before they expire
-    * <div style="color:white;background-color:black;font-family:'Consolas">============================================================<br>STEP 10: Adding signing and encryption keys and AADAppSecret for the IEF applications<br>=============================================================<br>How many months do you want the keys to be valid for? (must be greater than 0): <span style="background-color:magenta">3</span></div>
-* Upon success, the keysets and their respective keys will automatically be generated and/or uploaded in the subsequent steps 10.a through 10.c.
+    * ![key duration](Images/Deployment/10a_time.png)
 
 #### <span style="color:red">Troubleshoot PMA Admin Consent</span>
 
 * This step may fail due to a race condition between the granting of admin-consent vs the requirement of its usage in this step; you will know this has occured if you see the error message shown below
-    * <div style="color:white;background-color:black;font-family:'Consolas"><span style="color:red">Error due to admin-consent having not yet been granted; please copy and paste the yellow link into your browser to manually grant admin-consent then press enter.</span><br><span style="color:yellow">https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/{{YOUR APP ID}}/isMSAApp~/false</span><br>Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this.<br>Press enter after manually granting the admin consent permission:</div>
+    * ![error admin-consent race](Images/Deployment/10b_error.png)
 * To solve this issue, follow the link highlighted yellow in your console which will take you to the below page. On this page you should see a button called "Grant admin consent for {B2C Tenant Name} circled in red.
     * ![Application permissions page](Images/Deployment/10tb_ManuallyGrantAdminConsent.png)
 * After clicking on "Grant Admin Consent" the page should now say all permissions are granted
