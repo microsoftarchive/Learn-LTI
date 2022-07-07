@@ -10,6 +10,7 @@
 * You should have already created on Azure:
   * 1x AD tenant
   * 1x B2C tenant
+      * If not already set up information is available [here](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant) at step 1: "Create an Azure AD B2C Tenant"
 
 ## Starting The Script
 
@@ -118,12 +119,19 @@
 ### Input key duration
 * You will first be prompted to input how long you wish the created keys to be valid for before they expire
     * ![key duration](Images/Deployment/10a_time.png)
+* The script should then continue without requiring any further user inputs
 
 #### <span style="color:red">Troubleshoot PMA Admin Consent</span>
 
 * This step may fail due to a race condition between the granting of admin-consent vs the requirement of its usage in this step; you will know this has occured if you see the error message shown below
     * ![error admin-consent race](Images/Deployment/10b_error.png)
-* To solve this issue, follow the link highlighted yellow in your console which will take you to the below page. On this page you should see a button called "Grant admin consent for {B2C Tenant Name} circled in red.
+* To solve this issue:
+    * First you must login to your b2c tenant on the Azure Portal. If the b2c tenant is already your active directory in the portal you can skip this step.
+        * ![Switch directory on portal](Images/Deployment/10taa_switchDirectory.png)
+            *  Load up the Azure portal; then click on your icon in the top right of the screen, then click "Switch Directory"
+       *  ![ACtive directory](Images/Deployment/10tab_current.png)
+             *  Now click "Switch" for your b2c tenant so it now displays "active"
+    * Next, follow the link highlighted yellow in your console which will take you to the below page. On this page you should see a button called "Grant admin consent for {B2C Tenant Name} circled in red.
     * ![Application permissions page](Images/Deployment/10tb_ManuallyGrantAdminConsent.png)
 * After clicking on "Grant Admin Consent" the page should now say all permissions are granted
     * ![Application permissions page](Images/Deployment/10tc_FullyGranted.png)

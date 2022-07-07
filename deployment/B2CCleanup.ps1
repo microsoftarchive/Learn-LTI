@@ -12,6 +12,7 @@ function Write-Title([string]$Title) {
 # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
 Write-Title "STEP 1: Getting the token to be used in the HTML REQUESTS"
 
+$B2cTenantName = Read-Host "Please enter your B2C tenant name"
 $PermissionClientID = Read-Host "Please enter the client ID of the permission management application"
 $PermissionClientSecret = Read-Host "Please enter the client secret of the permission management application" -AsSecureString
 #Converting from secure string to normal string
@@ -23,7 +24,7 @@ $headers.Add("Content-Type", "application/x-www-form-urlencoded")
 
 $body = "client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
 
-$response = Invoke-RestMethod 'https://login.microsoftonline.com/playltib2c.onmicrosoft.com/oauth2/v2.0/token' -Method 'POST' -Headers $headers -Body $body
+$response = Invoke-RestMethod "https://login.microsoftonline.com/$B2cTenantName.onmicrosoft.com/oauth2/v2.0/token" -Method 'POST' -Headers $headers -Body $body
 $access_token = $response.access_token
 $access_token = "Bearer " + $access_token
 #endregion

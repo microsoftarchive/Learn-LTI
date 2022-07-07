@@ -10,8 +10,17 @@ function Write-Title([string]$Title) {
 
 #function for making coloured outputs
 function Write-Color($Color, [string]$Text) {
-	process{Write-Host $Text -ForegroundColor $Color}
+	Write-Host $Text -ForegroundColor $Color
 }
+
+#function for writing errors
+function Write-Error([string]$Text) {
+    Write-Host "`n`n=============================================================`n" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+	Write-Host "Error!`n$Text" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+    Write-Host "`n=============================================================" -ForegroundColor "black" -BackgroundColor "DarkRed"
+}
+
+
 #endregion
 
 #region "AppInfo CSV setup"
@@ -92,7 +101,7 @@ $WebClientID = (az ad app create --display-name $B2cAppName --sign-in-audience A
 
 # create client secret
 Write-Host "Creating the client secret for $B2cAppName"
-$WebClientSecretName = Read-Host "Please give a the name for the client secret to be created"
+$WebClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $WebClientSecretDuration = 1
 $WebClientSecret = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $B2cAppName`: $WebClientID"
@@ -125,7 +134,7 @@ az ad app permission add --id $IEFClientID --api 00000003-0000-0000-c000-0000000
 
 # expose the user_impersonation API
 Write-Host "Exposing the user_impersonation API"
-az ad app update --id $IEFClientID --identifier-uris "https://playltib2c.onmicrosoft.com/$IEFClientID" --only-show-errors
+az ad app update --id $IEFClientID --identifier-uris "https://$B2cTenantName.onmicrosoft.com/$IEFClientID" --only-show-errors
 $IEFAppInfo = (az ad app show --id $IEFClientID --only-show-errors | ConvertFrom-Json)
 $IEFAppApiInfo = $IEFAppInfo.api
 $IEFScopeGUID = [guid]::NewGuid()
@@ -171,7 +180,7 @@ $PermissionClientID = (az ad app create --display-name $PermissionAppName --sign
 
 # create client secret
 Write-Host "Creating the client secret for $PermissionAppName"
-$PermissionClientSecretName = Read-Host "Please give a the name for the client secret to be created"
+$PermissionClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $PermissionClientSecretDuration = 1
 $PermissionClientSecret = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $PermissionAppName`: $PermissionClientID"
@@ -187,9 +196,7 @@ az ad sp create --id $PermissionClientID --only-show-errors 2>&1 > $null
 az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
-# az ad app permission admin-consent --id $PermissionClientID --only-show-errors
-# sleep 3 seconds to finish the admin-consent step
-Start-Sleep -Seconds 3
+az ad app permission admin-consent --id $PermissionClientID --only-show-errors
 #endregion
 
 
@@ -200,8 +207,10 @@ while($HasFaceBookApp -ne "y" -and $HasFaceBookApp -ne "n"){
     $HasFaceBookApp = Read-Host "Do you have a facebook application set up that you'd like to link? (y/n)"
 }
 $FacebookId = "00000000-0000-0000-0000-000000000000" #default to meaningless placeholder value if app isn't set up
+$FacebookSecret = "00000000-0000-0000-0000-000000000000" #default to meaningless placeholder value if app isn't set up
 if($HasFaceBookApp -eq "y"){
 	$FacebookId = Read-Host "What is the application ID of the Facebook application you created?"
+    $FacebookSecret = Read-Host "What is the secret value of the Facebook application you created?"
 }
 #endregion
 
@@ -266,7 +275,7 @@ while(1){
 
         $body = "client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
 
-        $response = Invoke-RestMethod 'https://login.microsoftonline.com/playltib2c.onmicrosoft.com/oauth2/v2.0/token' -Method 'POST' -Headers $headers -Body $body
+        $response = Invoke-RestMethod "https://login.microsoftonline.com/$B2cTenantName.onmicrosoft.com/oauth2/v2.0/token" -Method 'POST' -Headers $headers -Body $body
         $access_token = $response.access_token
         $access_token = "Bearer " + $access_token
         #endregion
@@ -281,7 +290,10 @@ while(1){
         break
     }
     catch{
-        Write-Color "Red" "Error due to admin-consent having not yet been granted; please copy and paste the yellow link into your browser to manually grant admin-consent then press enter."
+        Write-Host ""
+        Write-Error $Error[0]
+        Write-Host ""
+        Write-Color "Red" "Error may be due to admin-consent having not yet been granted; please switch your directory to the b2c tenant ($B2cTenantName) in the Azure portal then copy and paste the yellow link into your browser to manually grant admin-consent then press enter."
         $PMA_Page = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$PermissionClientID/isMSAApp~/false"
         Write-Color "Yellow" "$PMA_Page"
         Write-Host "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this."
@@ -440,6 +452,56 @@ else{
 #endregion
 
 #endregion 
+
+#region "STEP 10.D: Create the Facebook keyset"
+#TODO - eventually only run this step if we are using Facebook (and then use different contract templates for linking facebook vs without)
+Write-Title "STEP 10.D: Creating the Facebook Key"
+
+if($keysets -contains "B2C_1A_FacebookSecret"){
+    Read-Host "B2C_1A_FacebookSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
+}
+else{
+    #region "Creating the B2C_1A_FacebookSecret keyset (container)"
+    #reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
+    Write-Host "`nCreating the FacebookSecret keyset (container)`n"
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization", $access_token)
+    $headers.Add("Content-Type", "application/json")
+
+    $body = "{`"id`":`"B2C_1A_FacebookSecret`"}"
+
+    $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'POST' -Headers $headers -Body $body
+    $FacebookSecret_container_id = $response.id
+
+    Write-Host "Successfully created the key FacebookSecret container: $FacebookSecret_container_id"
+    #endregion
+
+    #region "Uploading the AADAppSecret key"
+    #reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkkeyset-uploadsecret?view=graph-rest-beta&tabs=https
+    #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
+    Write-Host "`nGenerating the FacebookSecret key and uploading to the keyset`n"
+    $arr = getNbfExp($num_months)
+    $nbf = $arr[0]
+    $exp = $arr[1]
+
+    #uploading the FacebookSecret key
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization", $access_token)
+    $headers.Add("Content-Type", "application/json")
+
+    $body = "{
+    `n  `"use`": `"sig`",
+    `n  `"k`": `""+$FacebookSecret+"`",
+    `n  `"nbf`": "+$nbf+",
+    `n  `"exp`": "+$exp+"
+    `n}"
+
+    $response = Invoke-RestMethod "https://graph.microsoft.com/beta/trustFramework/keySets/$FacebookSecret_container_id/uploadSecret" -Method 'POST' -Headers $headers -Body $body
+
+    Write-Host "Successfully uploaded the FacebookSecret key"
+}
+#endregion
+
 #endregion
 
 #region "STEP 11: uploading the custom policies to the b2c tenant"
