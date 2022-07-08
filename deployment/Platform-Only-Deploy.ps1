@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_a2_MSLearnLTI",
-    [string]$AppName = "RB_a2_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "RB_a1_MSLearnLTI",
+    [string]$AppName = "RB_a1_MSLearnLTI",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -153,22 +153,22 @@ process {
         #endregion
     
         #region Create New App Registration in AzureAD
+        # RB remove -- don't need to register a new app 
+        # maybe hardcode? 
         Write-Title 'STEP #4 - Registering Azure Active Directory App'
     
         Write-Log -Message "Creating AAD App with Name: $AppName"
+
+        # do i need to hardccode this appinfo.appId
         $appinfo=$(az ad app create --display-name $AppName) | ConvertFrom-Json;
         if(!$appinfo) {
             throw "Encountered an Error while creating AAD App"
         }
+
         $identifierURI = "api://$($appinfo.appId)";
         Write-Log -Message "Updating Identifier URI's in AAD App to: [ api://$($appinfo.appId) ]"
         $appUpdateOp = az ad app update --id $appinfo.appId --identifier-uris $identifierURI;
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
-    
-        Write-Log -Message "Updating App so as to add MS Graph -> User Profile -> Read Permissions to the AAD App"
-        $GraphAPIId = '00000003-0000-0000-c000-000000000000'
-        $GraphAPIPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope'
-        $appPermissionAddOp = az ad app permission add --id $appinfo.appId --api $GraphAPIId --api-permissions $GraphAPIPermissionId
         #Intentionally not catching an exception here
     
         Write-Host 'App Created Successfully'
@@ -177,18 +177,10 @@ process {
         #region Create New Resource Group in above Region
         Write-Title 'STEP #5 - Creating Resource Group'
     
-        Write-Log -Message "Creating Resource Group with Name: $ResourceGroupName at Location: $LocationName"
-        $resourceGroupCreationOp = az group create -l $LocationName -n $ResourceGroupName
-        if(!$resourceGroupCreationOp) {
-            $ex = @(
-                "Error while creating Resource Group with Name : [ $ResourceGroupName ] at Location: [ $LocationName ]."
-                "One Reason could be that a Resource Group with same name but different location already exists in your Subscription."
-                "Delete the other Resource Group and run this script again."
-            ) -join ' '
-            throw $ex
-        }
-    
         Write-Host 'Resource Group Created Successfully'
+
+        #RB -- need to hardcode $ResourceGroupName and  $deploymentName -- potentiallly
+
         #endregion
 
         #region Provision Resources inside Resource Group on Azure using ARM template
@@ -199,11 +191,7 @@ process {
     
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
-        Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $($appinfo.appId), IdentifiedURI: $($appinfo.identifierUris)"
-        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
-        if(!$deploymentOutput) {
-            throw "Encountered an Error while deploying to Azure"
-        }
+
         Write-Host 'Resource Creation in Azure Completed Successfully'
         
         Write-Title 'Step #7 - Updating KeyVault with LTI 1.3 Key'
@@ -217,80 +205,37 @@ process {
         }
     
         #Creating EdnaLiteDevKey in keyVault and Updating the Config Entry EdnaLiteDevKey in the Function Config
-        $keyCreationOp = (az keyvault key create --vault-name $deploymentOutput.properties.outputs.KeyVaultName.value --name EdnaLiteDevKey --protection software) | ConvertFrom-Json;
-        if(!$keyCreationOp) {
-            throw "Encountered an Error while creating Key in keyVault"
-        }
-        $KeyVaultLink = $keyCreationOp.key.kid
-        $EdnaKeyString = @{ "EdnaKeyString"="$KeyVaultLink" }
+
+        # RB might need to hardcode EdnaLiteDevKey? or somehow get it for the fucntion config? 
+        
+        # $EdnaKeyString = @{ "EdnaKeyString"="$KeyVaultLink" } # RB: this thing here, can get from current list 
+        $EdnaKeyString ="TODO" 
+        
         $ConnectUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.ConnectFunctionName.value $EdnaKeyString
         $PlatformsUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.PlatformsFunctionName.value $EdnaKeyString
         $UsersUpdateOp = Update-LtiFunctionAppSettings $ResourceGroupName $deploymentOutput.properties.outputs.UsersFunctionName.value $EdnaKeyString
-
-        Write-Host 'Key Creation in KeyVault Completed Successfully'
-
-        Write-Title 'Step #8 - Enabling Static Website Container'
-
-        #Creating a Container in Static Website
-        $containerEnableOp = az storage blob service-properties update --account-name $deploymentOutput.properties.outputs.StaticWebSiteName.value --static-website --404-document index.html --index-document index.html --only-show-errors
-        if(!$containerEnableOp) {
-            throw "Encountered an Error while creating Container to host Static Website"
-        }
-        Write-Host 'Static Website Container Enabled Successfully'
-
-        Write-Title 'STEP #9 - Updating AAD App'
-    
-        $AppRedirectUrl = $deploymentOutput.properties.outputs.webClientURL.value
-        Write-Log -Message "Updating App with ID: $($appinfo.appId) to Redirect URL: $AppRedirectUrl and also enabling Implicit Flow"
-        $appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
-        #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
-    
-        Write-Host 'App Update Completed Successfully'
         #endregion
 
         #region Build and Publish Function Apps
         . .\Install-Backend.ps1
         Write-Title "STEP #10 - Installing the backend"
     
+
+        # RB maybe tweak to only one of these? 
         $BackendParams = @{
             SourceRoot="../backend";
             ResourceGroupName=$ResourceGroupName;
-            LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
-            LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
-            AssignmentsFunctionAppName=$deploymentOutput.properties.outputs.AssignmentsFunctionName.value;
-            ConnectFunctionAppName=$deploymentOutput.properties.outputs.ConnectFunctionName.value;
+            #LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
+            #LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
+            #AssignmentsFunctionAppName=$deploymentOutput.properties.outputs.AssignmentsFunctionName.value;
+            #ConnectFunctionAppName=$deploymentOutput.properties.outputs.ConnectFunctionName.value;
             PlatformsFunctionAppName=$deploymentOutput.properties.outputs.PlatformsFunctionName.value;
-            UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
+            #UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
         }
         Install-Backend @BackendParams
         #endregion
 
         #region Build and Publish Client Artifacts
-        . .\Install-Client.ps1
-        Write-Title "STEP #11 - Updating client's .env.production file"
-    
-        $ClientUpdateConfigParams = @{
-            ConfigPath="../client/.env.production";
-            AppId=$appinfo.appId;
-            LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
-            LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
-            AssignmentsFunctionAppName=$deploymentOutput.properties.outputs.AssignmentsFunctionName.value;
-            PlatformsFunctionAppName=$deploymentOutput.properties.outputs.PlatformsFunctionName.value;
-            UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
-            StaticWebsiteUrl=$deploymentOutput.properties.outputs.webClientURL.value;
-        }
-        Update-ClientConfig @ClientUpdateConfigParams
-    
-        Write-Title 'STEP #12 - Installing the client'
-        $ClientInstallParams = @{
-            SourceRoot="../client";
-            StaticWebsiteStorageAccount=$deploymentOutput.properties.outputs.StaticWebSiteName.value
-        }
-        Install-Client @ClientInstallParams
-        #endregion
-
-        Write-Title "TOOL REGISTRATION URL (Please Copy, Required for Next Steps) -> $($deploymentOutput.properties.outputs.webClientURL.value)platform"
-
         Write-Title '======== Successfully Deployed Resources to Azure ==========='
 
         Write-Log -Message "Deployment Complete"
