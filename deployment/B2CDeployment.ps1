@@ -152,6 +152,10 @@ $IEFAppApiInfo.oauth2PermissionScopes += $UserImpersonationScope
 ConvertTo-Json -InputObject $IEFAppApiInfo | Out-File -FilePath "userImpersonationScope.json"
 az ad app update --id $IEFClientID --set api=@userImpersonationScope.json --only-show-errors
 
+# granting user_impersonation to the web app
+az ad app permission grant --id $WebClientID --api $IEFClientID --scope "user_impersonation" --only-show-errors > $null
+az ad app permission add --id $WebClientID --api $IEFClientID --api-permissions "$IEFScopeGUID=Scope" --only-show-errors
+
 Remove-Item userImpersonationScope.json
 #endregion
 
