@@ -5,7 +5,9 @@
 
 
 #Things to update 
-## Resource group name and app nam
+## Resource group name and app name
+## application ID and uri 
+# backend parameters
 
 
 [CmdletBinding()]
@@ -244,7 +246,7 @@ process {
         Write-Title "STEP #10 - Installing the backend"
     
 
-        # RB maybe tweak to only one of these? 
+        # Comment out any you don't want to deploy
         $BackendParams = @{
             SourceRoot="../backend";
             ResourceGroupName=$ResourceGroupName;
