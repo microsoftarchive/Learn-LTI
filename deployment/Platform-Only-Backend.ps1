@@ -126,9 +126,10 @@ function Install-Backend {
             if ($FunctionAppName) { 
                 $PublishParams.FunctionAppName = $FunctionAppName
             } else {
-                $MissingFunctionAppName = "Unable to map [ $Function ] to any Azure FunctionAppName"
-                Write-BackendDebugLog -Message $MissingFunctionAppName
-                Write-Warning $MissingFunctionAppName
+                continue
+                #$MissingFunctionAppName = "Unable to map [ $Function ] to any Azure FunctionAppName"
+                #Write-BackendDebugLog -Message $MissingFunctionAppName
+                #Write-Warning $MissingFunctionAppName
             }
 
             Publish-FunctionApp @PublishParams
