@@ -4,9 +4,16 @@
 # --------------------------------------------------------------------------------------------
 
 # List of known Azure Functions to Install / Publish.
-# Update this list on adding / updating any Function. 
+# Update this list on adding / updating any Function.
+
+# testing note -- comment out any you will not deploy
 enum VALID_FUNCTIONS {
+    #AssignmentLearnContent;
+    #AssignmentLinks;
+    #Assignments;
+    #Connect;
     Platforms;
+    #Users
 }
 
 function Write-BackendDebugLog {
@@ -120,7 +127,12 @@ function Install-Backend {
 
             $FunctionAppName = & {
                 switch ($Function) {
+                    "AssignmentLearnContent"    { return $LearnContentFunctionAppName }
+                    "AssignmentLinks"           { return $LinksFunctionAppName }
+                    "Assignments"               { return $AssignmentsFunctionAppName }
+                    "Connect"                   { return $ConnectFunctionAppName }
                     "Platforms"                 { return $PlatformsFunctionAppName }
+                    "Users"                     { return $UsersFunctionAppName }
                 }
             }
             if ($FunctionAppName) { 

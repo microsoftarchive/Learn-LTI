@@ -6,7 +6,6 @@
 
 #Things to update 
 ## Resource group name and app nam
-## $EdnaKeyString = @{ "EdnaKeyString"="$KeyVaultLink" } # RB: this thing here, can get from current list 
 
 
 [CmdletBinding()]
@@ -26,6 +25,9 @@ process {
     }
     
     try {
+        #application ID and uri
+        $clientId = "8174fcc1-196d-4578-9c5c-9b4ff5ba6e19"
+        $apiURI = "api://8174fcc1-196d-4578-9c5c-9b4ff5ba6e19"
 
         #region Show Learn LTI Banner
         Write-Host ''
@@ -196,8 +198,6 @@ process {
 
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
-        $clientId = "8174fcc1-196d-4578-9c5c-9b4ff5ba6e19"
-        $apiURI = "api://8174fcc1-196d-4578-9c5c-9b4ff5ba6e19"
 
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $clientId, IdentifiedURI: $apiURI"
         $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$clientId appRegistrationApiURI=$apiURI userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
