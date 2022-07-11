@@ -197,6 +197,7 @@
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
+                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
                 "AssignmentsServiceUrl": "[concat('https://', 'assignments' , variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
                 "Lti1Secret": "LearnLTI",
                 "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
@@ -222,6 +223,7 @@
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
+                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
                 "AssignmentsServiceUrl": "[concat('https://', 'assignments', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
                 "Lti1Secret": "LearnLTI",
                 "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
@@ -246,6 +248,7 @@
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
+                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
                 "PlatformsServiceUrl": "[concat('https://','platforms' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
                 "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
@@ -293,6 +296,7 @@
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
+                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
                 "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('links' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('links' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
@@ -315,6 +319,7 @@
             ],
             "properties": {
                 "AuthUrl": "[parameters('appRegistrationApiURI')]",
+                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
                 "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
                 "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
                 "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('learncontent' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('learncontent' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",

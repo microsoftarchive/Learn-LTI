@@ -242,7 +242,7 @@ process {
         #endregion
 
         #region Build and Publish Function Apps
-        . .\Platform-Only-Backend.ps1
+        . .\Limited-Install-Backend.ps1
         Write-Title "STEP #10 - Installing the backend"
     
 
