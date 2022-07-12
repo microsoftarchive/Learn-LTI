@@ -1,4 +1,4 @@
-# B2C Cleanup User Docs
+# B2C Deployment User Docs
 
 ## Terminal screenshots key:
 * Red background = hidden B2C value
