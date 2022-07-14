@@ -19,7 +19,7 @@ const configuration: Configuration = {
   auth: {
     clientId: '0cd1d1d6-a7aa-41e2-b569-1ca211147973', // RB: don't hardcode
     redirectUri: process.env.REACT_APP_EDNA_MAIN_URL!,
-    authority: b2cPolicies.authorities.signUpSignIn.authority,
+    authority: b2cPolicies.authorities.signIn.authority,
     navigateToLoginRequestUrl: true,
     knownAuthorities: [b2cPolicies.authorityDomain]
   },
