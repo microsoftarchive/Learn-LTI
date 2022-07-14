@@ -9,13 +9,69 @@
 # Upate: comment out any you don't want to deploy. Maybe prompt here? called automatically from limited-deploy
 
 enum VALID_FUNCTIONS {
-    #AssignmentLearnContent;
-    #AssignmentLinks;
-    #Assignments;
-    #Connect;
+    AssignmentLearnContent;
+    AssignmentLinks;
+    Assignments;
+    Connect;
     Platforms;
-    #Users
+    Users
 }
+function Write-Title([string]$Title) {
+    Write-Host "`n`n============================================================="
+    Write-Host $Title
+    Write-Host "=============================================================`n`n"
+}
+
+function Is-Numeric ($Value)
+{
+    return $Value -match "^[\d\.]+$"
+}
+
+Write-Title 'Choose function Apps to update'
+[string]$menu = "1.AssignmentLearnContent`r`n2.AssignmentLinks`r`n3.Assignments`r`n4.Connect`r`n5.Platforms`r`n6.Users"
+Write-Host "$menu"
+[Int32[]]$indexes= @() 
+while ($true) {
+    [string]$indextoupdate = Read-Host 'Choose the index of the function you need to update (one at a time, eg:3) or for exit: e'
+    if(Is-Numeric($indextoupdate)){
+        $indupdate = [int]$indextoupdate
+        if ($indupdate -gt 0 -and $indupdate -lt 7) {
+            if (!($indupdate -in $indexes)) {
+                $indexes += ,$indupdate
+            }
+            else {
+                Write-Host "Index already chosen"
+            }
+        }
+        else {
+            Write-Host "Invalid input"
+        }
+    } 
+    else{
+        if($indextoupdate -eq 'e'){
+            break
+        }
+        Write-Host "Invalid input"
+    
+    }
+    
+    if($indexes){
+        Write-Host "These are the chosen options: $indexes"
+    }  
+    else {
+        Write-Host "You haven't chosen the option"
+    }
+    if ($indexes.Count -eq 6) {
+        break
+    }
+    if ($indexes.Count -eq 6) {
+        break
+    }
+}
+
+
+
+
 
 function Write-BackendDebugLog {
     param (
@@ -86,6 +142,7 @@ function Publish-FunctionApp {
 
 function Install-Backend {
  
+    
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
@@ -109,8 +166,53 @@ function Install-Backend {
         Remove-Item -LiteralPath $PublishRoot -Recurse -Force
     }
     
+    Write-Title 'Choose function Apps to update'
+    [string]$menu = "1.AssignmentLearnContent`r`n2.AssignmentLinks`r`n3.Assignments`r`n4.Connect`r`n5.Platforms`r`n6.Users"
+    Write-Host "$menu"
+    [Int32[]]$indexes= @() 
+    while ($true) {
+        [string]$indextoupdate = Read-Host 'Choose the index of the function you need to update (one at a time, eg:3) or for exit: e'
+        if(Is-Numeric($indextoupdate)){
+            $indupdate = [int]$indextoupdate
+            if ($indupdate -gt 0 -and $indupdate -lt 7) {
+                if (!($indupdate -in $indexes)) {
+                    $indexes += ,$indupdate
+                }
+                else {
+                    Write-Host "Index already chosen"
+                }
+            }
+            else {
+                Write-Host "Invalid input"
+            }
+        } 
+        else{
+            if($indextoupdate -eq 'e'){
+                break
+            }
+            Write-Host "Invalid input"
+        
+        }
+        
+        if($indexes){
+            Write-Host "These are the chosen options: $indexes"
+        }  
+        else {
+            Write-Host "You haven't chosen the option"
+        }
+        if ($indexes.Count -eq 6) {
+            break
+        }
+        if ($indexes.Count -eq 6) {
+            break
+        }
+    }
+
+
     try {            
         $Functions = [System.Enum]::GetNames([VALID_FUNCTIONS])
+        Write-Host "$Functions"
+        Read-Host "stoppp"
         foreach ($Function in $Functions) {
 
             Write-BackendDebugLog -Message "Installing FunctionApp -- $Function"
