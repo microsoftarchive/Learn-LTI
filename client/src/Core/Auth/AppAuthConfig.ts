@@ -17,7 +17,7 @@ const authLogCallback = (level: LogLevel, message: string, _containsPii: boolean
 
 const configuration: Configuration = {
   auth: {
-    clientId: '0cd1d1d6-a7aa-41e2-b569-1ca211147973', // RB: don't hardcode
+    clientId: process.env.REACT_APP_EDNA_AUTH_CLIENT_ID!, //process.env.REACT_APP_EDNA_AAD_CLIENT_ID!
     redirectUri: process.env.REACT_APP_EDNA_MAIN_URL!,
     authority: b2cPolicies.authorities.signIn.authority,
     navigateToLoginRequestUrl: true,
@@ -33,7 +33,7 @@ const configuration: Configuration = {
 };
 
 const authParams: AuthenticationParameters = {
-  scopes: ['https://ltimoodleb2c.onmicrosoft.com/api/b2c.read'] // RB: configure B2C here
+  scopes: ['https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read'] // RB: 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read'
 };
 
 const options: IMsalAuthProviderConfig = {
