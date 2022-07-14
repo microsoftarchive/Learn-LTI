@@ -5,15 +5,16 @@
 
 
 #Things to update 
-## Resource group name and app name
-## application ID and uri 
+## Resource group name and app name - maybe make these params you pass in or prompt? 
+## application ID and uri - uri is just "api://" + the application id -- parameter , or prompt
 # backend parameters
+# need to update Limited-install-backend as well
 
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_a2_MSLearnLTI",
-    [string]$AppName = "RB_a2_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "RB_a3_MSLearnLTI",
+    [string]$AppName = "RB_a3_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -28,8 +29,8 @@ process {
     
     try {
         #application ID and uri
-        $clientId = "8174fcc1-196d-4578-9c5c-9b4ff5ba6e19"
-        $apiURI = "api://8174fcc1-196d-4578-9c5c-9b4ff5ba6e19"
+        $clientId = "a15f3fac-c0e5-491f-8a17-41233e28ab8c"
+        $apiURI = "api://a15f3fac-c0e5-491f-8a17-41233e28ab8c"
 
         #region Show Learn LTI Banner
         Write-Host ''
@@ -250,12 +251,12 @@ process {
         $BackendParams = @{
             SourceRoot="../backend";
             ResourceGroupName=$ResourceGroupName;
-            #LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
-            #LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
-            #AssignmentsFunctionAppName=$deploymentOutput.properties.outputs.AssignmentsFunctionName.value;
-            #ConnectFunctionAppName=$deploymentOutput.properties.outputs.ConnectFunctionName.value;
+            LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
+            LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
+            AssignmentsFunctionAppName=$deploymentOutput.properties.outputs.AssignmentsFunctionName.value;
+            ConnectFunctionAppName=$deploymentOutput.properties.outputs.ConnectFunctionName.value;
             PlatformsFunctionAppName=$deploymentOutput.properties.outputs.PlatformsFunctionName.value;
-            #UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
+            UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
         }
         Install-Backend @BackendParams
         #endregion

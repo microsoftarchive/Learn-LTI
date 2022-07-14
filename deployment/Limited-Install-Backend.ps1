@@ -6,7 +6,8 @@
 # List of known Azure Functions to Install / Publish.
 # Update this list on adding / updating any Function.
 
-# testing note -- comment out any you will not deploy
+# Upate: comment out any you don't want to deploy. Maybe prompt here? called automatically from limited-deploy
+
 enum VALID_FUNCTIONS {
     #AssignmentLearnContent;
     #AssignmentLinks;
