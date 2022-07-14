@@ -157,13 +157,10 @@ function Install-Backend {
         if ($indexes.Count -eq 6) {
             break
         }
-        if ($indexes.Count -eq 6) {
-            break
-        }
     }
     $Functions = @()
     foreach($func in $indexes){
-        $value = [VALID_FUNCTIONS]$func
+        $value = [VALID_FUNCTIONS]($func-1)
         $Functions+= $value
     }
 
