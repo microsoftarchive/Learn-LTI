@@ -28,6 +28,11 @@ process {
     }
     
     try {
+        #region "formatting a unique identifier to ensure we create a new keyvault for each run"
+        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
+        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+        #endregion
+
         #application ID and uri
         $clientId = "a15f3fac-c0e5-491f-8a17-41233e28ab8c"
         $apiURI = "api://a15f3fac-c0e5-491f-8a17-41233e28ab8c"
@@ -132,7 +137,9 @@ process {
         else {
             $SubscriptionListOutput = $SubscriptionList | Select-Object @{ l="Subscription Name"; e={ $_.name } }, "id", "isDefault"
             Write-Host ($SubscriptionListOutput | Out-String)
-            $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List'
+            # $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List' #TODO - UNCOMMENT
+            $SubscriptionNameOrId = "COMP0111 2021-22 Project_Warren_Buhler" #TODO - REMOVE
+
             #trimming the input for empty spaces, if any
             $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
             Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
@@ -145,10 +152,12 @@ process {
 
         #region Choosing AAD app to update
         Write-Title ' Choose an Azure Active Directory App to update'
-        $AppName = Read-Host 'Enter the Name for Application'
+        # $AppName = Read-Host 'Enter the Name for Application' #TODO - UNCOMMENT
+        $AppName = "RB_policy1_MS-Learn-Lti-Tool-App" #TODO - REMOVE
         $AppName = $AppName.Trim()
 
-        $clientId = Read-Host 'Enter the Client ID of your registered application'
+        # $clientId = Read-Host 'Enter the Client ID of your registered application' #TODO - UNCOMMENT
+        $clientId = "3d440bc7-87f5-4600-8814-698b895d14d7" #TODO - REMOVE
         $clientId = $clientId.Trim()
 
         Write-Host "Checking if Application exists...."
@@ -174,7 +183,8 @@ process {
         #region Choose Resource Group of above application
         Write-Title ' Choose a Resource Group to update'
         
-        $ResourceGroupName = Read-Host 'Enter the Name of Resource Group'
+        # $ResourceGroupName = Read-Host 'Enter the Name of Resource Group' # TODO - UNCOMMENT
+        $ResourceGroupName = "RB_policy1_MSLearnLTI" #TODO - REMOVE
         $ResourceGroupName = $ResourceGroupName.Trim()
         Write-Host "Checking If entered Resource Group exists...."
         $checkResourceGroupExist = (az group exists --resource-group $ResourceGroupName)
@@ -198,7 +208,8 @@ process {
 
         if(!$LocationName) {
             Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
-            $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+            # $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning' #TODO - UNCOMMENT
+            $LocationName = "uksouth" #TODO - REMOVE
             #trimming the input for empty spaces, if any
             $LocationName = $LocationName.Trim()
         }
@@ -219,9 +230,15 @@ process {
         #region Provision Resources inside Resource Group on Azure using ARM template
         Write-Title 'STEP #6 - Creating Resources in Azure'
     
+        [int]$azver0= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[0]
+        [int]$azver1= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[1]
+        if( $azver0 -ge 2 -and $azver1 -ge 37){
+        $userObjectId = az ad signed-in-user show --query id
+        }
+        else {
         $userObjectId = az ad signed-in-user show --query objectId
-        #$userObjectId
-    
+        }
+
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
 
