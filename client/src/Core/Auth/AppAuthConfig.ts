@@ -5,6 +5,7 @@
 
 import { MsalAuthProvider, LoginType, IMsalAuthProviderConfig } from 'react-aad-msal';
 import { Configuration, Logger, LogLevel, AuthenticationParameters } from 'msal';
+import { b2cPolicies } from './policies';
 
 const authLogCallback = (level: LogLevel, message: string, _containsPii: boolean): void => {
   // Not setting the log at all, will cause the an exception in the UserAgentApplication.
@@ -16,10 +17,11 @@ const authLogCallback = (level: LogLevel, message: string, _containsPii: boolean
 
 const configuration: Configuration = {
   auth: {
-    clientId: process.env.REACT_APP_EDNA_AAD_CLIENT_ID!,
+    clientId: process.env.REACT_APP_EDNA_AUTH_CLIENT_ID!, //process.env.REACT_APP_EDNA_AAD_CLIENT_ID!
     redirectUri: process.env.REACT_APP_EDNA_MAIN_URL!,
-    authority: `https://login.microsoftonline.com/${process.env.REACT_APP_EDNA_TENANT_ID}`,
-    navigateToLoginRequestUrl: true
+    authority: b2cPolicies.authorities.signIn.authority,
+    navigateToLoginRequestUrl: true,
+    knownAuthorities: [b2cPolicies.authorityDomain]
   },
   cache: {
     cacheLocation: 'localStorage',
@@ -31,7 +33,7 @@ const configuration: Configuration = {
 };
 
 const authParams: AuthenticationParameters = {
-  scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!]
+  scopes: ['https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read'] // RB: 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read'
 };
 
 const options: IMsalAuthProviderConfig = {
