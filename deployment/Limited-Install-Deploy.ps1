@@ -13,8 +13,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_a3_MSLearnLTI",
-    [string]$AppName = "RB_a3_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "RB_policy2_MSLearnLTI",
+    [string]$AppName = "RB_policy2_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -29,8 +29,8 @@ process {
     
     try {
         #application ID and uri
-        $clientId = "a15f3fac-c0e5-491f-8a17-41233e28ab8c"
-        $apiURI = "api://a15f3fac-c0e5-491f-8a17-41233e28ab8c"
+        $clientId = "c9180be0-6a72-4bd4-9d5a-9e649a24688c"
+        $apiURI = "api://c9180be0-6a72-4bd4-9d5a-9e649a24688c"
 
         #region Show Learn LTI Banner
         Write-Host ''
@@ -222,9 +222,6 @@ process {
         $userObjectId = az ad signed-in-user show --query objectId
         #$userObjectId
     
-        $templateFileName = "azuredeploy.json"
-        $deploymentName = "Deployment-$ExecutionStartTime"
-
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
 
