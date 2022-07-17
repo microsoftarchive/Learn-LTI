@@ -10,10 +10,12 @@ import { ServiceError } from '../Core/Utils/Axios/ServiceError';
 
 class PlatformServiceClass {
   public async getAllPlatforms(): Promise<WithError<PlatformDto[]>> {
+    console.log(`calling all platforms`);
     const allPlatformsResponse = await axios.get<PlatformDto[]>(
       `${process.env.REACT_APP_EDNA_PLATFORM_SERVICE_URL}/platforms`
     );
-
+    console.log(allPlatformsResponse);
+    console.log(`finished calling get all platforms`);
     return safeData(allPlatformsResponse);
   }
 

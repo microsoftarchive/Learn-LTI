@@ -13,8 +13,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_a3_MSLearnLTI",
-    [string]$AppName = "RB_a3_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "RB_policy2_MSLearnLTI",
+    [string]$AppName = "RB_policy2_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -29,13 +29,13 @@ process {
     
     try {
         #region "formatting a unique identifier to ensure we create a new keyvault for each run"
-        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
-        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+        #$uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
+        #((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
         #endregion
 
         #application ID and uri
-        $clientId = "a15f3fac-c0e5-491f-8a17-41233e28ab8c"
-        $apiURI = "api://a15f3fac-c0e5-491f-8a17-41233e28ab8c"
+        $clientId = "7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
+        $apiURI = "api://7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
 
         #region Show Learn LTI Banner
         Write-Host ''
@@ -153,11 +153,11 @@ process {
         #region Choosing AAD app to update
         Write-Title ' Choose an Azure Active Directory App to update'
         # $AppName = Read-Host 'Enter the Name for Application' #TODO - UNCOMMENT
-        $AppName = "RB_policy1_MS-Learn-Lti-Tool-App" #TODO - REMOVE
+        $AppName = "RB_policy2_MS-Learn-Lti-Tool-App" #TODO - REMOVE
         $AppName = $AppName.Trim()
 
         # $clientId = Read-Host 'Enter the Client ID of your registered application' #TODO - UNCOMMENT
-        $clientId = "3d440bc7-87f5-4600-8814-698b895d14d7" #TODO - REMOVE
+        #$clientId = "3d440bc7-87f5-4600-8814-698b895d14d7" #TODO - REMOVE
         $clientId = $clientId.Trim()
 
         Write-Host "Checking if Application exists...."
@@ -184,7 +184,7 @@ process {
         Write-Title ' Choose a Resource Group to update'
         
         # $ResourceGroupName = Read-Host 'Enter the Name of Resource Group' # TODO - UNCOMMENT
-        $ResourceGroupName = "RB_policy1_MSLearnLTI" #TODO - REMOVE
+        #$ResourceGroupName = "RB_policy1_MSLearnLTI" #TODO - REMOVE
         $ResourceGroupName = $ResourceGroupName.Trim()
         Write-Host "Checking If entered Resource Group exists...."
         $checkResourceGroupExist = (az group exists --resource-group $ResourceGroupName)
@@ -238,9 +238,6 @@ process {
         else {
         $userObjectId = az ad signed-in-user show --query objectId
         }
-
-        $templateFileName = "azuredeploy.json"
-        $deploymentName = "Deployment-$ExecutionStartTime"
 
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
@@ -306,6 +303,30 @@ process {
 
         #region Build and Publish Client Artifacts
         Write-Title '======== Successfully Deployed Resources to Azure ==========='
+        
+        Write-Title '======== the Client deploy to Azure ==========='
+        
+        . .\Install-Client.ps1
+        Write-Title "STEP #11 - Updating client's .env.production file"
+    
+        $ClientUpdateConfigParams = @{
+            ConfigPath="../client/.env.production";
+            AppId=$clientId;
+            LearnContentFunctionAppName=$deploymentOutput.properties.outputs.LearnContentFunctionName.value;
+            LinksFunctionAppName=$deploymentOutput.properties.outputs.LinksFunctionName.value;
+            AssignmentsFunctionAppName=$deploymentOutput.properties.outputs.AssignmentsFunctionName.value;
+            PlatformsFunctionAppName=$deploymentOutput.properties.outputs.PlatformsFunctionName.value;
+            UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
+            StaticWebsiteUrl=$deploymentOutput.properties.outputs.webClientURL.value;
+        }
+        Update-ClientConfig @ClientUpdateConfigParams
+    
+        Write-Title 'STEP #12 - Installing the client'
+        $ClientInstallParams = @{
+            SourceRoot="../client";
+            StaticWebsiteStorageAccount=$deploymentOutput.properties.outputs.StaticWebSiteName.value
+        }
+        Install-Client @ClientInstallParams
 
         Write-Log -Message "Deployment Complete"
     }
