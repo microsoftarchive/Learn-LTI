@@ -32,9 +32,10 @@ process {
         $apiURI = "api://a15f3fac-c0e5-491f-8a17-41233e28ab8c"
 
         #B2C parameters
-        $REACT_APP_EDNA_B2C_CLIENT_ID = 'sdfsdfsdf'
-        $REACT_APP_EDNA_B2C_TENANT = 'sdfsdf'
-        $REACT_APP_EDNA_AUTH_CLIENT_ID = 'asdasdads'
+        $b2c_secret = "hard-code value"
+        $REACT_APP_EDNA_B2C_CLIENT_ID = 'hard-code client id'
+        $REACT_APP_EDNA_B2C_TENANT = 'hard-code b2c tenant'
+        $REACT_APP_EDNA_AUTH_CLIENT_ID = 'hard-code client id'
 
         #region Show Learn LTI Banner
         Write-Host ''
@@ -93,10 +94,12 @@ process {
 
 
         #region "formatting a unique identifier to ensure we create a new keyvault for each run"
-        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace "'<AZURE_B2C_SECRET_STRING>'", ('"213123123123123"')) |  Set-Content -path (".\azuredeploy.json")
+
+        $b2c_secret =  '"'+$b2c_secret+'"'
+        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace "'<AZURE_B2C_SECRET_STRING>'", $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
         
         [string]$dir = Get-Location
-        $dir += "\..\client\.env.production"
+        $dir += "/../client/.env.production"
         #$dir += ".env.production"
 
         $old_REACT_APP_EDNA_B2C_CLIENT_ID=''
