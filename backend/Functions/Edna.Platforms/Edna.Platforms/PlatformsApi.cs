@@ -29,7 +29,7 @@ namespace Edna.Platforms
     {
         private const string PlatformsTableName = "Platforms";
 
-        private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
+        private static readonly string[] PossibleEmailClaimTypes = { "email", "emails", "upn", "unique_name" };
         private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
 
@@ -171,7 +171,8 @@ namespace Edna.Platforms
                 _logger.LogError("Could not get any user email / uid for the current user.");
                 return false;
             }
-
+            _logger.LogInformation(String.Join(",",userEmails));
+            _logger.LogInformation(String.Join(",",AllowedUsers));
             // return value of if user email is in the allowed users list
             return AllowedUsers.Intersect(userEmails).Any();
         }

@@ -34,8 +34,8 @@ process {
         #endregion
 
         #application ID and uri
-        $clientId = "7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
-        $apiURI = "api://7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
+        $clientId = "1ea637ca-5c43-4742-b590-f3c084af99d2"
+        $apiURI = "api://1ea637ca-5c43-4742-b590-f3c084af99d2"
 
         #region Show Learn LTI Banner
         Write-Host ''
@@ -153,7 +153,6 @@ process {
         #region Choosing AAD app to update
         Write-Title ' Choose an Azure Active Directory App to update'
         # $AppName = Read-Host 'Enter the Name for Application' #TODO - UNCOMMENT
-        $AppName = "RB_policy2_MS-Learn-Lti-Tool-App" #TODO - REMOVE
         $AppName = $AppName.Trim()
 
         # $clientId = Read-Host 'Enter the Client ID of your registered application' #TODO - UNCOMMENT
