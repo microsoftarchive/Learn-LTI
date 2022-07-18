@@ -18,7 +18,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 using System.Text;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
@@ -147,6 +147,8 @@ namespace Edna.Platforms
             return true;
             #endif
 
+            _logger.LogInformation("In validate");
+
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
                 return false;
 
@@ -188,6 +190,12 @@ namespace Edna.Platforms
                 .Select(claim => claim.Value)
                 .Distinct()
                 .ToList();
+            
+            _logger.LogInformation("In get user");
+            // string emails = claimsArray.FirstOrDefault(claim => claim.Type == "emails").Value;
+            // string[] emailsCollection = emails.Split(",");
+            // userEmails.Concat(emailsCollection);
+
 
             return userEmails.Any();
         }

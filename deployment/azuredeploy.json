@@ -20,7 +20,7 @@
         }
     },
     "variables": {
-        "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '20220715045557'),0,9)]",
+        "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id),0,9)]",
         "functionList": [
             "connect",
             "assignments",
@@ -172,7 +172,19 @@
 									"wellKnownOpenIdConfiguration": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/B2C_1_signup_signin_LTI/v2.0/.well-known/openid-configuration"
 								}
 							}
-						}
+						},
+                        "AzureB2CCustomerPolicy": 
+                        {
+                            "registration": {
+								"clientId": "0cd1d1d6-a7aa-41e2-b569-1ca211147973",
+								"clientCredential": {
+									"clientSecretSettingName": "AzureB2C_AUTHENTICATION_SECRET"
+								},
+								"openIdConnectConfiguration": {
+									"wellKnownOpenIdConfiguration": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/B2C_1_signup_signin_LTI/v2.0/.well-known/openid-configuration?p=B2C_1A_SIGNUP_SIGNIN"
+								}
+							}
+                        }
 					}
 				},
 				"login": {
