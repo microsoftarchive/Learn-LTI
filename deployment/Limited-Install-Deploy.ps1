@@ -172,9 +172,6 @@ process {
         $filecontent = Get-Content $dir
         $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
         
-
-
-        Read-Host 'Debug stop.....'
         #endregion
 
 
