@@ -54,6 +54,9 @@ $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/p
 
 Write-Host "Deleting B2C_1A_PasswordReset"
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies/B2C_1A_PasswordReset' -Method 'DELETE' -Headers $headers
+
+Write-Host "Deleting B2C_1A_FacebookSecret"
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies/B2C_1A_FacebookSecret' -Method 'DELETE' -Headers $headers
 #endregion
 
 #region "STEP 3: Cleaning up the keysets from the b2c tenant"

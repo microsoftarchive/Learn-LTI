@@ -565,6 +565,9 @@ CustomPolicyUpdateOrUpload "B2C_1A_PasswordReset" $customPolicies $access_token
 #endregion
 
 #region "saving needed params to a .csv to be passed to the Deploy.ps1"
+Write-Title "Saving params to b2cSavedParams.csv to be passed to Deploy.ps1; this will automatically be cleaned up after the values are loaded"
+#TODO - perhaps in future change it to argument passing instead of via the .csv file; done for now for ease of prototyping
+
 $b2cSavedParamsPath = ".\b2cSavedParams.csv"
 if(Test-Path $b2cSavedParamsPath -PathType Leaf){
     Clear-Content $b2cSavedParamsPath
