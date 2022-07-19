@@ -582,6 +582,7 @@ else{
 "WebClientSecret,$WebClientSecret" | Out-File -FilePath $b2cSavedParamsPath -Append
 "PermissionClientID,$PermissionClientID" | Out-File -FilePath $b2cSavedParamsPath -Append
 "PermissionClientSecret,$PermissionClientSecret" | Out-File -FilePath $b2cSavedParamsPath -Append
+"B2cTenantName,$B2cTenantName" | Out-File -FilePath $b2cSavedParamsPath -Append
 #TODO - add code to load these into the deploy script when needed
 #TODO - prune this to only include those that are actually used
 

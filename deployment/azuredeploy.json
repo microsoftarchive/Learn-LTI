@@ -6,39 +6,9 @@
       "type": "string",
       "defaultValue": "dc0fcdd9-727f-47a3-8f15-4dcb813919fc"
     },
-    "variables": {
-        "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '20220715045557'),0,9)]",
-        "functionList": [
-            "connect",
-            "assignments",
-            "learncontent",
-            "links",
-            "platforms",
-            "users"
-        ],
-        "enabledForDeployment": false,
-        "enabledForDiskEncryption": false,
-        "enabledForTemplateDeployment": false,
-        "tenantId": "[subscription().tenantId]",
-        "skuName": "Standard",
-        "location": "[resourceGroup().location]",
-        "runtimeStack": "dotnet",
-        "resourceGroupName": "[resourceGroup().name]",
-        "StorageAccountSuffix": "[toLower(replace(variables('uniqueIdentifier'),'-',''))]",
-        "ProjectNameSuffix": "[concat('-', variables('StorageAccountSuffix'))]",
-        "staticWebsite": "[toLower(concat('learnclient', variables('StorageAccountSuffix')))]",
-        "keyVaultName": "[toLower(concat('kv', variables('ProjectNameSuffix')))]",
-        "KeyVaultAuditLogsStorageAccountName": "[toLower(concat('kv' , variables('StorageAccountSuffix'), 'auditlogs'))]",
-        "readerRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
-        "KVKeyPermissions": [
-            "encrypt",
-            "decrypt",
-            "wrapKey",
-            "unwrapKey",
-            "sign",
-            "verify",
-            "get"
-        ]
+    "appRegistrationApiURI": {
+      "type": "string",
+      "defaultValue": "api://10ef1e6b-1171-4888-92d5-c661b428796b"
     },
     "userEmailAddress": {
       "type": "string",
@@ -50,7 +20,7 @@
     }
   },
   "variables": {
-    "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '80'),0,9)]",
+    "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '1'),0,9)]",
     "functionList": [
       "connect",
       "assignments",
@@ -59,7 +29,7 @@
       "platforms",
       "users"
     ],
-    "AzureB2C_AUTHENTICATION_SECRET": "hard-code value",
+    "AzureB2C_AUTHENTICATION_SECRET": "<AZURE_B2C_SECRET_STRING>",
     "enabledForDeployment": false,
     "enabledForDiskEncryption": false,
     "enabledForTemplateDeployment": false,

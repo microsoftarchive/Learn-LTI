@@ -37,12 +37,32 @@ process {
         $clientId = "7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
         $apiURI = "api://7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
 
-        #B2C parameters
+        #Initializing B2C parameters
         $b2c_secret = "hard-code value"
         $REACT_APP_EDNA_B2C_CLIENT_ID = 'hard-code client id'
         $REACT_APP_EDNA_B2C_TENANT = 'hard-code b2c tenant'
         $REACT_APP_EDNA_AUTH_CLIENT_ID = 'hard-code client id'
 
+        $headers = "Parameter","Value"
+        $configurations = (Import-CSV -Path "b2cSavedParams (2).csv" -Header $headers)
+        ForEach($row in $configurations) {
+            switch($row."Parameter"){
+                "WebClientID" {  
+
+                    $REACT_APP_EDNA_B2C_CLIENT_ID = $row."Value" 
+                    
+                    $REACT_APP_EDNA_AUTH_CLIENT_ID =$row."Value"
+                }
+                "WebClientSecret" { $b2c_secret = $row."Value"}
+                "B2cTenantName" { $REACT_APP_EDNA_B2C_TENANT = $row."Value" }
+            }
+        }
+        
+        Write-Host $b2c_secret
+        Write-Host $REACT_APP_EDNA_B2C_CLIENT_ID
+        Write-Host $REACT_APP_EDNA_B2C_TENANT
+        Write-Host $REACT_APP_EDNA_AUTH_CLIENT_ID
+        Read-Host "Debug stop"
         #region Show Learn LTI Banner
         Write-Host ''
         Write-Host ' _      ______          _____  _   _            _   _______ _____ '
@@ -113,35 +133,48 @@ process {
         [System.IO.File]::ReadLines($dir) |  ForEach-Object {
                if(  $_ -Match "REACT_APP_EDNA_B2C_CLIENT_ID" ){
                    $configuration_line = $_ -split "="
-                   $old_REACT_APP_EDNA_B2C_CLIENT_ID = $_
-                   $REACT_APP_EDNA_B2C_CLIENT_ID = $configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_CLIENT_ID+"'"
-                   echo $REACT_APP_EDNA_B2C_CLIENT_ID
+                   $old_REACT_APP_EDNA_B2C_CLIENT_ID = $_.Trim()
+                   $REACT_APP_EDNA_B2C_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_CLIENT_ID+"'").Trim()
                }
                elseif ( $_ -Match "REACT_APP_EDNA_B2C_TENANT"){
                    $configuration_line = $_ -split "="
-                   $old_REACT_APP_EDNA_B2C_TENANT = $_
-                   $REACT_APP_EDNA_B2C_TENANT = $configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_TENANT+"'"
-                   echo $REACT_APP_EDNA_B2C_TENANT
+                   $old_REACT_APP_EDNA_B2C_TENANT = $_.Trim()
+                   $REACT_APP_EDNA_B2C_TENANT = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_TENANT+"'").Trim()
                }
                elseif ( $_ -Match "REACT_APP_EDNA_AUTH_CLIENT_ID"){
                    $configuration_line = $_ -split "="
-                   $old_REACT_APP_EDNA_AUTH_CLIENT_ID = $_
-                   $REACT_APP_EDNA_AUTH_CLIENT_ID = $configuration_line[0]+"="+"'"+$REACT_APP_EDNA_AUTH_CLIENT_ID+"'"
-                   echo $REACT_APP_EDNA_AUTH_CLIENT_ID
+                   $old_REACT_APP_EDNA_AUTH_CLIENT_ID = $_.Trim()
+                   $REACT_APP_EDNA_AUTH_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_AUTH_CLIENT_ID+"'").Trim()
                }
                else{
-                   echo $false
                }
         }   
+        echo "Old value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
         $filecontent = Get-Content $dir
-        $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content ".env.production"
+        $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
         
         $filecontent = Get-Content $dir
-        $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content ".env.production"
+        $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
         
         $filecontent = Get-Content $dir
-        $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content ".env.production"
+        $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
+
+        [string]$dir = Get-Location
+        $dir += "/../client/.env.development"
+
+        echo "New value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
+
+        $filecontent = Get-Content $dir
+        $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
         
+        $filecontent = Get-Content $dir
+        $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
+        
+        $filecontent = Get-Content $dir
+        $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
+        
+
+
         Read-Host 'Debug stop.....'
         #endregion
 
