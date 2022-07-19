@@ -62,7 +62,6 @@ process {
         Write-Host $REACT_APP_EDNA_B2C_CLIENT_ID
         Write-Host $REACT_APP_EDNA_B2C_TENANT
         Write-Host $REACT_APP_EDNA_AUTH_CLIENT_ID
-        Read-Host "Debug stop"
         #region Show Learn LTI Banner
         Write-Host ''
         Write-Host ' _      ______          _____  _   _            _   _______ _____ '
