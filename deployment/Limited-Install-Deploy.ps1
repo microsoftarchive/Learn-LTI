@@ -28,8 +28,9 @@ process {
     }
     try {
         #region "formatting a unique identifier to ensure we create a new keyvault for each run"
-        #$uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
-        #((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
+        $uniqueIdentifier = "1" # TODO - remove this, just left it like this for now to make it consistent
+        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
         #endregion
 
         #application ID and uri
@@ -101,7 +102,7 @@ process {
         #region "formatting a unique identifier to ensure we create a new keyvault for each run"
 
         $b2c_secret =  '"'+$b2c_secret+'"'
-        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
+        ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
         
         [string]$dir = Get-Location
         $dir += "/../client/.env.production"
