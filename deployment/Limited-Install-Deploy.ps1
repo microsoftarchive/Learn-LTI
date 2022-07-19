@@ -13,8 +13,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_policy2_MSLearnLTI",
-    [string]$AppName = "RB_policy2_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "MSLearnLTI",
+    [string]$AppName = "MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -137,8 +137,7 @@ process {
         else {
             $SubscriptionListOutput = $SubscriptionList | Select-Object @{ l="Subscription Name"; e={ $_.name } }, "id", "isDefault"
             Write-Host ($SubscriptionListOutput | Out-String)
-            # $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List' #TODO - UNCOMMENT
-            $SubscriptionNameOrId = "COMP0111 2021-22 Project_Warren_Buhler" #TODO - REMOVE
+            $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List' 
 
             #trimming the input for empty spaces, if any
             $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
@@ -152,12 +151,10 @@ process {
 
         #region Choosing AAD app to update
         Write-Title ' Choose an Azure Active Directory App to update'
-        # $AppName = Read-Host 'Enter the Name for Application' #TODO - UNCOMMENT
-        $AppName = "RB_policy2_MS-Learn-Lti-Tool-App" #TODO - REMOVE
+        $AppName = Read-Host 'Enter the Name for Application'
         $AppName = $AppName.Trim()
 
-        # $clientId = Read-Host 'Enter the Client ID of your registered application' #TODO - UNCOMMENT
-        #$clientId = "3d440bc7-87f5-4600-8814-698b895d14d7" #TODO - REMOVE
+        $clientId = Read-Host 'Enter the Client ID of your registered application' 
         $clientId = $clientId.Trim()
 
         Write-Host "Checking if Application exists...."
@@ -183,8 +180,7 @@ process {
         #region Choose Resource Group of above application
         Write-Title ' Choose a Resource Group to update'
         
-        # $ResourceGroupName = Read-Host 'Enter the Name of Resource Group' # TODO - UNCOMMENT
-        #$ResourceGroupName = "RB_policy1_MSLearnLTI" #TODO - REMOVE
+        $ResourceGroupName = Read-Host 'Enter the Name of Resource Group' 
         $ResourceGroupName = $ResourceGroupName.Trim()
         Write-Host "Checking If entered Resource Group exists...."
         $checkResourceGroupExist = (az group exists --resource-group $ResourceGroupName)
@@ -208,8 +204,7 @@ process {
 
         if(!$LocationName) {
             Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
-            # $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning' #TODO - UNCOMMENT
-            $LocationName = "uksouth" #TODO - REMOVE
+            $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning' 
             #trimming the input for empty spaces, if any
             $LocationName = $LocationName.Trim()
         }
