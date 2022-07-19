@@ -20,6 +20,15 @@ process {
     }
     
     try {
+        #region "TEMPORARY VALUES - REMOVE THESE"
+        #TODO - REMOVE THESE
+        $b2c_secret = "hard-code value"
+        #endregion
+
+        #region "formatting a unique identifier to ensure we create a new keyvault for each run"
+        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
+        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+        #endregion
 
         #region Show Learn LTI Banner
         Write-Host ''

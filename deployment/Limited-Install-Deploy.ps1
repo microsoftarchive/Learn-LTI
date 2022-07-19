@@ -28,8 +28,8 @@ process {
     }
     try {
         #region "formatting a unique identifier to ensure we create a new keyvault for each run"
-        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
-        $uniqueIdentifier = "1" # TODO - remove this, just left it like this for now to make it consistent
+        # $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
+        $uniqueIdentifier = "1" # Using lat value instead as Limited deploy is just to get a faster deploy useful for testing only; so we want to replace in place
         ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
         #endregion
 
@@ -99,8 +99,7 @@ process {
 
 
 
-        #region "formatting a unique identifier to ensure we create a new keyvault for each run"
-
+        #region "updating the b2c parameters and secrets"
         $b2c_secret =  '"'+$b2c_secret+'"'
         ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
         
@@ -143,7 +142,7 @@ process {
         $filecontent = Get-Content $dir
         $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content ".env.production"
         
-       Read-Host 'Debug stop.....'
+        Read-Host 'Debug stop.....'
         #endregion
 
 
