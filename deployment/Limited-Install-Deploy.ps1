@@ -96,7 +96,7 @@ process {
         #region "formatting a unique identifier to ensure we create a new keyvault for each run"
 
         $b2c_secret =  '"'+$b2c_secret+'"'
-        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace "'<AZURE_B2C_SECRET_STRING>'", $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
+        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
         
         [string]$dir = Get-Location
         $dir += "/../client/.env.production"
