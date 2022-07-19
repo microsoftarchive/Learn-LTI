@@ -151,7 +151,13 @@ process {
             throw "Invalid Location Name Entered."
         }
         #endregion
-    
+        
+        Write-Title "Choose the authentication mode from below`r`n1.AD mode`r`n2.B2C mode"
+        [int]$ch = Read-Host "choose the mode by typing it's index (for eg: for AD mode, enter 1):"
+        
+
+
+
         #region Create New App Registration in AzureAD
         Write-Title 'STEP #4 - Registering Azure Active Directory App'
     
