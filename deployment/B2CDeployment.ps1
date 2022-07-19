@@ -563,3 +563,23 @@ CustomPolicyUpdateOrUpload "B2C_1A_signup_signin" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_ProfileEdit" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_PasswordReset" $customPolicies $access_token
 #endregion
+
+#region "saving needed params to a .csv to be passed to the Deploy.ps1"
+$b2cSavedParamsPath = ".\b2cSavedParams.csv"
+if(Test-Path $b2cSavedParamsPath -PathType Leaf){
+    Clear-Content $b2cSavedParamsPath
+}
+else{
+    New-Item $b2cSavedParamsPath > $null
+}
+
+"MultiTenantAppID,$MultiTenantAppID" | Out-File -FilePath $b2cSavedParamsPath -Append
+"MultiTenantAppSecret,$MultiTenantAppSecret" | Out-File -FilePath $b2cSavedParamsPath -Append
+"WebClientID,$WebClientID" | Out-File -FilePath $b2cSavedParamsPath -Append
+"WebClientSecret,$WebClientSecret" | Out-File -FilePath $b2cSavedParamsPath -Append
+"PermissionClientID,$PermissionClientID" | Out-File -FilePath $b2cSavedParamsPath -Append
+"PermissionClientSecret,$PermissionClientSecret" | Out-File -FilePath $b2cSavedParamsPath -Append
+#TODO - add code to load these into the deploy script when needed
+#TODO - prune this to only include those that are actually used
+
+#endregion
