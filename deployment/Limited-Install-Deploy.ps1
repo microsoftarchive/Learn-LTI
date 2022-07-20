@@ -37,31 +37,14 @@ process {
         $clientId = "7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
         $apiURI = "api://7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
 
-        #Initializing B2C parameters
-        $b2c_secret = "hard-code value"
-        $REACT_APP_EDNA_B2C_CLIENT_ID = 'hard-code client id'
-        $REACT_APP_EDNA_B2C_TENANT = 'hard-code b2c tenant'
-        $REACT_APP_EDNA_AUTH_CLIENT_ID = 'hard-code client id'
+        #region "Calling B2CDeployment and retrieving the returned values"
+        $results = powershell.exe -file ".\B2CDeployment.ps1"
+        $REACT_APP_EDNA_B2C_CLIENT_ID = $results[0] #webclient ID
+        $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[0] #webclient ID
+        $b2c_secret = $results[1] #webclient secret
+        $REACT_APP_EDNA_B2C_TENANT = $results[2] #b2c tenant name
+        #endregion
 
-        $headers = "Parameter","Value"
-        $configurations = (Import-CSV -Path "b2cSavedParams (2).csv" -Header $headers)
-        ForEach($row in $configurations) {
-            switch($row."Parameter"){
-                "WebClientID" {  
-
-                    $REACT_APP_EDNA_B2C_CLIENT_ID = $row."Value" 
-                    
-                    $REACT_APP_EDNA_AUTH_CLIENT_ID =$row."Value"
-                }
-                "WebClientSecret" { $b2c_secret = $row."Value"}
-                "B2cTenantName" { $REACT_APP_EDNA_B2C_TENANT = $row."Value" }
-            }
-        }
-        
-        Write-Host $b2c_secret
-        Write-Host $REACT_APP_EDNA_B2C_CLIENT_ID
-        Write-Host $REACT_APP_EDNA_B2C_TENANT
-        Write-Host $REACT_APP_EDNA_AUTH_CLIENT_ID
         #region Show Learn LTI Banner
         Write-Host ''
         Write-Host ' _      ______          _____  _   _            _   _______ _____ '
