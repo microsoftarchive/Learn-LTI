@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_a01_MSLearnLTI",
-    [string]$AppName = "DM_a01_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad2_MSLearnLTI",
+    [string]$AppName = "DM_ad2_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -284,21 +284,12 @@ process {
         
         [int]$azver0= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[0]
         [int]$azver1= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[1]
-        if( $azver0 -ge 2 && $azver1 -ge 37){
+        if( $azver0 -ge 2 -and $azver1 -ge 37){
         $userObjectId = az ad signed-in-user show --query id
         }
         else {
         $userObjectId = az ad signed-in-user show --query objectId
         }
-        #$userObjectId
-
-        [string]$dir = Get-Location
-        $dir = $dir + "/azuredeploy.json"
-        [string]$ran = Get-Random -Maximum 1000
-
-        $json = Get-Content $dir | ConvertFrom-Json
-        $json.variables.uniqueIdentifier = "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, $ran),0,9)]"
-        $json | ConvertTo-Json | Out-File $dir
 
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
