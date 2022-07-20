@@ -37,14 +37,6 @@ process {
         $clientId = "7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
         $apiURI = "api://7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
 
-        #region "Calling B2CDeployment and retrieving the returned values"
-        $results = powershell.exe -file ".\B2CDeployment.ps1"
-        $REACT_APP_EDNA_B2C_CLIENT_ID = $results[0] #webclient ID
-        $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[0] #webclient ID
-        $b2c_secret = $results[1] #webclient secret
-        $REACT_APP_EDNA_B2C_TENANT = $results[2] #b2c tenant name
-        #endregion
-
         #region Show Learn LTI Banner
         Write-Host ''
         Write-Host ' _      ______          _____  _   _            _   _______ _____ '
@@ -98,68 +90,6 @@ process {
 
         Write-Log -Message "Successfully logged in to Azure."
         #endregion
-
-
-
-        #region "updating the b2c parameters and secrets"
-        $b2c_secret =  '"'+$b2c_secret+'"'
-        ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
-        
-        [string]$dir = Get-Location
-        $dir += "/../client/.env.production"
-        #$dir += ".env.production"
-
-        $old_REACT_APP_EDNA_B2C_CLIENT_ID=''
-        $old_REACT_APP_EDNA_B2C_TENANT=''
-        $old_REACT_APP_EDNA_AUTH_CLIENT_ID=''
-        [System.IO.File]::ReadLines($dir) |  ForEach-Object {
-               if(  $_ -Match "REACT_APP_EDNA_B2C_CLIENT_ID" ){
-                   $configuration_line = $_ -split "="
-                   $old_REACT_APP_EDNA_B2C_CLIENT_ID = $_.Trim()
-                   $REACT_APP_EDNA_B2C_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_CLIENT_ID+"'").Trim()
-               }
-               elseif ( $_ -Match "REACT_APP_EDNA_B2C_TENANT"){
-                   $configuration_line = $_ -split "="
-                   $old_REACT_APP_EDNA_B2C_TENANT = $_.Trim()
-                   $REACT_APP_EDNA_B2C_TENANT = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_TENANT+"'").Trim()
-               }
-               elseif ( $_ -Match "REACT_APP_EDNA_AUTH_CLIENT_ID"){
-                   $configuration_line = $_ -split "="
-                   $old_REACT_APP_EDNA_AUTH_CLIENT_ID = $_.Trim()
-                   $REACT_APP_EDNA_AUTH_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_AUTH_CLIENT_ID+"'").Trim()
-               }
-               else{
-               }
-        }   
-        echo "Old value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-        $filecontent = Get-Content $dir
-        $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-        
-        $filecontent = Get-Content $dir
-        $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-        
-        $filecontent = Get-Content $dir
-        $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-
-        [string]$dir = Get-Location
-        $dir += "/../client/.env.development"
-
-        echo "New value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-
-        $filecontent = Get-Content $dir
-        $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-        
-        $filecontent = Get-Content $dir
-        $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-        
-        $filecontent = Get-Content $dir
-        $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-        
-        #endregion
-
-
-
-
 
         #region Choose Active Subcription 
         Write-Title 'STEP #2 - Choose Subscription'

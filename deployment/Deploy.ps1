@@ -20,11 +20,6 @@ process {
     }
     
     try {
-        #region "TEMPORARY VALUES - REMOVE THESE"
-        #TODO - REMOVE THESE
-        $b2c_secret = "hard-code value"
-        #endregion
-
         #region "formatting a unique identifier to ensure we create a new keyvault for each run"
         $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
         ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
@@ -42,6 +37,13 @@ process {
         Write-Host ''
         #endregion
 
+        #region "getting the setup mode for b2c vs ad"
+        $b2cOrAD = "none"
+        while($b2cOrAD -ne "b2c" -and $b2cOrAD -ne "ad") {
+            $b2cOrAD = Read-Host "Would you like to set this up with b2c or AD? (b2c/ad) (b2c recommended as it can be single tenant or multitenant, ad only single tenant [less scalable])"
+        }
+        #endregion
+
         #region Setup Logging
         . .\Write-Log.ps1
         $ScriptPath = split-path -parent $MyInvocation.MyCommand.Definition
@@ -54,6 +56,24 @@ process {
         $TranscriptFile = Join-Path $LogRoot "Transcript-$ExecutionStartTime.log"
         Start-Transcript -Path $TranscriptFile;
         #endregion
+
+
+        #region "B2C STEP 1: Calling B2CDeployment to set up the b2c script and retrieving the returned values to be used later on"
+        $REACT_APP_EDNA_B2C_CLIENT_ID = ""
+        $REACT_APP_EDNA_AUTH_CLIENT_ID = ""
+        $b2c_secret = ""
+        $REACT_APP_EDNA_B2C_TENANT = ""
+        if($b2cOrAD -eq "b2c"){
+            Write-Title "B2C Step #1: Running the B2C Setup Script"
+            # TODO - verify these values are correct
+            $results = powershell.exe -file ".\B2CDeployment.ps1"
+            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[0] #webclient ID
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[0] #webclient ID
+            $b2c_secret = $results[1] #webclient secret
+            $REACT_APP_EDNA_B2C_TENANT = $results[2] #b2c tenant name
+        }
+        #endregion
+        
 
         #region Login to Azure CLI        
         Write-Title 'STEP #1 - Logging into Azure'
@@ -82,6 +102,65 @@ process {
         }
 
         Write-Log -Message "Successfully logged in to Azure."
+        #endregion
+
+        #region "B2C Step 2: Update required parameter in .env.production/ .env.development for front-end build and B2C secret in azuredeploy.json" 
+        if($b2cOrAD -eq "b2c"){
+            Write-Title "B2C Step #2: updating the b2c parameters and secrets"
+            $b2c_secret =  '"'+$b2c_secret+'"'
+            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
+            
+            [string]$dir = Get-Location
+            $dir += "/../client/.env.production"
+            #$dir += ".env.production"
+
+            $old_REACT_APP_EDNA_B2C_CLIENT_ID=''
+            $old_REACT_APP_EDNA_B2C_TENANT=''
+            $old_REACT_APP_EDNA_AUTH_CLIENT_ID=''
+            [System.IO.File]::ReadLines($dir) |  ForEach-Object {
+                if(  $_ -Match "REACT_APP_EDNA_B2C_CLIENT_ID" ){
+                    $configuration_line = $_ -split "="
+                    $old_REACT_APP_EDNA_B2C_CLIENT_ID = $_.Trim()
+                    $REACT_APP_EDNA_B2C_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_CLIENT_ID+"'").Trim()
+                }
+                elseif ( $_ -Match "REACT_APP_EDNA_B2C_TENANT"){
+                    $configuration_line = $_ -split "="
+                    $old_REACT_APP_EDNA_B2C_TENANT = $_.Trim()
+                    $REACT_APP_EDNA_B2C_TENANT = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_TENANT+"'").Trim()
+                }
+                elseif ( $_ -Match "REACT_APP_EDNA_AUTH_CLIENT_ID"){
+                    $configuration_line = $_ -split "="
+                    $old_REACT_APP_EDNA_AUTH_CLIENT_ID = $_.Trim()
+                    $REACT_APP_EDNA_AUTH_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_AUTH_CLIENT_ID+"'").Trim()
+                }
+                else{
+                }
+            }   
+            Write-Host "Old value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
+            $filecontent = Get-Content $dir
+            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
+            
+            $filecontent = Get-Content $dir
+            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
+            
+            $filecontent = Get-Content $dir
+            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
+
+            [string]$dir = Get-Location
+            $dir += "/../client/.env.development"
+
+            Write-Host "New value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
+
+            $filecontent = Get-Content $dir
+            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
+            
+            $filecontent = Get-Content $dir
+            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
+            
+            $filecontent = Get-Content $dir
+            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
+        }
+        
         #endregion
 
         #region Choose Active Subcription 
@@ -161,11 +240,6 @@ process {
         }
         #endregion
         
-        Write-Title "Choose the authentication mode from below`r`n1.AD mode`r`n2.B2C mode"
-        [int]$ch = Read-Host "choose the mode by typing it's index (for eg: for AD mode, enter 1):"
-        
-
-
 
         #region Create New App Registration in AzureAD
         Write-Title 'STEP #4 - Registering Azure Active Directory App'
