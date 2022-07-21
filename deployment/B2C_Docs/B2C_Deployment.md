@@ -11,6 +11,7 @@
   * 1x AD tenant
   * 1x B2C tenant
       * If not already set up information is available [here](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant) at step 1: "Create an Azure AD B2C Tenant"
+* You should have ready a **list of the tenant id's for the tenants you wish to give access**
 
 ## Starting The Script
 
@@ -93,7 +94,13 @@
     * ![secret PMA value](Images/Deployment/06b_secret.png)
 
 
-## Step 7: (Optional) linking facebook app
+## Step 7: Creating a whitelist for the tenants we wish to give access to
+
+* Now input 1 by 1 the tenant id's for each of the tenants you wish to give access to. After inputting each one's ID, select 'y' to continue until you have input them all then select 'n'
+    * ![inputting ID's](Images/Deployment/07_successfulWhitelist.png)
+* if at any point you see an error as shown below, contact the system admin for that tenant to verify they sent you the correct ID
+    * ![failure to get issuer claim](Images/Deployment/07_failWhitelist.png)
+## Step 8: (Optional) linking facebook app
 
 ### Don't link Facebook App
 
@@ -110,11 +117,11 @@
 
 
 
-## Step 8 & 9: Creating and Generating Custom Policies from templates
+## Step 9 & 10: Creating and Generating Custom Policies from templates
 
 * No user input is required in these steps; simply wait for them to finish
 
-## Step 10: Adding Signing and Encryption keys and AADAppSecret for the IEF Applications
+## Step 11: Adding Signing and Encryption keys and AADAppSecret for the IEF Applications
 
 ### Input key duration
 * You will first be prompted to input how long you wish the created keys to be valid for before they expire
@@ -139,7 +146,7 @@
     * The script should then continue without requiring any further user inputs
 
 
-## Step 11: Creating the AADAppSecret Key
+## Step 12: Creating the AADAppSecret Key
 
 * No user input is required in this step; simply wait for it to finish
 * Upon this steps completion the B2C setup is now complete and can be configured with Learn-LTI

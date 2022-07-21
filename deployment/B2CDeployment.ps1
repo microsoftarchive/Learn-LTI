@@ -203,9 +203,41 @@ az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-
 az ad app permission admin-consent --id $PermissionClientID --only-show-errors
 #endregion
 
+#region "STEP 7: restrict access via whitelisting tenants"
+# https://docs.microsoft.com/en-us/azure/active-directory-b2c/identity-provider-azure-ad-multi-tenant?pivots=b2c-custom-policy#restrict-access
+Write-Title "STEP 7: Creating a whitelist for the tenants we wish to give access to"
+Write-Host "Important - if no tenants are whitelisted; nobody will be able to access the AD"
+$continue = "y"
+$whitelist = @()
+while($continue -eq "y"){
+    $wlTenantID = Read-Host "Please enter the tenant ID field of the tenant you wish to add to the whitelist: "
 
-#region "STEP 7: (Optional) linking facebook apps"
-Write-Title "STEP 7: (Optional) linking facebook app"
+    try{
+        #region "HTTP request to get the issuer claim we want to add to the whitelist"
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("Cookie", "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrz5AJFK2BuCxYc25okcgEMIhli-M9GRnC77gX9U2agXqRChe5Tk3qNfEPzYWBnDAUp-o9RWFY5KNcFx-vXSzS0awJmoC7qDfdimSHwN_cVTAk3AVnFnGSxQfcY9xfjJxnZI_bqBXjO6MUJ0rjdw14dd7jnRNLmUGqljuVubDJWG8gAA; fpc=AkuS-X1BCTpNr-MiUS-IqaM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd")
+
+        $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
+        $issuer = $response.issuer
+        #endregion
+
+        $whitelist += $issuer #adding the issuer for this tenant to the whitelist
+    }
+    catch{
+        Write-Host ""
+        Write-Error ("HTTP request to get the issuer claim failed, please ensure the tenant ID is correct`n`n"+$Error[0])
+        Write-Host ""
+    }
+    
+    $continue = Read-Host "Would you like to add another tenant? (y/n)"
+}
+
+$whitelistString = $whitelist -join ","
+#endregion
+
+
+#region "STEP 8: (Optional) linking facebook apps"
+Write-Title "STEP 8: (Optional) linking facebook app"
 $HasFaceBookApp = ""
 while($HasFaceBookApp -ne "y" -and $HasFaceBookApp -ne "n"){
     $HasFaceBookApp = Read-Host "Do you have a facebook application set up that you'd like to link? (y/n)"
@@ -219,16 +251,16 @@ if($HasFaceBookApp -eq "y"){
 #endregion
 
 
-#region "STEP 8: looping through each CustomPolicyTemplate and creating bases of them in CustomTemplates"
-Write-Title "STEP 8: Creating template custom policies"
+#region "STEP 9: looping through each CustomPolicyTemplate and creating bases of them in CustomTemplates"
+Write-Title "STEP 9: Creating template custom policies"
 Get-ChildItem ".\CustomPolicyTemplates\" | Foreach-Object {
     ((Get-Content -path $_.FullName -Raw)) | Set-Content -path (".\CustomPolicy\"+$_.Name)
 }
 #endregion
 
 
-#region "STEP 9: looping through each CustomPolicy and replacing their placeholder values to generate the final custom policies"
-Write-Title "STEP 9: Replacing values in template custom policies to generate finalised custom policies"
+#region "Step 10: looping through each CustomPolicy and replacing their placeholder values to generate the final custom policies"
+Write-Title "Step 10: Replacing values in template custom policies to generate finalised custom policies"
 Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
     #ignore the gitkeep
     if($_.Name -ne ".gitkeep"){
@@ -241,12 +273,15 @@ Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
         ((Get-Content -path $_.FullName -Raw) -replace '<<FacebookId>>', $FacebookId) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
 
         ((Get-Content -path $_.FullName -Raw) -replace '<<MultiTenantAppID>>', $MultitenantAppID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+        
+        ((Get-Content -path $_.FullName -Raw) -replace '<<WhiteListedTenants>>', $whitelistString) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+    
     }
 
 }
 #endregion
 
-#region "STEP 10: Add signing and encryption keys and AADAppSecret for the IEF applications"
+#region "STEP 11: Add signing and encryption keys and AADAppSecret for the IEF applications"
 
 #region "Function for calculating the not before and expiry datetimes for the keys"
 function getNbfExp($num_months){
@@ -259,12 +294,13 @@ function getNbfExp($num_months){
 }
 #endregion
 
-Write-Title "STEP 10: Adding signing and encryption keys and AADAppSecret for the IEF applications"
+Write-Title "Step 11: Adding signing and encryption keys and AADAppSecret for the IEF applications"
 
 $num_months = 0 
 while($num_months -le 0){
 	[uint16] $num_months = Read-Host "How many months do you want the keys to be valid for? (must be greater than 0)"
 }
+
 
 Write-Host "Getting the token to be used in the HTML Requests and the list of existing keysets to check for conflicts when creating new ones"
 $response = ""
@@ -304,10 +340,9 @@ while(1){
         Read-Host "Press enter after manually granting the admin consent permission"
     }
 }    
-#endregion
 
-#region "STEP 10.A: Create the signing key"
-Write-Title "STEP 10.A: Creating the Signing Key"
+#region "Step 11.A: Create the signing key"
+Write-Title "Step 11.A: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
     Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -357,8 +392,8 @@ else{
 #endregion
 
 
-#region "STEP 10.B: Create the encryption key"
-Write-Title "STEP 10.B: Creating the Signing Key"
+#region "Step 11.B: Create the encryption key"
+Write-Title "Step 11.B: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
     Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -407,8 +442,8 @@ Write-Host "Successfully generated and uploaded the encryption key"
 #endregion
 
 
-#region "STEP 10.C: Create the AADSecret keyset"
-Write-Title "STEP 10.C: Creating the AADAppSecret Key"
+#region "Step 11.C: Create the AADSecret keyset"
+Write-Title "Step 11.C: Creating the AADAppSecret Key"
 
 if($keysets -contains "B2C_1A_AADAppSecret"){
     Read-Host "B2C_1A_AADAppSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -457,9 +492,9 @@ else{
 
 #endregion 
 
-#region "STEP 10.D: Create the Facebook keyset"
+#region "Step 11.D: Create the Facebook keyset"
 #TODO - eventually only run this step if we are using Facebook (and then use different contract templates for linking facebook vs without)
-Write-Title "STEP 10.D: Creating the Facebook Key"
+Write-Title "Step 11.D: Creating the Facebook Key"
 
 if($keysets -contains "B2C_1A_FacebookSecret"){
     Read-Host "B2C_1A_FacebookSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -507,8 +542,9 @@ else{
 #endregion
 
 #endregion
+#endregion
 
-#region "STEP 11: uploading the custom policies to the b2c tenant"
+#region "STEP 12: uploading the custom policies to the b2c tenant"
 
 #region "Function for updating existing custom policy or uploading new custom policies"
 function CustomPolicyUpdateOrUpload($customPolicyName, $customPolicies, $access_token) {
@@ -542,7 +578,7 @@ function CustomPolicyUpdateOrUpload($customPolicyName, $customPolicies, $access_
 }
 #endregion
 
-Write-Title "STEP 11: Uploading the custom policies to the b2c tenant"
+Write-Title "STEP 12: Uploading the custom policies to the b2c tenant"
 
 #getting list of all users in the tenant
 Write-Host "Getting the list of all custom policies in the tenant"
