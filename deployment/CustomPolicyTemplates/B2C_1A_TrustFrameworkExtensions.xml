@@ -3,7 +3,15 @@
     <TenantId><<B2CTenantName>>.onmicrosoft.com</TenantId>
     <PolicyId>B2C_1A_TrustFrameworkLocalization</PolicyId>
   </BasePolicy>
-  <BuildingBlocks></BuildingBlocks>
+  <BuildingBlocks>
+    <ClaimsSchema>
+      <ClaimType Id="_isB2CToken">
+        <DisplayName>_isB2CToken</DisplayName>
+        <DataType>boolean</DataType>
+        <UserHelpText>To identify if the token is a b2c token.</UserHelpText>
+      </ClaimType>
+    </ClaimsSchema>
+  </BuildingBlocks>
   <ClaimsProviders>
     <ClaimsProvider>
       <Domain>commonaad</Domain>
