@@ -19,7 +19,7 @@ There are 2 ways to deploy B2C:
 
 ### 1. Running the B2C deploy script from LTI deploy (Recommended)
 
-Follow the steps in [LTI deployment guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md) and it will automatically direct you to the following steps.
+Follow the steps in [LTI deployment guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consolidated_deploy_branch/docs/CONSOLIDATED_DEPLOY.md) and it will automatically direct you to the following steps.
 
 ### 2. Running the B2C deploy script manually (if you want to run only B2C deploy)
 
