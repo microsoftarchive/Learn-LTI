@@ -106,7 +106,7 @@ process {
 
         #region "B2C Step 2: Update required parameter in .env.production/ .env.development for front-end build and B2C secret in azuredeploy.json" 
         if($b2cOrAD -eq "b2c"){
-            Write-Title "B2C Step #2: updating the b2c parameters and secrets"
+            Write-Title "B2C Step #2: Updating the B2C parameters and secrets"
             $b2c_secret =  '"'+$b2c_secret+'"'
             ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
             
