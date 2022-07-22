@@ -7,7 +7,6 @@ import { UserDto } from '../Dtos/User.dto';
 import axios from 'axios';
 import { safeData, WithError } from '../Core/Utils/Axios/safeData';
 import { AppAuthConfig } from '../Core/Auth/AppAuthConfig';
-import { AuthResponse } from 'msal';
 
 class UsersServiceClass {
   public async getCurrentUserDetails(assignmentId: string): Promise<WithError<UserDto>> {
@@ -26,7 +25,8 @@ class UsersServiceClass {
   }
 
   public async getCurrentUserImageBlob(): Promise<Blob> {
-    const authResponse: AuthResponse = await AppAuthConfig.acquireTokenSilent({ scopes: ['user.read'] });
+    console.log(`in get user image blob`); // TODO fix
+    const authResponse = await AppAuthConfig.acquireTokenSilent({ scopes: ['user.read'] });
     const response = await axios.get('https://graph.microsoft.com/beta/me/photos/96x96/$value', {
       headers: {
         common: {

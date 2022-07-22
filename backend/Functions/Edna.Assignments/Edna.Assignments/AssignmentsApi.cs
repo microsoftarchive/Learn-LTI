@@ -93,11 +93,11 @@ namespace Edna.Assignments
                 return new InternalServerErrorResult();
             }
 
-            _logger.LogInformation($"Saved assignment {assignmentEntity.ToAssignmentId()}.");
-
+            _logger.LogError($"Saved assignment {assignmentEntity.ToAssignmentId()}."); // TODO: switch back to loginfo
+            
             string assignmentUrl = $"{req.Scheme}://{req.Host}/api/{AssignmentsRoutePath}/{assignmentEntity.ToAssignmentId()}";
             AssignmentDto savedAssignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
-
+            _logger.LogError(savedAssignmentDto.CourseName + savedAssignmentDto.Id);
             return new CreatedResult(assignmentUrl, savedAssignmentDto);
         }
 
@@ -108,6 +108,8 @@ namespace Edna.Assignments
             [Platform] PlatformsClient platformsClient,
             string assignmentId)
         {
+            _logger.LogError("In Get Assignment");
+                
             AssignmentEntity assignmentEntity = await FetchAssignment(table, assignmentId);
             if (assignmentEntity == null)
                 return new NotFoundResult();
@@ -119,7 +121,7 @@ namespace Edna.Assignments
                 Platform platform = await platformsClient.GetPlatform(assignmentEntity.PlatformId);
                 assignmentDto.PlatformPersonalization = _mapper.Map<PlatformPersonalizationDto>(platform);
             }
-
+            _logger.LogError(assignmentDto.CourseName + assignmentDto.Name);
             return new OkObjectResult(assignmentDto);
         }
 
