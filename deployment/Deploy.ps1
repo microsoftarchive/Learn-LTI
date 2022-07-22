@@ -66,7 +66,7 @@ process {
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #1: Running the B2C Setup Script"
             # TODO - verify these values are correct
-            $results = powershell.exe -file ".\B2CDeployment.ps1"
+            $results = powershell.exe -file ".\B2CDeployment.ps1" #Modify depending on the OS 
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[0] #webclient ID
             $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[0] #webclient ID
             $b2c_secret = $results[1] #webclient secret
@@ -106,7 +106,7 @@ process {
 
         #region "B2C Step 2: Update required parameter in .env.production/ .env.development for front-end build and B2C secret in azuredeploy.json" 
         if($b2cOrAD -eq "b2c"){
-            Write-Title "B2C Step #2: updating the b2c parameters and secrets"
+            Write-Title "B2C Step #2: Updating the B2C parameters and secrets"
             $b2c_secret =  '"'+$b2c_secret+'"'
             ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
             

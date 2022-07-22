@@ -14,6 +14,14 @@
 * You should have ready a **list of the tenant id's for the tenants you wish to give access**
 
 ## Starting The Script
+ 
+There are 2 ways to deploy B2C:
+
+### 1. Running the B2C deploy script from LTI deploy (Recommended)
+
+Follow the steps in [LTI deployment guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md) and it will automatically direct you to the following steps.
+
+### 2. Running the B2C deploy script manually (if you want to run only B2C deploy)
 
 * Load Learn-LTI/Deployment into Windows File Explorer
 * **Hold shift** and right click in the file explorer to launch the Expanded Context Menu
