@@ -66,7 +66,7 @@ process {
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #1: Running the B2C Setup Script"
             # TODO - verify these values are correct
-            $results = powershell.exe -file ".\B2CDeployment.ps1"
+            $results = & ".\B2CDeployment.ps1" # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[0] #webclient ID
             $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[0] #webclient ID
             $b2c_secret = $results[1] #webclient secret
