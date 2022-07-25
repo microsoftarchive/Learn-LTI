@@ -18,13 +18,9 @@ export class AssignmentStore extends ChildStore {
   async initializeAssignment(assignmentId: string): Promise<void> {
     const assignment = await AssignmentService.getAssignment(assignmentId);
     if (assignment.error) {
-      console.log('in assignment error');
-      console.log(assignment.error);
       this.errorContent = ErrorPageContent.CreateFromServiceError(assignment.error);
       return;
     }
-    console.log('assigment is ');
-    console.log(assignment);
     const { deadline } = assignment;
     this.assignment = deadline ? { ...assignment, deadline: new Date(deadline) } : assignment;
   }

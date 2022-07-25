@@ -25,7 +25,6 @@ class UsersServiceClass {
   }
 
   public async getCurrentUserImageBlob(): Promise<Blob> {
-    console.log(`in get user image blob`); // TODO fix
     const authResponse = await AppAuthConfig.acquireTokenSilent({ scopes: ['user.read'] });
     const response = await axios.get('https://graph.microsoft.com/beta/me/photos/96x96/$value', {
       headers: {

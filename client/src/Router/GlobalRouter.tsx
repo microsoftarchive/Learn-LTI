@@ -7,7 +7,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { routesConstants } from './Consts';
 
-//Declaring required props
+// Declaring required props
 export interface GlobalRouterProps {
   AssignmentRouteComponent: JSX.Element;
   PlatformRegistrationComponent: JSX.Element;
