@@ -6,12 +6,12 @@
 
 export const b2cPolicies = {
   names: {
-    signIn: 'B2C_1A_SIGNUP_SIGNIN' // custom policy
+    signIn: 'B2C_1A_SIGNIN' // custom policy
     //signin: `B2C_1_signup_signin_LTI` // user flow
   },
   authorities: {
     signIn: {
-      authority: `https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/B2C_1A_SIGNUP_SIGNIN` // custom policy
+      authority: `https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/B2C_1A_SIGNIN` // custom policy
       //authority: `https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/B2C_1_signup_signin_LTI` // user flow
       // user flow:
       // `https://` +
