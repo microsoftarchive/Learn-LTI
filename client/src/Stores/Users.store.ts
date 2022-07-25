@@ -33,7 +33,6 @@ export class UsersStore extends ChildStore {
   @observable errorContent: ErrorPageContent | undefined = undefined;
 
   initialize(): void {
-    console.log('initialize user store');
     const detailsFromPlatform = toObservable(
       () => this.root.platformStore.platform || this.root.platformStore.errorContent !== undefined
     ).pipe(
@@ -47,7 +46,6 @@ export class UsersStore extends ChildStore {
 
     const getUser = async (assignmentId: string): Promise<WithError<UserDto>> => {
       const user = await UsersService.getCurrentUserDetails(assignmentId);
-      console.log('user is ' + user.email);
       if (user.error) {
         this.errorContent = ErrorPageContent.CreateFromServiceError(user.error);
       } else if (!user) {
