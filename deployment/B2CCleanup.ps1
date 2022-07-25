@@ -88,3 +88,5 @@ foreach ($info in $AppInfo) {
     az ad app delete --id $id --only-show-errors
 }
 #endregion
+
+$exit = Read-Host "Press enter to exit"

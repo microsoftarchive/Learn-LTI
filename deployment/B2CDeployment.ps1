@@ -60,7 +60,7 @@ $ADAppManifest = "{
 }"
 Out-File -FilePath "manifest.json" -InputObject $ADAppManifest
 $MultiTenantAppID = (az ad app create --display-name $MultiTenantAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com/oauth2/authresp --optional-claims "@manifest.json" --query appId --output tsv --only-show-errors)
-
+Start-SLeep 1
 "$MultiTenantAppID,$ADTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # Create client secret
@@ -96,7 +96,7 @@ az login --tenant "$B2cTenantName.onmicrosoft.com" --allow-no-subscriptions --on
 Write-Title "STEP 3: Creating the B2C Web application"
 $B2cAppName = Read-Host "Please give a name for the web application to be created"
 $WebClientID = (az ad app create --display-name $B2cAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://jwt.ms --enable-access-token-issuance true --enable-id-token-issuance true --query appId --output tsv --only-show-errors)
-
+Start-SLeep 1
 "$WebClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # create client secret
@@ -123,7 +123,7 @@ az ad app permission add --id $WebClientID --api 00000003-0000-0000-c000-0000000
 Write-Title "STEP 4: Creating the Identity Experience Framework application"
 $IEFAppName = "IdentityExperienceFramework"
 $IEFClientID = (az ad app create --display-name $IEFAppName --sign-in-audience AzureADMyOrg --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com --query appId --output tsv --only-show-errors)
-
+Start-SLeep 1
 "$IEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # set permissions for the IEF app
@@ -164,7 +164,7 @@ Remove-Item userImpersonationScope.json
 Write-Title "STEP 5: Creating the Proxy Identity Experience Framework application"
 $ProxyIEFAppName = "ProxyIdentityExperienceFramework"
 $ProxyIEFClientID = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --query appId --output tsv --only-show-errors)
-
+Start-SLeep 1
 "$ProxyIEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 Write-Host "Granting permissions to the Proxy IEF application"
@@ -179,7 +179,7 @@ az ad app permission add --id $ProxyIEFClientID --api $IEFClientID --api-permiss
 Write-Title "STEP 6: Creating Permission Management application"
 $PermissionAppName = Read-Host "Please give a name for the permission management application to be created"
 $PermissionClientID = (az ad app create --display-name $PermissionAppName --sign-in-audience AzureADMyOrg --query appId --output tsv --only-show-errors)
-
+Start-SLeep 1
 "$PermissionClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # create client secret
@@ -221,7 +221,19 @@ $whitelist = @()
 if ($fileOrInputs -eq "1")
 {
     $filePath = Read-Host "Please enter the path to the file containing the tenant ID's"
-    $whitelist = Get-Content $filePath 
+    $tenantIDs = Get-Content $filePath 
+    
+    foreach ($wlTenantID in $tenantIDs)
+    {
+        #region "HTTP request to get the issuer claim we want to add to the whitelist"
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        
+        $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
+        $issuer = $response.issuer
+        #endregion
+
+        $whitelist += $issuer #adding the issuer for this tenant to the whitelist
+    }
 }
 
 # Input one by one to the console
@@ -237,8 +249,7 @@ else
         try{
             #region "HTTP request to get the issuer claim we want to add to the whitelist"
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-            $headers.Add("Cookie", "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrz5AJFK2BuCxYc25okcgEMIhli-M9GRnC77gX9U2agXqRChe5Tk3qNfEPzYWBnDAUp-o9RWFY5KNcFx-vXSzS0awJmoC7qDfdimSHwN_cVTAk3AVnFnGSxQfcY9xfjJxnZI_bqBXjO6MUJ0rjdw14dd7jnRNLmUGqljuVubDJWG8gAA; fpc=AkuS-X1BCTpNr-MiUS-IqaM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd")
-    
+            
             $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
             $issuer = $response.issuer
             #endregion

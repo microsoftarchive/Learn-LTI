@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad3_MSLearnLTI",
-    [string]$AppName = "DM_ad3_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad4_MSLearnLTI",
+    [string]$AppName = "DM_ad4_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -109,6 +109,7 @@ process {
             Write-Title "B2C Step #2: Updating the B2C parameters and secrets"
             $b2c_secret =  '"'+$b2c_secret+'"'
             ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
+            #TODO - find way to replace the value for line 173 of azuredeployTemplate.json via an input or API call (wellKnownOpenIdConfiguration) so they can input it correctly
             
             [string]$dir = Get-Location
             $dir += "/../client/.env.production"

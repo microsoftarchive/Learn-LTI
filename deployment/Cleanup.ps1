@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad2_MSLearnLTI",
-    [string]$AppName = "DM_ad2_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad4_MSLearnLTI",
+    [string]$AppName = "DM_ad4_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null
 )
@@ -43,6 +43,11 @@ process {
     Start-Transcript -Path $TranscriptFile;
     #endregion
     
+
+    Write-Title "Step #0 - Running B2C Cleanup Script"
+    & ".\B2CCleanup.ps1"
+    
+
     #region Login to Azure CLI
     Write-Title 'STEP #1 - Logging into Azure'
 
@@ -153,7 +158,4 @@ process {
 
     Write-Log -Message "Clean-up Complete"
     Write-Warning 'Please use a different ResourceGroup name on re-deployment!'
-
-    Write-Title "Step #5 - Running B2C Cleanup Script"
-    & ".\B2CCleanup.ps1"
 }
