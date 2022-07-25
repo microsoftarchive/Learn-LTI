@@ -10,6 +10,7 @@ import { AppAuthConfig } from './AppAuthConfig';
 export const AxiosBasicAuthInitializer = ({ children }: PropsWithChildren<{}>): JSX.Element => {
   const [isTokenLoaded, setIsTokenLoaded] = useState(false);
 
+  //Called everytime time the LTI app is accessed to authenticate the user before allowing access.
   useEffect(() => {
     AppAuthConfig.getAccessToken()
       .then(tokenObj => (axios.defaults.headers.common = { Authorization: `bearer ${tokenObj.accessToken}` }))
@@ -17,5 +18,7 @@ export const AxiosBasicAuthInitializer = ({ children }: PropsWithChildren<{}>): 
     axios.defaults.validateStatus = () => true;
   }, []);
 
+  //Check if user has successfully been authenticated and load children(Children are basically anything that
+  //is between the open and closing tag of this <AxiosBasicAuthInitialer> component), otherwise return null.
   return <>{isTokenLoaded ? children : null}</>;
 };

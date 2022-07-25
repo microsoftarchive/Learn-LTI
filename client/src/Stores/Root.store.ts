@@ -18,10 +18,12 @@ export class RootStore {
   platformStore = new PlatformStore();
 
   constructor() {
+    //Get list of all available stores
     const childStores: ChildStore[] = Object.keys(this)
       .map(key => Reflect.get(this, key))
       .filter(value => value instanceof ChildStore);
 
+    //Set the Root store for each store in the list to be this RootStore and initialize the stores.
     childStores.forEach(store => store.setRootStore(this));
     childStores.forEach(store => store.initialize());
   }
