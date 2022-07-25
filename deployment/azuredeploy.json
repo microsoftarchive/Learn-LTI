@@ -20,7 +20,7 @@
     }
   },
   "variables": {
-    "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '20220722050731'),0,9)]",
+    "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '20220725104007'),0,9)]",
     "functionList": [
       "connect",
       "assignments",
@@ -29,7 +29,7 @@
       "platforms",
       "users"
     ],
-    "AzureB2C_AUTHENTICATION_SECRET": "l",
+    "AzureB2C_AUTHENTICATION_SECRET": "",
     "enabledForDeployment": false,
     "enabledForDiskEncryption": false,
     "enabledForTemplateDeployment": false,

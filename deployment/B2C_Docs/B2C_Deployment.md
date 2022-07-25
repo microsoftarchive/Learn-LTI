@@ -103,11 +103,12 @@ Follow the steps in [LTI deployment guide](https://github.com/UCL-MSc-Learn-LTI/
 
 
 ## Step 7: Creating a whitelist for the tenants we wish to give access to
-
-* Now input 1 by 1 the tenant id's for each of the tenants you wish to give access to. After inputting each one's ID, select 'y' to continue until you have input them all then select 'n'
-    * ![inputting ID's](Images/Deployment/07_successfulWhitelist.png)
-* if at any point you see an error as shown below, contact the system admin for that tenant to verify they sent you the correct ID
-    * ![failure to get issuer claim](Images/Deployment/07_failWhitelist.png)
+* You have 2 choices for how to create the whitelist of tenant id's you wish to give access to:
+    * Input '1' to import via a file where the id of each tenant is separated with a newline or a comma. You will then need to input the path to that file, e.g. "C:/documents/myTenantIDs.txt"
+    * Input '2' to input 1 by 1; in this case you copy/paste the tenant ID's 1 by 1 into the console until you have no more then input "no" to terminate the script.
+        * ![inputting ID's](Images/Deployment/07_successfulWhitelist.png)
+        * if at any point you see an error as shown below, you have input an ID that doesn't exist. Verify you typed it correctly and if so, verify with the tenant owner that they sent you the correct value.
+            * ![failure to get issuer claim](Images/Deployment/07_failWhitelist.png)
 ## Step 8: (Optional) linking facebook app
 
 ### Don't link Facebook App

@@ -207,29 +207,50 @@ az ad app permission admin-consent --id $PermissionClientID --only-show-errors
 # https://docs.microsoft.com/en-us/azure/active-directory-b2c/identity-provider-azure-ad-multi-tenant?pivots=b2c-custom-policy#restrict-access
 Write-Title "STEP 7: Creating a whitelist for the tenants we wish to give access to"
 Write-Host "Important - if no tenants are whitelisted; nobody will be able to access the AD"
-$continue = "y"
+
+#TODO - make it a file
+$fileOrInputs=""
+while($fileOrInputs -ne "1" -and $fileOrInputs -ne "2")
+{
+    $fileOrInputs = Read-Host "Would you like to either:`n1. import a file with *all* the tenant ID's to be whitelisted`n2. input them 1 by 1 into the console? (1/2)"
+}
+
+
 $whitelist = @()
-while($continue -eq "y"){
-    $wlTenantID = Read-Host "Please enter the tenant ID field of the tenant you wish to add to the whitelist: "
+# Input via a file
+if ($fileOrInputs -eq "1")
+{
+    $filePath = Read-Host "Please enter the path to the file containing the tenant ID's"
+    $whitelist = Get-Content $filePath 
+}
 
-    try{
-        #region "HTTP request to get the issuer claim we want to add to the whitelist"
-        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-        $headers.Add("Cookie", "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrz5AJFK2BuCxYc25okcgEMIhli-M9GRnC77gX9U2agXqRChe5Tk3qNfEPzYWBnDAUp-o9RWFY5KNcFx-vXSzS0awJmoC7qDfdimSHwN_cVTAk3AVnFnGSxQfcY9xfjJxnZI_bqBXjO6MUJ0rjdw14dd7jnRNLmUGqljuVubDJWG8gAA; fpc=AkuS-X1BCTpNr-MiUS-IqaM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd")
+# Input one by one to the console
+else
+{
+    $wlTenantID = "" 
+    while ($wlTenantID -ne "no")
+    {
+        $wlTenantID = Read-Host "Please enter the tenant ID you wish to add to the whitelist (or 'no' to stop): "
 
-        $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
-        $issuer = $response.issuer
-        #endregion
-
-        $whitelist += $issuer #adding the issuer for this tenant to the whitelist
-    }
-    catch{
-        Write-Host ""
-        Write-Error ("HTTP request to get the issuer claim failed, please ensure the tenant ID is correct`n`n"+$Error[0])
-        Write-Host ""
-    }
+        if($tenantID -eq "no"){break}
+        
+        try{
+            #region "HTTP request to get the issuer claim we want to add to the whitelist"
+            $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+            $headers.Add("Cookie", "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrz5AJFK2BuCxYc25okcgEMIhli-M9GRnC77gX9U2agXqRChe5Tk3qNfEPzYWBnDAUp-o9RWFY5KNcFx-vXSzS0awJmoC7qDfdimSHwN_cVTAk3AVnFnGSxQfcY9xfjJxnZI_bqBXjO6MUJ0rjdw14dd7jnRNLmUGqljuVubDJWG8gAA; fpc=AkuS-X1BCTpNr-MiUS-IqaM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd")
     
-    $continue = Read-Host "Would you like to add another tenant? (y/n)"
+            $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
+            $issuer = $response.issuer
+            #endregion
+    
+            $whitelist += $issuer #adding the issuer for this tenant to the whitelist
+        }
+        catch{
+            Write-Host ""
+            Write-Error ("HTTP request to get the issuer claim failed, please ensure the tenant ID is correct`n`n"+$Error[0])
+            Write-Host ""
+        }
+    }
 }
 
 $whitelistString = $whitelist -join ","
@@ -361,7 +382,7 @@ else{
     $response | ConvertTo-Json
     $signing_container_id = $response.id
 
-    Write-Host "`nSuccessfully created the key signing container: "+$signing_container_id+"`n"
+    Write-Host "`nSuccessfully created the key signing container: $signing_container_id`n"
     #endregion
 
     #region "Generating the signing key"
