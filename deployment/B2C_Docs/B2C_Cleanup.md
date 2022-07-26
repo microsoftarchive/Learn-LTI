@@ -6,6 +6,14 @@
 * Pink background = user inputted value
 ## Starting The Script
 
+There are 2 ways to cleanup B2C:
+
+### 1. Running the B2C cleanup script from LTI cleanup (Recommended)
+
+Follow the steps in [LTI troubleshooting guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consolidated_deploy_branch/docs/TROUBLESHOOTING.md) for cleanup and it will automatically direct you to the following steps.
+
+### 2. Running the B2C cleanup script manually (if you want to remove only B2C resources)
+
 * Load Learn-LTI/Deployment into Windows File Explorer
 * **Hold shift** and right click in the file explorer to launch the Expanded Context Menu
 * Click "Open Powershell Window Here" to launch powershell with cd already set to Learn-Lti/Deployment
