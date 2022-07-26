@@ -18,7 +18,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 using System.Text;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
@@ -29,7 +29,7 @@ namespace Edna.Platforms
     {
         private const string PlatformsTableName = "Platforms";
 
-        private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
+        private static readonly string[] PossibleEmailClaimTypes = { "email", "emails", "upn", "unique_name" };
         private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
 
@@ -147,6 +147,8 @@ namespace Edna.Platforms
             return true;
             #endif
 
+            _logger.LogInformation("In validate");
+
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
                 return false;
 
@@ -169,7 +171,8 @@ namespace Edna.Platforms
                 _logger.LogError("Could not get any user email / uid for the current user.");
                 return false;
             }
-
+            _logger.LogInformation(String.Join(",",userEmails));
+            _logger.LogInformation(String.Join(",",AllowedUsers));
             // return value of if user email is in the allowed users list
             return AllowedUsers.Intersect(userEmails).Any();
         }
@@ -188,6 +191,12 @@ namespace Edna.Platforms
                 .Select(claim => claim.Value)
                 .Distinct()
                 .ToList();
+            
+            _logger.LogInformation("In get user");
+            // string emails = claimsArray.FirstOrDefault(claim => claim.Type == "emails").Value;
+            // string[] emailsCollection = emails.Split(",");
+            // userEmails.Concat(emailsCollection);
+
 
             return userEmails.Any();
         }
