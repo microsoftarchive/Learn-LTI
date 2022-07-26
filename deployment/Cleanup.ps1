@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_a2_MSLearnLTI",
-    [string]$AppName = "RB_a2_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "RB_policy2_MSLearnLTI",
+    [string]$AppName = "RB_policy2_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null
 )
@@ -154,4 +154,6 @@ process {
     Write-Log -Message "Clean-up Complete"
     Write-Warning 'Please use a different ResourceGroup name on re-deployment!'
 
+    Write-Title "Step #5 - Running B2C Cleanup Script"
+    & ".\B2CCleanup.ps1"
 }

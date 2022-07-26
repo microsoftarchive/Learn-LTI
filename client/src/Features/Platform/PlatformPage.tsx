@@ -74,6 +74,7 @@ const PlatformPageInner = ({ styles }: IStylesOnly<PlatformPageStyles>): JSX.Ele
           labelPosition="bottom"
         />
       ) : (
+        // TODO - either finish this functionality or remove it
         // should this div have the "className={classes.content}" too?
         <div>
           <label htmlFor="myCheck">Is·this·a·b2c·tenant?</label>

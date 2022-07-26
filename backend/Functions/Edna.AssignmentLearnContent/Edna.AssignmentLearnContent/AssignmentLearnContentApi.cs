@@ -89,7 +89,7 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
-            #region "DM: VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
+            // TODO -  VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
             // validating user email exists in the request header
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
@@ -97,11 +97,10 @@ namespace Edna.AssignmentLearnContent
                 _logger.LogError("Could not get user email.");
                 return new BadRequestErrorMessageResult("Could not get user email.");
             }
-            #endregion
 
             if (userEmails.Count > 0)
             {
-                #region "DM: getting list of for the assignment from AD and checking they are authorized (teacher status)"
+                // TODO - "DM: getting list of for the assignment from AD and checking they are authorized (teacher status)"
                 _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'."); // Creating logger for logging user (email owner) information
 
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId); // Getting all users for the assignment
@@ -109,7 +108,6 @@ namespace Edna.AssignmentLearnContent
                 // If the user is not found or the user is NOT a teacher, return UnauthorizedResult
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
-                #endregion
             }
 
             _logger.LogInformation($"Saving assignment learn content with uid [{contentUid}] to assignment {assignmentId}");
@@ -134,7 +132,7 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
-            #region "DM: VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
+            // TODO - "DM: VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
             // validating user email exists in the request header
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
@@ -142,18 +140,16 @@ namespace Edna.AssignmentLearnContent
                 _logger.LogError("Could not get user email.");
                 return new BadRequestErrorMessageResult("Could not get user email.");
             }
-            #endregion
 
             if (userEmails.Count > 0)
             {
-                #region "DM: [SAME AS LINE 98] getting list of for the assignment from AD and checking they are authorized (teacher status)"
+                // TODO - "DM: [SAME AS LINE 98] getting list of for the assignment from AD and checking they are authorized (teacher status)"
                 _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
-                #endregion
             }
 
             if (assignmentLearnContentEntityToDelete == null)
@@ -177,7 +173,7 @@ namespace Edna.AssignmentLearnContent
             string assignmentId,
             [User] UsersClient usersClient)
         {
-            #region "DM: VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
+            // TODO - "DM: VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
             // validating user email exists in the request header
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
@@ -185,18 +181,16 @@ namespace Edna.AssignmentLearnContent
                 _logger.LogError("Could not get user email.");
                 return new BadRequestErrorMessageResult("Could not get user email.");
             }
-            #endregion
 
             if (userEmails.Count > 0)
             {
-                #region "DM: [SAME AS LINE98] getting list of for the assignment from AD and checking they are authorized (teacher status)"
+                //TODO - "DM: [SAME AS LINE98] getting list of for the assignment from AD and checking they are authorized (teacher status)"
                 _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
                 User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
-                #endregion
             }
 
             List<AssignmentLearnContentEntity> assignmentLearnContentEntities = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
@@ -220,7 +214,7 @@ namespace Edna.AssignmentLearnContent
         }
 
 
-        #region "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES TOKENS"
+        //TODO -  "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES TOKENS"
         // function for getting all the assignmentLearnContent entities in the tenant (?)
         private async Task<List<AssignmentLearnContentEntity>> GetAllAssignmentLearnContentEntities(CloudTable assignmentLearnContentTable, string assignmentId)
         {
@@ -243,9 +237,8 @@ namespace Edna.AssignmentLearnContent
 
             return assignmentSelectedLearnContent;
         }
-        #endregion
 
-        #region "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES JSON TOKENS"
+       //TODO - "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES JSON TOKENS"
         // takes in a JSON token for the content
         private void ChangeUrlQueryToEdnaIdentifier(JToken contentJToken)
         {
@@ -261,6 +254,5 @@ namespace Edna.AssignmentLearnContent
 
             contentJToken["url"] = newUriBuilder.Uri.ToString(); //update the JSON tokens url with the newly generated url
         }
-        #endregion
     }
 }

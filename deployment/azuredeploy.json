@@ -1,58 +1,59 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "appRegistrationClientId": {
-            "type": "string",
-            "defaultValue": "dc0fcdd9-727f-47a3-8f15-4dcb813919fc"
-        },
-        "appRegistrationApiURI": {
-            "type": "string",
-            "defaultValue": "api://10ef1e6b-1171-4888-92d5-c661b428796b"
-        },
-        "userEmailAddress": {
-            "type": "string",
-            "defaultValue": "user@microsoft.com"
-        },
-        "userObjectId": {
-            "type": "string",
-            "defaultValue": ""
-        }
+  "parameters": {
+    "appRegistrationClientId": {
+      "type": "string",
+      "defaultValue": "dc0fcdd9-727f-47a3-8f15-4dcb813919fc"
     },
-    "variables": {
-        "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id),0,9)]",
-        "functionList": [
-            "connect",
-            "assignments",
-            "learncontent",
-            "links",
-            "platforms",
-            "users"
-        ],
-        "enabledForDeployment": false,
-        "enabledForDiskEncryption": false,
-        "enabledForTemplateDeployment": false,
-        "tenantId": "[subscription().tenantId]",
-        "skuName": "Standard",
-        "location": "[resourceGroup().location]",
-        "runtimeStack": "dotnet",
-        "resourceGroupName": "[resourceGroup().name]",
-        "StorageAccountSuffix": "[toLower(replace(variables('uniqueIdentifier'),'-',''))]",
-        "ProjectNameSuffix": "[concat('-', variables('StorageAccountSuffix'))]",
-        "staticWebsite": "[toLower(concat('learnclient', variables('StorageAccountSuffix')))]",
-        "keyVaultName": "[toLower(concat('kv', variables('ProjectNameSuffix')))]",
-        "KeyVaultAuditLogsStorageAccountName": "[toLower(concat('kv' , variables('StorageAccountSuffix'), 'auditlogs'))]",
-        "readerRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
-        "KVKeyPermissions": [
-            "encrypt",
-            "decrypt",
-            "wrapKey",
-            "unwrapKey",
-            "sign",
-            "verify",
-            "get"
-        ]
+    "appRegistrationApiURI": {
+      "type": "string",
+      "defaultValue": "api://10ef1e6b-1171-4888-92d5-c661b428796b"
     },
+    "userEmailAddress": {
+      "type": "string",
+      "defaultValue": "user@microsoft.com"
+    },
+    "userObjectId": {
+      "type": "string",
+      "defaultValue": ""
+    }
+  },
+  "variables": {
+    "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '20220725104006'),0,9)]",
+    "functionList": [
+      "connect",
+      "assignments",
+      "learncontent",
+      "links",
+      "platforms",
+      "users"
+    ],
+    "AzureB2C_AUTHENTICATION_SECRET": "",
+    "enabledForDeployment": false,
+    "enabledForDiskEncryption": false,
+    "enabledForTemplateDeployment": false,
+    "tenantId": "[subscription().tenantId]",
+    "skuName": "Standard",
+    "location": "[resourceGroup().location]",
+    "runtimeStack": "dotnet",
+    "resourceGroupName": "[resourceGroup().name]",
+    "StorageAccountSuffix": "[toLower(replace(variables('uniqueIdentifier'),'-',''))]",
+    "ProjectNameSuffix": "[concat('-', variables('StorageAccountSuffix'))]",
+    "staticWebsite": "[toLower(concat('learnclient', variables('StorageAccountSuffix')))]",
+    "keyVaultName": "[toLower(concat('kv', variables('ProjectNameSuffix')))]",
+    "KeyVaultAuditLogsStorageAccountName": "[toLower(concat('kv' , variables('StorageAccountSuffix'), 'auditlogs'))]",
+    "readerRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+    "KVKeyPermissions": [
+      "encrypt",
+      "decrypt",
+      "wrapKey",
+      "unwrapKey",
+      "sign",
+      "verify",
+      "get"
+    ]
+  },
     "resources": [
         {
             "type": "Microsoft.Web/sites",
@@ -196,24 +197,24 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', concat('connect' , variables('ProjectNameSuffix')))]"
             ],
-            "properties": {
-                "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "DidDeployWork": "true",
-                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
-                "AssignmentsServiceUrl": "[concat('https://', 'assignments' , variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "Lti1Secret": "LearnLTI",
-                "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
-                "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('connect' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('connect' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
-                "FUNCTIONS_EXTENSION_VERSION": "~3",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('connect' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
-                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('connect' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('connect' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
-                "WEBSITE_CONTENTSHARE": "[toLower(concat('connect' , variables('ProjectNameSuffix')))]",
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('connect' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
-                "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-                "WEBSITE_RUN_FROM_PACKAGE": "1"
-            }
+          "properties": {
+            "AuthUrl": "[parameters('appRegistrationApiURI')]",
+            "DidDeployWork": "true",
+            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
+            "AssignmentsServiceUrl": "[concat('https://', 'assignments' , variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
+            "Lti1Secret": "LearnLTI",
+            "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
+            "RedirectUrl": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('staticWebsite'))).primaryEndpoints.web]",
+            "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('connect' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('connect' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
+            "FUNCTIONS_EXTENSION_VERSION": "~3",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('connect' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('connect' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('connect' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+            "WEBSITE_CONTENTSHARE": "[toLower(concat('connect' , variables('ProjectNameSuffix')))]",
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('connect' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
+            "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
+            "WEBSITE_RUN_FROM_PACKAGE": "1"
+          }
         },
         {
             "name": "[concat('users', variables('ProjectNameSuffix'), '/appsettings')]",
@@ -223,22 +224,22 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', concat('users', variables('ProjectNameSuffix')))]"
             ],
-            "properties": {
-                "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
-                "AssignmentsServiceUrl": "[concat('https://', 'assignments', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "Lti1Secret": "LearnLTI",
-                "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
-                "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('users' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('users' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
-                "FUNCTIONS_EXTENSION_VERSION": "~3",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
-                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('users' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('users' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
-                "WEBSITE_CONTENTSHARE": "[toLower(concat('users' , variables('ProjectNameSuffix')))]",
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
-                "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-                "WEBSITE_RUN_FROM_PACKAGE": "1"
-            }
+          "properties": {
+            "AuthUrl": "[parameters('appRegistrationApiURI')]",
+            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
+            "AssignmentsServiceUrl": "[concat('https://', 'assignments', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
+            "Lti1Secret": "LearnLTI",
+            "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
+            "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('users' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('users' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
+            "FUNCTIONS_EXTENSION_VERSION": "~3",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('users' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('users' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+            "WEBSITE_CONTENTSHARE": "[toLower(concat('users' , variables('ProjectNameSuffix')))]",
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
+            "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
+            "WEBSITE_RUN_FROM_PACKAGE": "1"
+          }
         },
         {
             "name": "[concat('assignments' , variables('ProjectNameSuffix'), '/appsettings')]",
@@ -251,7 +252,7 @@
           "properties": {
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
             "DidDeployWork": "true",
-            "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
+            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
             "PlatformsServiceUrl": "[concat('https://','platforms' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
             "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
             "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
@@ -275,7 +276,7 @@
             ],
           "properties": {
             "AllowedUsers": "[parameters('userEmailAddress')]",
-            "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
+            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
             "DidDeployWork": "true",
             "ConnectApiBaseUrl": "[concat('https://','connect' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
@@ -298,20 +299,20 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', concat('links' , variables('ProjectNameSuffix')))]"
             ],
-            "properties": {
-                "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
-                "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
-                "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('links' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('links' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
-                "FUNCTIONS_EXTENSION_VERSION": "~3",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
-                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('links' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('links' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
-                "WEBSITE_CONTENTSHARE": "[toLower(concat('links' , variables('ProjectNameSuffix')))]",
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
-                "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-                "WEBSITE_RUN_FROM_PACKAGE": "1"
-            }
+          "properties": {
+            "AuthUrl": "[parameters('appRegistrationApiURI')]",
+            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
+            "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
+            "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('links' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('links' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
+            "FUNCTIONS_EXTENSION_VERSION": "~3",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('links' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('links' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+            "WEBSITE_CONTENTSHARE": "[toLower(concat('links' , variables('ProjectNameSuffix')))]",
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
+            "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
+            "WEBSITE_RUN_FROM_PACKAGE": "1"
+          }
         },
         {
             "name": "[concat('learncontent', variables('ProjectNameSuffix'), '/appsettings')]",
@@ -321,20 +322,20 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', concat('learncontent' , variables('ProjectNameSuffix')))]"
             ],
-            "properties": {
-                "AuthUrl": "[parameters('appRegistrationApiURI')]",
-                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
-                "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
-                "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('learncontent' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('learncontent' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
-                "FUNCTIONS_EXTENSION_VERSION": "~3",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
-                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('learncontent' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('learncontent' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
-                "WEBSITE_CONTENTSHARE": "[toLower(concat('learncontent' , variables('ProjectNameSuffix')))]",
-                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
-                "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-                "WEBSITE_RUN_FROM_PACKAGE": "1"
-            }
+          "properties": {
+            "AuthUrl": "[parameters('appRegistrationApiURI')]",
+            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
+            "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
+            "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('learncontent' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('learncontent' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
+            "FUNCTIONS_EXTENSION_VERSION": "~3",
+            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('learncontent' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('learncontent' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+            "WEBSITE_CONTENTSHARE": "[toLower(concat('learncontent' , variables('ProjectNameSuffix')))]",
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
+            "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
+            "WEBSITE_RUN_FROM_PACKAGE": "1"
+          }
         },
         {
             "type": "Microsoft.Web/serverfarms",
@@ -548,4 +549,5 @@
         }
     }
 }
+
 

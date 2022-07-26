@@ -10,8 +10,17 @@ function Write-Title([string]$Title) {
 
 #function for making coloured outputs
 function Write-Color($Color, [string]$Text) {
-	process{Write-Host $Text -ForegroundColor $Color}
+	Write-Host $Text -ForegroundColor $Color
 }
+
+#function for writing errors
+function Write-Error([string]$Text) {
+    Write-Host "`n`n=============================================================`n" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+	Write-Host "Error!`n$Text" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+    Write-Host "`n=============================================================" -ForegroundColor "black" -BackgroundColor "DarkRed"
+}
+
+
 #endregion
 
 #region "AppInfo CSV setup"
@@ -92,7 +101,7 @@ $WebClientID = (az ad app create --display-name $B2cAppName --sign-in-audience A
 
 # create client secret
 Write-Host "Creating the client secret for $B2cAppName"
-$WebClientSecretName = Read-Host "Please give a the name for the client secret to be created"
+$WebClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $WebClientSecretDuration = 1
 $WebClientSecret = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $B2cAppName`: $WebClientID"
@@ -125,7 +134,7 @@ az ad app permission add --id $IEFClientID --api 00000003-0000-0000-c000-0000000
 
 # expose the user_impersonation API
 Write-Host "Exposing the user_impersonation API"
-az ad app update --id $IEFClientID --identifier-uris "https://playltib2c.onmicrosoft.com/$IEFClientID" --only-show-errors
+az ad app update --id $IEFClientID --identifier-uris "https://$B2cTenantName.onmicrosoft.com/$IEFClientID" --only-show-errors
 $IEFAppInfo = (az ad app show --id $IEFClientID --only-show-errors | ConvertFrom-Json)
 $IEFAppApiInfo = $IEFAppInfo.api
 $IEFScopeGUID = [guid]::NewGuid()
@@ -142,6 +151,10 @@ $UserImpersonationScope = "{
 $IEFAppApiInfo.oauth2PermissionScopes += $UserImpersonationScope
 ConvertTo-Json -InputObject $IEFAppApiInfo | Out-File -FilePath "userImpersonationScope.json"
 az ad app update --id $IEFClientID --set api=@userImpersonationScope.json --only-show-errors
+
+# granting user_impersonation to the web app
+az ad app permission grant --id $WebClientID --api $IEFClientID --scope "user_impersonation" --only-show-errors > $null
+az ad app permission add --id $WebClientID --api $IEFClientID --api-permissions "$IEFScopeGUID=Scope" --only-show-errors
 
 Remove-Item userImpersonationScope.json
 #endregion
@@ -171,7 +184,7 @@ $PermissionClientID = (az ad app create --display-name $PermissionAppName --sign
 
 # create client secret
 Write-Host "Creating the client secret for $PermissionAppName"
-$PermissionClientSecretName = Read-Host "Please give a the name for the client secret to be created"
+$PermissionClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $PermissionClientSecretDuration = 1
 $PermissionClientSecret = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $PermissionAppName`: $PermissionClientID"
@@ -188,34 +201,87 @@ az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c00
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
 az ad app permission admin-consent --id $PermissionClientID --only-show-errors
-# sleep 3 seconds to finish the admin-consent step
-Start-Sleep -Seconds 3
+#endregion
+
+#region "STEP 7: restrict access via whitelisting tenants"
+# https://docs.microsoft.com/en-us/azure/active-directory-b2c/identity-provider-azure-ad-multi-tenant?pivots=b2c-custom-policy#restrict-access
+Write-Title "STEP 7: Creating a whitelist for the tenants we wish to give access to"
+Write-Host "Important - if no tenants are whitelisted; nobody will be able to access the AD"
+
+#TODO - make it a file
+$fileOrInputs=""
+while($fileOrInputs -ne "1" -and $fileOrInputs -ne "2")
+{
+    $fileOrInputs = Read-Host "Would you like to either:`n1. import a file with *all* the tenant ID's to be whitelisted`n2. input them 1 by 1 into the console? (1/2)"
+}
+
+
+$whitelist = @()
+# Input via a file
+if ($fileOrInputs -eq "1")
+{
+    $filePath = Read-Host "Please enter the path to the file containing the tenant ID's"
+    $whitelist = Get-Content $filePath 
+}
+
+# Input one by one to the console
+else
+{
+    $wlTenantID = "" 
+    while ($wlTenantID -ne "no")
+    {
+        $wlTenantID = Read-Host "Please enter the tenant ID you wish to add to the whitelist (or 'no' to stop): "
+
+        if($tenantID -eq "no"){break}
+        
+        try{
+            #region "HTTP request to get the issuer claim we want to add to the whitelist"
+            $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+            $headers.Add("Cookie", "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrz5AJFK2BuCxYc25okcgEMIhli-M9GRnC77gX9U2agXqRChe5Tk3qNfEPzYWBnDAUp-o9RWFY5KNcFx-vXSzS0awJmoC7qDfdimSHwN_cVTAk3AVnFnGSxQfcY9xfjJxnZI_bqBXjO6MUJ0rjdw14dd7jnRNLmUGqljuVubDJWG8gAA; fpc=AkuS-X1BCTpNr-MiUS-IqaM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd")
+    
+            $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
+            $issuer = $response.issuer
+            #endregion
+    
+            $whitelist += $issuer #adding the issuer for this tenant to the whitelist
+        }
+        catch{
+            Write-Host ""
+            Write-Error ("HTTP request to get the issuer claim failed, please ensure the tenant ID is correct`n`n"+$Error[0])
+            Write-Host ""
+        }
+    }
+}
+
+$whitelistString = $whitelist -join ","
 #endregion
 
 
-#region "STEP 7: (Optional) linking facebook apps"
-Write-Title "STEP 7: (Optional) linking facebook app"
+#region "STEP 8: (Optional) linking facebook apps"
+Write-Title "STEP 8: (Optional) linking facebook app"
 $HasFaceBookApp = ""
 while($HasFaceBookApp -ne "y" -and $HasFaceBookApp -ne "n"){
     $HasFaceBookApp = Read-Host "Do you have a facebook application set up that you'd like to link? (y/n)"
 }
 $FacebookId = "00000000-0000-0000-0000-000000000000" #default to meaningless placeholder value if app isn't set up
+$FacebookSecret = "00000000-0000-0000-0000-000000000000" #default to meaningless placeholder value if app isn't set up
 if($HasFaceBookApp -eq "y"){
 	$FacebookId = Read-Host "What is the application ID of the Facebook application you created?"
+    $FacebookSecret = Read-Host "What is the secret value of the Facebook application you created?"
 }
 #endregion
 
 
-#region "STEP 8: looping through each CustomPolicyTemplate and creating bases of them in CustomTemplates"
-Write-Title "STEP 8: Creating template custom policies"
+#region "STEP 9: looping through each CustomPolicyTemplate and creating bases of them in CustomTemplates"
+Write-Title "STEP 9: Creating template custom policies"
 Get-ChildItem ".\CustomPolicyTemplates\" | Foreach-Object {
     ((Get-Content -path $_.FullName -Raw)) | Set-Content -path (".\CustomPolicy\"+$_.Name)
 }
 #endregion
 
 
-#region "STEP 9: looping through each CustomPolicy and replacing their placeholder values to generate the final custom policies"
-Write-Title "STEP 9: Replacing values in template custom policies to generate finalised custom policies"
+#region "Step 10: looping through each CustomPolicy and replacing their placeholder values to generate the final custom policies"
+Write-Title "Step 10: Replacing values in template custom policies to generate finalised custom policies"
 Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
     #ignore the gitkeep
     if($_.Name -ne ".gitkeep"){
@@ -228,12 +294,15 @@ Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
         ((Get-Content -path $_.FullName -Raw) -replace '<<FacebookId>>', $FacebookId) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
 
         ((Get-Content -path $_.FullName -Raw) -replace '<<MultiTenantAppID>>', $MultitenantAppID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+        
+        ((Get-Content -path $_.FullName -Raw) -replace '<<WhiteListedTenants>>', $whitelistString) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+    
     }
 
 }
 #endregion
 
-#region "STEP 10: Add signing and encryption keys and AADAppSecret for the IEF applications"
+#region "STEP 11: Add signing and encryption keys and AADAppSecret for the IEF applications"
 
 #region "Function for calculating the not before and expiry datetimes for the keys"
 function getNbfExp($num_months){
@@ -246,39 +315,55 @@ function getNbfExp($num_months){
 }
 #endregion
 
-Write-Title "STEP 10: Adding signing and encryption keys and AADAppSecret for the IEF applications"
+Write-Title "Step 11: Adding signing and encryption keys and AADAppSecret for the IEF applications"
 
 $num_months = 0 
 while($num_months -le 0){
 	[uint16] $num_months = Read-Host "How many months do you want the keys to be valid for? (must be greater than 0)"
 }
 
-#region "Getting the token to be used in the HTML REQUESTS"
-# relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
-Write-Host "Getting the token to be used in the HTML REQUESTS"
 
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Content-Type", "application/x-www-form-urlencoded")
+Write-Host "Getting the token to be used in the HTML Requests and the list of existing keysets to check for conflicts when creating new ones"
+$response = ""
+$keysets = ""
+while(1){
+    try{
+        #region "Getting the token to be used in the HTML REQUESTS"
+        # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
 
-$body = "client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("Content-Type", "application/x-www-form-urlencoded")
 
-$response = Invoke-RestMethod 'https://login.microsoftonline.com/playltib2c.onmicrosoft.com/oauth2/v2.0/token' -Method 'POST' -Headers $headers -Body $body
-$access_token = $response.access_token
-$access_token = "Bearer " + $access_token
-#endregion
+        $body = "client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
 
-#region "Getting the list of all custom policies in the tenant; to check if each keyset already exists prior to creating it"
-Write-Host "Getting the list of all custom policies in the tenant"
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Authorization", $access_token)
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'GET' -Headers $headers
-$keysets = $response.value
-$keysets = $keysets.id
-$keysets
-#endregion
+        $response = Invoke-RestMethod "https://login.microsoftonline.com/$B2cTenantName.onmicrosoft.com/oauth2/v2.0/token" -Method 'POST' -Headers $headers -Body $body
+        $access_token = $response.access_token
+        $access_token = "Bearer " + $access_token
+        #endregion
 
-#region "STEP 10.A: Create the signing key"
-Write-Title "STEP 10.A: Creating the Signing Key"
+        #region "Getting the list of all custom policies in the tenant; to check if each keyset already exists prior to creating it"
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        $headers.Add("Authorization", $access_token)
+        $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'GET' -Headers $headers
+        $keysets = $response.value
+        $keysets = $keysets.id
+        #endregion
+        break
+    }
+    catch{
+        Write-Host ""
+        Write-Error $Error[0]
+        Write-Host ""
+        Write-Color "Red" "Error may be due to admin-consent having not yet been granted; please switch your directory to the b2c tenant ($B2cTenantName) in the Azure portal then copy and paste the yellow link into your browser to manually grant admin-consent then press enter."
+        $PMA_Page = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$PermissionClientID/isMSAApp~/false"
+        Write-Color "Yellow" "$PMA_Page"
+        Write-Host "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this."
+        Read-Host "Press enter after manually granting the admin consent permission"
+    }
+}    
+
+#region "Step 11.A: Create the signing key"
+Write-Title "Step 11.A: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
     Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -297,7 +382,7 @@ else{
     $response | ConvertTo-Json
     $signing_container_id = $response.id
 
-    Write-Host "`nSuccessfully created the key signing container: "+$signing_container_id+"`n"
+    Write-Host "`nSuccessfully created the key signing container: $signing_container_id`n"
     #endregion
 
     #region "Generating the signing key"
@@ -328,8 +413,8 @@ else{
 #endregion
 
 
-#region "STEP 10.B: Create the encryption key"
-Write-Title "STEP 10.B: Creating the Signing Key"
+#region "Step 11.B: Create the encryption key"
+Write-Title "Step 11.B: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
     Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -378,8 +463,8 @@ Write-Host "Successfully generated and uploaded the encryption key"
 #endregion
 
 
-#region "STEP 10.C: Create the AADSecret keyset"
-Write-Title "STEP 10.C: Creating the AADAppSecret Key"
+#region "Step 11.C: Create the AADSecret keyset"
+Write-Title "Step 11.C: Creating the AADAppSecret Key"
 
 if($keysets -contains "B2C_1A_AADAppSecret"){
     Read-Host "B2C_1A_AADAppSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -427,9 +512,60 @@ else{
 #endregion
 
 #endregion 
+
+#region "Step 11.D: Create the Facebook keyset"
+#TODO - eventually only run this step if we are using Facebook (and then use different contract templates for linking facebook vs without)
+Write-Title "Step 11.D: Creating the Facebook Key"
+
+if($keysets -contains "B2C_1A_FacebookSecret"){
+    Read-Host "B2C_1A_FacebookSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
+}
+else{
+    #region "Creating the B2C_1A_FacebookSecret keyset (container)"
+    #reference: https://docs.microsoft.com/en-us/graph/api/trustframework-post-keysets?view=graph-rest-beta&tabs=http
+    Write-Host "`nCreating the FacebookSecret keyset (container)`n"
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization", $access_token)
+    $headers.Add("Content-Type", "application/json")
+
+    $body = "{`"id`":`"B2C_1A_FacebookSecret`"}"
+
+    $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets' -Method 'POST' -Headers $headers -Body $body
+    $FacebookSecret_container_id = $response.id
+
+    Write-Host "Successfully created the key FacebookSecret container: $FacebookSecret_container_id"
+    #endregion
+
+    #region "Uploading the AADAppSecret key"
+    #reference: https://docs.microsoft.com/en-us/graph/api/trustframeworkkeyset-uploadsecret?view=graph-rest-beta&tabs=https
+    #calculating nbf (not before) and exp (expiry) tokens into the json required format of seconds past after 1970-01-01T00:00:00Z UTC
+    Write-Host "`nGenerating the FacebookSecret key and uploading to the keyset`n"
+    $arr = getNbfExp($num_months)
+    $nbf = $arr[0]
+    $exp = $arr[1]
+
+    #uploading the FacebookSecret key
+    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+    $headers.Add("Authorization", $access_token)
+    $headers.Add("Content-Type", "application/json")
+
+    $body = "{
+    `n  `"use`": `"sig`",
+    `n  `"k`": `""+$FacebookSecret+"`",
+    `n  `"nbf`": "+$nbf+",
+    `n  `"exp`": "+$exp+"
+    `n}"
+
+    $response = Invoke-RestMethod "https://graph.microsoft.com/beta/trustFramework/keySets/$FacebookSecret_container_id/uploadSecret" -Method 'POST' -Headers $headers -Body $body
+
+    Write-Host "Successfully uploaded the FacebookSecret key"
+}
 #endregion
 
-#region "STEP 11: uploading the custom policies to the b2c tenant"
+#endregion
+#endregion
+
+#region "STEP 12: uploading the custom policies to the b2c tenant"
 
 #region "Function for updating existing custom policy or uploading new custom policies"
 function CustomPolicyUpdateOrUpload($customPolicyName, $customPolicies, $access_token) {
@@ -463,7 +599,7 @@ function CustomPolicyUpdateOrUpload($customPolicyName, $customPolicies, $access_
 }
 #endregion
 
-Write-Title "STEP 11: Uploading the custom policies to the b2c tenant"
+Write-Title "STEP 12: Uploading the custom policies to the b2c tenant"
 
 #getting list of all users in the tenant
 Write-Host "Getting the list of all custom policies in the tenant"
@@ -484,3 +620,6 @@ CustomPolicyUpdateOrUpload "B2C_1A_signup_signin" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_ProfileEdit" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_PasswordReset" $customPolicies $access_token
 #endregion
+
+#returning values required by the Deploy.ps1 script
+return $WebClientID, $WebClientSecret, $B2cTenantName
