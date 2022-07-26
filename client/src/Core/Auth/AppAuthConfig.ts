@@ -56,6 +56,17 @@ const config: Configuration = {
   }
 };
 
+export let request;
+if (process.env.REACT_APP_EDNA_B2C_TENANT! != null) {
+  request = {
+    scopes: ['openid', 'profile', 'https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read']
+  };
+} else {
+  request = {
+    scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!]
+  };
+}
+
 // Todo, may no longer be neccessary
 // const authParams: AuthenticationParameters = {
 //   //scopes: ['https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read'] // RB: 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read'

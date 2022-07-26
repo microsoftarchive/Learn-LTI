@@ -13,7 +13,7 @@ import { MainLayout } from './Core/Components/MainLayout';
 import { GlobalRouter } from './Router/GlobalRouter';
 import { registerIcons, loadTheme } from '@uifabric/styling';
 import { fabricIconsData } from './Assets/Fonts/FabricIconsData';
-import { AppAuthConfig } from './Core/Auth/AppAuthConfig';
+import { AppAuthConfig, request } from './Core/Auth/AppAuthConfig';
 import { initializeIcons } from '@fluentui/react';
 import { appTheme } from './Core/Themes/MainTheme';
 import { PlatformPage } from './Features/Platform/PlatformPage';
@@ -28,9 +28,6 @@ function App() {
   registerIcons(fabricIconsData);
   initializeIcons();
   loadTheme(appTheme);
-  const request = {
-    scopes: ['openid', 'profile', 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read']
-  };
 
   return (
     <BrowserRouter>

@@ -7,15 +7,12 @@ import React, { PropsWithChildren, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useMsal } from '@azure/msal-react';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
+import { request } from './AppAuthConfig';
 
 export const AxiosBasicAuthInitializer = ({ children }: PropsWithChildren<{}>): JSX.Element => {
   const { instance, accounts } = useMsal();
   const [isTokenLoaded, setIsTokenLoaded] = useState(false);
   const [accessToken, setAccessToken] = useState<null | string>(null);
-  const request = {
-    scopes: ['https://ltimoodleb2c.onmicrosoft.com/api/b2c.read', 'profile', 'openid'],
-    account: accounts[0]
-  };
 
   // Called everytime time the LTI app is accessed to authenticate the user before allowing access.
 
