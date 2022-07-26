@@ -13,7 +13,6 @@ class PlatformServiceClass {
     const allPlatformsResponse = await axios.get<PlatformDto[]>(
       `${process.env.REACT_APP_EDNA_PLATFORM_SERVICE_URL}/platforms`
     );
-
     return safeData(allPlatformsResponse);
   }
 

@@ -18,7 +18,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 using System.Text;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
@@ -29,7 +29,7 @@ namespace Edna.Platforms
     {
         private const string PlatformsTableName = "Platforms";
 
-        private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
+        private static readonly string[] PossibleEmailClaimTypes = { "email", "emails", "upn", "unique_name" };
         private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
 
@@ -147,27 +147,34 @@ namespace Edna.Platforms
             return true;
             #endif
 
+            _logger.LogInformation("In validate");
+
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
                 return false;
 
             // By checking appidacr claim, we can know if the call was made by a user or by the system.
             // https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens
             string appidacr = claims.FirstOrDefault(claim => claim.Type == "appidacr")?.Value;
+            // made by system
             if (appidacr == "2")
                 return true;
+            if (appidacr == "1")
+                return false;
 
-            if (appidacr == "0")
+            // TODO - find a more secure way of doing this: e.g. put the below in something saying (if appidacr == "0" OR this is a b2c token) with else being return false
+            // TODO- need to find a way to identify b2c tokens, same issue in HTTPCLaimsExtension.cs
+
+            // made by user so check they have permission
+            // return false if user does not exist
+            if (!TryGetUserEmails(claims, out List<string> userEmails))
             {
-                if (!TryGetUserEmails(claims, out List<string> userEmails))
-                {
-                    _logger.LogError("Could not get any user email / uid for the current user.");
-                    return false;
-                }
-
-                return AllowedUsers.Intersect(userEmails).Any();
+                _logger.LogError("Could not get any user email / uid for the current user.");
+                return false;
             }
-
-            return false;
+            _logger.LogInformation(String.Join(",",userEmails));
+            _logger.LogInformation(String.Join(",",AllowedUsers));
+            // return value of if user email is in the allowed users list
+            return AllowedUsers.Intersect(userEmails).Any();
         }
 
         private bool TryGetUserEmails(IEnumerable<Claim> claims, out List<string> userEmails)
@@ -184,6 +191,12 @@ namespace Edna.Platforms
                 .Select(claim => claim.Value)
                 .Distinct()
                 .ToList();
+            
+            _logger.LogInformation("In get user");
+            // string emails = claimsArray.FirstOrDefault(claim => claim.Type == "emails").Value;
+            // string[] emailsCollection = emails.Split(",");
+            // userEmails.Concat(emailsCollection);
+
 
             return userEmails.Any();
         }

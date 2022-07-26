@@ -35,18 +35,32 @@ namespace Edna.Utils.Http
             // https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens
             string appidacr = claims.FirstOrDefault(claim => claim.Type == "appidacr")?.Value;
 
-            switch (appidacr)
-            {
-                case "0":
-                    return ParseUserEmailsFromClaims(claims, out userEmails);
+            // appidacr exists so this is an AAD token
+            if(appidacr != null){
+                switch (appidacr)
+                {
+                    case "0":
+                        //appidacr 0: authenticate  user using ParseUserEmails from claims
+                        return ParseUserEmailsFromClaims(claims, out userEmails);
 
-                case "2":
-                    return true;
+                    case "2":
+                        //appidacr 2: authed because its from server
+                        return true;
 
-                default:
-                    logAction?.Invoke("this is neither a valid call from user nor a valid server to server call");
-                    return false;
+                    default:
+                        //appidacr default: this is neither a valid call from user nor a valid server to server call
+                        logAction?.Invoke("this is neither a valid call from user nor a valid server to server call");
+                        return false;
+                }
             }
+
+            // else appidacr is null so this is a B2C Token
+            else{
+                //b2c authenticate  user using ParseUserEmails from claims by default
+                return ParseUserEmailsFromClaims(claims, out userEmails);
+            }
+            // TODO - at a later point add check that this is definitely a b2c token and then have the else to hadnle if it is neither AAD or B2C
+            // TODO- need to find a way to identify b2c tokens, same issue in PlatformApi.cs
         }
 
         private static bool ParseUserEmailsFromClaims(Claim[] claims, out List<String> userEmails)
