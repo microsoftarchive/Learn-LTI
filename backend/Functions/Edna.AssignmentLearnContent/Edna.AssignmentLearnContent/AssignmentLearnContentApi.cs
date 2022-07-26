@@ -87,7 +87,7 @@ namespace Edna.AssignmentLearnContent
         {
             if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
                 return new UnauthorizedResult();
-            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails, ValidAudience, ValidIssuer, JwksURI);
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
                 _logger.LogError("Could not get user email.");
@@ -131,7 +131,7 @@ namespace Edna.AssignmentLearnContent
         {
             if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
                 return new UnauthorizedResult();
-            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails, ValidAudience, ValidIssuer, JwksURI);
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
                 _logger.LogError("Could not get user email.");
