@@ -5,13 +5,8 @@
 
 [CmdletBinding()]
 param (
-<<<<<<< HEAD
     [string]$ResourceGroupName = "DM_ad4_MSLearnLTI",
     [string]$AppName = "DM_ad4_MS-Learn-Lti-Tool-App",
-=======
-    [string]$ResourceGroupName = "RB_policy2_MSLearnLTI",
-    [string]$AppName = "RB_policy2_MS-Learn-Lti-Tool-App",
->>>>>>> fd274f1832dcfa17487d03f791d151129b189792
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null
 )
@@ -48,9 +43,12 @@ process {
     Start-Transcript -Path $TranscriptFile;
     #endregion
     
-
-    Write-Title "Step #0 - Running B2C Cleanup Script"
-    & ".\B2CCleanup.ps1"
+    $choice = Read-Host "Do you have a b2c tenant to cleanup in addition to your ad tenant? (y/n)"
+    if ($choice -eq "y") {
+        Write-Title "Step #0 - Running B2C Cleanup Script"
+        & ".\B2CCleanup.ps1"
+    } 
+    
     
 
     #region Login to Azure CLI

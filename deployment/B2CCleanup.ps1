@@ -68,7 +68,7 @@ $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/k
 Write-Host "Deleting B2C_1A_AADAppSecret keyset"
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets/B2C_1A_AADAppSecret' -Method 'DELETE' -Headers $headers
 Write-Host "Deleting B2C_1A_FacebookSecret"
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies/B2C_1A_FacebookSecret' -Method 'DELETE' -Headers $headers
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/keySets/B2C_1A_FacebookSecret' -Method 'DELETE' -Headers $headers
 #endregion
 
 #region "STEP 4: Deleting the generated applications"
@@ -88,5 +88,3 @@ foreach ($info in $AppInfo) {
     az ad app delete --id $id --only-show-errors
 }
 #endregion
-
-$exit = Read-Host "Press enter to exit"
