@@ -13,8 +13,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "MSLearnLTI",
-    [string]$AppName = "MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "RB_policy2_MSLearnLTI",
+    [string]$AppName = "RB_policy2_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -34,8 +34,8 @@ process {
         #endregion
 
         #application ID and uri
-        $clientId = "7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
-        $apiURI = "api://7979bcbb-c70b-46f0-b229-0e3f9cec56a5"
+        $clientId = "c9180be0-6a72-4bd4-9d5a-9e649a24688c"
+        $apiURI = "api://c9180be0-6a72-4bd4-9d5a-9e649a24688c"
 
         #region Show Learn LTI Banner
         Write-Host ''
@@ -234,9 +234,6 @@ process {
         else {
         $userObjectId = az ad signed-in-user show --query objectId
         }
-
-        $templateFileName = "azuredeploy.json"
-        $deploymentName = "Deployment-$ExecutionStartTime"
 
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $clientId, IdentifiedURI: $apiURI"
         $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$clientId appRegistrationApiURI=$apiURI userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
