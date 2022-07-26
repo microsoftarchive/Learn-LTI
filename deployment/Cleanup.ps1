@@ -154,4 +154,6 @@ process {
     Write-Log -Message "Clean-up Complete"
     Write-Warning 'Please use a different ResourceGroup name on re-deployment!'
 
+    Write-Title "Step #5 - Running B2C Cleanup Script"
+    & ".\B2CCleanup.ps1"
 }

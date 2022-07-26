@@ -83,6 +83,8 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
+            // TODO -  VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
+            // validating user email exists in the request header
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -92,10 +94,12 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
-                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
+                // TODO - "DM: getting list of for the assignment from AD and checking they are authorized (teacher status)"
+                _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'."); // Creating logger for logging user (email owner) information
 
-                User[] allUsers = await usersClient.GetAllUsers(assignmentId);
-                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail)));
+                User[] allUsers = await usersClient.GetAllUsers(assignmentId); // Getting all users for the assignment
+                User user = allUsers.FirstOrDefault(member => userEmails.Any(userEmail => (member.Email ?? String.Empty).Equals(userEmail))); // Getting user from the list of emails
+                // If the user is not found or the user is NOT a teacher, return UnauthorizedResult
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
             }
@@ -122,6 +126,8 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
+            // TODO - "DM: VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
+            // validating user email exists in the request header
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -131,6 +137,7 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
+                // TODO - "DM: [SAME AS LINE 98] getting list of for the assignment from AD and checking they are authorized (teacher status)"
                 _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
@@ -160,6 +167,8 @@ namespace Edna.AssignmentLearnContent
             string assignmentId,
             [User] UsersClient usersClient)
         {
+            // TODO - "DM: VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
+            // validating user email exists in the request header
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -169,6 +178,7 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
+                //TODO - "DM: [SAME AS LINE98] getting list of for the assignment from AD and checking they are authorized (teacher status)"
                 _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
@@ -197,38 +207,46 @@ namespace Edna.AssignmentLearnContent
                 : new OkResult();
         }
 
+
+        //TODO -  "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES TOKENS"
+        // function for getting all the assignmentLearnContent entities in the tenant (?)
         private async Task<List<AssignmentLearnContentEntity>> GetAllAssignmentLearnContentEntities(CloudTable assignmentLearnContentTable, string assignmentId)
         {
             TableQuery<AssignmentLearnContentEntity> assignmentSelectedLearnContentQuery = new TableQuery<AssignmentLearnContentEntity>()
                 .Where(
                     TableQuery.GenerateFilterCondition(nameof(TableEntity.PartitionKey), QueryComparisons.Equal, assignmentId)
-                );
+                ); // get all the entities with the same partition key as the assignmentId (?)
 
-            List<AssignmentLearnContentEntity> assignmentSelectedLearnContent = new List<AssignmentLearnContentEntity>();
-            TableContinuationToken continuationToken = new TableContinuationToken();
+            List<AssignmentLearnContentEntity> assignmentSelectedLearnContent = new List<AssignmentLearnContentEntity>(); // create an empty list of AssignmentLearnContentEntity
+
+            TableContinuationToken continuationToken = new TableContinuationToken(); // create a new empty TableContinuationToken
+
+            // loop through the assignmentLearnContentTable and add the entities to assignmentSelectedLearnContent
             do
             {
-                TableQuerySegment<AssignmentLearnContentEntity> querySegment = await assignmentLearnContentTable.ExecuteQuerySegmentedAsync(assignmentSelectedLearnContentQuery, continuationToken);
-                continuationToken = querySegment.ContinuationToken;
-                assignmentSelectedLearnContent.AddRange(querySegment.Results);
-            } while (continuationToken != null);
+                TableQuerySegment<AssignmentLearnContentEntity> querySegment = await assignmentLearnContentTable.ExecuteQuerySegmentedAsync(assignmentSelectedLearnContentQuery, continuationToken); // get the next segment of the assignmentLearnContentTable (?)
+                continuationToken = querySegment.ContinuationToken; // set the continuationToken to the next segment of the query
+                assignmentSelectedLearnContent.AddRange(querySegment.Results); // add the entities to the list
+            } while (continuationToken != null); //until there are no more continuation tokens
 
             return assignmentSelectedLearnContent;
         }
 
+       //TODO - "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES JSON TOKENS"
+        // takes in a JSON token for the content
         private void ChangeUrlQueryToEdnaIdentifier(JToken contentJToken)
         {
-            string url = contentJToken["url"]?.ToString();
-            if (string.IsNullOrEmpty(url))
+            string url = contentJToken["url"]?.ToString(); // get the url from the decoded JSON token
+            if (string.IsNullOrEmpty(url)) // if the url is null or empty, return
                 return;
 
-            Uri previousUri = new Uri(url);
-            NameValueCollection queryParams = previousUri.ParseQueryString();
-            queryParams[LearnContentUrlIdentifierKey] = LearnContentUrlIdentifierValue;
+            Uri previousUri = new Uri(url); //store the old url in a Uri object
+            NameValueCollection queryParams = previousUri.ParseQueryString(); //parse the query string of the old url into a NameValueCollection object
+            queryParams[LearnContentUrlIdentifierKey] = LearnContentUrlIdentifierValue; //add the "edna" identifier to the query string of the old url (defined at line 55)
 
-            UriBuilder newUriBuilder = new UriBuilder(url) { Query = queryParams.ToString() };
+            UriBuilder newUriBuilder = new UriBuilder(url) { Query = queryParams.ToString() }; // create a new UriBuilder object with the new url and the query string
 
-            contentJToken["url"] = newUriBuilder.Uri.ToString();
+            contentJToken["url"] = newUriBuilder.Uri.ToString(); //update the JSON tokens url with the newly generated url
         }
     }
 }
