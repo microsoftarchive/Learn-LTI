@@ -33,6 +33,9 @@ namespace Edna.Assignments
         private const string AssignmentsTableName = "Assignments";
         private const string AssignmentsRoutePath = "assignments";
 
+        private static readonly string OpenIdConfigurationUrl = Environment.GetEnvironmentVariable("OpenIdConfigurationUrl");
+        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
+        
         private readonly ILogger<AssignmentsApi> _logger;
         private readonly IMapper _mapper;
 
@@ -58,6 +61,9 @@ namespace Edna.Assignments
             
             //While debugging, authorization header is empty when this API gets called from either Lti1 API or LtiAdvantage API
             // So to enable seamless debugging, putting this code in #if !DEBUG block
+
+            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
@@ -161,6 +167,8 @@ namespace Edna.Assignments
 
         private async Task<IActionResult> ChangePublishStatus(HttpRequest req, CloudTable table, IAsyncCollector<AssignmentEntity> assignmentEntityCollector, string assignmentId, UsersClient usersClient, PublishStatus newPublishStatus)
         {
+            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {

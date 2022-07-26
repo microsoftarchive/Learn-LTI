@@ -13,8 +13,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "TZ_policy_validation",
-    [string]$AppName = "TZ_policy_val_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "TZ_policy_validation1",
+    [string]$AppName = "TZ_policy_val1_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -34,8 +34,8 @@ process {
         #endregion
 
         #application ID and uri
-        $clientId = "1ea637ca-5c43-4742-b590-f3c084af99d2"
-        $apiURI = "api://1ea637ca-5c43-4742-b590-f3c084af99d2"
+        $clientId = "cb508fc8-6a5f-49b1-b688-dac065ba59e4"
+        $apiURI = "api://cb508fc8-6a5f-49b1-b688-dac065ba59e4"
 
         #region Show Learn LTI Banner
         Write-Host ''

@@ -30,6 +30,8 @@ namespace Edna.AssignmentLinks
         private readonly ILogger<AssignmentLinksApi> _logger;
         private readonly IMapper _mapper;
         private const string AssignmentLinksTableName = "Links";
+        private static readonly string OpenIdConfigurationUrl = Environment.GetEnvironmentVariable("OpenIdConfigurationUrl");
+        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
 
         public AssignmentLinksApi(ILogger<AssignmentLinksApi> logger, IMapper mapper)
         {
@@ -89,6 +91,8 @@ namespace Edna.AssignmentLinks
             string linkId,
             [User] UsersClient usersClient)
         {
+            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -149,6 +153,8 @@ namespace Edna.AssignmentLinks
             string assignmentId,
             [User] UsersClient usersClient)
         {
+            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {

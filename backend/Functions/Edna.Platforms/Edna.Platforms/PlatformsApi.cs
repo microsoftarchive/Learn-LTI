@@ -33,6 +33,9 @@ namespace Edna.Platforms
         private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
 
+        private static readonly string OpenIdConfigurationUrl = Environment.GetEnvironmentVariable("OpenIdConfigurationUrl");
+        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
+
         private readonly IMapper _mapper;
         private readonly ILogger<PlatformsApi> _logger;
 
@@ -48,7 +51,7 @@ namespace Edna.Platforms
             [LtiAdvantage] LtiToolPublicKey publicKey,
             [Table(PlatformsTableName)] CloudTable table)
         {
-            if (!ValidatePermission(req))
+            if (!await ValidatePermission(req))
                 return new UnauthorizedResult();
 
             _logger.LogInformation("Getting all the registered platforms.");
@@ -77,12 +80,12 @@ namespace Edna.Platforms
         }
 
         [FunctionName(nameof(GetPlatform))]
-        public IActionResult GetPlatform(
+        public async Task<IActionResult> GetPlatform(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "platforms/{platformId}")] HttpRequest req,
             [LtiAdvantage] LtiToolPublicKey publicKey,
             [Table(PlatformsTableName, "{platformId}", "{platformId}")] PlatformEntity platformEntity)
         {
-            if (!ValidatePermission(req))
+            if (!await ValidatePermission(req))
                 return new UnauthorizedResult();
 
             PlatformDto platformDto = _mapper.Map<PlatformDto>(platformEntity);
@@ -93,11 +96,11 @@ namespace Edna.Platforms
         }
 
         [FunctionName(nameof(GetNewPlatform))]
-        public IActionResult GetNewPlatform(
+        public async Task<IActionResult> GetNewPlatform(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "new-platform")] HttpRequest req,
             [LtiAdvantage] LtiToolPublicKey publicKey)
         {
-            if (!ValidatePermission(req))
+            if (!await ValidatePermission(req))
                 return new UnauthorizedResult();
 
             string platformId = GeneratePlatformID();
@@ -122,7 +125,7 @@ namespace Edna.Platforms
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "platforms")] HttpRequest req,
             [Table(PlatformsTableName)] IAsyncCollector<PlatformEntity> entityCollector)
         {
-            if (!ValidatePermission(req))
+            if (!await ValidatePermission(req))
                 return new UnauthorizedResult();
 
             string platformDtoJson = await req.ReadAsStringAsync();
@@ -140,7 +143,7 @@ namespace Edna.Platforms
             return new CreatedResult(platformGetUrl, updatedPlatformDto);
         }
 
-        private bool ValidatePermission(HttpRequest req)
+        private async Task<bool> ValidatePermission(HttpRequest req)
         {
             #if DEBUG
             // For debug purposes, there is no authentication.
@@ -148,7 +151,9 @@ namespace Edna.Platforms
             #endif
 
             _logger.LogInformation("In validate");
-
+            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+                return false;
+            
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
                 return false;
 

@@ -248,7 +248,9 @@
                 "WEBSITE_CONTENTSHARE": "[toLower(concat('users' , variables('ProjectNameSuffix')))]",
                 "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-                "WEBSITE_RUN_FROM_PACKAGE": "1"
+                "WEBSITE_RUN_FROM_PACKAGE": "1",
+                "ValidAudience": "f7089027-f1fe-47c7-850b-32e8bed4bc0a",
+                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
             }
         },
         {
@@ -259,22 +261,24 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', concat('assignments' , variables('ProjectNameSuffix')))]"
             ],
-          "properties": {
-            "AuthUrl": "[parameters('appRegistrationApiURI')]",
-            "DidDeployWork": "true",
-            "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
-            "PlatformsServiceUrl": "[concat('https://','platforms' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
-            "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
-            "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('assignments' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('assignments' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
-            "FUNCTIONS_EXTENSION_VERSION": "~3",
-            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
-            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('assignments' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('assignments' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
-            "WEBSITE_CONTENTSHARE": "[toLower(concat('assignments' , variables('ProjectNameSuffix')))]",
-            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
-            "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
-          }
+            "properties": {
+                "AuthUrl": "[parameters('appRegistrationApiURI')]",
+                "DidDeployWork": "true",
+                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
+                "PlatformsServiceUrl": "[concat('https://','platforms' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
+                "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
+                "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('assignments' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('assignments' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
+                "FUNCTIONS_EXTENSION_VERSION": "~3",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('assignments' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('assignments' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(concat('assignments' , variables('ProjectNameSuffix')))]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
+                "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
+                "WEBSITE_RUN_FROM_PACKAGE": "1",
+                "ValidAudience": "f7089027-f1fe-47c7-850b-32e8bed4bc0a",
+                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
+            }
         },
         {
             "name": "[concat('platforms' , variables('ProjectNameSuffix'),'/appsettings')]",
@@ -284,22 +288,24 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', concat('platforms' , variables('ProjectNameSuffix')))]"
             ],
-          "properties": {
-            "AllowedUsers": "[parameters('userEmailAddress')]",
-            "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
-            "AuthUrl": "[parameters('appRegistrationApiURI')]",
-            "DidDeployWork": "true",
-            "ConnectApiBaseUrl": "[concat('https://','connect' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
-            "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
-            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('platforms' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('platforms' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
-            "FUNCTIONS_EXTENSION_VERSION": "~3",
-            "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('platforms' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
-            "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('platforms' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('platforms' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
-            "WEBSITE_CONTENTSHARE": "[toLower(concat('platforms' , variables('ProjectNameSuffix')))]",
-            "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('platforms' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
-            "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
-          }
+            "properties": {
+                "AllowedUsers": "[parameters('userEmailAddress')]",
+                "AzureB2C_AUTHENTICATION_SECRET": "jHr8Q~tEPWGJBdBtNn0MNfZRXUZjpGghi~6zBalB",
+                "AuthUrl": "[parameters('appRegistrationApiURI')]",
+                "DidDeployWork": "true",
+                "ConnectApiBaseUrl": "[concat('https://','connect' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
+                "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('platforms' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('platforms' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
+                "FUNCTIONS_EXTENSION_VERSION": "~3",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components', concat('platforms' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey]",
+                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', concat('platforms' , variables('StorageAccountSuffix')), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('platforms' , variables('StorageAccountSuffix'))),'2019-06-01').keys[0].value)]",
+                "WEBSITE_CONTENTSHARE": "[toLower(concat('platforms' , variables('ProjectNameSuffix')))]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('platforms' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
+                "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
+                "WEBSITE_RUN_FROM_PACKAGE": "1",
+                "ValidAudience": "f7089027-f1fe-47c7-850b-32e8bed4bc0a",
+                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
+            }
         },
         {
             "name": "[concat('links', variables('ProjectNameSuffix'), '/appsettings')]",
@@ -321,7 +327,9 @@
                 "WEBSITE_CONTENTSHARE": "[toLower(concat('links' , variables('ProjectNameSuffix')))]",
                 "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-                "WEBSITE_RUN_FROM_PACKAGE": "1"
+                "WEBSITE_RUN_FROM_PACKAGE": "1",
+                "ValidAudience": "f7089027-f1fe-47c7-850b-32e8bed4bc0a",
+                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
             }
         },
         {
@@ -344,7 +352,9 @@
                 "WEBSITE_CONTENTSHARE": "[toLower(concat('learncontent' , variables('ProjectNameSuffix')))]",
                 "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-                "WEBSITE_RUN_FROM_PACKAGE": "1"
+                "WEBSITE_RUN_FROM_PACKAGE": "1",
+                "ValidAudience": "f7089027-f1fe-47c7-850b-32e8bed4bc0a",
+                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
             }
         },
         {

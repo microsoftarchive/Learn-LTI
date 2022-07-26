@@ -3,6 +3,7 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,6 +32,9 @@ namespace Edna.Users
     {
         private readonly IMapper _mapper;
         private readonly ILogger<UsersApi> _logger;
+        
+        private static readonly string OpenIdConfigurationUrl = Environment.GetEnvironmentVariable("OpenIdConfigurationUrl");
+        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
 
         public UsersApi(IMapper mapper, ILogger<UsersApi> logger)
         {
@@ -51,6 +55,9 @@ namespace Edna.Users
             if (req.Headers == null)
                 return new BadRequestErrorMessageResult("No headers are presented in the request.");
 
+            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
+            
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))
                 return new BadRequestErrorMessageResult("Could not get user email.");
 

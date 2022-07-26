@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "TZ_policy_validation",
-    [string]$AppName = "TZ_policy_val_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "TZ_policy_validation1",
+    [string]$AppName = "TZ_policy_val1_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -196,11 +196,10 @@ process {
     
         [int]$azver0= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[0]
         [int]$azver1= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[1]
-        if( $azver0 -ge 2 && $azver1 -ge 37){
-        $userObjectId = az ad signed-in-user show --query id
-        }
-        else {
-        $userObjectId = az ad signed-in-user show --query objectId
+        if ($azver0 -ge 2 -and $azver1 -ge 37) {
+            $userObjectId = az ad signed-in-user show --query id
+        } else {
+            $userObjectId = az ad signed-in-user show --query objectId
         }
         #$userObjectId
     
@@ -249,7 +248,11 @@ process {
     
         $AppRedirectUrl = $deploymentOutput.properties.outputs.webClientURL.value
         Write-Log -Message "Updating App with ID: $($appinfo.appId) to Redirect URL: $AppRedirectUrl and also enabling Implicit Flow"
-        $appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
+        if ($azver0 -ge 2 -and $azver1 -ge 37) {
+            $appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --web-redirect-uris $AppRedirectUrl --enable-access-token-issuance true
+        } else {
+            $appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
+        }
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
     
         Write-Host 'App Update Completed Successfully'
