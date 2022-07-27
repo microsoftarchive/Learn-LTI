@@ -18,6 +18,45 @@ process {
         Write-Host $Title
         Write-Host "=============================================================`n`n"
     }
+
+     # Checking Azure CLI is installed
+     $AzCliCheck= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli")
+     if( $AzCliCheck -eq $null){
+         Write-Host "Azure CLI is not installed and please go to this link to install. (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest%3FWT.mc_id%3Dlearnlti-github-cxa)"        
+         exit
+     }
+     else {
+         Write-Host "Azure CLI is installed."
+     }
+     # Checking .Net Framework is installed
+     $NetFrCheck= (dotnet --list-sdks)
+     if( $NetFrCheck -eq $null){
+         Write-Host ".Net Framework is not installed and please go to this link to install. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
+         exit
+     }
+     else {
+         Write-Host ".Net Framework is installed."
+     }
+     # Checking Node.js is installed
+     $NodejsCheck= (node -v)
+     if( $NodejsCheck -eq $null){
+         Write-Host "Node.js is not installed and please go to this link to install. (https://nodejs.org/en/download/)"        
+         exit
+     }
+     else {
+         Write-Host "Node.js is installed."
+     }
+     # Checking Git is installed
+     $GitCheck= (git --version)
+     if( $GitCheck -eq $null){
+         Write-Host "Git is not installed and please go to this link to install. (https://git-scm.com/downloads)"        
+         exit
+     }
+     else {
+         Write-Host "Git is installed."
+     }
+ 
+     Write-Host "All pre-requisites checks are done."
     
     try {
         #region Show Learn LTI Banner
