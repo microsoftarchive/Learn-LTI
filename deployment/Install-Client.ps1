@@ -113,9 +113,9 @@ function Update-ClientConfig {
         [DotEnv]::REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL="$(Get-ServiceUrl $AssignmentsFunctionAppName)";
         [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL="$(Get-ServiceUrl $PlatformsFunctionAppName)";
         [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$(Get-ServiceUrl $UsersFunctionAppName)";
-        [DotEnv]::REACT_APP_EDNA_B2C_CLIENT_ID="$(Get-ServiceUrl $b2cClientID)";
-        [DotEnv]::REACT_APP_EDNA_B2C_TENANT="$(Get-ServiceUrl $b2cTenantName)";
-        [DotEnv]::REACT_APP_EDNA_AUTH_CLIENT_ID="$(Get-ServiceUrl $authClientID)"
+        [DotEnv]::REACT_APP_EDNA_B2C_CLIENT_ID="$b2cClientID";
+        [DotEnv]::REACT_APP_EDNA_B2C_TENANT="$b2cTenantName";
+        [DotEnv]::REACT_APP_EDNA_AUTH_CLIENT_ID="$authClientID"
     }
     Write-ClientDebugLog -Message "Updated Configuration:-`n$($Config | Out-String)"
 
@@ -151,19 +151,19 @@ function Update-DevelopmentConfig {
     $Config = @{
         GENERATE_SOURCEMAP="false";
 
-        [DotEnv]::REACT_APP_EDNA_AAD_CLIENT_ID=($configValues.REACT_APP_EDNA_AAD_CLIENT_ID -replace '"' -replace "'");
-        [DotEnv]::REACT_APP_EDNA_MAIN_URL=($configValues.REACT_APP_EDNA_MAIN_URL -replace '"' -replace "'");
-        [DotEnv]::REACT_APP_EDNA_DEFAULT_SCOPE=($configValues.REACT_APP_EDNA_DEFAULT_SCOPE -replace '"' -replace "'");
-        [DotEnv]::REACT_APP_EDNA_TENANT_ID=($configValues.REACT_APP_EDNA_TENANT_ID -replace '"' -replace "'");
-        [DotEnv]::REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL=($configValues.REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL -replace '"' -replace "'");
-        [DotEnv]::REACT_APP_EDNA_LINKS_SERVICE_URL=($configValues.REACT_APP_EDNA_LINKS_SERVICE_URL -replace '"' -replace "'");
-        [DotEnv]::REACT_APP_EDNA_LEARN_CONTENT=($configValues.REACT_APP_EDNA_LEARN_CONTENT -replace '"' -replace "'");
-        [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL=($configValues.REACT_APP_EDNA_USERS_SERVICE_URL -replace '"' -replace "'");
-        [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL=($configValues.REACT_APP_EDNA_USERS_SERVICE_URL -replace '"' -replace "'");
+        [DotEnv]::REACT_APP_EDNA_AAD_CLIENT_ID="$($configValues.REACT_APP_EDNA_AAD_CLIENT_ID -replace '"' -replace "'")";
+        [DotEnv]::REACT_APP_EDNA_MAIN_URL="$($configValues.REACT_APP_EDNA_MAIN_URL -replace '"' -replace "'")";
+        [DotEnv]::REACT_APP_EDNA_DEFAULT_SCOPE="$($configValues.REACT_APP_EDNA_DEFAULT_SCOPE -replace '"' -replace "'")";
+        [DotEnv]::REACT_APP_EDNA_TENANT_ID="$($configValues.REACT_APP_EDNA_TENANT_ID -replace '"' -replace "'")";
+        [DotEnv]::REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL="$($configValues.REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL -replace '"' -replace "'")";
+        [DotEnv]::REACT_APP_EDNA_LINKS_SERVICE_URL="$($configValues.REACT_APP_EDNA_LINKS_SERVICE_URL -replace '"' -replace "'")";
+        [DotEnv]::REACT_APP_EDNA_LEARN_CONTENT="$($configValues.REACT_APP_EDNA_LEARN_CONTENT -replace '"' -replace "'")";
+        [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$($configValues.REACT_APP_EDNA_USERS_SERVICE_URL -replace '"' -replace "'")";
+        [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL="$($configValues.REACT_APP_EDNA_USERS_SERVICE_URL -replace '"' -replace "'")";
 
-        [DotEnv]::REACT_APP_EDNA_B2C_CLIENT_ID="$(Get-ServiceUrl $b2cClientID)";
-        [DotEnv]::REACT_APP_EDNA_B2C_TENANT="$(Get-ServiceUrl $b2cTenantName)";
-        [DotEnv]::REACT_APP_EDNA_AUTH_CLIENT_ID="$(Get-ServiceUrl $authClientID)"
+        [DotEnv]::REACT_APP_EDNA_B2C_CLIENT_ID="$b2cClientID";
+        [DotEnv]::REACT_APP_EDNA_B2C_TENANT="$b2cTenantName";
+        [DotEnv]::REACT_APP_EDNA_AUTH_CLIENT_ID="$authClientID"
     }
     Write-ClientDebugLog -Message "Updated Configuration:-`n$($Config | Out-String)"
 

@@ -378,7 +378,7 @@ while(1){
         $PMA_Page = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$PermissionClientID/isMSAApp~/false"
         Write-Color "Yellow" "$PMA_Page"
         Write-Host "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this."
-        Read-Host "Press enter after manually granting the admin consent permission"
+        Read-Host "Press enter after manually granting the admin consent permission and waiting 10 seconds"
     }
 }    
 

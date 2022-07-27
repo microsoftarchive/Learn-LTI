@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad10_MSLearnLTI",
-    [string]$AppName = "DM_ad10_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad14_MSLearnLTI",
+    [string]$AppName = "DM_ad14_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -67,7 +67,7 @@ process {
 
         #region "B2C STEP 1: Calling B2CDeployment to set up the b2c script and retrieving the returned values to be used later on"
         $REACT_APP_EDNA_B2C_CLIENT_ID = "'NA'"
-        $REACT_APP_EDNA_AUTH_CLIENT_ID = "'NA'"
+        $REACT_APP_EDNA_AUTH_CLIENT_ID = "'Placeholder'" # either replaced below by returned value of b2c script if b2cOrAD = "b2c", or just before step 11.a to AAD_Client_ID's ($appinfo.appId) value if b2cOrAD = "ad"
         $b2c_secret = "'NA'"
         $REACT_APP_EDNA_B2C_TENANT = "'NA'"
         if($b2cOrAD -eq "b2c"){
@@ -309,6 +309,12 @@ process {
         #endregion
 
         #region Build and Publish Client Artifacts
+
+        # if this is in AD mode not b2c, then AUTH_CLIENT_ID is the same as AAD_ClientID
+        if($b2cOrAD -eq "ad"){
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $appinfo.appId
+        }
+
         . .\Install-Client.ps1
         Write-Title "STEP #11.A - Updating client's .env.production file"
         
@@ -323,7 +329,7 @@ process {
             StaticWebsiteUrl=$deploymentOutput.properties.outputs.webClientURL.value;
             b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
             b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
-            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to 'NA' if AD
+            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to $appinfo.appId if AD
         }
         Update-ClientConfig @ClientUpdateConfigParams
 
@@ -333,7 +339,7 @@ process {
             ConfigPath="../client/.env.development";
             b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
             b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
-            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to 'NA' if AD
+            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to $appinfo.appId if AD
         }
         Update-DevelopmentConfig @DevelopmentUpdateConfigParams
 
