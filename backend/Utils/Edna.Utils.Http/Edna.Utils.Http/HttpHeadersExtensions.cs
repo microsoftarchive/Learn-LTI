@@ -41,7 +41,7 @@ namespace Edna.Utils.Http
                 var b2cConfig = await b2cConfigurationManager.GetConfigurationAsync(default);
                 var adConfigurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
                     configUrls[1], new OpenIdConnectConfigurationRetriever());
-                var adConfig = await adConfigurationManager.GetBaseConfigurationAsync(default);
+                var adConfig = await adConfigurationManager.GetConfigurationAsync(default);
                 var signingKeys = b2cConfig.SigningKeys;
                 foreach (var key in adConfig.SigningKeys)
                 {
