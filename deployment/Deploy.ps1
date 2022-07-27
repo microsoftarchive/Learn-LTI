@@ -20,11 +20,6 @@ process {
     }
     
     try {
-        #region "formatting a unique identifier to ensure we create a new keyvault for each run"
-        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
-        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
-        #endregion
-
         #region Show Learn LTI Banner
         Write-Host ''
         Write-Host ' _      ______          _____  _   _            _   _______ _____ '
@@ -41,6 +36,18 @@ process {
         $b2cOrAD = "none"
         while($b2cOrAD -ne "b2c" -and $b2cOrAD -ne "ad") {
             $b2cOrAD = Read-Host "Would you like to set this up with b2c or AD? (b2c/ad) (b2c recommended as it can be single tenant or multitenant, ad only single tenant [less scalable])"
+        }
+        #endregion
+
+        #region "formatting a unique identifier to ensure we create a new keyvault for each run"
+        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
+        #if its b2c load the b2c azuredeploy template
+        if($b2cOrAD -eq "b2c"){
+            ((Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+        }
+        #else its AD load the AD azuredeploy template
+        else{
+            ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
         }
         #endregion
 
