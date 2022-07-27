@@ -70,7 +70,8 @@ process {
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[0] #webclient ID
             $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[0] #webclient ID
             $b2c_secret = $results[1] #webclient secret
-            $REACT_APP_EDNA_B2C_TENANT = $results[2] #b2c tenant name
+            $REACT_APP_EDNA_B2C_TENANT = $results[2] #b2c tenant name 
+            $B2C_ObjectID = $results[3] # b2c webapp id that needs the SPA uri
         }
         #endregion
         
@@ -396,6 +397,11 @@ process {
         $body = '{\"spa\":{\"redirectUris\":[\"' + $AppRedirectUrl + '\"]}}'
         Write-Log -Message "Pointing to  $graphUrl and using body $body"
         az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
+
+        if ($b2cOrAD eq "b2c"){ #Set the SPA uri link on the B2C as well
+            $graphUrl = "https://graph.microsoft.com/v1.0/applications/$($B2C_ObjectID)"
+            az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
+        }
 
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
     
