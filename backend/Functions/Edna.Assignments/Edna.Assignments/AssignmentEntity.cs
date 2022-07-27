@@ -4,7 +4,7 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 
 namespace Edna.Assignments
 {

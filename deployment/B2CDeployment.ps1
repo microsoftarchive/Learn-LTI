@@ -104,8 +104,11 @@ az login --tenant "$B2cTenantName.onmicrosoft.com" --allow-no-subscriptions --on
 #region "STEP 3: Create the web app"
 Write-Title "STEP 3: Creating the B2C Web application"
 # $B2cAppName = Read-Host "Please give a name for the web application to be created"
-$WebClientID = (az ad app create --display-name $B2cAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://jwt.ms --enable-access-token-issuance true --enable-id-token-issuance true --query appId --output tsv --only-show-errors)
+$appinfo = (az ad app create --display-name $B2cAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://jwt.ms --enable-access-token-issuance true --enable-id-token-issuance true --only-show-errors) | ConvertFrom-Json
 Start-SLeep 2
+$WebClientID = $appinfo.appId
+$ObjectId = $appinfo.id
+
 "$WebClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # create client secret
@@ -639,7 +642,7 @@ CustomPolicyUpdateOrUpload "B2C_1A_TrustFrameworkExtensions" $customPolicies $ac
 CustomPolicyUpdateOrUpload "B2C_1A_signup_signin" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_ProfileEdit" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_PasswordReset" $customPolicies $access_token
-#endregion
+#endregionWebClientID
 
 #returning values required by the Deploy.ps1 script
-return $WebClientID, $WebClientSecret, $B2cTenantName
+return $WebClientID, $WebClientSecret, $B2cTenantName, $ObjectId

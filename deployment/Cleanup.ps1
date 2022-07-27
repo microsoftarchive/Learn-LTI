@@ -43,12 +43,19 @@ process {
     Start-Transcript -Path $TranscriptFile;
     #endregion
     
-    $choice = Read-Host "Do you have a b2c tenant to cleanup in addition to your ad tenant? (y/n)"
-    if ($choice -eq "y") {
-        Write-Title "Step #0 - Running B2C Cleanup Script"
-        & ".\B2CCleanup.ps1"
-    } 
+    #region B2c if needed
+    Write-Title "Optional B2C cleanup"
+    $b2ccleanup = "none"
+    while($b2ccleanup -ne "yes" -and $b2ccleanup -ne "no") {
+        $b2ccleanup = Read-Host "Would you like to to cleanup a B2C tenant? (yes/no)"
+    }
     
+    if($b2ccleanup -eq "yes")
+    {
+        Write-Title "Step #5 - Running B2C Cleanup Script"
+        & ".\B2CCleanup.ps1"
+    }
+    #endregion
     
 
     #region Login to Azure CLI

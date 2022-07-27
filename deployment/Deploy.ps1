@@ -70,15 +70,18 @@ process {
         $REACT_APP_EDNA_AUTH_CLIENT_ID = "'Placeholder'" # either replaced below by returned value of b2c script if b2cOrAD = "b2c", or just before step 11.a to AAD_Client_ID's ($appinfo.appId) value if b2cOrAD = "ad"
         $b2c_secret = "'NA'"
         $REACT_APP_EDNA_B2C_TENANT = "'NA'"
+        $B2C_ObjectID = "'NA'"
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #1: Running the B2C Setup Script"
             # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
             $results = & ".\B2CDeployment.ps1" # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
+
             # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
-            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-3] #webclient ID
-            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-3] #webclient ID
-            $b2c_secret = $results[-2] #webclient secret
-            $REACT_APP_EDNA_B2C_TENANT = $results[-1] #b2c tenant name
+            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-4] #webclient ID
+            $b2c_secret = $results[-3] #webclient secret
+            $REACT_APP_EDNA_B2C_TENANT = $results[-2] #b2c tenant name
+            $B2C_ObjectID = $results[-1] # b2c webapp id that needs the SPA uri
         }
         #endregion
         
@@ -285,7 +288,19 @@ process {
     
         $AppRedirectUrl = $deploymentOutput.properties.outputs.webClientURL.value
         Write-Log -Message "Updating App with ID: $($appinfo.appId) to Redirect URL: $AppRedirectUrl and also enabling Implicit Flow"
-        $appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
+        #$appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
+
+        #Azure CLI doesn't offer the ability to create SPA redirect uris, must use patch instead 
+        $graphUrl = "https://graph.microsoft.com/v1.0/applications/$($appinfo.id)"
+        $body = '{\"spa\":{\"redirectUris\":[\"' + $AppRedirectUrl + '\"]}}'
+        Write-Log -Message "Pointing to  $graphUrl and using body $body"
+        az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
+
+        if ($b2cOrAD -eq "b2c"){ #Set the SPA uri link on the B2C as well
+            $graphUrl = "https://graph.microsoft.com/v1.0/applications/$B2C_ObjectID"
+            az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
+        }
+
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
     
         Write-Host 'App Update Completed Successfully'

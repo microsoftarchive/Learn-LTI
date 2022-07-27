@@ -34,8 +34,8 @@ process {
         #endregion
 
         #application ID and uri
-        $clientId = "c9180be0-6a72-4bd4-9d5a-9e649a24688c"
-        $apiURI = "api://c9180be0-6a72-4bd4-9d5a-9e649a24688c"
+        $clientId = "1ea637ca-5c43-4742-b590-f3c084af99d2"
+        $apiURI = "api://1ea637ca-5c43-4742-b590-f3c084af99d2"
 
         #region Show Learn LTI Banner
         Write-Host ''
