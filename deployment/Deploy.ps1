@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad9_MSLearnLTI",
-    [string]$AppName = "DM_ad9_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad10_MSLearnLTI",
+    [string]$AppName = "DM_ad10_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -323,6 +323,7 @@ process {
         Write-Title "STEP #11.B - .env.development file"
 
         $ServerUpdateConfigParams = @{
+            ConfigPath="../client/.env.development";
             b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
             b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
             authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to 'NA' if AD
