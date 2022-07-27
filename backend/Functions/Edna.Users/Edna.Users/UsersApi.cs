@@ -25,6 +25,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Edna.Users
 {
@@ -32,14 +34,20 @@ namespace Edna.Users
     {
         private readonly IMapper _mapper;
         private readonly ILogger<UsersApi> _logger;
-        
-        private static readonly string OpenIdConfigurationUrl = Environment.GetEnvironmentVariable("OpenIdConfigurationUrl");
+
+        private readonly ConfigurationManager<OpenIdConnectConfiguration> _adManager, _b2CManager;
         private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
 
-        public UsersApi(IMapper mapper, ILogger<UsersApi> logger)
+        public UsersApi(IMapper mapper, ILogger<UsersApi> logger, IEnumerable<ConfigurationManager<OpenIdConnectConfiguration>> managers)
         {
             _mapper = mapper;
             _logger = logger;
+            
+            var configurationManagers = managers.ToList();
+            _adManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("ADConfigurationUrl"));
+            _b2CManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("B2CConfigurationUrl"));
         }
 
         [FunctionName(nameof(GetUserDetails))]
@@ -55,7 +63,7 @@ namespace Edna.Users
             if (req.Headers == null)
                 return new BadRequestErrorMessageResult("No headers are presented in the request.");
 
-            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
                 return new UnauthorizedResult();
             
             if (!req.Headers.TryGetUserEmails(out List<string> userEmails))

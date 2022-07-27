@@ -24,6 +24,8 @@ using Edna.Utils.Http;
 using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Edna.AssignmentLearnContent
 {
@@ -32,18 +34,25 @@ namespace Edna.AssignmentLearnContent
         private const string AssignmentLearnContentTableName = "AssignmentLearnContent";
         private const string LearnContentUrlIdentifierKey = "WT.mc_id";
         private const string LearnContentUrlIdentifierValue = "Edna";
-        private static readonly string OpenIdConfigurationUrl = Environment.GetEnvironmentVariable("OpenIdConfigurationUrl");
-        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
 
+        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
+        private readonly ConfigurationManager<OpenIdConnectConfiguration> _adManager, _b2CManager;
         private readonly ILogger<AssignmentLearnContentApi> _logger;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public AssignmentLearnContentApi(ILogger<AssignmentLearnContentApi> logger, IMapper mapper, IHttpClientFactory httpClientFactory)
+        public AssignmentLearnContentApi(ILogger<AssignmentLearnContentApi> logger, IMapper mapper, 
+            IHttpClientFactory httpClientFactory, IEnumerable<ConfigurationManager<OpenIdConnectConfiguration>> managers)
         {
             _logger = logger;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+
+            var configurationManagers = managers.ToList();
+            _adManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("ADConfigurationUrl"));
+            _b2CManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("B2CConfigurationUrl"));
         }
 
         [FunctionName(nameof(GetLearnCatalog))]
@@ -85,7 +94,7 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
-            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
                 return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
@@ -96,7 +105,6 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
-                #region "DM: getting list of for the assignment from AD and checking they are authorized (teacher status)"
                 _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'."); // Creating logger for logging user (email owner) information
 
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId); // Getting all users for the assignment
@@ -104,7 +112,6 @@ namespace Edna.AssignmentLearnContent
                 // If the user is not found or the user is NOT a teacher, return UnauthorizedResult
                 if (user == null || !user.Role.Equals("teacher"))
                     return new UnauthorizedResult();
-                #endregion
             }
 
             _logger.LogInformation($"Saving assignment learn content with uid [{contentUid}] to assignment {assignmentId}");
@@ -129,7 +136,7 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
-            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
                 return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
@@ -169,7 +176,7 @@ namespace Edna.AssignmentLearnContent
             string assignmentId,
             [User] UsersClient usersClient)
         {
-            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
                 return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)

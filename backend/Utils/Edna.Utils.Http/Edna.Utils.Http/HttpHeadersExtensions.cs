@@ -21,7 +21,9 @@ namespace Edna.Utils.Http
     {
         private static readonly JwtSecurityTokenHandler JwtSecurityTokenHandler = new JwtSecurityTokenHandler();
 
-        public static async Task<bool> ValidateToken(this IHeaderDictionary headers, string openIdConfigUrl, 
+        public static async Task<bool> ValidateToken(this IHeaderDictionary headers, 
+            ConfigurationManager<OpenIdConnectConfiguration> adConfigurationManager, 
+            ConfigurationManager<OpenIdConnectConfiguration> b2CConfigurationManager, 
             string validAudience, Action<string> logAction = null)
         {
             IdentityModelEventSource.ShowPII = true;
@@ -35,14 +37,9 @@ namespace Edna.Utils.Http
             var token = authorizationContent?.Split(' ')[1];
             try
             {
-                var configUrls = openIdConfigUrl.Split(',');
-                var b2cConfigurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-                    configUrls[0], new OpenIdConnectConfigurationRetriever());
-                var b2cConfig = await b2cConfigurationManager.GetConfigurationAsync(default);
-                var adConfigurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-                    configUrls[1], new OpenIdConnectConfigurationRetriever());
+                var b2CConfig = await b2CConfigurationManager.GetConfigurationAsync(default);
                 var adConfig = await adConfigurationManager.GetConfigurationAsync(default);
-                var signingKeys = b2cConfig.SigningKeys;
+                var signingKeys = b2CConfig.SigningKeys;
                 foreach (var key in adConfig.SigningKeys)
                 {
                     signingKeys.Add(key);
@@ -55,7 +52,7 @@ namespace Edna.Utils.Http
                     ValidateLifetime = true,
                     RequireSignedTokens = true,
                     IssuerSigningKeys = signingKeys,
-                    ValidIssuers = new List<string>{b2cConfig.Issuer, adConfig.Issuer},
+                    ValidIssuers = new List<string>{b2CConfig.Issuer, adConfig.Issuer},
                     ValidAudiences = validAudience.Split(',')
                 };
                 var principal = JwtSecurityTokenHandler.ValidateToken(token, validationParameters, out _);

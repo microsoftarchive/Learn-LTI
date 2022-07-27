@@ -21,6 +21,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Cosmos.Table;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 
 namespace Edna.Platforms
@@ -30,19 +32,25 @@ namespace Edna.Platforms
         private const string PlatformsTableName = "Platforms";
 
         private static readonly string[] PossibleEmailClaimTypes = { "email", "emails", "upn", "unique_name" };
-        private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
+        private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl")?.TrimEnd('/');
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
 
-        private static readonly string OpenIdConfigurationUrl = Environment.GetEnvironmentVariable("OpenIdConfigurationUrl");
+        private readonly ConfigurationManager<OpenIdConnectConfiguration> _adManager, _b2CManager;
         private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
 
         private readonly IMapper _mapper;
         private readonly ILogger<PlatformsApi> _logger;
 
-        public PlatformsApi(IMapper mapper, ILogger<PlatformsApi> logger)
+        public PlatformsApi(IMapper mapper, ILogger<PlatformsApi> logger, IEnumerable<ConfigurationManager<OpenIdConnectConfiguration>> managers)
         {
             _mapper = mapper;
             _logger = logger;
+            
+            var configurationManagers = managers.ToList();
+            _adManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("ADConfigurationUrl"));
+            _b2CManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("B2CConfigurationUrl"));
         }
 
         [FunctionName(nameof(GetAllRegisteredPlatforms))]
@@ -151,7 +159,7 @@ namespace Edna.Platforms
             #endif
 
             _logger.LogInformation("In validate");
-            if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
                 return false;
             
             if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))

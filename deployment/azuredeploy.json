@@ -250,7 +250,8 @@
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1",
                 "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
-                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration,https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration"
+                "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+                "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
             }
         },
         {
@@ -277,7 +278,8 @@
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1",
                 "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
-                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration,https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration"
+                "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+                "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
             }
         },
         {
@@ -304,7 +306,8 @@
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1",
                 "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
-                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration,https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration"
+                "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+                "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
             }
         },
         {
@@ -329,7 +332,8 @@
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1",
                 "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
-                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration,https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration"
+                "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+                "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
             }
         },
         {
@@ -354,7 +358,8 @@
                 "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
                 "WEBSITE_RUN_FROM_PACKAGE": "1",
                 "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
-                "OpenIdConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration,https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration"
+                "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+                "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
             }
         },
         {
