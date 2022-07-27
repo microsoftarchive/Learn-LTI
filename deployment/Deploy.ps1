@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_policy2_MSLearnLTI",
-    [string]$AppName = "RB_policy2_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "RB_graph1_MSLearnLTI",
+    [string]$AppName = "RB_graph1_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -389,7 +389,14 @@ process {
     
         $AppRedirectUrl = $deploymentOutput.properties.outputs.webClientURL.value
         Write-Log -Message "Updating App with ID: $($appinfo.appId) to Redirect URL: $AppRedirectUrl and also enabling Implicit Flow"
-        $appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
+        #$appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
+
+        #Azure CLI doesn't offer the ability to create SPA redirect uris, must use patch instead 
+        $graphUrl = "https://graph.microsoft.com/v1.0/applications/$($appinfo.id)"
+        $body = '{\"spa\":{\"redirectUris\":[\"' + $AppRedirectUrl + '\"]}}'
+        Write-Log -Message "Pointing to  $graphUrl and using body $body"
+        az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
+
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
     
         Write-Host 'App Update Completed Successfully'
