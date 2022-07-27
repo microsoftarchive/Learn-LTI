@@ -32,6 +32,15 @@ if (Test-Path $AppInfoCSVPath -PathType Leaf) {
 }
 #endregeion
 
+#region "values determining the names of the resources"
+$MultiTenantAppName = "b2c_AD_app"
+$MultiTenantClientSecretName = "b2c_AD_app_secret"
+$B2cAppName = "b2c_AD_webapp"
+$WebClientSecretName = "b2c_AD_webapp_secret"
+$PermissionAppName = "b2c_AD_PMA"
+$PermissionClientSecretName = "b2c_AD_PMA_secret"
+#endregion
+
 #region "STEP 1: Create Active Directory application"
 $B2cTenantName = Read-Host "Please enter your B2C tenant name"
 $ADTenantName = Read-Host "Please enter your AD tenant name"
@@ -39,7 +48,7 @@ $ADTenantName = Read-Host "Please enter your AD tenant name"
 Write-Title "STEP 1: Create AD application"
 Write-Host "Please login to $ADTenantName via the pop-up window that has launched in your browser"
 az login --tenant "$ADTenantName.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
-$MultiTenantAppName = Read-Host "Please give a name for the AD application to be created"
+# $MultiTenantAppName = Read-Host "Please give a name for the AD application to be created"
 $ADAppManifest = "{
     `"idToken`": [
         {
@@ -60,12 +69,12 @@ $ADAppManifest = "{
 }"
 Out-File -FilePath "manifest.json" -InputObject $ADAppManifest
 $MultiTenantAppID = (az ad app create --display-name $MultiTenantAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com/oauth2/authresp --optional-claims "@manifest.json" --query appId --output tsv --only-show-errors)
-Start-SLeep 1
+Start-SLeep 2
 "$MultiTenantAppID,$ADTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # Create client secret
 Write-Host "Creating the client secret for $MultiTenantAppName"
-$MultiTenantClientSecretName = Read-Host "Please give a name for the client secret to be created"
+# $MultiTenantClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $MultiTenantClientSecretDuration = 1
 $MultiTenantClientSecret = (az ad app credential reset --id $MultiTenantAppID --append --display-name $MultiTenantClientSecretName --years $MultiTenantClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $MultiTenantAppName`: $MultiTenantAppID"
@@ -94,14 +103,14 @@ az login --tenant "$B2cTenantName.onmicrosoft.com" --allow-no-subscriptions --on
 
 #region "STEP 3: Create the web app"
 Write-Title "STEP 3: Creating the B2C Web application"
-$B2cAppName = Read-Host "Please give a name for the web application to be created"
+# $B2cAppName = Read-Host "Please give a name for the web application to be created"
 $WebClientID = (az ad app create --display-name $B2cAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://jwt.ms --enable-access-token-issuance true --enable-id-token-issuance true --query appId --output tsv --only-show-errors)
-Start-SLeep 1
+Start-SLeep 2
 "$WebClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # create client secret
 Write-Host "Creating the client secret for $B2cAppName"
-$WebClientSecretName = Read-Host "Please give a name for the client secret to be created"
+# $WebClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $WebClientSecretDuration = 1
 $WebClientSecret = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $B2cAppName`: $WebClientID"
@@ -123,7 +132,7 @@ az ad app permission add --id $WebClientID --api 00000003-0000-0000-c000-0000000
 Write-Title "STEP 4: Creating the Identity Experience Framework application"
 $IEFAppName = "IdentityExperienceFramework"
 $IEFClientID = (az ad app create --display-name $IEFAppName --sign-in-audience AzureADMyOrg --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com --query appId --output tsv --only-show-errors)
-Start-SLeep 1
+Start-SLeep 2
 "$IEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # set permissions for the IEF app
@@ -164,7 +173,7 @@ Remove-Item userImpersonationScope.json
 Write-Title "STEP 5: Creating the Proxy Identity Experience Framework application"
 $ProxyIEFAppName = "ProxyIdentityExperienceFramework"
 $ProxyIEFClientID = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --query appId --output tsv --only-show-errors)
-Start-SLeep 1
+Start-SLeep 2
 "$ProxyIEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 Write-Host "Granting permissions to the Proxy IEF application"
@@ -177,14 +186,14 @@ az ad app permission add --id $ProxyIEFClientID --api $IEFClientID --api-permiss
 
 #region "STEP 6: Create Permission Management app"
 Write-Title "STEP 6: Creating Permission Management application"
-$PermissionAppName = Read-Host "Please give a name for the permission management application to be created"
+# $PermissionAppName = Read-Host "Please give a name for the permission management application to be created"
 $PermissionClientID = (az ad app create --display-name $PermissionAppName --sign-in-audience AzureADMyOrg --query appId --output tsv --only-show-errors)
-Start-SLeep 1
+Start-SLeep 2
 "$PermissionClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # create client secret
 Write-Host "Creating the client secret for $PermissionAppName"
-$PermissionClientSecretName = Read-Host "Please give a name for the client secret to be created"
+# $PermissionClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $PermissionClientSecretDuration = 1
 $PermissionClientSecret = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $PermissionAppName`: $PermissionClientID"
