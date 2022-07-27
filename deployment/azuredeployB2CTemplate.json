@@ -29,7 +29,7 @@
       "platforms",
       "users"
     ],
-    "AzureB2C_AUTHENTICATION_SECRET": "",
+    "AzureB2C_AUTHENTICATION_SECRET": "<AZURE_B2C_SECRET_STRING>",
     "enabledForDeployment": false,
     "enabledForDiskEncryption": false,
     "enabledForTemplateDeployment": false,

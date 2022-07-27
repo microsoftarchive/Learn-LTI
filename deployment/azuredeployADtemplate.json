@@ -29,7 +29,6 @@
       "platforms",
       "users"
     ],
-    "AzureB2C_AUTHENTICATION_SECRET": "",
     "enabledForDeployment": false,
     "enabledForDiskEncryption": false,
     "enabledForTemplateDeployment": false,
@@ -162,20 +161,6 @@
 							}
 						}
 					},
-					"customOpenIdConnectProviders": {
-						"AzureB2C": {
-							"registration": {
-								"clientId": "0cd1d1d6-a7aa-41e2-b569-1ca211147973",
-								"clientCredential": {
-									"clientSecretSettingName": "AzureB2C_AUTHENTICATION_SECRET"
-								},
-								"openIdConnectConfiguration": {
-									"wellKnownOpenIdConfiguration": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/B2C_1_signup_signin_LTI/v2.0/.well-known/openid-configuration"
-								}
-							}
-						}
-					}
-				},
 				"login": {
 					"tokenStore": {
 						"enabled": true
@@ -198,8 +183,6 @@
             ],
           "properties": {
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
-            "DidDeployWork": "true",
-            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
             "AssignmentsServiceUrl": "[concat('https://', 'assignments' , variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
             "Lti1Secret": "LearnLTI",
             "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
@@ -225,7 +208,6 @@
             ],
           "properties": {
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
-            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
             "AssignmentsServiceUrl": "[concat('https://', 'assignments', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
             "Lti1Secret": "LearnLTI",
             "PlatformsServiceUrl": "[concat('https://', 'platforms', variables('ProjectNameSuffix'), '.azurewebsites.net/api/')]",
@@ -251,7 +233,6 @@
           "properties": {
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
             "DidDeployWork": "true",
-            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
             "PlatformsServiceUrl": "[concat('https://','platforms' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
             "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
             "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
@@ -275,7 +256,6 @@
             ],
           "properties": {
             "AllowedUsers": "[parameters('userEmailAddress')]",
-            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
             "DidDeployWork": "true",
             "ConnectApiBaseUrl": "[concat('https://','connect' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
@@ -300,7 +280,6 @@
             ],
           "properties": {
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
-            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
             "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
             "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
             "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('links' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('links' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
@@ -323,7 +302,6 @@
             ],
           "properties": {
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
-            "AzureB2C_AUTHENTICATION_SECRET": "[variables('AzureB2C_AUTHENTICATION_SECRET')]",
             "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
             "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
             "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('learncontent' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('learncontent' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
