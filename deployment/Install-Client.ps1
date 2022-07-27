@@ -125,7 +125,7 @@ function Update-ClientConfig {
     Write-Output "Client Config Updated Successfully"
 }
 
-function Update-ServerConfig {
+function Update-DevelopmentConfig {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (

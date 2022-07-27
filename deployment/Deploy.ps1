@@ -320,15 +320,15 @@ process {
         }
         Update-ClientConfig @ClientUpdateConfigParams
 
-        Write-Title "STEP #11.B - .env.development file"
+        Write-Title "STEP #11.B - Updating .env.development file"
 
-        $ServerUpdateConfigParams = @{
+        $DevelopmentUpdateConfigParams = @{
             ConfigPath="../client/.env.development";
             b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
             b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
             authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to 'NA' if AD
         }
-        Update-ServerConfig @ServerUpdateConfigParams
+        Update-DevelopmentConfig @DevelopmentUpdateConfigParams
 
         if($b2cOrAD -eq "b2c"){
             Write-Title "Step #11.C - Updating the B2C secret in the azuredeploy.json"
