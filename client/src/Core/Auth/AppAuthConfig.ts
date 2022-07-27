@@ -33,8 +33,10 @@ const configuration: Configuration = {
 };
 
 const authParams: AuthenticationParameters = {
-  scopes: ['https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read'] // RB: 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read'
-  // scopes: [
+  //TODO - remove the hard coded ltimoodleb2c!!!
+  //old hard coded scopes
+  scopes: ['https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read'] // RB: 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read' // b2c scope
+  // scopes: [ //AD scopes
   //   //'https://ltimoodleb2c.onmicrosoft.com/api/user_impersonation',
   //   'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read'
   // ] // RB: 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read'

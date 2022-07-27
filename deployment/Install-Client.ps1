@@ -12,7 +12,10 @@ enum DotEnv {
     REACT_APP_EDNA_LINKS_SERVICE_URL;
     REACT_APP_EDNA_LEARN_CONTENT;
     REACT_APP_EDNA_USERS_SERVICE_URL;
-    REACT_APP_EDNA_PLATFORM_SERVICE_URL
+    REACT_APP_EDNA_PLATFORM_SERVICE_URL;
+    REACT_APP_EDNA_B2C_CLIENT_ID;
+    REACT_APP_EDNA_B2C_TENANT;
+    REACT_APP_EDNA_AUTH_CLIENT_ID
 }
 
 function Write-ClientDebugLog {
@@ -88,7 +91,13 @@ function Update-ClientConfig {
         [Parameter(Mandatory)]
         [string]$UsersFunctionAppName,
         [Parameter(Mandatory)]
-        [string]$StaticWebsiteUrl
+        [string]$StaticWebsiteUrl,
+        [Parameter(Mandatory)]
+        [string]$b2cClientID,
+        [Parameter(Mandatory)]
+        [string]$b2cTenantName,
+        [Parameter(Mandatory)]
+        [string]$authClientID
     )
 
 
@@ -103,12 +112,64 @@ function Update-ClientConfig {
         [DotEnv]::REACT_APP_EDNA_LINKS_SERVICE_URL="$(Get-ServiceUrl $LinksFunctionAppName)";
         [DotEnv]::REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL="$(Get-ServiceUrl $AssignmentsFunctionAppName)";
         [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL="$(Get-ServiceUrl $PlatformsFunctionAppName)";
-        [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$(Get-ServiceUrl $UsersFunctionAppName)"
+        [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL="$(Get-ServiceUrl $UsersFunctionAppName)";
+        [DotEnv]::REACT_APP_EDNA_B2C_CLIENT_ID="$(Get-ServiceUrl $b2cClientID)";
+        [DotEnv]::REACT_APP_EDNA_B2C_TENANT="$(Get-ServiceUrl $b2cTenantName)";
+        [DotEnv]::REACT_APP_EDNA_AUTH_CLIENT_ID="$(Get-ServiceUrl $authClientID)"
     }
     Write-ClientDebugLog -Message "Updated Configuration:-`n$($Config | Out-String)"
 
     Write-ClientDebugLog -Message "Updating [ $ConfigPath ] with new config variables"
     Export-DotEnv $Config $ConfigPath
+
+    Write-Output "Client Config Updated Successfully"
+}
+
+function Update-DevelopmentConfig {
+
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [Parameter(Mandatory)]
+        [string]$ConfigPath,
+        [Parameter(Mandatory)]
+        [string]$b2cClientID,
+        [Parameter(Mandatory)]
+        [string]$b2cTenantName,
+        [Parameter(Mandatory)]
+        [string]$authClientID
+    )
+
+
+    Write-ClientDebugLog -Message "Creating new configuration"
+
+    #region "Getting the current config"
+    $text = Get-Content $ConfigPath
+    $configValues = $text | ConvertFrom-StringData
+    #endregion
+
+    #region "Updating the config using old values for all except the new b2c related stuff"
+    $Config = @{
+        GENERATE_SOURCEMAP="false";
+
+        [DotEnv]::REACT_APP_EDNA_AAD_CLIENT_ID=($configValues.REACT_APP_EDNA_AAD_CLIENT_ID -replace '"' -replace "'");
+        [DotEnv]::REACT_APP_EDNA_MAIN_URL=($configValues.REACT_APP_EDNA_MAIN_URL -replace '"' -replace "'");
+        [DotEnv]::REACT_APP_EDNA_DEFAULT_SCOPE=($configValues.REACT_APP_EDNA_DEFAULT_SCOPE -replace '"' -replace "'");
+        [DotEnv]::REACT_APP_EDNA_TENANT_ID=($configValues.REACT_APP_EDNA_TENANT_ID -replace '"' -replace "'");
+        [DotEnv]::REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL=($configValues.REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL -replace '"' -replace "'");
+        [DotEnv]::REACT_APP_EDNA_LINKS_SERVICE_URL=($configValues.REACT_APP_EDNA_LINKS_SERVICE_URL -replace '"' -replace "'");
+        [DotEnv]::REACT_APP_EDNA_LEARN_CONTENT=($configValues.REACT_APP_EDNA_LEARN_CONTENT -replace '"' -replace "'");
+        [DotEnv]::REACT_APP_EDNA_USERS_SERVICE_URL=($configValues.REACT_APP_EDNA_USERS_SERVICE_URL -replace '"' -replace "'");
+        [DotEnv]::REACT_APP_EDNA_PLATFORM_SERVICE_URL=($configValues.REACT_APP_EDNA_USERS_SERVICE_URL -replace '"' -replace "'");
+
+        [DotEnv]::REACT_APP_EDNA_B2C_CLIENT_ID="$(Get-ServiceUrl $b2cClientID)";
+        [DotEnv]::REACT_APP_EDNA_B2C_TENANT="$(Get-ServiceUrl $b2cTenantName)";
+        [DotEnv]::REACT_APP_EDNA_AUTH_CLIENT_ID="$(Get-ServiceUrl $authClientID)"
+    }
+    Write-ClientDebugLog -Message "Updated Configuration:-`n$($Config | Out-String)"
+
+    Write-ClientDebugLog -Message "Updating [ $ConfigPath ] with new config variables"
+    Export-DotEnv $Config $ConfigPath
+    #endregion
 
     Write-Output "Client Config Updated Successfully"
 }

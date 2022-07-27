@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad4_MSLearnLTI",
-    [string]$AppName = "DM_ad4_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad10_MSLearnLTI",
+    [string]$AppName = "DM_ad10_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -59,18 +59,19 @@ process {
 
 
         #region "B2C STEP 1: Calling B2CDeployment to set up the b2c script and retrieving the returned values to be used later on"
-        $REACT_APP_EDNA_B2C_CLIENT_ID = ""
-        $REACT_APP_EDNA_AUTH_CLIENT_ID = ""
-        $b2c_secret = ""
-        $REACT_APP_EDNA_B2C_TENANT = ""
+        $REACT_APP_EDNA_B2C_CLIENT_ID = "'NA'"
+        $REACT_APP_EDNA_AUTH_CLIENT_ID = "'NA'"
+        $b2c_secret = "'NA'"
+        $REACT_APP_EDNA_B2C_TENANT = "'NA'"
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #1: Running the B2C Setup Script"
-            # TODO - verify these values are correct
+            # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
             $results = & ".\B2CDeployment.ps1" # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
-            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[0] #webclient ID
-            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[0] #webclient ID
-            $b2c_secret = $results[1] #webclient secret
-            $REACT_APP_EDNA_B2C_TENANT = $results[2] #b2c tenant name
+            # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
+            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-3] #webclient ID
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-3] #webclient ID
+            $b2c_secret = $results[-2] #webclient secret
+            $REACT_APP_EDNA_B2C_TENANT = $results[-1] #b2c tenant name
         }
         #endregion
         
@@ -102,119 +103,6 @@ process {
         }
 
         Write-Log -Message "Successfully logged in to Azure."
-        #endregion
-
-        #region "B2C Step 2: Update required parameter in .env.production/ .env.development for front-end build and B2C secret in azuredeploy.json" 
-        if($b2cOrAD -eq "b2c"){
-            Write-Title "B2C Step #2: Updating the B2C parameters and secrets"
-            $b2c_secret =  '"'+$b2c_secret+'"'
-            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
-            #TODO - find way to replace the value for line 173 of azuredeployTemplate.json via an input or API call (wellKnownOpenIdConfiguration) so they can input it correctly
-            
-            [string]$dir = Get-Location
-            $dir += "/../client/.env.production"
-            #$dir += ".env.production"
-
-            $old_REACT_APP_EDNA_B2C_CLIENT_ID=''
-            $old_REACT_APP_EDNA_B2C_TENANT=''
-            $old_REACT_APP_EDNA_AUTH_CLIENT_ID=''
-            [System.IO.File]::ReadLines($dir) |  ForEach-Object {
-                if(  $_ -Match "REACT_APP_EDNA_B2C_CLIENT_ID" ){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_B2C_CLIENT_ID = $_.Trim()
-                    $REACT_APP_EDNA_B2C_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_CLIENT_ID+"'").Trim()
-                }
-                elseif ( $_ -Match "REACT_APP_EDNA_B2C_TENANT"){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_B2C_TENANT = $_.Trim()
-                    $REACT_APP_EDNA_B2C_TENANT = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_TENANT+"'").Trim()
-                }
-                elseif ( $_ -Match "REACT_APP_EDNA_AUTH_CLIENT_ID"){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_AUTH_CLIENT_ID = $_.Trim()
-                    $REACT_APP_EDNA_AUTH_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_AUTH_CLIENT_ID+"'").Trim()
-                }
-                else{
-                }
-            }   
-            Write-Host "Old value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-
-            [string]$dir = Get-Location
-            $dir += "/../client/.env.development"
-
-            Write-Host "New value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-        }
-        # else for AD mode
-        else {
-            [string]$dir = Get-Location
-            $dir += "/../client/.env.production"
-            #$dir += ".env.production"
-
-            $old_REACT_APP_EDNA_B2C_CLIENT_ID=''
-            $old_REACT_APP_EDNA_B2C_TENANT=''
-            $old_REACT_APP_EDNA_AUTH_CLIENT_ID=''
-            [System.IO.File]::ReadLines($dir) |  ForEach-Object {
-                if(  $_ -Match "REACT_APP_EDNA_B2C_CLIENT_ID" ){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_B2C_CLIENT_ID = $_.Trim()
-                    $REACT_APP_EDNA_B2C_CLIENT_ID = ($configuration_line[0]+"="+"NULL").Trim()
-                }
-                elseif ( $_ -Match "REACT_APP_EDNA_B2C_TENANT"){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_B2C_TENANT = $_.Trim()
-                    $REACT_APP_EDNA_B2C_TENANT = ($configuration_line[0]+"="+"NULL").Trim()
-                }
-                elseif ( $_ -Match "REACT_APP_EDNA_AUTH_CLIENT_ID"){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_AUTH_CLIENT_ID = $_.Trim()
-                    $REACT_APP_EDNA_AUTH_CLIENT_ID = ($configuration_line[0]+"="+"NULL").Trim()
-                }
-                else{
-                }
-            }   
-            Write-Host "Old value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-
-            [string]$dir = Get-Location
-            $dir += "/../client/.env.development"
-
-            Write-Host "New value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-
-        }
-        
         #endregion
 
         #region Choose Active Subcription 
@@ -415,8 +303,8 @@ process {
 
         #region Build and Publish Client Artifacts
         . .\Install-Client.ps1
-        Write-Title "STEP #11 - Updating client's .env.production file"
-    
+        Write-Title "STEP #11.A - Updating client's .env.production file"
+        
         $ClientUpdateConfigParams = @{
             ConfigPath="../client/.env.production";
             AppId=$appinfo.appId;
@@ -426,9 +314,31 @@ process {
             PlatformsFunctionAppName=$deploymentOutput.properties.outputs.PlatformsFunctionName.value;
             UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
             StaticWebsiteUrl=$deploymentOutput.properties.outputs.webClientURL.value;
+            b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
+            b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
+            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to 'NA' if AD
         }
         Update-ClientConfig @ClientUpdateConfigParams
-    
+
+        Write-Title "STEP #11.B - Updating .env.development file"
+
+        $DevelopmentUpdateConfigParams = @{
+            ConfigPath="../client/.env.development";
+            b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
+            b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
+            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to 'NA' if AD
+        }
+        Update-DevelopmentConfig @DevelopmentUpdateConfigParams
+
+        if($b2cOrAD -eq "b2c"){
+            Write-Title "Step #11.C - Updating the B2C secret in the azuredeploy.json"
+            $b2c_secret =  '"'+$b2c_secret+'"'
+            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
+            #TODO - find way to replace the value for line 173 of azuredeployTemplate.json via an input or API call (wellKnownOpenIdConfiguration) so they can input it correctly
+            #TODO - make separate azureTemplate for b2c vs ad; with ad not having the b2c specific lines
+        
+        }
+
         Write-Title 'STEP #12 - Installing the client'
         $ClientInstallParams = @{
             SourceRoot="../client";
