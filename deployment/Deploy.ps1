@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad10_MSLearnLTI",
-    [string]$AppName = "DM_ad10_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "LH_a1_MSLearnLTI",
+    [string]$AppName = "LH_a1_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -206,6 +206,26 @@ process {
         $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
         $UserEmailAddress = $ActiveSubscription.user.name
         #endregion
+
+        Write-Host "Checking if resource group already exists..."
+        $checkResourceGroupExist = (az group exists --resource-group $ResourceGroupName)
+        if($checkResourceGroupExist -eq $true){
+            Write-Host "Resource Group exists. Please cleanup the existing resources to create the new one."
+            $choice = Read-Host "Do you want to cleanup the resources or do you want to exit?(y for cleanup or any other key for exit):"
+            $choice = $choice.Trim()
+            if ($choice -eq 'y') {
+                Write-Title "Running Cleanup Script"
+                $clean = & ".\cleanup.ps1" -ResourceGroupName $ResourceGroupName -AppName $AppName
+            }
+            else {
+                Write-Host "Exiting..."
+                exit
+            }
+        }
+        else {
+            Write-Host "Continuing deployment process..."
+        }
+        
 
         #region Choose Region for Deployment
         Write-Title "STEP #3 - Choose Location`n(Please refer to the Documentation / ReadMe on Github for the List of Supported Locations)"
