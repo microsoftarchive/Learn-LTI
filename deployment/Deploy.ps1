@@ -13,11 +13,42 @@ param (
 )
 
 process {
+    #region "Helper Functions"
+    #function for making clear and distinct titles
     function Write-Title([string]$Title) {
         Write-Host "`n`n============================================================="
         Write-Host $Title
         Write-Host "=============================================================`n`n"
     }
+
+    #function for making coloured outputs
+    function Write-Color($Color, [string]$Text) {
+        Write-Host $Text -ForegroundColor $Color
+    }
+
+    #function for writing errors
+    function Write-Error([string]$Text) {
+        Write-Host "`n`n=============================================================`n" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+        Write-Host "Error!`n$Text" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+        Write-Host "`n=============================================================" -ForegroundColor "black" -BackgroundColor "DarkRed"
+    }
+    #endregion
+
+    #region "exception handling classes"
+    class InvalidAzureSubscriptionException: System.Exception{
+        $Emessage
+        InvalidAzureSubscriptionException([string]$msg){
+            $this.Emessage=$msg
+        }
+    }
+    
+    class InvalidAzureRegionException: System.Exception{
+        $Emessage
+        InvalidAzureSubscriptionException([string]$msg){
+            $this.Emessage=$msg
+        }
+    }
+    #endregion
     
     try {
         #region Show Learn LTI Banner
@@ -167,7 +198,20 @@ process {
             Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
         }
 
-        $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+        #defensive programming so script doesn't halt and require a cleanup if subscription is mistyped
+        while(1){
+            try{
+                $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+                break
+            }
+            catch [InvalidAzureSubscriptionException]{
+                Write-Error $Error[0]
+                $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List'
+                #trimming the input for empty spaces, if any
+                $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
+                Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
+            }
+        }
         $UserEmailAddress = $ActiveSubscription.user.name
         #endregion
 
@@ -178,17 +222,26 @@ process {
         $LocationList = ((az account list-locations) | ConvertFrom-Json)
         Write-Log -Message "List of Locations:-`n$($locationList | ConvertTo-Json -Compress)"
 
-        if(!$LocationName) {
-            Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
-            $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
-            #trimming the input for empty spaces, if any
-            $LocationName = $LocationName.Trim()
-        }
-        Write-Log -Message "User Provided Location Name: $LocationName"
-
-        $ValidLocation = $LocationList | Where-Object { $_.name -ieq $LocationName }
-        if(!$ValidLocation) {
-            throw "Invalid Location Name Entered."
+        #defensive programming so script doesn't halt and require a cleanup if region is mistyped
+        while(1){
+            try{
+                if(!$LocationName) {
+                    Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
+                    $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+                    #trimming the input for empty spaces, if any
+                    $LocationName = $LocationName.Trim()
+                }
+                Write-Log -Message "User Provided Location Name: $LocationName"
+        
+                $ValidLocation = $LocationList | Where-Object { $_.name -ieq $LocationName }
+                if(!$ValidLocation) {
+                    throw [InvalidAzureRegionException] "Invalid Location Name Entered."
+                }
+                break
+            }
+            catch [InvalidAzureRegionException]{
+                Write-Error $Error[0]
+            }
         }
         #endregion
         

@@ -12,11 +12,35 @@ param (
 )
 
 process {
+    #region "Helper Functions"
+    #function for making clear and distinct titles
     function Write-Title([string]$Title) {
         Write-Host "`n`n============================================================="
         Write-Host $Title
         Write-Host "=============================================================`n`n"
     }
+
+    #function for making coloured outputs
+    function Write-Color($Color, [string]$Text) {
+        Write-Host $Text -ForegroundColor $Color
+    }
+
+    #function for writing errors
+    function Write-Error([string]$Text) {
+        Write-Host "`n`n=============================================================`n" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+        Write-Host "Error!`n$Text" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+        Write-Host "`n=============================================================" -ForegroundColor "black" -BackgroundColor "DarkRed"
+    }
+    #endregion
+
+    #region "exception handling classes"
+    class InvalidAzureSubscriptionException: System.Exception{
+        $Emessage
+        InvalidAzureSubscriptionException([string]$msg){
+            $this.Emessage=$msg
+        }
+    }
+    #endregion
 
     #region Show Learn LTI Banner
     Write-Host ''
@@ -106,7 +130,7 @@ process {
         
         $subscription = ($List | Where-Object { ($_.name -ieq $NameOrId) -or ($_.id -ieq $NameOrId) })
         if(!$subscription) {
-            throw "Invalid Subscription Name/ID Entered."
+            throw [InvalidAzureSubscriptionException] "Invalid Subscription Name/ID Entered."
         }
         az account set --subscription $NameOrId
         #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
@@ -139,7 +163,21 @@ process {
         Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
     }
 
-    $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+    #defensive programming so script doesn't halt and require a cleanup if subscription is mistyped
+    while(1){
+        try{
+            $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+            break
+        }
+        catch [InvalidAzureSubscriptionException]{
+            Write-Error $Error[0]
+            $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List'
+            #trimming the input for empty spaces, if any
+            $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
+            Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
+        }
+    }
+    
     #endregion
     
     #region Delete Resource Group, if Exists
