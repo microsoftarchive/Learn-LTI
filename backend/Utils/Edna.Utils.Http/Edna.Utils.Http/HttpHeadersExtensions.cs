@@ -4,11 +4,13 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -22,6 +24,7 @@ namespace Edna.Utils.Http
         public static async Task<bool> ValidateToken(this IHeaderDictionary headers, string openIdConfigUrl, 
             string validAudience, Action<string> logAction = null)
         {
+            IdentityModelEventSource.ShowPII = true;
             if (!headers.ContainsKey("Authorization"))
             {
                 logAction?.Invoke("No Authorization header was found in the request.");
@@ -32,9 +35,18 @@ namespace Edna.Utils.Http
             var token = authorizationContent?.Split(' ')[1];
             try
             {
-                var configurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
-                    openIdConfigUrl, new OpenIdConnectConfigurationRetriever());
-                var openIdConfig = await configurationManager.GetConfigurationAsync(default);
+                var configUrls = openIdConfigUrl.Split(',');
+                var b2cConfigurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+                    configUrls[0], new OpenIdConnectConfigurationRetriever());
+                var b2cConfig = await b2cConfigurationManager.GetConfigurationAsync(default);
+                var adConfigurationManager = new ConfigurationManager<OpenIdConnectConfiguration>(
+                    configUrls[1], new OpenIdConnectConfigurationRetriever());
+                var adConfig = await adConfigurationManager.GetBaseConfigurationAsync(default);
+                var signingKeys = b2cConfig.SigningKeys;
+                foreach (var key in adConfig.SigningKeys)
+                {
+                    signingKeys.Add(key);
+                }
                 var validationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
@@ -42,16 +54,16 @@ namespace Edna.Utils.Http
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
                     RequireSignedTokens = true,
-                    IssuerSigningKeys = openIdConfig.SigningKeys,
-                    ValidIssuer = openIdConfig.Issuer,
-                    ValidAudience = validAudience
+                    IssuerSigningKeys = signingKeys,
+                    ValidIssuers = new List<string>{b2cConfig.Issuer, adConfig.Issuer},
+                    ValidAudiences = validAudience.Split(',')
                 };
                 var principal = JwtSecurityTokenHandler.ValidateToken(token, validationParameters, out _);
                 return !(principal is null);
             }
             catch (Exception e)
             {
-                logAction?.Invoke("Error when validating the user token.");
+                logAction?.Invoke(token + e + "Error when validating the user token.");
             }
             return false;
         }

@@ -65,7 +65,7 @@ namespace Edna.Assignments
             if (!await req.Headers.ValidateToken(OpenIdConfigurationUrl, ValidAudience, message => _logger.LogError(message)))
                 return new UnauthorizedResult();
             
-            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails, message => _logger.LogInformation(message));
             if (!isSystemCallOrUserWithValidEmail)
             {
                 _logger.LogError("Could not get user email.");

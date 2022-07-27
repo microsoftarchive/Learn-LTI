@@ -159,27 +159,26 @@ namespace Edna.Platforms
 
             // By checking appidacr claim, we can know if the call was made by a user or by the system.
             // https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens
+            var isB2CToken = claims.FirstOrDefault(claim => claim.Type == "_isB2CToken")?.Value;
             string appidacr = claims.FirstOrDefault(claim => claim.Type == "appidacr")?.Value;
+            string azpacr = claims.FirstOrDefault(claim => claim.Type == "azpacr")?.Value;
             // made by system
-            if (appidacr == "2")
+            if (appidacr == "2" || azpacr == "2")
                 return true;
-            if (appidacr == "1")
-                return false;
-
-            // TODO - find a more secure way of doing this: e.g. put the below in something saying (if appidacr == "0" OR this is a b2c token) with else being return false
-            // TODO- need to find a way to identify b2c tokens, same issue in HTTPCLaimsExtension.cs
-
-            // made by user so check they have permission
-            // return false if user does not exist
-            if (!TryGetUserEmails(claims, out List<string> userEmails))
+            if (appidacr == "0" || azpacr == "0" || isB2CToken == "true")
             {
-                _logger.LogError("Could not get any user email / uid for the current user.");
-                return false;
+                if (!TryGetUserEmails(claims, out List<string> userEmails))
+                {
+                    _logger.LogError("Could not get any user email / uid for the current user.");
+                    return false;
+                }
+                _logger.LogInformation(String.Join(",",userEmails));
+                _logger.LogInformation(String.Join(",",AllowedUsers));
+                // return value of if user email is in the allowed users list
+                return AllowedUsers.Intersect(userEmails).Any();
             }
-            _logger.LogInformation(String.Join(",",userEmails));
-            _logger.LogInformation(String.Join(",",AllowedUsers));
-            // return value of if user email is in the allowed users list
-            return AllowedUsers.Intersect(userEmails).Any();
+
+            return false;
         }
 
         private bool TryGetUserEmails(IEnumerable<Claim> claims, out List<string> userEmails)
