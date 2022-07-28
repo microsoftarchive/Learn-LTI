@@ -171,7 +171,7 @@
 									"clientSecretSettingName": "AzureB2C_AUTHENTICATION_SECRET"
 								},
 								"openIdConnectConfiguration": {
-									"wellKnownOpenIdConfiguration": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/B2C_1_signin_LTI/v2.0/.well-known/openid-configuration?p=B2C_1A_SIGNIN"
+									"wellKnownOpenIdConfiguration": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/B2C_1a_signin/v2.0/.well-known/openid-configuration?p=B2C_1A_SIGNIN"
 								}
 							}
                         }

@@ -13,14 +13,14 @@ export let request;
 let authority;
 // Swap out needed B2C vs AD options
 if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NULL') {
-  console.log(process.env.REACT_APP_EDNA_B2C_TENANT!);
+  console.log(process.env.REACT_APP_EDNA_B2C_TENANT!); // TODO, remove
   console.log('in B2C mode');
   request = {
     scopes: ['openid', 'profile', 'https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read']
   };
   authority = b2cPolicies.authorities.signIn.authority;
 } else {
-  console.log('in AD mode');
+  console.log('in AD mode'); // TODO, remove
   request = {
     scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!]
   };
@@ -73,25 +73,5 @@ const config: Configuration = {
     allowRedirectInIframe: true
   }
 };
-
-// Todo, may no longer be neccessary
-// const authParams: AuthenticationParameters = {
-//   //scopes: ['https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read'] // RB: 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read'
-//   scopes: [
-//     // TODO: unclear what is needed for custom policies
-//     //'https://ltimoodleb2c.onmicrosoft.com/api/user_impersonation',
-//     'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read',
-//     'openid',
-//     'profile'
-//   ]
-// };
-
-// Todo, may no longer be neccessary
-// const options: IMsalAuthProviderConfig = {
-//   loginType: LoginType.Redirect,
-
-// };
-
-//export const AppAuthConfig = new MsalAuthProvider(configuration, authParams, options);
 
 export const AppAuthConfig = new PublicClientApplication(config);
