@@ -101,7 +101,6 @@ process {
             ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
         }
         #endregion
-        Read-Host "Debug stop..."
         #region Setup Logging
         . .\Write-Log.ps1
         $ScriptPath = split-path -parent $MyInvocation.MyCommand.Definition
