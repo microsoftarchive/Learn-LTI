@@ -30,8 +30,8 @@ process {
         Write-Host '|______|______/_/    \_\_|  \_\_| \_|          |______|_|  |_____|'
         Write-Host ''
         Write-Host ''
-        #endregion
-
+        #endregion |  Set-Content -path (".\test_text.txt")
+        
         #region "getting the setup mode for b2c vs ad"
         $b2cOrAD = "none"
         while($b2cOrAD -ne "b2c" -and $b2cOrAD -ne "ad") {
@@ -39,18 +39,38 @@ process {
         }
         #endregion
 
+
+        
         #region "formatting a unique identifier to ensure we create a new keyvault for each run"
         $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
         #if its b2c load the b2c azuredeploy template
         if($b2cOrAD -eq "b2c"){
             ((Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+            
+            #Update's prerequsites
+
+            $b2c_tenant_name = "ltimoodleb2c" 
+            $policy_name = "b2c_1a_signup_signin" 
+            
+            #Updating function apps's settings
+
+            $B2C_APP_CLIENT_ID_IDENTIFIER = "0cd1d1d6-a7aa-41e2-b569-1ca211147973" # TODO remove hardcode 
+            $AD_APP_CLIENT_ID_IDENTIFIER = "cb508fc8-6a5f-49b1-b688-dac065ba59e4" # TODO remove hardcode
+            $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://"+$b2c_tenant_name+".b2clogin.com/ltimoodleb2c.onmicrosoft.com/"+$policy_name+"/v2.0/.well-known/openid-configuration" # TODO remove hardcode
+            $OPENDID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration" # TODO remove hardcode
+
+            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '<B2C_APP_CLIENT_ID_IDENTIFIER>', ($B2C_APP_CLIENT_ID_IDENTIFIER))`
+            -replace '<AD_APP_CLIENT_ID_IDENTIFIER>', ($AD_APP_CLIENT_ID_IDENTIFIER)`
+            -replace '<OPENID_B2C_CONFIG_URL_IDENTIFIER>', ($OPENID_B2C_CONFIG_URL_IDENTIFIER)`
+            -replace '<OPENDID_AD_CONFIG_URL_IDENTIFIER>', ($OPENDID_AD_CONFIG_URL_IDENTIFIER) |  Set-Content -path (".\azuredeploy.json")
+
         }
         #else its AD load the AD azuredeploy template
         else{
             ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
         }
         #endregion
-
+        Read-Host "Debug stop..."
         #region Setup Logging
         . .\Write-Log.ps1
         $ScriptPath = split-path -parent $MyInvocation.MyCommand.Definition

@@ -20,7 +20,7 @@
     }
   },
   "variables": {
-    "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '20220727122022'),0,9)]",
+    "uniqueIdentifier": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, '20220728120636'),0,9)]",
     "functionList": [
       "connect",
       "assignments",
@@ -29,7 +29,7 @@
       "platforms",
       "users"
     ],
-    "AzureB2C_AUTHENTICATION_SECRET": "9bg8Q~y8lU1VLV4IrUcfjfY1lNSb3hCB43pJHc.2",
+    "AzureB2C_AUTHENTICATION_SECRET": "<AZURE_B2C_SECRET_STRING>",
     "enabledForDeployment": false,
     "enabledForDiskEncryption": false,
     "enabledForTemplateDeployment": false,
@@ -237,7 +237,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('users' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
+            "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+            "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
           }
         },
         {
@@ -262,7 +265,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('assignments' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
+            "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+            "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
           }
         },
         {
@@ -287,7 +293,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('platforms' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('platforms' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
+            "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+            "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
           }
         },
         {
@@ -310,7 +319,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('links' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
+            "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+            "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
           }
         },
         {
@@ -333,7 +345,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('learncontent' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "0cd1d1d6-a7aa-41e2-b569-1ca211147973,cb508fc8-6a5f-49b1-b688-dac065ba59e4",
+            "ADConfigurationUrl": "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration",
+            "B2CConfigurationUrl": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin/v2.0/.well-known/openid-configuration"
           }
         },
         {
@@ -548,5 +563,7 @@
         }
     }
 }
+
+
 
 
