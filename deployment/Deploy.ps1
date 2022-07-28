@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "LH_a1_MSLearnLTI",
-    [string]$AppName = "LH_a1_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "LH_a2_MSLearnLTI",
+    [string]$AppName = "LH_a2_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -211,11 +211,12 @@ process {
         $checkResourceGroupExist = (az group exists --resource-group $ResourceGroupName)
         if($checkResourceGroupExist -eq $true){
             Write-Host "Resource Group exists. Please cleanup the existing resources to create the new one."
-            $choice = Read-Host "Do you want to cleanup the resources or do you want to exit?(y for cleanup or any other key for exit):"
+            $choice = Read-Host "Do you want to cleanup the resources or do you want to exit? ('y' for cleanup or any other key for exit)"
             $choice = $choice.Trim()
             if ($choice -eq 'y') {
                 Write-Title "Running Cleanup Script"
                 $clean = & ".\cleanup.ps1" -ResourceGroupName $ResourceGroupName -AppName $AppName
+                Write-Title "Continue Re-deployment from Step 3"
             }
             else {
                 Write-Host "Exiting..."
