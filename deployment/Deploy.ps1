@@ -5,26 +5,52 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_graph1_MSLearnLTI",
-    [string]$AppName = "RB_graph1_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad15_MSLearnLTI",
+    [string]$AppName = "DM_ad15_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
 )
 
 process {
+    #region "Helper Functions"
+    #function for making clear and distinct titles
     function Write-Title([string]$Title) {
         Write-Host "`n`n============================================================="
         Write-Host $Title
         Write-Host "=============================================================`n`n"
     }
+
+    #function for making coloured outputs
+    function Write-Color($Color, [string]$Text) {
+        Write-Host $Text -ForegroundColor $Color
+    }
+
+    #function for writing errors
+    function Write-Error([string]$Text) {
+        Write-Host "`n`n=============================================================`n" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "Error!`n$Text" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "`n=============================================================" -ForegroundColor "red" -BackgroundColor "black"
+    }
+    #endregion
+
+    #region "exception handling classes"
+    class InvalidAzureSubscriptionException: System.Exception{
+        $Emessage
+        InvalidAzureSubscriptionException([string]$msg){
+            $this.Emessage=$msg
+        }
+    }
+    
+    class InvalidAzureRegionException: System.Exception{
+        $Emessage
+        InvalidAzureRegionException([string]$msg){
+            $this.Emessage=$msg
+        }
+    }
+    #endregion
     
     try {
-        #region "formatting a unique identifier to ensure we create a new keyvault for each run"
-        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
-        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
-        #endregion
-
         #region Show Learn LTI Banner
         Write-Host ''
         Write-Host ' _      ______          _____  _   _            _   _______ _____ '
@@ -35,8 +61,8 @@ process {
         Write-Host '|______|______/_/    \_\_|  \_\_| \_|          |______|_|  |_____|'
         Write-Host ''
         Write-Host ''
-        #endregion
-
+        #endregion |  Set-Content -path (".\test_text.txt")
+        
         #region "getting the setup mode for b2c vs ad"
         $b2cOrAD = "none"
         while($b2cOrAD -ne "b2c" -and $b2cOrAD -ne "ad") {
@@ -44,6 +70,37 @@ process {
         }
         #endregion
 
+
+        
+        #region "formatting a unique identifier to ensure we create a new keyvault for each run"
+        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
+        #if its b2c load the b2c azuredeploy template
+        if($b2cOrAD -eq "b2c"){
+            ((Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+            
+            #Update's prerequsites
+
+            $b2c_tenant_name = "ltimoodleb2c" 
+            $policy_name = "b2c_1a_signup_signin" 
+            
+            #Updating function apps's settings
+
+            $B2C_APP_CLIENT_ID_IDENTIFIER = "0cd1d1d6-a7aa-41e2-b569-1ca211147973" # TODO remove hardcode 
+            $AD_APP_CLIENT_ID_IDENTIFIER = "cb508fc8-6a5f-49b1-b688-dac065ba59e4" # TODO remove hardcode
+            $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://"+$b2c_tenant_name+".b2clogin.com/ltimoodleb2c.onmicrosoft.com/"+$policy_name+"/v2.0/.well-known/openid-configuration" # TODO remove hardcode
+            $OPENDID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration" # TODO remove hardcode
+
+            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '<B2C_APP_CLIENT_ID_IDENTIFIER>', ($B2C_APP_CLIENT_ID_IDENTIFIER))`
+            -replace '<AD_APP_CLIENT_ID_IDENTIFIER>', ($AD_APP_CLIENT_ID_IDENTIFIER)`
+            -replace '<OPENID_B2C_CONFIG_URL_IDENTIFIER>', ($OPENID_B2C_CONFIG_URL_IDENTIFIER)`
+            -replace '<OPENDID_AD_CONFIG_URL_IDENTIFIER>', ($OPENDID_AD_CONFIG_URL_IDENTIFIER) |  Set-Content -path (".\azuredeploy.json")
+
+        }
+        #else its AD load the AD azuredeploy template
+        else{
+            ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+        }
+        #endregion
         #region Setup Logging
         . .\Write-Log.ps1
         $ScriptPath = split-path -parent $MyInvocation.MyCommand.Definition
@@ -59,19 +116,22 @@ process {
 
 
         #region "B2C STEP 1: Calling B2CDeployment to set up the b2c script and retrieving the returned values to be used later on"
-        $REACT_APP_EDNA_B2C_CLIENT_ID = ""
-        $REACT_APP_EDNA_AUTH_CLIENT_ID = ""
-        $b2c_secret = ""
-        $REACT_APP_EDNA_B2C_TENANT = ""
+        $REACT_APP_EDNA_B2C_CLIENT_ID = "'NA'"
+        $REACT_APP_EDNA_AUTH_CLIENT_ID = "'Placeholder'" # either replaced below by returned value of b2c script if b2cOrAD = "b2c", or just before step 11.a to AAD_Client_ID's ($appinfo.appId) value if b2cOrAD = "ad"
+        $b2c_secret = "'NA'"
+        $REACT_APP_EDNA_B2C_TENANT = "'NA'"
+        $B2C_ObjectID = "'NA'"
         if($b2cOrAD -eq "b2c"){
-            Write-Title "B2C Step #1: Running the B2C Setup Script"
-            # TODO - verify these values are correct
+            Write-Title "B2C Step #0: Running the B2C Setup Script"
+            # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
             $results = & ".\B2CDeployment.ps1" # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
-            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[0] #webclient ID
-            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[0] #webclient ID
-            $b2c_secret = $results[1] #webclient secret
-            $REACT_APP_EDNA_B2C_TENANT = $results[2] #b2c tenant name 
-            $B2C_ObjectID = $results[3] # b2c webapp id that needs the SPA uri
+
+            # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
+            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-4] #webclient ID
+            $b2c_secret = $results[-3] #webclient secret
+            $REACT_APP_EDNA_B2C_TENANT = $results[-2] #b2c tenant name
+            $B2C_ObjectID = $results[-1] # b2c webapp id that needs the SPA uri
         }
         #endregion
         
@@ -105,118 +165,6 @@ process {
         Write-Log -Message "Successfully logged in to Azure."
         #endregion
 
-        #region "B2C Step 2: Update required parameter in .env.production/ .env.development for front-end build and B2C secret in azuredeploy.json" 
-        if($b2cOrAD -eq "b2c"){
-            Write-Title "B2C Step #2: Updating the B2C parameters and secrets"
-            $b2c_secret =  '"'+$b2c_secret+'"'
-            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
-            
-            [string]$dir = Get-Location
-            $dir += "/../client/.env.production"
-            #$dir += ".env.production"
-
-            $old_REACT_APP_EDNA_B2C_CLIENT_ID=''
-            $old_REACT_APP_EDNA_B2C_TENANT=''
-            $old_REACT_APP_EDNA_AUTH_CLIENT_ID=''
-            [System.IO.File]::ReadLines($dir) |  ForEach-Object {
-                if(  $_ -Match "REACT_APP_EDNA_B2C_CLIENT_ID" ){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_B2C_CLIENT_ID = $_.Trim()
-                    $REACT_APP_EDNA_B2C_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_CLIENT_ID+"'").Trim()
-                }
-                elseif ( $_ -Match "REACT_APP_EDNA_B2C_TENANT"){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_B2C_TENANT = $_.Trim()
-                    $REACT_APP_EDNA_B2C_TENANT = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_B2C_TENANT+"'").Trim()
-                }
-                elseif ( $_ -Match "REACT_APP_EDNA_AUTH_CLIENT_ID"){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_AUTH_CLIENT_ID = $_.Trim()
-                    $REACT_APP_EDNA_AUTH_CLIENT_ID = ($configuration_line[0]+"="+"'"+$REACT_APP_EDNA_AUTH_CLIENT_ID+"'").Trim()
-                }
-                else{
-                }
-            }   
-            Write-Host "Old value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-
-            [string]$dir = Get-Location
-            $dir += "/../client/.env.development"
-
-            Write-Host "New value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-        }
-        # else for AD mode
-        else {
-            [string]$dir = Get-Location
-            $dir += "/../client/.env.production"
-            #$dir += ".env.production"
-
-            $old_REACT_APP_EDNA_B2C_CLIENT_ID=''
-            $old_REACT_APP_EDNA_B2C_TENANT=''
-            $old_REACT_APP_EDNA_AUTH_CLIENT_ID=''
-            [System.IO.File]::ReadLines($dir) |  ForEach-Object {
-                if(  $_ -Match "REACT_APP_EDNA_B2C_CLIENT_ID" ){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_B2C_CLIENT_ID = $_.Trim()
-                    $REACT_APP_EDNA_B2C_CLIENT_ID = ($configuration_line[0]+"="+"NULL").Trim()
-                }
-                elseif ( $_ -Match "REACT_APP_EDNA_B2C_TENANT"){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_B2C_TENANT = $_.Trim()
-                    $REACT_APP_EDNA_B2C_TENANT = ($configuration_line[0]+"="+"NULL").Trim()
-                }
-                elseif ( $_ -Match "REACT_APP_EDNA_AUTH_CLIENT_ID"){
-                    $configuration_line = $_ -split "="
-                    $old_REACT_APP_EDNA_AUTH_CLIENT_ID = $_.Trim()
-                    $REACT_APP_EDNA_AUTH_CLIENT_ID = ($configuration_line[0]+"="+"NULL").Trim()
-                }
-                else{
-                }
-            }   
-            Write-Host "Old value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-
-            [string]$dir = Get-Location
-            $dir += "/../client/.env.development"
-
-            Write-Host "New value:",$old_REACT_APP_EDNA_B2C_CLIENT_ID
-
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_CLIENT_ID,$REACT_APP_EDNA_B2C_CLIENT_ID | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_B2C_TENANT,$REACT_APP_EDNA_B2C_TENANT | Set-Content $dir
-            
-            $filecontent = Get-Content $dir
-            $filecontent -replace $old_REACT_APP_EDNA_AUTH_CLIENT_ID,$REACT_APP_EDNA_AUTH_CLIENT_ID | Set-Content $dir
-
-        }
-        
-        #endregion
-
         #region Choose Active Subcription 
         Write-Title 'STEP #2 - Choose Subscription'
 
@@ -236,7 +184,7 @@ process {
             
             $subscription = ($List | Where-Object { ($_.name -ieq $NameOrId) -or ($_.id -ieq $NameOrId) })
             if(!$subscription) {
-                throw "Invalid Subscription Name/ID Entered."
+                throw [InvalidAzureSubscriptionException] "Invalid Subscription Name/ID Entered."
             }
             az account set --subscription $NameOrId
             #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
@@ -269,7 +217,20 @@ process {
             Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
         }
 
-        $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+        #defensive programming so script doesn't halt and require a cleanup if subscription is mistyped
+        while(1){
+            try{
+                $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+                break
+            }
+            catch [InvalidAzureSubscriptionException]{
+                Write-Error $Error[0]
+                $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List'
+                #trimming the input for empty spaces, if any
+                $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
+                Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
+            }
+        }
         $UserEmailAddress = $ActiveSubscription.user.name
         #endregion
 
@@ -280,17 +241,30 @@ process {
         $LocationList = ((az account list-locations) | ConvertFrom-Json)
         Write-Log -Message "List of Locations:-`n$($locationList | ConvertTo-Json -Compress)"
 
-        if(!$LocationName) {
-            Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
-            $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
-            #trimming the input for empty spaces, if any
-            $LocationName = $LocationName.Trim()
-        }
-        Write-Log -Message "User Provided Location Name: $LocationName"
+        #defensive programming so script doesn't halt and require a cleanup if region is mistyped
+        while(1){
+            try{
+                if(!$LocationName) {
+                    Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
+                    $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+                    #trimming the input for empty spaces, if any
+                    $LocationName = $LocationName.Trim()
+                }
+                Write-Log -Message "User Provided Location Name: $LocationName"
+        
+                $ValidLocation = $LocationList | Where-Object { $_.name -ieq $LocationName }
+                if(!$ValidLocation) {
+                    throw [InvalidAzureRegionException] "Invalid Location Name Entered."
+                }
+                break
+            }
+            catch [InvalidAzureRegionException]{
+                Write-Error $Error[0]
 
-        $ValidLocation = $LocationList | Where-Object { $_.name -ieq $LocationName }
-        if(!$ValidLocation) {
-            throw "Invalid Location Name Entered."
+                $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+                #trimming the input for empty spaces, if any
+                $LocationName = $LocationName.Trim()
+            }
         }
         #endregion
         
@@ -398,11 +372,6 @@ process {
         Write-Log -Message "Pointing to  $graphUrl and using body $body"
         az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
 
-        if ($b2cOrAD eq "b2c"){ #Set the SPA uri link on the B2C as well
-            $graphUrl = "https://graph.microsoft.com/v1.0/applications/$($B2C_ObjectID)"
-            az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
-        }
-
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
     
         Write-Host 'App Update Completed Successfully'
@@ -426,9 +395,15 @@ process {
         #endregion
 
         #region Build and Publish Client Artifacts
+
+        # if this is in AD mode not b2c, then AUTH_CLIENT_ID is the same as AAD_ClientID
+        if($b2cOrAD -eq "ad"){
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $appinfo.appId
+        }
+
         . .\Install-Client.ps1
-        Write-Title "STEP #11 - Updating client's .env.production file"
-    
+        Write-Title "STEP #11.A - Updating client's .env.production file"
+        
         $ClientUpdateConfigParams = @{
             ConfigPath="../client/.env.production";
             AppId=$appinfo.appId;
@@ -438,9 +413,31 @@ process {
             PlatformsFunctionAppName=$deploymentOutput.properties.outputs.PlatformsFunctionName.value;
             UsersFunctionAppName=$deploymentOutput.properties.outputs.UsersFunctionName.value;
             StaticWebsiteUrl=$deploymentOutput.properties.outputs.webClientURL.value;
+            b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
+            b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
+            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to $appinfo.appId if AD
         }
         Update-ClientConfig @ClientUpdateConfigParams
-    
+
+        Write-Title "STEP #11.B - Updating .env.development file"
+
+        $DevelopmentUpdateConfigParams = @{
+            ConfigPath="../client/.env.development";
+            b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
+            b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
+            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to $appinfo.appId if AD
+        }
+        Update-DevelopmentConfig @DevelopmentUpdateConfigParams
+
+        if($b2cOrAD -eq "b2c"){
+            Write-Title "Step #11.C - Updating the B2C secret in the azuredeploy.json"
+            $b2c_secret =  '"'+$b2c_secret+'"'
+            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
+            #TODO - find way to replace the value for line 173 of azuredeployTemplate.json via an input or API call (wellKnownOpenIdConfiguration) so they can input it correctly
+            #TODO - make separate azureTemplate for b2c vs ad; with ad not having the b2c specific lines
+        
+        }
+
         Write-Title 'STEP #12 - Installing the client'
         $ClientInstallParams = @{
             SourceRoot="../client";
@@ -448,6 +445,14 @@ process {
         }
         Install-Client @ClientInstallParams
         #endregion
+
+        if ($b2cOrAD -eq "b2c"){ #Set the SPA uri link on the B2C as well
+            Write-Title 'STEP #13 (B2C Only) - Updating the B2C WebApp redirect URI'
+            az login --tenant "$REACT_APP_EDNA_B2C_TENANT.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
+            $graphUrl = "https://graph.microsoft.com/v1.0/applications/$B2C_ObjectID"
+            az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
+        }
+
 
         Write-Title "TOOL REGISTRATION URL (Please Copy, Required for Next Steps) -> $($deploymentOutput.properties.outputs.webClientURL.value)platform"
 

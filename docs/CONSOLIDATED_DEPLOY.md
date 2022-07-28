@@ -61,9 +61,6 @@ Go to the [B2C setup](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consol
 
 The script will ask you to login to Azure by navigating to the Azure Login Page on your browser.
 
-## (FOR B2C Mode Only) Updating required parameter in .env.production/ .env.development for front-end build and B2C secret in azuredeploy.json
-**NOTE:** if B2C mode is chosen, then before choosing the subscription, the B2C parameters and secrets should automatically be updated as shown below.
-![b2cstep2.png](/images/b2cstep2.png)
 
 ## Choose Subscription
 

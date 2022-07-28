@@ -41,6 +41,11 @@ If you have changed the name of the Resource Group or AppName simply replace the
 
 Ensure you [purge your keyvault]( https://github.com/microsoft/Learn-LTI/blob/main/docs/TROUBLESHOOTING.md#purging-key-vaults) before running the setup script again 
 
+**Note:** By running [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat), if you have B2C authentication, the script will ask for this to remove the B2C tenant as well as shown below:
+![b2cclean.png](/images/b2cclean.png)
+
+After this step, you can follow this [guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consolidated_deploy_branch/deployment/B2C_Docs/B2C_Cleanup.md) to remove B2C tenant from your app.
+
 ## Check the Failed Deployment status and output
 
 From the Azure Portal, simply select deployments. See the following screenshot.

@@ -1,8 +1,6 @@
-*Temp*
+Temp*
 CustomPolicy/*
 manifest.json
 AppInfo.csv
 b2cSavedParams.csv
-.env.production
-.env.development
 azuredeploy.json
