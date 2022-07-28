@@ -619,7 +619,7 @@ Write-Host "Uploading/updating each of the custom policies"
 CustomPolicyUpdateOrUpload "B2C_1A_TrustFrameworkBase" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_TrustFrameworkLocalization" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_TrustFrameworkExtensions" $customPolicies $access_token
-CustomPolicyUpdateOrUpload "B2C_1A_signup_signin" $customPolicies $access_token
+CustomPolicyUpdateOrUpload "B2C_1A_signin" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_ProfileEdit" $customPolicies $access_token
 CustomPolicyUpdateOrUpload "B2C_1A_PasswordReset" $customPolicies $access_token
 #endregionWebClientID
