@@ -1,0 +1,2 @@
+B2C client id
+B2C config url

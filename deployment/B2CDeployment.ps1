@@ -15,9 +15,9 @@ function Write-Color($Color, [string]$Text) {
 
 #function for writing errors
 function Write-Error([string]$Text) {
-    Write-Host "`n`n=============================================================`n" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
-	Write-Host "Error!`n$Text" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
-    Write-Host "`n=============================================================" -ForegroundColor "black" -BackgroundColor "DarkRed"
+    Write-Host "`n`n=============================================================`n" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+	Write-Host "Error!`n$Text" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+    Write-Host "`n=============================================================" -ForegroundColor "red" -BackgroundColor "black"
 }
 
 
@@ -32,14 +32,23 @@ if (Test-Path $AppInfoCSVPath -PathType Leaf) {
 }
 #endregeion
 
-#region "STEP 1: Create Active Directory application"
+#region "values determining the names of the resources"
+$MultiTenantAppName = "b2c_AD_app"
+$MultiTenantClientSecretName = "b2c_AD_app_secret"
+$B2cAppName = "b2c_AD_webapp"
+$WebClientSecretName = "b2c_AD_webapp_secret"
+$PermissionAppName = "b2c_AD_PMA"
+$PermissionClientSecretName = "b2c_AD_PMA_secret"
+#endregion
+
+#region "B2C STEP 1: Create Active Directory application"
 $B2cTenantName = Read-Host "Please enter your B2C tenant name"
 $ADTenantName = Read-Host "Please enter your AD tenant name"
 
-Write-Title "STEP 1: Create AD application"
+Write-Title "B2C STEP 1: Create AD application"
 Write-Host "Please login to $ADTenantName via the pop-up window that has launched in your browser"
 az login --tenant "$ADTenantName.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
-$MultiTenantAppName = Read-Host "Please give a name for the AD application to be created"
+# $MultiTenantAppName = Read-Host "Please give a name for the AD application to be created"
 $ADAppManifest = "{
     `"idToken`": [
         {
@@ -60,12 +69,12 @@ $ADAppManifest = "{
 }"
 Out-File -FilePath "manifest.json" -InputObject $ADAppManifest
 $MultiTenantAppID = (az ad app create --display-name $MultiTenantAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com/oauth2/authresp --optional-claims "@manifest.json" --query appId --output tsv --only-show-errors)
-
+Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
 "$MultiTenantAppID,$ADTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # Create client secret
 Write-Host "Creating the client secret for $MultiTenantAppName"
-$MultiTenantClientSecretName = Read-Host "Please give a name for the client secret to be created"
+# $MultiTenantClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $MultiTenantClientSecretDuration = 1
 $MultiTenantClientSecret = (az ad app credential reset --id $MultiTenantAppID --append --display-name $MultiTenantClientSecretName --years $MultiTenantClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $MultiTenantAppName`: $MultiTenantAppID"
@@ -85,26 +94,26 @@ Remove-Item manifest.json
 #endregion
 
 
-#region "STEP 2: login"
-Write-Title "STEP 2: Logging into the B2C Tenant" 
+#region "B2C STEP 2: login"
+Write-Title "B2C STEP 2: Logging into the B2C Tenant" 
 Write-Host "Please login to $B2cTenantName via the pop-up window that has launched in your browser"
 az login --tenant "$B2cTenantName.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
 #endregion
 
 
-#region "STEP 3: Create the web app"
-Write-Title "STEP 3: Creating the B2C Web application"
-$B2cAppName = Read-Host "Please give a name for the web application to be created"
-$appinfo = (az ad app create --display-name $AppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://jwt.ms --enable-access-token-issuance true --enable-id-token-issuance true --only-show-errors) | ConvertFrom-Json
+#region "B2C STEP 3: Create the web app"
+Write-Title "B2C STEP 3: Creating the B2C Web application"
+# $B2cAppName = Read-Host "Please give a name for the web application to be created"
+$appinfo = (az ad app create --display-name $B2cAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://jwt.ms --enable-access-token-issuance true --enable-id-token-issuance true --only-show-errors) | ConvertFrom-Json
+Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
 $WebClientID = $appinfo.appId
 $ObjectId = $appinfo.id
-#(az ad app create --display-name $B2cAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://jwt.ms --enable-access-token-issuance true --enable-id-token-issuance true --query appId --output tsv --only-show-errors)
 
 "$WebClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # create client secret
 Write-Host "Creating the client secret for $B2cAppName"
-$WebClientSecretName = Read-Host "Please give a name for the client secret to be created"
+# $WebClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $WebClientSecretDuration = 1
 $WebClientSecret = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $B2cAppName`: $WebClientID"
@@ -122,11 +131,11 @@ az ad app permission add --id $WebClientID --api 00000003-0000-0000-c000-0000000
 #endregion
 
 
-#region "STEP 4: Create IdentityExperienceFramework app"
-Write-Title "STEP 4: Creating the Identity Experience Framework application"
+#region "B2C STEP 4: Create IdentityExperienceFramework app"
+Write-Title "B2C STEP 4: Creating the Identity Experience Framework application"
 $IEFAppName = "IdentityExperienceFramework"
 $IEFClientID = (az ad app create --display-name $IEFAppName --sign-in-audience AzureADMyOrg --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com --query appId --output tsv --only-show-errors)
-
+Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
 "$IEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # set permissions for the IEF app
@@ -163,11 +172,11 @@ Remove-Item userImpersonationScope.json
 #endregion
 
 
-#region "STEP 5: Create ProxyIEF app"
-Write-Title "STEP 5: Creating the Proxy Identity Experience Framework application"
+#region "B2C STEP 5: Create ProxyIEF app"
+Write-Title "B2C STEP 5: Creating the Proxy Identity Experience Framework application"
 $ProxyIEFAppName = "ProxyIdentityExperienceFramework"
 $ProxyIEFClientID = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --query appId --output tsv --only-show-errors)
-
+Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
 "$ProxyIEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 Write-Host "Granting permissions to the Proxy IEF application"
@@ -178,16 +187,16 @@ az ad app permission grant --id $ProxyIEFClientID --api $IEFClientID --scope "us
 az ad app permission add --id $ProxyIEFClientID --api $IEFClientID --api-permissions "$IEFScopeGUID=Scope" --only-show-errors
 #endregion
 
-#region "STEP 6: Create Permission Management app"
-Write-Title "STEP 6: Creating Permission Management application"
-$PermissionAppName = Read-Host "Please give a name for the permission management application to be created"
+#region "B2C STEP 6: Create Permission Management app"
+Write-Title "B2C STEP 6: Creating Permission Management application"
+# $PermissionAppName = Read-Host "Please give a name for the permission management application to be created"
 $PermissionClientID = (az ad app create --display-name $PermissionAppName --sign-in-audience AzureADMyOrg --query appId --output tsv --only-show-errors)
-
+Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
 "$PermissionClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # create client secret
 Write-Host "Creating the client secret for $PermissionAppName"
-$PermissionClientSecretName = Read-Host "Please give a name for the client secret to be created"
+# $PermissionClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $PermissionClientSecretDuration = 1
 $PermissionClientSecret = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --query password --output tsv --only-show-errors)
 Write-Color "green" "Client ID for $PermissionAppName`: $PermissionClientID"
@@ -206,16 +215,16 @@ az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-
 az ad app permission admin-consent --id $PermissionClientID --only-show-errors
 #endregion
 
-#region "STEP 7: restrict access via whitelisting tenants"
+#region "B2C STEP 7: restrict access via whitelisting tenants"
 # https://docs.microsoft.com/en-us/azure/active-directory-b2c/identity-provider-azure-ad-multi-tenant?pivots=b2c-custom-policy#restrict-access
-Write-Title "STEP 7: Creating a whitelist for the tenants we wish to give access to"
+Write-Title "B2C STEP 7: Creating a whitelist for the tenants we wish to give access to"
 Write-Host "Important - if no tenants are whitelisted; nobody will be able to access the AD"
 
 #TODO - make it a file
 $fileOrInputs=""
 while($fileOrInputs -ne "1" -and $fileOrInputs -ne "2")
 {
-    $fileOrInputs = Read-Host "Would you like to either:`n1. import a file with *all* the tenant ID's to be whitelisted`n2. input them 1 by 1 into the console? (1/2)"
+    $fileOrInputs = Read-Host "Would you like to either:`n1. import a file with *all* the tenant ID's to be whitelisted`n2. input them 1 by 1 into the console? `n(1/2)"
 }
 
 
@@ -224,7 +233,19 @@ $whitelist = @()
 if ($fileOrInputs -eq "1")
 {
     $filePath = Read-Host "Please enter the path to the file containing the tenant ID's"
-    $whitelist = Get-Content $filePath 
+    $tenantIDs = Get-Content $filePath 
+    
+    foreach ($wlTenantID in $tenantIDs)
+    {
+        #region "HTTP request to get the issuer claim we want to add to the whitelist"
+        $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+        
+        $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
+        $issuer = $response.issuer
+        #endregion
+
+        $whitelist += $issuer #adding the issuer for this tenant to the whitelist
+    }
 }
 
 # Input one by one to the console
@@ -240,8 +261,7 @@ else
         try{
             #region "HTTP request to get the issuer claim we want to add to the whitelist"
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-            $headers.Add("Cookie", "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrz5AJFK2BuCxYc25okcgEMIhli-M9GRnC77gX9U2agXqRChe5Tk3qNfEPzYWBnDAUp-o9RWFY5KNcFx-vXSzS0awJmoC7qDfdimSHwN_cVTAk3AVnFnGSxQfcY9xfjJxnZI_bqBXjO6MUJ0rjdw14dd7jnRNLmUGqljuVubDJWG8gAA; fpc=AkuS-X1BCTpNr-MiUS-IqaM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd")
-    
+            
             $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
             $issuer = $response.issuer
             #endregion
@@ -260,8 +280,8 @@ $whitelistString = $whitelist -join ","
 #endregion
 
 
-#region "STEP 8: (Optional) linking facebook apps"
-Write-Title "STEP 8: (Optional) linking facebook app"
+#region "B2C STEP 8: (Optional) linking facebook apps"
+Write-Title "B2C STEP 8: (Optional) linking facebook app"
 $HasFaceBookApp = ""
 while($HasFaceBookApp -ne "y" -and $HasFaceBookApp -ne "n"){
     $HasFaceBookApp = Read-Host "Do you have a facebook application set up that you'd like to link? (y/n)"
@@ -275,16 +295,16 @@ if($HasFaceBookApp -eq "y"){
 #endregion
 
 
-#region "STEP 9: looping through each CustomPolicyTemplate and creating bases of them in CustomTemplates"
-Write-Title "STEP 9: Creating template custom policies"
+#region "B2C STEP 9: looping through each CustomPolicyTemplate and creating bases of them in CustomTemplates"
+Write-Title "B2C STEP 9: Creating template custom policies"
 Get-ChildItem ".\CustomPolicyTemplates\" | Foreach-Object {
     ((Get-Content -path $_.FullName -Raw)) | Set-Content -path (".\CustomPolicy\"+$_.Name)
 }
 #endregion
 
 
-#region "Step 10: looping through each CustomPolicy and replacing their placeholder values to generate the final custom policies"
-Write-Title "Step 10: Replacing values in template custom policies to generate finalised custom policies"
+#region "B2C STEP 10: looping through each CustomPolicy and replacing their placeholder values to generate the final custom policies"
+Write-Title "B2C STEP 10: Replacing values in template custom policies to generate finalised custom policies"
 Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
     #ignore the gitkeep
     if($_.Name -ne ".gitkeep"){
@@ -305,7 +325,7 @@ Get-ChildItem ".\CustomPolicy\" | Foreach-Object {
 }
 #endregion
 
-#region "STEP 11: Add signing and encryption keys and AADAppSecret for the IEF applications"
+#region "B2C STEP 11: Add signing and encryption keys and AADAppSecret for the IEF applications"
 
 #region "Function for calculating the not before and expiry datetimes for the keys"
 function getNbfExp($num_months){
@@ -318,7 +338,7 @@ function getNbfExp($num_months){
 }
 #endregion
 
-Write-Title "Step 11: Adding signing and encryption keys and AADAppSecret for the IEF applications"
+Write-Title "B2C STEP 11: Adding signing and encryption keys and AADAppSecret for the IEF applications"
 
 $num_months = 0 
 while($num_months -le 0){
@@ -361,12 +381,12 @@ while(1){
         $PMA_Page = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$PermissionClientID/isMSAApp~/false"
         Write-Color "Yellow" "$PMA_Page"
         Write-Host "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this."
-        Read-Host "Press enter after manually granting the admin consent permission"
+        Read-Host "Press enter after manually granting the admin consent permission and waiting 10 seconds"
     }
 }    
 
-#region "Step 11.A: Create the signing key"
-Write-Title "Step 11.A: Creating the Signing Key"
+#region "B2C STEP 11.A: Create the signing key"
+Write-Title "B2C STEP 11.A: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
     Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -416,8 +436,8 @@ else{
 #endregion
 
 
-#region "Step 11.B: Create the encryption key"
-Write-Title "Step 11.B: Creating the Signing Key"
+#region "B2C STEP 11.B: Create the encryption key"
+Write-Title "B2C STEP 11.B: Creating the Signing Key"
 
 if($keysets -contains "B2C_1A_TokenSigningKeyContainer"){
     Read-Host "B2C_1A_TokenSigningKeyContainer already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -466,8 +486,8 @@ Write-Host "Successfully generated and uploaded the encryption key"
 #endregion
 
 
-#region "Step 11.C: Create the AADSecret keyset"
-Write-Title "Step 11.C: Creating the AADAppSecret Key"
+#region "B2C STEP 11.C: Create the AADSecret keyset"
+Write-Title "B2C STEP 11.C: Creating the AADAppSecret Key"
 
 if($keysets -contains "B2C_1A_AADAppSecret"){
     Read-Host "B2C_1A_AADAppSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -516,9 +536,9 @@ else{
 
 #endregion 
 
-#region "Step 11.D: Create the Facebook keyset"
-#TODO - eventually only run this step if we are using Facebook (and then use different contract templates for linking facebook vs without)
-Write-Title "Step 11.D: Creating the Facebook Key"
+#region "B2C STEP 11.D: Create the Facebook keyset"
+#TODO - eventually only run this B2C STEP if we are using Facebook (and then use different contract templates for linking facebook vs without)
+Write-Title "B2C STEP 11.D: Creating the Facebook Key"
 
 if($keysets -contains "B2C_1A_FacebookSecret"){
     Read-Host "B2C_1A_FacebookSecret already exists, so cannot upload it again. If this is not expected, please terminate this script and run B2CCleanup.ps1 first."
@@ -568,7 +588,7 @@ else{
 #endregion
 #endregion
 
-#region "STEP 12: uploading the custom policies to the b2c tenant"
+#region "B2C STEP 12: uploading the custom policies to the b2c tenant"
 
 #region "Function for updating existing custom policy or uploading new custom policies"
 function CustomPolicyUpdateOrUpload($customPolicyName, $customPolicies, $access_token) {
@@ -602,7 +622,7 @@ function CustomPolicyUpdateOrUpload($customPolicyName, $customPolicies, $access_
 }
 #endregion
 
-Write-Title "STEP 12: Uploading the custom policies to the b2c tenant"
+Write-Title "B2C STEP 12: Uploading the custom policies to the b2c tenant"
 
 #getting list of all users in the tenant
 Write-Host "Getting the list of all custom policies in the tenant"

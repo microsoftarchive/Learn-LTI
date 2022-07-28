@@ -5,18 +5,42 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_graph1_MSLearnLTI",
-    [string]$AppName = "RB_graph1_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad15_MSLearnLTI",
+    [string]$AppName = "DM_ad15_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null
 )
 
 process {
+    #region "Helper Functions"
+    #function for making clear and distinct titles
     function Write-Title([string]$Title) {
         Write-Host "`n`n============================================================="
         Write-Host $Title
         Write-Host "=============================================================`n`n"
     }
+
+    #function for making coloured outputs
+    function Write-Color($Color, [string]$Text) {
+        Write-Host $Text -ForegroundColor $Color
+    }
+
+    #function for writing errors
+    function Write-Error([string]$Text) {
+        Write-Host "`n`n=============================================================`n" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "Error!`n$Text" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "`n=============================================================" -ForegroundColor "red" -BackgroundColor "black"
+    }
+    #endregion
+
+    #region "exception handling classes"
+    class InvalidAzureSubscriptionException: System.Exception{
+        $Emessage
+        InvalidAzureSubscriptionException([string]$msg){
+            $this.Emessage=$msg
+        }
+    }
+    #endregion
 
     #region Show Learn LTI Banner
     Write-Host ''
@@ -43,6 +67,21 @@ process {
     Start-Transcript -Path $TranscriptFile;
     #endregion
     
+    #region B2c if needed
+    Write-Title "Optional B2C cleanup"
+    $b2ccleanup = "none"
+    while($b2ccleanup -ne "yes" -and $b2ccleanup -ne "no") {
+        $b2ccleanup = Read-Host "Would you like to to cleanup a B2C tenant? (yes/no)"
+    }
+    
+    if($b2ccleanup -eq "yes")
+    {
+        Write-Title "Step #5 - Running B2C Cleanup Script"
+        & ".\B2CCleanup.ps1"
+    }
+    #endregion
+    
+
     #region Login to Azure CLI
     Write-Title 'STEP #1 - Logging into Azure'
 
@@ -91,7 +130,7 @@ process {
         
         $subscription = ($List | Where-Object { ($_.name -ieq $NameOrId) -or ($_.id -ieq $NameOrId) })
         if(!$subscription) {
-            throw "Invalid Subscription Name/ID Entered."
+            throw [InvalidAzureSubscriptionException] "Invalid Subscription Name/ID Entered."
         }
         az account set --subscription $NameOrId
         #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
@@ -124,22 +163,23 @@ process {
         Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
     }
 
-    $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
-    #endregion
-    #region B2c if needed
-    Write-Title "Optional B2C cleanup"
-    $b2ccleanup = "none"
-    while($b2ccleanup -ne "yes" -and $b2ccleanup -ne "no") {
-        $b2ccleanup = Read-Host "Would you like to to cleanup a B2C tenant? (yes/no)"
+    #defensive programming so script doesn't halt and require a cleanup if subscription is mistyped
+    while(1){
+        try{
+            $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+            break
+        }
+        catch [InvalidAzureSubscriptionException]{
+            Write-Error $Error[0]
+            $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List'
+            #trimming the input for empty spaces, if any
+            $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
+            Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
+        }
     }
     
-    if($b2ccleanup -eq "yes")
-    {
-        Write-Title "Step #5 - Running B2C Cleanup Script"
-        & ".\B2CCleanup.ps1"
-    }
     #endregion
-
+    
     #region Delete Resource Group, if Exists
     Write-Title 'STEP #3 - Delete Resource Group'
     az group delete --name $ResourceGroupName --yes
@@ -166,5 +206,4 @@ process {
 
     Write-Log -Message "Clean-up Complete"
     Write-Warning 'Please use a different ResourceGroup name on re-deployment!'
-
 }

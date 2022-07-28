@@ -4,16 +4,66 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Edna.Utils.Http
 {
     public static class HttpHeadersExtensions
     {
         private static readonly JwtSecurityTokenHandler JwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+
+        public static async Task<bool> ValidateToken(this IHeaderDictionary headers, 
+            ConfigurationManager<OpenIdConnectConfiguration> adConfigurationManager, 
+            ConfigurationManager<OpenIdConnectConfiguration> b2CConfigurationManager, 
+            string validAudience, Action<string> logAction = null)
+        {
+            IdentityModelEventSource.ShowPII = true;
+            if (!headers.ContainsKey("Authorization"))
+            {
+                logAction?.Invoke("No Authorization header was found in the request.");
+                return false;
+            }
+
+            var authorizationContent = headers["Authorization"].ToString();
+            var token = authorizationContent?.Split(' ')[1];
+            try
+            {
+                var b2CConfig = await b2CConfigurationManager.GetConfigurationAsync(default);
+                var adConfig = await adConfigurationManager.GetConfigurationAsync(default);
+                var signingKeys = b2CConfig.SigningKeys;
+                foreach (var key in adConfig.SigningKeys)
+                {
+                    signingKeys.Add(key);
+                }
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = true,
+                    ValidateIssuer = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    RequireSignedTokens = true,
+                    IssuerSigningKeys = signingKeys,
+                    ValidIssuers = new List<string>{b2CConfig.Issuer, adConfig.Issuer},
+                    ValidAudiences = validAudience.Split(',')
+                };
+                var principal = JwtSecurityTokenHandler.ValidateToken(token, validationParameters, out _);
+                return !(principal is null);
+            }
+            catch (Exception e)
+            {
+                logAction?.Invoke(token + e + "Error when validating the user token.");
+            }
+            return false;
+        }
 
         public static bool TryGetTokenClaims(this IHeaderDictionary headers, out Claim[] claims, Action<string> logAction = null)
         {
