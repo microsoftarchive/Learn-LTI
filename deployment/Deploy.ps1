@@ -28,15 +28,22 @@ process {
      else {
          Write-Host "Azure CLI $AzCliCheck is installed. We currently recommend using Microsoft CLI version 2.27. The most recent version is of Azure CLI has deprecated commands in use which will be addressed later."
      }
-     # Checking .Net Framework is installed
+     # Checking .Net core 3.1 Framework is installed
      $NetFrCheck= (dotnet --version)
      if( $NetFrCheck -eq $null){
-         Write-Host ".Net Framework is not installed and please go to this link to install. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
-         exit
+        Write-Host ".Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
+        exit
      }
      else {
-         Write-Host ".Net Framework $NetFrCheck is installed."
-     }
+        [int]$NetFrCheck1= (dotnet --version).Split(".")[0]
+        [int]$NetFrCheck2= (dotnet --version).Split(".")[1]
+        if( $NetFrCheck1 -eq 3 && $NetFrCheck2 -eq 1){
+            Write-Host ".Net Framework $NetFrCheck is installed."
+        }
+        else {
+            Write-Host "Correct .Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
+            exit
+        }
      # Checking Node.js is installed
      $NodejsCheck= (node -v)
      if( $NodejsCheck -eq $null){
