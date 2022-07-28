@@ -26,16 +26,16 @@ process {
          exit
      }
      else {
-         Write-Host "Azure CLI is installed."
+         Write-Host "Azure CLI $AzCliCheck is installed. We currently recommend using Microsoft CLI version 2.27. The most recent version is of Azure CLI has deprecated commands in use which will be addressed later."
      }
      # Checking .Net Framework is installed
-     $NetFrCheck= (dotnet --list-sdks)
+     $NetFrCheck= (dotnet --version)
      if( $NetFrCheck -eq $null){
          Write-Host ".Net Framework is not installed and please go to this link to install. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
          exit
      }
      else {
-         Write-Host ".Net Framework is installed."
+         Write-Host ".Net Framework $NetFrCheck is installed."
      }
      # Checking Node.js is installed
      $NodejsCheck= (node -v)
@@ -44,7 +44,7 @@ process {
          exit
      }
      else {
-         Write-Host "Node.js is installed."
+         Write-Host "Node.js $NodejsCheck is installed."
      }
      # Checking Git is installed
      $GitCheck= (git --version)
@@ -53,10 +53,10 @@ process {
          exit
      }
      else {
-         Write-Host "Git is installed."
+         Write-Host "$GitCheck is installed."
      }
  
-     Write-Host "All pre-requisites checks are done."
+     Write-Title "Confirming all pre-requisites are installed."
     
     try {
         #region Show Learn LTI Banner
@@ -210,8 +210,8 @@ process {
         Write-Host "Checking if resource group already exists..."
         $checkResourceGroupExist = (az group exists --resource-group $ResourceGroupName)
         if($checkResourceGroupExist -eq $true){
-            Write-Host "Resource Group exists. Please cleanup the existing resources to create the new one."
-            $choice = Read-Host "Do you want to cleanup the resources or do you want to exit? ('y' for cleanup or any other key for exit)"
+            Write-Host "The specified Resource Group $ResourceGroupName already exists."
+            $choice = Read-Host "Would you like to automatically cleanup this resource group, or exit the deployment process? ('y' for cleanup or any other key for exit)"
             $choice = $choice.Trim()
             if ($choice -eq 'y') {
                 Write-Title "Running Cleanup Script"
@@ -223,11 +223,7 @@ process {
                 exit
             }
         }
-        else {
-            Write-Host "Continuing deployment process..."
-        }
         
-
         #region Choose Region for Deployment
         Write-Title "STEP #3 - Choose Location`n(Please refer to the Documentation / ReadMe on Github for the List of Supported Locations)"
 
