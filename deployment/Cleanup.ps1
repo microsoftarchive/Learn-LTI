@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad14_MSLearnLTI",
-    [string]$AppName = "DM_ad14_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad15_MSLearnLTI",
+    [string]$AppName = "DM_ad15_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null
 )
@@ -27,9 +27,9 @@ process {
 
     #function for writing errors
     function Write-Error([string]$Text) {
-        Write-Host "`n`n=============================================================`n" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
-        Write-Host "Error!`n$Text" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
-        Write-Host "`n=============================================================" -ForegroundColor "black" -BackgroundColor "DarkRed"
+        Write-Host "`n`n=============================================================`n" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "Error!`n$Text" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "`n=============================================================" -ForegroundColor "red" -BackgroundColor "black"
     }
     #endregion
 

@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad14_MSLearnLTI",
-    [string]$AppName = "DM_ad14_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad15_MSLearnLTI",
+    [string]$AppName = "DM_ad15_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -28,9 +28,9 @@ process {
 
     #function for writing errors
     function Write-Error([string]$Text) {
-        Write-Host "`n`n=============================================================`n" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
-        Write-Host "Error!`n$Text" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
-        Write-Host "`n=============================================================" -ForegroundColor "black" -BackgroundColor "DarkRed"
+        Write-Host "`n`n=============================================================`n" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "Error!`n$Text" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "`n=============================================================" -ForegroundColor "red" -BackgroundColor "black"
     }
     #endregion
 
@@ -44,7 +44,7 @@ process {
     
     class InvalidAzureRegionException: System.Exception{
         $Emessage
-        InvalidAzureSubscriptionException([string]$msg){
+        InvalidAzureRegionException([string]$msg){
             $this.Emessage=$msg
         }
     }
@@ -103,7 +103,7 @@ process {
         $REACT_APP_EDNA_B2C_TENANT = "'NA'"
         $B2C_ObjectID = "'NA'"
         if($b2cOrAD -eq "b2c"){
-            Write-Title "B2C Step #1: Running the B2C Setup Script"
+            Write-Title "B2C Step #0: Running the B2C Setup Script"
             # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
             $results = & ".\B2CDeployment.ps1" # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
 
@@ -165,7 +165,7 @@ process {
             
             $subscription = ($List | Where-Object { ($_.name -ieq $NameOrId) -or ($_.id -ieq $NameOrId) })
             if(!$subscription) {
-                throw "Invalid Subscription Name/ID Entered."
+                throw [InvalidAzureSubscriptionException] "Invalid Subscription Name/ID Entered."
             }
             az account set --subscription $NameOrId
             #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
@@ -241,6 +241,10 @@ process {
             }
             catch [InvalidAzureRegionException]{
                 Write-Error $Error[0]
+
+                $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+                #trimming the input for empty spaces, if any
+                $LocationName = $LocationName.Trim()
             }
         }
         #endregion
@@ -349,11 +353,6 @@ process {
         Write-Log -Message "Pointing to  $graphUrl and using body $body"
         az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
 
-        if ($b2cOrAD -eq "b2c"){ #Set the SPA uri link on the B2C as well
-            $graphUrl = "https://graph.microsoft.com/v1.0/applications/$B2C_ObjectID"
-            az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
-        }
-
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
     
         Write-Host 'App Update Completed Successfully'
@@ -427,6 +426,14 @@ process {
         }
         Install-Client @ClientInstallParams
         #endregion
+
+        if ($b2cOrAD -eq "b2c"){ #Set the SPA uri link on the B2C as well
+            Write-Title 'STEP #13 (B2C Only) - Updating the B2C WebApp redirect URI'
+            az login --tenant "$REACT_APP_EDNA_B2C_TENANT.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
+            $graphUrl = "https://graph.microsoft.com/v1.0/applications/$B2C_ObjectID"
+            az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
+        }
+
 
         Write-Title "TOOL REGISTRATION URL (Please Copy, Required for Next Steps) -> $($deploymentOutput.properties.outputs.webClientURL.value)platform"
 
