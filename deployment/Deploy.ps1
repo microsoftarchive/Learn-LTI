@@ -41,9 +41,10 @@ process {
             Write-Host ".Net Framework $NetFrCheck is installed."
         }
         else {
-            Write-Host "Correct .Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
+            Write-Host "Correct .Net Framework is not installed and your version is $NetFrCheck. Please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
             exit
         }
+    }
      # Checking Node.js is installed
      $NodejsCheck= (node -v)
      if( $NodejsCheck -eq $null){
