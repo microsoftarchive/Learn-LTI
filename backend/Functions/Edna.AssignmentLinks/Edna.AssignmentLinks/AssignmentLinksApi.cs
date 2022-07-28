@@ -22,6 +22,8 @@ using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Edna.AssignmentLinks
 {
@@ -29,12 +31,23 @@ namespace Edna.AssignmentLinks
     {
         private readonly ILogger<AssignmentLinksApi> _logger;
         private readonly IMapper _mapper;
+        private readonly ConfigurationManager<OpenIdConnectConfiguration> _adManager, _b2CManager;
         private const string AssignmentLinksTableName = "Links";
+        
+        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
+        private static readonly string OpenIdConfigurationUrl = Environment.GetEnvironmentVariable("OpenIdConfigurationUrl");
 
-        public AssignmentLinksApi(ILogger<AssignmentLinksApi> logger, IMapper mapper)
+        public AssignmentLinksApi(ILogger<AssignmentLinksApi> logger, IMapper mapper,
+            IEnumerable<ConfigurationManager<OpenIdConnectConfiguration>> managers)
         {
             _logger = logger;
             _mapper = mapper;
+            
+            var configurationManagers = managers.ToList();
+            _adManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("ADConfigurationUrl"));
+            _b2CManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("B2CConfigurationUrl"));
         }
 
         [FunctionName(nameof(GetAllLinks))]
@@ -89,6 +102,8 @@ namespace Edna.AssignmentLinks
             string linkId,
             [User] UsersClient usersClient)
         {
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -149,6 +164,8 @@ namespace Edna.AssignmentLinks
             string assignmentId,
             [User] UsersClient usersClient)
         {
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
