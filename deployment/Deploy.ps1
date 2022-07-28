@@ -5,19 +5,50 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad10_MSLearnLTI",
-    [string]$AppName = "DM_ad10_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "DM_ad14_MSLearnLTI",
+    [string]$AppName = "DM_ad14_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
 )
 
 process {
+    #region "Helper Functions"
+    #function for making clear and distinct titles
     function Write-Title([string]$Title) {
         Write-Host "`n`n============================================================="
         Write-Host $Title
         Write-Host "=============================================================`n`n"
     }
+
+    #function for making coloured outputs
+    function Write-Color($Color, [string]$Text) {
+        Write-Host $Text -ForegroundColor $Color
+    }
+
+    #function for writing errors
+    function Write-Error([string]$Text) {
+        Write-Host "`n`n=============================================================`n" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+        Write-Host "Error!`n$Text" -ForegroundColor "black" -BackgroundColor "DarkRed" -NoNewline
+        Write-Host "`n=============================================================" -ForegroundColor "black" -BackgroundColor "DarkRed"
+    }
+    #endregion
+
+    #region "exception handling classes"
+    class InvalidAzureSubscriptionException: System.Exception{
+        $Emessage
+        InvalidAzureSubscriptionException([string]$msg){
+            $this.Emessage=$msg
+        }
+    }
+    
+    class InvalidAzureRegionException: System.Exception{
+        $Emessage
+        InvalidAzureSubscriptionException([string]$msg){
+            $this.Emessage=$msg
+        }
+    }
+    #endregion
     
     try {
         #region Show Learn LTI Banner
@@ -87,18 +118,21 @@ process {
 
         #region "B2C STEP 1: Calling B2CDeployment to set up the b2c script and retrieving the returned values to be used later on"
         $REACT_APP_EDNA_B2C_CLIENT_ID = "'NA'"
-        $REACT_APP_EDNA_AUTH_CLIENT_ID = "'NA'"
+        $REACT_APP_EDNA_AUTH_CLIENT_ID = "'Placeholder'" # either replaced below by returned value of b2c script if b2cOrAD = "b2c", or just before step 11.a to AAD_Client_ID's ($appinfo.appId) value if b2cOrAD = "ad"
         $b2c_secret = "'NA'"
         $REACT_APP_EDNA_B2C_TENANT = "'NA'"
+        $B2C_ObjectID = "'NA'"
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #1: Running the B2C Setup Script"
             # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
             $results = & ".\B2CDeployment.ps1" # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
+
             # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
-            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-3] #webclient ID
-            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-3] #webclient ID
-            $b2c_secret = $results[-2] #webclient secret
-            $REACT_APP_EDNA_B2C_TENANT = $results[-1] #b2c tenant name
+            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-4] #webclient ID
+            $b2c_secret = $results[-3] #webclient secret
+            $REACT_APP_EDNA_B2C_TENANT = $results[-2] #b2c tenant name
+            $B2C_ObjectID = $results[-1] # b2c webapp id that needs the SPA uri
         }
         #endregion
         
@@ -184,7 +218,20 @@ process {
             Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
         }
 
-        $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+        #defensive programming so script doesn't halt and require a cleanup if subscription is mistyped
+        while(1){
+            try{
+                $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+                break
+            }
+            catch [InvalidAzureSubscriptionException]{
+                Write-Error $Error[0]
+                $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List'
+                #trimming the input for empty spaces, if any
+                $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
+                Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
+            }
+        }
         $UserEmailAddress = $ActiveSubscription.user.name
         #endregion
 
@@ -195,17 +242,26 @@ process {
         $LocationList = ((az account list-locations) | ConvertFrom-Json)
         Write-Log -Message "List of Locations:-`n$($locationList | ConvertTo-Json -Compress)"
 
-        if(!$LocationName) {
-            Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
-            $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
-            #trimming the input for empty spaces, if any
-            $LocationName = $LocationName.Trim()
-        }
-        Write-Log -Message "User Provided Location Name: $LocationName"
-
-        $ValidLocation = $LocationList | Where-Object { $_.name -ieq $LocationName }
-        if(!$ValidLocation) {
-            throw "Invalid Location Name Entered."
+        #defensive programming so script doesn't halt and require a cleanup if region is mistyped
+        while(1){
+            try{
+                if(!$LocationName) {
+                    Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
+                    $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
+                    #trimming the input for empty spaces, if any
+                    $LocationName = $LocationName.Trim()
+                }
+                Write-Log -Message "User Provided Location Name: $LocationName"
+        
+                $ValidLocation = $LocationList | Where-Object { $_.name -ieq $LocationName }
+                if(!$ValidLocation) {
+                    throw [InvalidAzureRegionException] "Invalid Location Name Entered."
+                }
+                break
+            }
+            catch [InvalidAzureRegionException]{
+                Write-Error $Error[0]
+            }
         }
         #endregion
         
@@ -305,7 +361,19 @@ process {
     
         $AppRedirectUrl = $deploymentOutput.properties.outputs.webClientURL.value
         Write-Log -Message "Updating App with ID: $($appinfo.appId) to Redirect URL: $AppRedirectUrl and also enabling Implicit Flow"
-        $appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
+        #$appUpdateRedirectUrlOp = az ad app update --id $appinfo.appId --reply-urls $AppRedirectUrl --oauth2-allow-implicit-flow true
+
+        #Azure CLI doesn't offer the ability to create SPA redirect uris, must use patch instead 
+        $graphUrl = "https://graph.microsoft.com/v1.0/applications/$($appinfo.id)"
+        $body = '{\"spa\":{\"redirectUris\":[\"' + $AppRedirectUrl + '\"]}}'
+        Write-Log -Message "Pointing to  $graphUrl and using body $body"
+        az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
+
+        if ($b2cOrAD -eq "b2c"){ #Set the SPA uri link on the B2C as well
+            $graphUrl = "https://graph.microsoft.com/v1.0/applications/$B2C_ObjectID"
+            az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
+        }
+
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
     
         Write-Host 'App Update Completed Successfully'
@@ -329,6 +397,12 @@ process {
         #endregion
 
         #region Build and Publish Client Artifacts
+
+        # if this is in AD mode not b2c, then AUTH_CLIENT_ID is the same as AAD_ClientID
+        if($b2cOrAD -eq "ad"){
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $appinfo.appId
+        }
+
         . .\Install-Client.ps1
         Write-Title "STEP #11.A - Updating client's .env.production file"
         
@@ -343,7 +417,7 @@ process {
             StaticWebsiteUrl=$deploymentOutput.properties.outputs.webClientURL.value;
             b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
             b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
-            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to 'NA' if AD
+            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to $appinfo.appId if AD
         }
         Update-ClientConfig @ClientUpdateConfigParams
 
@@ -353,7 +427,7 @@ process {
             ConfigPath="../client/.env.development";
             b2cClientID=$REACT_APP_EDNA_B2C_CLIENT_ID; #defaulted to 'NA' if AD
             b2cTenantName=$REACT_APP_EDNA_B2C_TENANT; #defaulted to 'NA' if AD
-            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to 'NA' if AD
+            authClientID=$REACT_APP_EDNA_AUTH_CLIENT_ID #defaulted to $appinfo.appId if AD
         }
         Update-DevelopmentConfig @DevelopmentUpdateConfigParams
 
