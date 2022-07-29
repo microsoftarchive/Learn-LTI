@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "ALLAD_test2_MSLearnLti",
-    [string]$AppName = "ALLAD_test2_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "ALLB2C_test2_MSLearnLti",
+    [string]$AppName = "ALLB2C_test2_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -108,6 +108,7 @@ process {
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
             $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-4] #webclient ID
             $b2c_secret = $results[-3] #webclient secret
+            $b2c_secret =  '"'+$b2c_secret+'"' # turning the secret into a form we can store 
             $REACT_APP_EDNA_B2C_TENANT = $results[-2] #b2c tenant name
             $B2C_ObjectID = $results[-1] # b2c webapp id that needs the SPA uri
 
@@ -115,8 +116,7 @@ process {
             $policy_name = "b2c_1a_signin" 
             
             #Updating function apps's settings
-            ((Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
-            
+           
             #$B2C_APP_CLIENT_ID_IDENTIFIER = "0cd1d1d6-a7aa-41e2-b569-1ca211147973" # TODO remove hardcode 
             #$AD_APP_CLIENT_ID_IDENTIFIER = "cb508fc8-6a5f-49b1-b688-dac065ba59e4" # TODO remove hardcode
             $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://${b2c_tenant_name}.b2clogin.com/${b2c_tenant_name}.onmicrosoft.com/${policy_name}/v2.0/.well-known/openid-configuration"
@@ -125,10 +125,14 @@ process {
             Write-Title $OPENID_B2C_CONFIG_URL_IDENTIFIER
             Write-Title  $OPENID_AD_CONFIG_URL_IDENTIFIER
 
+            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
+            
+
             (Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) `
             -replace '<B2C_APP_CLIENT_ID_IDENTIFIER>', ($REACT_APP_EDNA_B2C_CLIENT_ID) `
             -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'") `
             -replace '<OPENID_B2C_CONFIG_URL_IDENTIFIER>', ($OPENID_B2C_CONFIG_URL_IDENTIFIER) `
+            -replace '<AZURE_B2C_SECRET_STRING>', $b2c_secret) `
             -replace '<OPENID_AD_CONFIG_URL_IDENTIFIER>', ($OPENID_AD_CONFIG_URL_IDENTIFIER) | Set-Content -path (".\azuredeploy.json")
         }
         #endregion
@@ -432,16 +436,7 @@ process {
         }
         Update-DevelopmentConfig @DevelopmentUpdateConfigParams
 
-        if($b2cOrAD -eq "b2c"){
-            Write-Title "Step #11.C - Updating the B2C secret in the azuredeploy.json"
-            $b2c_secret =  '"'+$b2c_secret+'"'
-            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
-            #TODO - find way to replace the value for line 173 of azuredeployTemplate.json via an input or API call (wellKnownOpenIdConfiguration) so they can input it correctly
-            #TODO - make separate azureTemplate for b2c vs ad; with ad not having the b2c specific lines
-        
-        }
-
-        Write-Title 'STEP #12 - Installing the client'
+        Write-Title 'STEP #12 - Installing the client'  
         $ClientInstallParams = @{
             SourceRoot="../client";
             StaticWebsiteStorageAccount=$deploymentOutput.properties.outputs.StaticWebSiteName.value
