@@ -93,15 +93,22 @@ try{
     
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
             $MultiTenantClientSecretInfo = az ad app credential reset --id $MultiTenantAppID --append --display-name $MultiTenantClientSecretName --years $MultiTenantClientSecretDuration --only-show-errors | ConvertFrom-Json
             $MultiTenantClientSecret = $MultiTenantClientSecretInfo.password
             Write-Log -Message "MultiTenantClientSecretInfo value:`n$MultiTenantClientSecretInfo"
+
+            # if it failed to create the service
+            if(!$MultiTenantClientSecretInfo){
+                throw "Azure cli failed due to race condition"
+            }
+
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to create client secret for $MultiTenantAppName $counter times"
             Write-Error $Error[0]
@@ -130,14 +137,21 @@ try{
 
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $MultiTenantAppServicePrincipal = az ad sp create --id $MultiTenantAppID --only-show-errors 2>&1 > $null
+            $MultiTenantAppServicePrincipal = az ad sp create --id $MultiTenantAppID --only-show-errors
             Write-Log -Message "MultiTenantAppServicePrincipal value:`n$MultiTenantAppServicePrincipal"
+
+            # if it failed to create the service
+            if(!$MultiTenantAppServicePrincipal){
+                throw "Azure cli failed due to race condition"
+            }
+
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
@@ -149,14 +163,21 @@ try{
     Write-Log -Message "Granting permissions to the service principal for $MultiTenantAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $MultiTenantAppInfo = az ad app permission grant --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors > $null
-            Write-Log -Message "MultiTenantAppInfo value:`n$MultiTenantAppInfo"
+            $MultiTenantAppPermissionGrantInfo = az ad app permission grant --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors
+            Write-Log -Message "MultiTenantAppPermissionGrantInfo value:`n$MultiTenantAppPermissionGrantInfo"
+
+             # if it failed to create the service
+             if(!$MultiTenantAppPermissionGrantInfo){
+                throw "Azure cli failed due to race condition"
+            }
+
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to grant permissions to the service principal for $MultiTenantAppName $counter times"
             Write-Error $Error[0]
@@ -197,15 +218,22 @@ try{
 
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
             $WebClientInfo = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --only-show-errors) | ConvertFrom-Json
             $WebClientSecret = $WebClientInfo.password
             Write-Log -Message "WebClientInfo value:`n$WebClientInfo"
+
+            # if it failed to create the service
+            if(!$WebClientInfo){
+                throw "Azure cli failed due to race condition"
+            }
+
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to create client secret for $B2cAppName $counter times"
             Write-Error $Error[0]
@@ -226,14 +254,21 @@ try{
 
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $B2cAppServicePrincipalInfo = az ad sp create --id $WebClientID --only-show-errors 2>&1 > $null
+            $B2cAppServicePrincipalInfo = az ad sp create --id $WebClientID --only-show-errors
             Write-Log -Message "B2cAppServicePrincipalInfo value:`n$B2cAppServicePrincipalInfo"
+
+            # if it failed to create the service
+            if(!$B2cAppServicePrincipalInfo){
+                throw "Azure cli failed due to race condition"
+            }
+
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
@@ -245,14 +280,21 @@ try{
     Write-Host "Granting permissions to the service principal for $B2cAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $WebClientPermissionGrantingInfo = az ad app permission grant --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            $WebClientPermissionGrantingInfo = az ad app permission grant --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
             Write-Log -Message "WebClientPermissionGrantingInfo value:`n$WebClientPermissionGrantingInfo"
+
+            # if it failed to create the service
+            if(!$WebClientPermissionGrantingInfo){
+                throw "Azure cli failed due to race condition"
+            }
+
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to grant permissions to the service principal for $B2cAppName $counter times"
             Write-Error $Error[0]
@@ -279,14 +321,19 @@ try{
 
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $IEFServicePrincipalInfo = az ad sp create --id $IEFClientID --only-show-errors 2>&1 > $null
+            $IEFServicePrincipalInfo = az ad sp create --id $IEFClientID --only-show-errors
             Write-Log -Message "IEFServicePrincipalInfo value:`n$IEFServicePrincipalInfo"
+            # if it failed to create the service
+            if(!$IEFServicePrincipalInfo){
+                throw "Azure cli failed due to race condition"
+            }
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
@@ -297,14 +344,20 @@ try{
     Write-Host "Granting permissions to the service principal for $IEFAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $IEFPermissionGrantInfo = az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            $IEFPermissionGrantInfo = az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
             Write-Log -Message "IEFPermissionGrantInfo value:`n$IEFPermissionGrantInfo"
+
+            # if it failed to create the service
+            if(!$IEFPermissionGrantInfo){
+                throw "Azure cli failed due to race condition"
+            }
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to grant permissions to the service principal for $IEFAppName $counter times"
             Write-Error $Error[0]
@@ -359,14 +412,20 @@ try{
 
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $PIEFServicePrincipalInfo = az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1 > $null
+            $PIEFServicePrincipalInfo = az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1
             Write-Log -Message "PIEFServicePrincipalInfo value:`n$PIEFServicePrincipalInfo"
+
+            # if it failed to create the service
+            if(!$IEFPermissiPIEFServicePrincipalInfoonGrantInfo){
+                throw "Azure cli failed due to race condition"
+            }
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to create service principal for $ProxyIEFAppName $counter times"
             Write-Error $Error[0]
@@ -380,14 +439,20 @@ try{
 
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $PIEFPermissionGrantInfo = az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            $PIEFPermissionGrantInfo = az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
             Write-Log -Message "PIEFPermissionGrantInfo value:`n$PIEFPermissionGrantInfo"
+
+            # if it failed to create the service
+            if(!$PIEFPermissionGrantInfo){
+                throw "Azure cli failed due to race condition"
+            }
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to create service principal for $ProxyIEFAppName $counter times"
             Write-Error $Error[0]
@@ -416,15 +481,21 @@ try{
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
     $PermissionClientSecret = ""
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
             $PermissionClientSecretInfo = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --only-show-errors) | ConvertFrom-Json
             $PermissionClientSecret = $PermissionClientSecretInfo.password
             Write-Log -Message "PermissionClientSecretInfo value:`n$PermissionClientSecretInfo"
+
+            # if it failed to create the service
+            if(!$PermissionClientSecretInfo){
+                throw "Azure cli failed due to race condition"
+            }
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to create client secret for $PermissionAppName $counter times"
             Write-Error $Error[0]
@@ -444,14 +515,20 @@ try{
     Write-Log -Message "Creating service principal for $PermissionAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $PermissionClientServicePrincipalInfo = az ad sp create --id $PermissionClientID --only-show-errors 2>&1 > $null
+            $PermissionClientServicePrincipalInfo = az ad sp create --id $PermissionClientID --only-show-errors 2>&1
             Write-Log -Message "PermissionClientServicePrincipalInfo value:`n$PermissionClientServicePrincipalInfo"
+
+            # if it failed to create the service
+            if(!$PermissionClientServicePrincipalInfo){
+                throw "Azure cli failed due to race condition"
+            }
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to create service principal for $PermissionAppName $counter times"
             Write-Error $Error[0]
@@ -464,14 +541,20 @@ try{
     Write-Log -Message "Granting permissions to the service principal for $PermissionAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    while($counter -le 5){
+    while($counter -lt 5){
         try{
             $counter += 1
-            $PermissionClientPermissionGrantInfo = az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            $PermissionClientPermissionGrantInfo = az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
             Write-Log -Message "PermissionClientPermissionGrantInfo value:`n$PermissionClientPermissionGrantInfo"
+
+            # if it failed to create the service
+            if(!$PermissionClientPermissionGrantInfo){
+                throw "Azure cli failed due to race condition"
+            }
             break
         }
         catch{
+            if($counter -eq 5){throw $Error[0]} #if we fail too many times throw the exception to terminate the code 
             Write-Host "Try $($counter+1) out of 6"
             Write-Log -Message "Failed to grant permissions to the service principal for $PermissionAppName $counter times"
             Write-Error $Error[0]
@@ -650,22 +733,20 @@ try{
             break
         }
         catch{
-
-            Write-Log -Message "appInfo: $MultiTenantAppInfo"
-            Write-Log -Message "Error message: $($Error[0].Exception.Message)"
-
-            Write-Host "appInfo: $MultiTenantAppInfo"
-            Write-Host "Error message: $($Error[0].Exception.Message)"
-
-
-            Write-Host ""
-            Write-Error $Error[0]
-            Write-Host ""
-            Write-Color "Red" "Error may be due to admin-consent having not yet been granted; please switch your directory to the b2c tenant ($B2cTenantName) in the Azure portal then copy and paste the yellow link into your browser to manually grant admin-consent then press enter."
-            $PMA_Page = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$PermissionClientID/isMSAApp~/false"
-            Write-Color "Yellow" "$PMA_Page"
-            Write-Host "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this."
-            Read-Host "Press enter after manually granting the admin consent permission and waiting 10 seconds"
+            if(($Error[0].Exception.Message).contains("403")){
+                Write-Color "Red" "403 forbidden error likely due to admin-consent having not yet been granted; please switch your directory to the b2c tenant ($B2cTenantName) in the Azure portal then copy and paste the yellow link into your browser to manually grant admin-consent then press enter."
+                Write-Color "Red" "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this."
+                $PMA_Page = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$PermissionClientID/isMSAApp~/false"
+                Write-Color "Yellow" "$PMA_Page"
+                Read-Host "Press enter after manually granting the admin consent permission and waiting 10 seconds"
+            }
+            else{
+                Write-Host "Unexpected exception occured" -ForegroundColor "Red"
+                Write-Host ""
+                Write-Error $Error[0]
+                Write-Host ""
+                throw $Error[0]
+            }
         }
     }    
 
