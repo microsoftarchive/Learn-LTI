@@ -132,7 +132,7 @@ process {
             -replace '<B2C_APP_CLIENT_ID_IDENTIFIER>', ($REACT_APP_EDNA_B2C_CLIENT_ID) `
             -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'") `
             -replace '<OPENID_B2C_CONFIG_URL_IDENTIFIER>', ($OPENID_B2C_CONFIG_URL_IDENTIFIER) `
-            -replace '<AZURE_B2C_SECRET_STRING>', $b2c_secret) `
+            -replace '<AZURE_B2C_SECRET_STRING>', ($b2c_secret) `
             -replace '<OPENID_AD_CONFIG_URL_IDENTIFIER>', ($OPENID_AD_CONFIG_URL_IDENTIFIER) | Set-Content -path (".\azuredeploy.json")
         }
         #endregion
@@ -402,11 +402,6 @@ process {
         #endregion
 
         #region Build and Publish Client Artifacts
-
-        # if this is in AD mode not b2c, then AUTH_CLIENT_ID is the same as AAD_ClientID
-        if($b2cOrAD -eq "ad"){
-            $REACT_APP_EDNA_AUTH_CLIENT_ID = $appinfo.appId
-        }
 
         . .\Install-Client.ps1
         Write-Title "STEP #11.A - Updating client's .env.production file"
