@@ -96,11 +96,13 @@ process {
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #0: Running the B2C Setup Script"
             # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
-            $results = & ".\B2CDeployment.ps1" # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
-
+            Stop-Transcript
+            $results = (& ".\B2CDeployment.ps1" $ExecutionStartTime) # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
+            Start-Transcript -Path $TranscriptFile
             if($results[-1] -eq -1){
                 throw "B2CDeployment.ps1 failed"
             }
+            Write-Log -Message "Returned from the B2C setup script, continuing with LTI deployment"
 
             # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
             $AD_Tenant_Name = $results[-6] # tenant name of the AD server
