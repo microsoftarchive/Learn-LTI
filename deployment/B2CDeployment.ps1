@@ -38,9 +38,6 @@ $LogRoot = Join-Path $ScriptPath "Log"
 
 $LogFile = Join-Path $LogRoot "Log-$ExecutionStartTime.log"
 Set-LogFile -Path $LogFile
-
-$TranscriptFile = Join-Path $LogRoot "Transcript-$ExecutionStartTime.log"
-Start-Transcript -Path $TranscriptFile
 Write-Log -Message "Started the B2C setup script"
 #endregion
 
@@ -121,6 +118,7 @@ try{
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
         }
     }
+    Write-Log -Message "Created secret $MultiTenantClientSecretName ($MultiTenantClientSecret) for $MultiTenantAppName ($MultiTenantAppIDs)"
 
     # grant permissions for the AD app
     Write-Host "Granting permissions to the AD application"
@@ -194,6 +192,7 @@ try{
         }
     }
     $WebClientSecret = $WebClientInfo.password
+    Write-Log -Message "Created secret $WebClientSecretName ($WebClientSecret) for $B2cAppName ($WebClientID)"
     
 
     # set permissions for the web app
@@ -388,6 +387,7 @@ try{
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
         }
     }
+    Write-Log -Message "Created secret $PermissionClientSecretName ($PermissionClientSecret) for $PermissionAppName ($PermissionClientID)"
 
 
     # set permissions for the web app
@@ -888,7 +888,6 @@ try{
 
 
     Write-Log -Message "Succesfully finished the B2C setup script"
-    Stop-Transcript
 
 
     #returning values required by the Deploy.ps1 script
@@ -905,7 +904,6 @@ catch{
 
     $Message = 'Error occurred while executing the B2C setup Script. Please report the bug on Github (along with Error Message & Logs)'
     Write-Log -Message $Message -ErrorRecord $Error[0]
-    Stop-Transcript
     return -1    
 }
 

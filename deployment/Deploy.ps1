@@ -96,9 +96,7 @@ process {
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #0: Running the B2C Setup Script"
             # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
-            Stop-Transcript
             $results = (& ".\B2CDeployment.ps1" $ExecutionStartTime) # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
-            Start-Transcript -Path $TranscriptFile
             if($results[-1] -eq -1){
                 throw "B2CDeployment.ps1 failed"
             }
