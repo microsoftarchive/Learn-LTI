@@ -141,8 +141,7 @@
 				},
 				"globalValidation": {
 					"requireAuthentication": true,
-					"unauthenticatedClientAction": "RedirectToLoginPage",
-					"redirectToProvider": "AzureB2C"
+					"unauthenticatedClientAction": "RedirectToLoginPage"
 				},
 				"identityProviders": {
 					"azureActiveDirectory": {
@@ -233,7 +232,6 @@
             ],
           "properties": {
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
-            "DidDeployWork": "true",
             "PlatformsServiceUrl": "[concat('https://','platforms' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
             "UsersServiceUrl": "[concat('https://','users' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
             "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
@@ -258,7 +256,6 @@
           "properties": {
             "AllowedUsers": "[parameters('userEmailAddress')]",
             "AuthUrl": "[parameters('appRegistrationApiURI')]",
-            "DidDeployWork": "true",
             "ConnectApiBaseUrl": "[concat('https://','connect' , variables('ProjectNameSuffix'),'.azurewebsites.net/api/')]",
             "FUNCTIONS_WORKER_RUNTIME": "[variables('runtimeStack')]",
             "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',concat('platforms' , variables('StorageAccountSuffix') ), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', concat('platforms' , variables('StorageAccountSuffix'))), '2019-06-01').keys[0].value)]",
