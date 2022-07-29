@@ -124,7 +124,7 @@ try{
     # $WebClientSecretName = Read-Host "Please give a name for the client secret to be created"
     $WebClientSecretDuration = 1
     $WebClientInfo = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --only-show-errors) | ConvertFrom-Json
-    $WebClientSecret = $webClientInfo.password
+    $WebClientSecret = $WebClientInfo.password
     
 
     # set permissions for the web app
@@ -189,7 +189,7 @@ try{
     Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
     "$ProxyIEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
-    Write-Host "Granting permissions to the Proxy IEF application"
+    Write-Host "Granting permissions to the Proxy IEF application at $ProxyIEFClientID"
     az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1 > $null
     az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
     az ad app permission add --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
@@ -218,7 +218,7 @@ try{
     az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
-    az ad app permission admin-consent --id $PermissionClientID --only-show-errors
+    #Will grant admin permissions later to avoid race condition
     #endregion
 
     #region "B2C STEP 7: restrict access via whitelisting tenants"
@@ -359,6 +359,9 @@ try{
         try{
             #region "Getting the token to be used in the HTML REQUESTS"
             # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
+
+            #grant admin permissions now, the apis should be created
+            az ad app permission admin-consent --id $PermissionClientID --only-show-errors
 
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
             $headers.Add("Content-Type", "application/x-www-form-urlencoded")
