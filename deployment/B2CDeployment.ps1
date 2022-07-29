@@ -253,6 +253,7 @@ try{
         }
     }
     Write-Log -Message "Granting permissions to the service principal for $IEFAppName"
+    Write-Host "Granting permissions to the service principal for $IEFAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
     while($counter -le 5){
