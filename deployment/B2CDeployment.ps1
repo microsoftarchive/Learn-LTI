@@ -333,6 +333,7 @@ try{
         }
     }
 
+    Write-Host "Granting permissions to the service principal for $ProxyIEFAppName"
     Write-Log -Message "Granting permissions to the service principal for $ProxyIEFAppName"
 
     #defensive programming around race condition between app creation and secret added to the app
@@ -394,6 +395,7 @@ try{
     $keysetRWPermission = "4a771c9a-1cf2-4609-b88e-3d3e02d539cd=Role"
     $policyRWPermission = "79a677f7-b79d-40d0-a36a-3e6f8688dd7a=Role"
 
+    Write-Host "Creating service principal for $PermissionAppName"
     Write-Log -Message "Creating service principal for $PermissionAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
@@ -413,7 +415,8 @@ try{
         }
     }
 
-    Write-Log-Message "Granting permissions to the service principal for $PermissionAppName"
+    Write-Host "Granting permissions to the service principal for $PermissionAppName"
+    Write-Log -Message "Granting permissions to the service principal for $PermissionAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
     $PermissionClientSecret = ""
