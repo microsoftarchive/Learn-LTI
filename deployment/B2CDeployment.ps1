@@ -434,7 +434,9 @@ try{
     }
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
-    #Will grant admin permissions later to avoid race condition
+    #Granting admin consent for the needed apis
+    az ad app permission admin-consent --id $PermissionClientID --only-show-errors
+    
     #endregion
 
     #region "B2C STEP 7: restrict access via whitelisting tenants"
@@ -578,9 +580,6 @@ try{
         try{
             #region "Getting the token to be used in the HTML REQUESTS"
             # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
-
-            #Granting admin consent for the needed apis
-            az ad app permission admin-consent --id $PermissionClientID --only-show-errors
 
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
             $headers.Add("Content-Type", "application/x-www-form-urlencoded")
