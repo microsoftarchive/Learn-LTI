@@ -110,7 +110,7 @@ try{
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
         }
     }
-    Write-Log -Message "Created secret $MultiTenantClientSecretName ($MultiTenantClientSecret) for $MultiTenantAppName ($MultiTenantAppIDs)"
+    Write-Log -Message "Created secret $MultiTenantClientSecretName ($MultiTenantClientSecret) for $MultiTenantAppName ($MultiTenantAppID)"
 
     # grant permissions for the AD app
     Write-Host "Granting permissions to the AD application"
@@ -449,7 +449,6 @@ try{
     Write-Log -Message "Creating service principal for $PermissionAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    $PermissionClientSecret = ""
     while($counter -le 5){
         try{
             $counter += 1
@@ -470,7 +469,6 @@ try{
     Write-Log -Message "Granting permissions to the service principal for $PermissionAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    $PermissionClientSecret = ""
     while($counter -le 5){
         try{
             $counter += 1
@@ -488,7 +486,9 @@ try{
     }
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
-    #Will grant admin permissions later to avoid race condition
+    #Granting admin consent for the needed apis
+    az ad app permission admin-consent --id $PermissionClientID --only-show-errors
+    
     #endregion
 
     #region "B2C STEP 7: restrict access via whitelisting tenants"
@@ -632,9 +632,6 @@ try{
         try{
             #region "Getting the token to be used in the HTML REQUESTS"
             # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
-
-            #Granting admin consent for the needed apis
-            az ad app permission admin-consent --id $PermissionClientID --only-show-errors
 
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
             $headers.Add("Content-Type", "application/x-www-form-urlencoded")
