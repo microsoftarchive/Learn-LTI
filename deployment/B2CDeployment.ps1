@@ -81,7 +81,6 @@ try{
     }"
     Out-File -FilePath "manifest.json" -InputObject $ADAppManifest
     $MultiTenantAppID = (az ad app create --display-name $MultiTenantAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com/oauth2/authresp --optional-claims "@manifest.json" --query appId --output tsv --only-show-errors)
-    Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
     "$MultiTenantAppID,$ADTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
     Write-Log -Message "Created MultiTenant app with id $MultiTenantAppID in $ADTenantName"
 
@@ -97,7 +96,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $MultiTenantClientSecretInfo = az ad app credential reset --id $MultiTenantAppID --append --display-name $MultiTenantClientSecretName --years $MultiTenantClientSecretDuration --only-show-errors | ConvertFrom-Json
             $MultiTenantClientSecret = $MultiTenantClientSecretInfo.password
             Write-Log -Message "MultiTenantClientSecretInfo value:`n$MultiTenantClientSecretInfo"
@@ -108,6 +106,7 @@ try{
             Write-Log -Message "Failed to create client secret for $MultiTenantAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
     Write-Log -Message "Created secret $MultiTenantClientSecretName ($MultiTenantClientSecret) for $MultiTenantAppName ($MultiTenantAppID)"
@@ -134,7 +133,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $MultiTenantAppServicePrincipal = az ad sp create --id $MultiTenantAppID --only-show-errors 2>&1 > $null
             Write-Log -Message "MultiTenantAppServicePrincipal value:`n$MultiTenantAppServicePrincipal"
             break
@@ -143,6 +141,7 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
 
@@ -153,7 +152,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $MultiTenantAppInfo = az ad app permission grant --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors > $null
             Write-Log -Message "MultiTenantAppInfo value:`n$MultiTenantAppInfo"
             break
@@ -163,6 +161,7 @@ try{
             Write-Log -Message "Failed to grant permissions to the service principal for $MultiTenantAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
     az ad app permission add --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --api-permissions $emailPermission $profilePermission --only-show-errors
@@ -182,7 +181,6 @@ try{
     Write-Title "B2C STEP 3: Creating the B2C Web application"
     # $B2cAppName = Read-Host "Please give a name for the web application to be created"
     $appinfo = (az ad app create --display-name $B2cAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://jwt.ms --enable-access-token-issuance true --enable-id-token-issuance true --only-show-errors) | ConvertFrom-Json
-    Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
     $WebClientID = $appinfo.appId
     $ObjectId = $appinfo.id
     Write-Log -Message "Created web app with id $WebClientID in $B2cTenantName"
@@ -202,8 +200,8 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $WebClientInfo = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --only-show-errors) | ConvertFrom-Json
+            $WebClientSecret = $WebClientInfo.password
             Write-Log -Message "WebClientInfo value:`n$WebClientInfo"
             break
         }
@@ -212,9 +210,9 @@ try{
             Write-Log -Message "Failed to create client secret for $B2cAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
-    $WebClientSecret = $WebClientInfo.password
     Write-Log -Message "Created secret $WebClientSecretName ($WebClientSecret) for $B2cAppName ($WebClientID)"
     
 
@@ -231,7 +229,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $B2cAppServicePrincipalInfo = az ad sp create --id $WebClientID --only-show-errors 2>&1 > $null
             Write-Log -Message "B2cAppServicePrincipalInfo value:`n$B2cAppServicePrincipalInfo"
             break
@@ -240,6 +237,7 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
 
@@ -250,7 +248,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $WebClientPermissionGrantingInfo = az ad app permission grant --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
             Write-Log -Message "WebClientPermissionGrantingInfo value:`n$WebClientPermissionGrantingInfo"
             break
@@ -260,6 +257,7 @@ try{
             Write-Log -Message "Failed to grant permissions to the service principal for $B2cAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
     az ad app permission add --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
@@ -272,7 +270,6 @@ try{
     $IEFAppInfo = (az ad app create --display-name $IEFAppName --sign-in-audience AzureADMyOrg --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com --only-show-errors) | ConvertFrom-Json
     $IEFClientID = $IEFAppInfo.appId
     Write-Log -Message "Created IEF app with id $IEFClientID in $B2cTenantName"
-    Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
     "$IEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 
@@ -285,7 +282,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $IEFServicePrincipalInfo = az ad sp create --id $IEFClientID --only-show-errors 2>&1 > $null
             Write-Log -Message "IEFServicePrincipalInfo value:`n$IEFServicePrincipalInfo"
             break
@@ -294,6 +290,7 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
     Write-Log -Message "Granting permissions to the service principal for $IEFAppName"
@@ -303,7 +300,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $IEFPermissionGrantInfo = az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
             Write-Log -Message "IEFPermissionGrantInfo value:`n$IEFPermissionGrantInfo"
             break
@@ -313,6 +309,7 @@ try{
             Write-Log -Message "Failed to grant permissions to the service principal for $IEFAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
     az ad app permission add --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
@@ -355,7 +352,6 @@ try{
     $ProxyIEFAppInfo = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --only-show-errors) | ConvertFrom-Json
     $ProxyIEFClientID = $ProxyIEFAppInfo.appId
     Write-Log -Message "Created Proxy IEF app with id $ProxyIEFClientID in $B2cTenantName"
-    Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
     "$ProxyIEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
     Write-Host "Granting permissions to the Proxy IEF application"
@@ -366,7 +362,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $PIEFServicePrincipalInfo = az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1 > $null
             Write-Log -Message "PIEFServicePrincipalInfo value:`n$PIEFServicePrincipalInfo"
             break
@@ -376,6 +371,7 @@ try{
             Write-Log -Message "Failed to create service principal for $ProxyIEFAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
 
@@ -387,7 +383,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $PIEFPermissionGrantInfo = az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
             Write-Log -Message "PIEFPermissionGrantInfo value:`n$PIEFPermissionGrantInfo"
             break
@@ -397,6 +392,7 @@ try{
             Write-Log -Message "Failed to create service principal for $ProxyIEFAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
     az ad app permission add --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
@@ -409,7 +405,6 @@ try{
     # $PermissionAppName = Read-Host "Please give a name for the permission management application to be created"
     $PermissionClientID = (az ad app create --display-name $PermissionAppName --sign-in-audience AzureADMyOrg --query appId --output tsv --only-show-errors)
     Write-Log -Message "Created Permission Management app with id $PermissionClientID in $B2cTenantName"
-    Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
     "$PermissionClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
     # create client secret
@@ -424,8 +419,7 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            $PermissionClientSecretInfo = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --only-show-errors)
+            $PermissionClientSecretInfo = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --only-show-errors) | ConvertFrom-Json
             $PermissionClientSecret = $PermissionClientSecretInfo.password
             Write-Log -Message "PermissionClientSecretInfo value:`n$PermissionClientSecretInfo"
             break
@@ -435,6 +429,7 @@ try{
             Write-Log -Message "Failed to create client secret for $PermissionAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
     Write-Log -Message "Created secret $PermissionClientSecretName ($PermissionClientSecret) for $PermissionAppName ($PermissionClientID)"
@@ -452,7 +447,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $PermissionClientServicePrincipalInfo = az ad sp create --id $PermissionClientID --only-show-errors 2>&1 > $null
             Write-Log -Message "PermissionClientServicePrincipalInfo value:`n$PermissionClientServicePrincipalInfo"
             break
@@ -462,6 +456,7 @@ try{
             Write-Log -Message "Failed to create service principal for $PermissionAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
 
@@ -472,7 +467,6 @@ try{
     while($counter -le 5){
         try{
             $counter += 1
-            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $PermissionClientPermissionGrantInfo = az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
             Write-Log -Message "PermissionClientPermissionGrantInfo value:`n$PermissionClientPermissionGrantInfo"
             break
@@ -482,6 +476,7 @@ try{
             Write-Log -Message "Failed to grant permissions to the service principal for $PermissionAppName $counter times"
             Write-Error $Error[0]
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
+            Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
         }
     }
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
@@ -636,8 +631,10 @@ try{
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
             $headers.Add("Content-Type", "application/x-www-form-urlencoded")
 
+            Write-Log -Message "body = client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
             $body = "client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
 
+            Write-Log -Message "http request url = https://login.microsoftonline.com/$B2cTenantName.onmicrosoft.com/oauth2/v2.0/token"
             $response = Invoke-RestMethod "https://login.microsoftonline.com/$B2cTenantName.onmicrosoft.com/oauth2/v2.0/token" -Method 'POST' -Headers $headers -Body $body
             $access_token = $response.access_token
             $access_token = "Bearer " + $access_token
@@ -653,6 +650,14 @@ try{
             break
         }
         catch{
+
+            Write-Log -Message "appInfo: $MultiTenantAppInfo"
+            Write-Log -Message "Error message: $($Error[0].Exception.Message)"
+
+            Write-Host "appInfo: $MultiTenantAppInfo"
+            Write-Host "Error message: $($Error[0].Exception.Message)"
+
+
             Write-Host ""
             Write-Error $Error[0]
             Write-Host ""
