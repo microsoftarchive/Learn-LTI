@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad15_MSLearnLTI",
-    [string]$AppName = "DM_ad15_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "ALLAD_test1_MSLearnLTI",
+    [string]$AppName = "ALLAD_test1_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null
 )
@@ -70,11 +70,11 @@ process {
     #region B2c if needed
     Write-Title "Optional B2C cleanup"
     $b2ccleanup = "none"
-    while($b2ccleanup -ne "yes" -and $b2ccleanup -ne "no") {
-        $b2ccleanup = Read-Host "Would you like to to cleanup a B2C tenant? (yes/no)"
+    while($b2ccleanup -ne "y" -and $b2ccleanup -ne "n") {
+        $b2ccleanup = Read-Host "Would you like to to cleanup a B2C tenant? (y/n)"
     }
     
-    if($b2ccleanup -eq "yes")
+    if($b2ccleanup -eq "y")
     {
         Write-Title "Step #5 - Running B2C Cleanup Script"
         & ".\B2CCleanup.ps1"

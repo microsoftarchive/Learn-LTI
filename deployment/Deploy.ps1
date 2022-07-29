@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad15_MSLearnLTI",
-    [string]$AppName = "DM_ad15_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "ALLAD_test1_MSLearnLTI",
+    [string]$AppName = "ALLAD_test1_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -125,6 +125,10 @@ process {
             Write-Title "B2C Step #0: Running the B2C Setup Script"
             # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
             $results = & ".\B2CDeployment.ps1" # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
+
+            if($results[-1] -eq -1){
+                throw "B2CDeployment.ps1 failed"
+            }
 
             # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
