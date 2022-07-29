@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "ALLAD_test1_MSLearnLTI",
-    [string]$AppName = "ALLAD_test1_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "AllB2C_test2_MSLearnLTI",
+    [string]$AppName = "AllB2C_test2_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -70,37 +70,6 @@ process {
         }
         #endregion
 
-
-        
-        #region "formatting a unique identifier to ensure we create a new keyvault for each run"
-        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
-        #if its b2c load the b2c azuredeploy template
-        if($b2cOrAD -eq "b2c"){
-            ((Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
-            
-            #Update's prerequsites
-
-            $b2c_tenant_name = "ltimoodleb2c" 
-            $policy_name = "b2c_1a_signup_signin" 
-            
-            #Updating function apps's settings
-
-            $B2C_APP_CLIENT_ID_IDENTIFIER = "0cd1d1d6-a7aa-41e2-b569-1ca211147973" # TODO remove hardcode 
-            $AD_APP_CLIENT_ID_IDENTIFIER = "cb508fc8-6a5f-49b1-b688-dac065ba59e4" # TODO remove hardcode
-            $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://"+$b2c_tenant_name+".b2clogin.com/ltimoodleb2c.onmicrosoft.com/"+$policy_name+"/v2.0/.well-known/openid-configuration" # TODO remove hardcode
-            $OPENDID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/uclmsclearnlti.onmicrosoft.com/v2.0/.well-known/openid-configuration" # TODO remove hardcode
-
-            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '<B2C_APP_CLIENT_ID_IDENTIFIER>', ($B2C_APP_CLIENT_ID_IDENTIFIER))`
-            -replace '<AD_APP_CLIENT_ID_IDENTIFIER>', ($AD_APP_CLIENT_ID_IDENTIFIER)`
-            -replace '<OPENID_B2C_CONFIG_URL_IDENTIFIER>', ($OPENID_B2C_CONFIG_URL_IDENTIFIER)`
-            -replace '<OPENDID_AD_CONFIG_URL_IDENTIFIER>', ($OPENDID_AD_CONFIG_URL_IDENTIFIER) |  Set-Content -path (".\azuredeploy.json")
-
-        }
-        #else its AD load the AD azuredeploy template
-        else{
-            ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
-        }
-        #endregion
         #region Setup Logging
         . .\Write-Log.ps1
         $ScriptPath = split-path -parent $MyInvocation.MyCommand.Definition
@@ -114,6 +83,8 @@ process {
         Start-Transcript -Path $TranscriptFile;
         #endregion
 
+        #formatting a unique identifier to ensure we create a new keyvault for each run
+        $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
 
         #region "B2C STEP 1: Calling B2CDeployment to set up the b2c script and retrieving the returned values to be used later on"
         $REACT_APP_EDNA_B2C_CLIENT_ID = "'NA'"
@@ -121,6 +92,7 @@ process {
         $b2c_secret = "'NA'"
         $REACT_APP_EDNA_B2C_TENANT = "'NA'"
         $B2C_ObjectID = "'NA'"
+        $b2c_tenant_name = "'NA'"
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #0: Running the B2C Setup Script"
             # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
@@ -131,13 +103,40 @@ process {
             }
 
             # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
+            $AD_Tenant_Name = $results[-6] # tenant name of the AD server
+            $b2c_tenant_name = $results[-5] #b2c tenant name
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
             $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-4] #webclient ID
             $b2c_secret = $results[-3] #webclient secret
             $REACT_APP_EDNA_B2C_TENANT = $results[-2] #b2c tenant name
             $B2C_ObjectID = $results[-1] # b2c webapp id that needs the SPA uri
+
+            #update b2c deploy template 
+            $policy_name = "b2c_1a_signin" 
+            
+            #Updating function apps's settings
+            ((Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+            
+            #$B2C_APP_CLIENT_ID_IDENTIFIER = "0cd1d1d6-a7aa-41e2-b569-1ca211147973" # TODO remove hardcode 
+            #$AD_APP_CLIENT_ID_IDENTIFIER = "cb508fc8-6a5f-49b1-b688-dac065ba59e4" # TODO remove hardcode
+            $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://${b2c_tenant_name}.b2clogin.com/${b2c_tenant_name}.onmicrosoft.com/${policy_name}/v2.0/.well-known/openid-configuration"
+            $OPENID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/${AD_Tenant_Name}.onmicrosoft.com/v2.0/.well-known/openid-configuration"
+            
+            Write-Title $OPENID_B2C_CONFIG_URL_IDENTIFIER
+            Write-Title  $OPENID_AD_CONFIG_URL_IDENTIFIER
+
+            (Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) `
+            -replace '<B2C_APP_CLIENT_ID_IDENTIFIER>', ($REACT_APP_EDNA_B2C_CLIENT_ID) `
+            -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'") `
+            -replace '<OPENID_B2C_CONFIG_URL_IDENTIFIER>', ($OPENID_B2C_CONFIG_URL_IDENTIFIER) `
+            -replace '<OPENID_AD_CONFIG_URL_IDENTIFIER>', ($OPENID_AD_CONFIG_URL_IDENTIFIER) | Set-Content -path (".\azuredeploy.json")
         }
         #endregion
+        
+        #else its AD load the AD azuredeploy template
+        else{
+            ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+        }
         
 
         #region Login to Azure CLI        

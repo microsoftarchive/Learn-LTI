@@ -105,13 +105,18 @@ try{
     $WebClientID = $appinfo.appId
     $ObjectId = $appinfo.id
 
+
+
+
     "$WebClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
     # create client secret
-    Write-Host "Creating the client secret for $B2cAppName"
+    Write-Host "Creating the client secret for $B2cAppName with id $WebClientID"
     # $WebClientSecretName = Read-Host "Please give a name for the client secret to be created"
     $WebClientSecretDuration = 1
-    $WebClientSecret = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --query password --output tsv --only-show-errors)
+    $WebClientInfo = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --only-show-errors) | ConvertFrom-Json
+    $WebClientSecret = $webClientInfo.password
+    
 
     # set permissions for the web app
     Write-Host "Granting permissions to the B2C Web application"
@@ -126,15 +131,18 @@ try{
     #region "B2C STEP 4: Create IdentityExperienceFramework app"
     Write-Title "B2C STEP 4: Creating the Identity Experience Framework application"
     $IEFAppName = "IdentityExperienceFramework"
-    $IEFClientID = (az ad app create --display-name $IEFAppName --sign-in-audience AzureADMyOrg --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com --query appId --output tsv --only-show-errors)
+    $IEFAppInfo = (az ad app create --display-name $IEFAppName --sign-in-audience AzureADMyOrg --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com --only-show-errors) | ConvertFrom-Json
+    $IEFClientID = $IEFAppInfo.appId
     Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
     "$IEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
+
 
     # set permissions for the IEF app
     Write-Host "Granting permissions to the IEF application"
     az ad sp create --id $IEFClientID --only-show-errors 2>&1 > $null
     az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
     az ad app permission add --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
+
 
     # expose the user_impersonation API
     Write-Host "Exposing the user_impersonation API"
@@ -167,7 +175,8 @@ try{
     #region "B2C STEP 5: Create ProxyIEF app"
     Write-Title "B2C STEP 5: Creating the Proxy Identity Experience Framework application"
     $ProxyIEFAppName = "ProxyIdentityExperienceFramework"
-    $ProxyIEFClientID = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --query appId --output tsv --only-show-errors)
+    $ProxyIEFAppInfo = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --only-show-errors) | ConvertFrom-Json
+    $ProxyIEFClientID = $ProxyIEFAppInfo.appId
     Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
     "$ProxyIEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
@@ -647,7 +656,7 @@ try{
 
 
     #returning values required by the Deploy.ps1 script
-    return $WebClientID, $WebClientSecret, $B2cTenantName, $ObjectId
+    return $ADTenantName, $B2cTenantName, $WebClientID, $WebClientSecret, $B2cTenantName, $ObjectId
 }
 catch{
     if(!$PermissionClientSecret){
@@ -657,6 +666,6 @@ catch{
         Write-Color "green" "Client secret for $PermissionAppName`: $PermissionClientSecret"
         Read-Host "Press enter when ready to continue after recording the client secret"
     }
-
     return -1    
 }
+
