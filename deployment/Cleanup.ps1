@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "ALLAD_test1_MS-Learn-Lti-Tool-App",
-    [string]$AppName = "ALLAD_test1_MSLearnLTI",
+    [string]$ResourceGroupName = "ALLAD_test2_MS-Learn-Lti-Tool-App",
+    [string]$AppName = "ALLAD_test2_MSLearnLTI",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null
 )

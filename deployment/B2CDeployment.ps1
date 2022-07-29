@@ -109,7 +109,9 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            $MultiTenantClientSecret = (az ad app credential reset --id $MultiTenantAppID --append --display-name $MultiTenantClientSecretName --years $MultiTenantClientSecretDuration --query password --output tsv --only-show-errors)
+            $MultiTenantClientSecretInfo = az ad app credential reset --id $MultiTenantAppID --append --display-name $MultiTenantClientSecretName --years $MultiTenantClientSecretDuration --only-show-errors | ConvertFrom-Json
+            $MultiTenantClientSecret = $MultiTenantClientSecretInfo.password
+            Write-Log -Message "MultiTenantClientSecretInfo value:`n$MultiTenantClientSecretInfo"
             break
         }
         catch{
@@ -134,7 +136,8 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            az ad app permission grant --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors > $null
+            $MultiTenantAppInfo = az ad app permission grant --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors > $null
+            Write-Log -Message "MultiTenantAppInfo value:`n$MultiTenantAppInfo"
             break
         }
         catch{
@@ -183,6 +186,7 @@ try{
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
             $WebClientInfo = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --only-show-errors) | ConvertFrom-Json
+            Write-Log -Message "WebClientInfo value:`n$WebClientInfo"
             break
         }
         catch{
@@ -209,7 +213,8 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            az ad app permission grant --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            $WebClientPermissionGrantingInfo = az ad app permission grant --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            Write-Log -Message "WebClientPermissionGrantingInfo value:`n$WebClientPermissionGrantingInfo"
             break
         }
         catch{
@@ -243,7 +248,8 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            az ad sp create --id $IEFClientID --only-show-errors 2>&1 > $null
+            $IEFServicePrincipalInfo = az ad sp create --id $IEFClientID --only-show-errors 2>&1 > $null
+            Write-Log -Message "IEFServicePrincipalInfo value:`n$IEFServicePrincipalInfo"
             break
         }
         catch{
@@ -260,7 +266,8 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            $IEFPermissionGrantInfo = az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            Write-Log -Message "IEFPermissionGrantInfo value:`n$IEFPermissionGrantInfo"
             break
         }
         catch{
@@ -322,7 +329,8 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1 > $null
+            $PIEFServicePrincipalInfo = az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1 > $null
+            Write-Log -Message "PIEFServicePrincipalInfo value:`n$PIEFServicePrincipalInfo"
             break
         }
         catch{
@@ -342,7 +350,8 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            $PIEFPermissionGrantInfo = az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            Write-Log -Message "PIEFPermissionGrantInfo value:`n$PIEFPermissionGrantInfo"
             break
         }
         catch{
@@ -378,7 +387,9 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            $PermissionClientSecret = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --query password --output tsv --only-show-errors)
+            $PermissionClientSecretInfo = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --only-show-errors)
+            $PermissionClientSecret = $PermissionClientSecretInfo.password
+            Write-Log -Message "PermissionClientSecretInfo value:`n$PermissionClientSecretInfo"
             break
         }
         catch{
@@ -405,7 +416,8 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            az ad sp create --id $PermissionClientID --only-show-errors 2>&1 > $null
+            $PermissionClientServicePrincipalInfo = az ad sp create --id $PermissionClientID --only-show-errors 2>&1 > $null
+            Write-Log -Message "PermissionClientServicePrincipalInfo value:`n$PermissionClientServicePrincipalInfo"
             break
         }
         catch{
@@ -425,7 +437,8 @@ try{
             Write-Host "Try $($counter+1) out of 6"
             $counter += 1
             Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
-            az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            $PermissionClientPermissionGrantInfo = az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
+            Write-Log -Message "PermissionClientPermissionGrantInfo value:`n$PermissionClientPermissionGrantInfo"
             break
         }
         catch{
