@@ -360,6 +360,9 @@ try{
             #region "Getting the token to be used in the HTML REQUESTS"
             # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
 
+            #Granting admin consent for the needed apis
+            az ad app permission admin-consent --id $PermissionClientID --only-show-errors
+
             $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
             $headers.Add("Content-Type", "application/x-www-form-urlencoded")
 
@@ -589,6 +592,8 @@ try{
 
         Write-Host "Successfully uploaded the FacebookSecret key"
     }
+    #endregion
+    #endregion
     #endregion
     
     #region "B2C STEP 12: uploading the custom policies to the b2c tenant"
