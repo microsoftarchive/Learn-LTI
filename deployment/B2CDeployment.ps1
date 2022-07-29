@@ -52,7 +52,8 @@ try{
 
     #region "B2C STEP 1: Create Active Directory application"
     $B2cTenantName = Read-Host "Please enter your B2C tenant name"
-    $ADTenantName = Read-Host "Please enter your AD tenant name"
+    $ADTenantId= (az account show | ConvertFrom-Json | Select -ExpandProperty "tenantId")
+    $ADTenantName = (Get-AzTenant -TenantId $ADTenantId | Select -ExpandProperty "Domains").Split(".")[0]
 
     Write-Title "B2C STEP 1: Create AD application"
     Write-Host "Please login to $ADTenantName via the pop-up window that has launched in your browser"
