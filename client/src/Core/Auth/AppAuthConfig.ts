@@ -12,7 +12,7 @@ import { b2cPolicies } from './policies';
 export let request;
 let authority;
 // Swap out needed B2C vs AD options
-if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NULL') {
+if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NA') {
   console.log(process.env.REACT_APP_EDNA_B2C_TENANT!); // TODO, remove
   console.log('in B2C mode');
   request = {
