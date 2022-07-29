@@ -898,8 +898,9 @@ catch{
         Write-Color "green" "Client secret for $PermissionAppName`: $PermissionClientSecret"
         Read-Host "Press enter when ready to continue after recording the client secret"
     }
-
-    Write-Log -Message "Failed the B2C setup script"
+    $Error[0]
+    Write-Log -Message "Failed the B2C setup script, error trace below"
+    Write-Log -Message $Error
     Stop-Transcript
 
     return -1    
