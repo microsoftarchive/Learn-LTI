@@ -1,5 +1,14 @@
 $ErrorActionPreference = "Stop"
 
+#region "values determining the names of the resources"
+$MultiTenantAppName = "b2c_AD_app"
+$MultiTenantClientSecretName = "b2c_AD_app_secret"
+$B2cAppName = "b2c_AD_webapp"
+$WebClientSecretName = "b2c_AD_webapp_secret"
+$PermissionAppName = "b2c_AD_PMA"
+$PermissionClientSecretName = "b2c_AD_PMA_secret"
+#endregion
+
 #region "Helper Functions"
 #function for making clear and distinct titles
 function Write-Title([string]$Title) {
@@ -31,15 +40,6 @@ if (Test-Path $AppInfoCSVPath -PathType Leaf) {
     New-Item $AppInfoCSVPath > $null
 }
 #endregeion
-
-#region "values determining the names of the resources"
-$MultiTenantAppName = "b2c_AD_app"
-$MultiTenantClientSecretName = "b2c_AD_app_secret"
-$B2cAppName = "b2c_AD_webapp"
-$WebClientSecretName = "b2c_AD_webapp_secret"
-$PermissionAppName = "b2c_AD_PMA"
-$PermissionClientSecretName = "b2c_AD_PMA_secret"
-#endregion
 
 #region "B2C STEP 1: Create Active Directory application"
 $B2cTenantName = Read-Host "Please enter your B2C tenant name"
@@ -215,7 +215,7 @@ az ad sp create --id $PermissionClientID --only-show-errors 2>&1 > $null
 az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
 az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
-az ad app permission admin-consent --id $PermissionClientID --only-show-errors
+#admin consent added later to avoid race condition
 #endregion
 
 #region "B2C STEP 7: restrict access via whitelisting tenants"
@@ -356,6 +356,9 @@ while(1){
     try{
         #region "Getting the token to be used in the HTML REQUESTS"
         # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
+        
+        #Granting admin consent for the needed apis
+        az ad app permission admin-consent --id $PermissionClientID --only-show-errors
 
         $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
         $headers.Add("Content-Type", "application/x-www-form-urlencoded")
