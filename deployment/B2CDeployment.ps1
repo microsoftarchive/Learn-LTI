@@ -118,7 +118,7 @@ try{
             Write-Color "yellow" "Failed due to potential race condition, retrying in 10 seconds"
         }
     }
-    Write-Log -Message "Created secret $MultiTenantClientSecretName ($MultiTenantClientSecret) for $MultiTenantAppName ($MultiTenantAppIDs)"
+    Write-Log -Message "Created secret $MultiTenantClientSecretName ($MultiTenantClientSecret) for $MultiTenantAppName ($MultiTenantAppID)"
 
     # grant permissions for the AD app
     Write-Host "Granting permissions to the AD application"
@@ -399,7 +399,6 @@ try{
     Write-Log -Message "Creating service principal for $PermissionAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    $PermissionClientSecret = ""
     while($counter -le 5){
         try{
             Write-Host "Try $($counter+1) out of 6"
@@ -419,7 +418,6 @@ try{
     Write-Log -Message "Granting permissions to the service principal for $PermissionAppName"
     #defensive programming around race condition between app creation and secret added to the app
     $counter = 0
-    $PermissionClientSecret = ""
     while($counter -le 5){
         try{
             Write-Host "Try $($counter+1) out of 6"
