@@ -112,10 +112,11 @@ $ObjectId = $appinfo.id
 "$WebClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # create client secret
-Write-Host "Creating the client secret for $B2cAppName"
+Write-Host "Creating the client secret for $B2cAppName with id $WebClientID"
 # $WebClientSecretName = Read-Host "Please give a name for the client secret to be created"
 $WebClientSecretDuration = 1
-$WebClientSecret = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --query password --output tsv --only-show-errors)
+$WebClientInfo = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --only-show-errors) | ConvertFrom-Json
+$WebClientSecret = $webClientInfo.password
 Write-Color "green" "Client ID for $B2cAppName`: $WebClientID"
 Write-Color "green" "Please take a moment to make a note of and protect the following client secret; as you will not be able to access it again."
 Write-Color "green" "Client secret for $B2cAppName`: $WebClientSecret"
@@ -134,12 +135,13 @@ az ad app permission add --id $WebClientID --api 00000003-0000-0000-c000-0000000
 #region "B2C STEP 4: Create IdentityExperienceFramework app"
 Write-Title "B2C STEP 4: Creating the Identity Experience Framework application"
 $IEFAppName = "IdentityExperienceFramework"
-$IEFClientID = (az ad app create --display-name $IEFAppName --sign-in-audience AzureADMyOrg --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com --query appId --output tsv --only-show-errors)
+$IEFAppInfo = (az ad app create --display-name $IEFAppName --sign-in-audience AzureADMyOrg --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com --only-show-errors) | ConvertFrom-Json
+$IEFClientID = $IEFAppInfo.appId
 Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
 "$IEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
 # set permissions for the IEF app
-Write-Host "Granting permissions to the IEF application"
+Write-Host "Granting permissions to the IEF application at id $IEFClientID"
 az ad sp create --id $IEFClientID --only-show-errors 2>&1 > $null
 az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
@@ -147,7 +149,7 @@ az ad app permission add --id $IEFClientID --api 00000003-0000-0000-c000-0000000
 # expose the user_impersonation API
 Write-Host "Exposing the user_impersonation API"
 az ad app update --id $IEFClientID --identifier-uris "https://$B2cTenantName.onmicrosoft.com/$IEFClientID" --only-show-errors
-$IEFAppInfo = (az ad app show --id $IEFClientID --only-show-errors | ConvertFrom-Json)
+$IEFAppInfo = (az ad app show --id $IEFClientID --only-show-errors) | ConvertFrom-Json
 $IEFAppApiInfo = $IEFAppInfo.api
 $IEFScopeGUID = [guid]::NewGuid()
 $UserImpersonationScope = "{
@@ -175,11 +177,12 @@ Remove-Item userImpersonationScope.json
 #region "B2C STEP 5: Create ProxyIEF app"
 Write-Title "B2C STEP 5: Creating the Proxy Identity Experience Framework application"
 $ProxyIEFAppName = "ProxyIdentityExperienceFramework"
-$ProxyIEFClientID = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --query appId --output tsv --only-show-errors)
+$ProxyIEFAppInfo = (az ad app create --display-name $ProxyIEFAppName --sign-in-audience AzureADMyOrg --public-client-redirect-uris myapp://auth --is-fallback-public-client true --only-show-errors) | ConvertFrom-Json
+$ProxyIEFClientID = $ProxyIEFAppInfo.appId
 Start-Sleep 10 # sleeping due to race condition between creating initial resource and adding to it
 "$ProxyIEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
-Write-Host "Granting permissions to the Proxy IEF application"
+Write-Host "Granting permissions to the Proxy IEF application at Id $ProxyIEFClientID"
 az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1 > $null
 az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors > $null
 az ad app permission add --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
@@ -645,4 +648,4 @@ CustomPolicyUpdateOrUpload "B2C_1A_PasswordReset" $customPolicies $access_token
 #endregionWebClientID
 
 #returning values required by the Deploy.ps1 script
-return $WebClientID, $WebClientSecret, $B2cTenantName, $ObjectId
+return $ADTenantName, $B2cTenantName, $WebClientID, $WebClientSecret, $B2cTenantName, $ObjectId

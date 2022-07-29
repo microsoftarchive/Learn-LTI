@@ -46,8 +46,8 @@ $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/p
 Write-Host "Deleting B2C_1A_TrustFrameworkExtensions"
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies/B2C_1A_TrustFrameworkExtensions' -Method 'DELETE' -Headers $headers
 
-Write-Host "Deleting B2C_1A_signup_signin"
-$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies/B2C_1A_signup_signin' -Method 'DELETE' -Headers $headers
+Write-Host "Deleting B2C_1A_signin"
+$response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies/B2C_1A_signin' -Method 'DELETE' -Headers $headers
 
 Write-Host "Deleting B2C_1A_ProfileEdit"
 $response = Invoke-RestMethod 'https://graph.microsoft.com/beta/trustFramework/policies/B2C_1A_ProfileEdit' -Method 'DELETE' -Headers $headers
