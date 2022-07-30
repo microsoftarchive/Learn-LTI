@@ -63,13 +63,6 @@ process {
         Write-Host ''
         Write-Host ''
         #endregion |  Set-Content -path (".\test_text.txt")
-        
-        #region "getting the setup mode for b2c vs ad"
-        $b2cOrAD = "none"
-        while($b2cOrAD -ne "b2c" -and $b2cOrAD -ne "ad") {
-            $b2cOrAD = Read-Host "Would you like to set this up with b2c or AD? (b2c/ad) (b2c recommended as it can be single tenant or multitenant, ad only single tenant [less scalable])"
-        }
-        #endregion
 
         #region Setup Logging
         . .\Write-Log.ps1
@@ -83,11 +76,18 @@ process {
         $TranscriptFile = Join-Path $LogRoot "Transcript-$ExecutionStartTime.log"
         Start-Transcript -Path $TranscriptFile;
         #endregion
-
+    
         $azureVersion = (az version 2>&1 | ConvertFrom-Json)."azure-cli"
-        if ($azureVersion -lt 2.39){
+        if ($azureVersion -lt 2.37){
             throw "Please upgrade to the minimum supported version of cli (2.37)"
         }
+        
+        #region "getting the setup mode for b2c vs ad"
+        $b2cOrAD = "none"
+        while($b2cOrAD -ne "b2c" -and $b2cOrAD -ne "ad") {
+            $b2cOrAD = Read-Host "Would you like to set this up with b2c or AD? (b2c/ad) (b2c recommended as it can be single tenant or multitenant, ad only single tenant [less scalable])"
+        }
+        #endregion
 
         #formatting a unique identifier to ensure we create a new keyvault for each run
         $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
