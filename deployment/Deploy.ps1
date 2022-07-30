@@ -52,11 +52,6 @@ process {
     
     try {
 
-        $azureVersion = (az version 2>&1 | ConvertFrom-Json)."azure-cli"
-        if ($azureVersion -lt 2.37){
-            throw "Please upgrade to the minimum supported version of cli (2.37)"
-        }
-
         #region Show Learn LTI Banner
         Write-Host ''
         Write-Host ' _      ______          _____  _   _            _   _______ _____ '
@@ -88,6 +83,11 @@ process {
         $TranscriptFile = Join-Path $LogRoot "Transcript-$ExecutionStartTime.log"
         Start-Transcript -Path $TranscriptFile;
         #endregion
+
+        $azureVersion = (az version 2>&1 | ConvertFrom-Json)."azure-cli"
+        if ($azureVersion -lt 2.39){
+            throw "Please upgrade to the minimum supported version of cli (2.37)"
+        }
 
         #formatting a unique identifier to ensure we create a new keyvault for each run
         $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
