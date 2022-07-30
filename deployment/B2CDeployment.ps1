@@ -43,6 +43,12 @@ Write-Log -Message "Started the B2C setup script"
 
 
 try{
+
+    $azureVersion = (az version 2>&1 | ConvertFrom-Json)."azure-cli"
+    if ($azureVersion -lt 2.37){
+        throw "Please upgrade to the minimum supported version of cli (2.37)"
+    }
+
     #region "AppInfo CSV setup"
     $AppInfoCSVPath = ".\AppInfo.csv"
     if (Test-Path $AppInfoCSVPath -PathType Leaf) {
