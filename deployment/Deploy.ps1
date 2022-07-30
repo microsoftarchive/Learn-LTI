@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "ALLB2C_test2_MSLearnLti",
-    [string]$AppName = "ALLB2C_test2_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "RB1_all_MSLearnLti",
+    [string]$AppName = "RB1_all_MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -114,7 +114,7 @@ process {
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
             $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-4] #webclient ID
             $b2c_secret = $results[-3] #webclient secret
-            $b2c_secret =  '"'+$b2c_secret+'"' # turning the secret into a form we can store 
+            $b2c_secret =  $b2c_secret # turning the secret into a form we can store 
             $REACT_APP_EDNA_B2C_TENANT = $results[-2] #b2c tenant name
             $B2C_ObjectID = $results[-1] # b2c webapp id that needs the SPA uri
 

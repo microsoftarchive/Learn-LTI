@@ -165,7 +165,7 @@
 					"customOpenIdConnectProviders": {
 						"AzureB2C": {
 							"registration": {
-								"clientId": "0cd1d1d6-a7aa-41e2-b569-1ca211147973",
+								"clientId": "<B2C_APP_CLIENT_ID_IDENTIFIER>",
 								"clientCredential": {
 									"clientSecretSettingName": "AzureB2C_AUTHENTICATION_SECRET"
 								},
