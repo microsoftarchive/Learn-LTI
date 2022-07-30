@@ -109,19 +109,16 @@ try{
     $profilePermission = "14dad69e-099b-42c9-810b-d002981feec1=Scope"
     $emailPermission = "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0=Scope"
     
-
     Write-Host "Creating service principal for $MultiTenantAppName"
     Write-Log -Message "Creating service principal for $MultiTenantAppName"
 
     $MultiTenantAppServicePrincipal = az ad sp create --id $MultiTenantAppID --only-show-errors
     Write-Log -Message "MultiTenantAppServicePrincipal value:`n$MultiTenantAppServicePrincipal"
 
-
     Write-Host "Granting permissions to the service principal for $MultiTenantAppName"
     Write-Log -Message "Granting permissions to the service principal for $MultiTenantAppName"
     $MultiTenantAppPermissionGrantInfo = az ad app permission grant --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors
     Write-Log -Message "MultiTenantAppPermissionGrantInfo value:`n$MultiTenantAppPermissionGrantInfo"
-
     az ad app permission add --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --api-permissions $emailPermission $profilePermission --only-show-errors
 
     Remove-Item manifest.json
@@ -143,8 +140,6 @@ try{
     $ObjectId = $appinfo.id
     Write-Log -Message "Created web app with id $WebClientID in $B2cTenantName"
 
-
-
     "$WebClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
 
     # create client secret
@@ -159,7 +154,6 @@ try{
 
     Write-Log -Message "Created secret $WebClientSecretName ($WebClientSecret) for $B2cAppName ($WebClientID)"
     
-
     # set permissions for the web app
     Write-Host "Granting permissions to the B2C Web application"
     $openidPermission = "37f7f235-527c-4136-accd-4a02d197296e=Scope"
@@ -186,8 +180,7 @@ try{
     $IEFClientID = $IEFAppInfo.appId
     Write-Log -Message "Created IEF app with id $IEFClientID in $B2cTenantName"
     "$IEFClientID,$B2cTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
-
-
+    
     # set permissions for the IEF app
     Write-Host "Granting permissions to the IEF application"
     Write-Log -Message "Creating service principal for $IEFAppName"
@@ -245,7 +238,6 @@ try{
     $PIEFServicePrincipalInfo = az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1
     Write-Log -Message "PIEFServicePrincipalInfo value:`n$PIEFServicePrincipalInfo"
 
-
     Write-Host "Granting permissions to the service principal for $ProxyIEFAppName"
     Write-Log -Message "Granting permissions to the service principal for $ProxyIEFAppName"
 
@@ -269,7 +261,6 @@ try{
     Write-Log -Message "Creating the client secret for $PermissionAppName"
     # $PermissionClientSecretName = Read-Host "Please give a name for the client secret to be created"
     $PermissionClientSecretDuration = 1
-
     
     $PermissionClientSecretInfo = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --only-show-errors) | ConvertFrom-Json
     $PermissionClientSecret = $PermissionClientSecretInfo.password
@@ -290,13 +281,10 @@ try{
     $PermissionClientServicePrincipalInfo = az ad sp create --id $PermissionClientID --only-show-errors 2>&1
     Write-Log -Message "PermissionClientServicePrincipalInfo value:`n$PermissionClientServicePrincipalInfo"
     
-
     Write-Host "Granting permissions to the service principal for $PermissionAppName"
     Write-Log -Message "Granting permissions to the service principal for $PermissionAppName"
-    
     $PermissionClientPermissionGrantInfo = az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
     Write-Log -Message "PermissionClientPermissionGrantInfo value:`n$PermissionClientPermissionGrantInfo"
-
             
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
@@ -316,7 +304,6 @@ try{
     {
         $fileOrInputs = Read-Host "Would you like to either:`n1. import a file with *all* the tenant ID's to be whitelisted`n2. input them 1 by 1 into the console? `n(1/2)"
     }
-
 
     $whitelist = @()
     # Input via a file
@@ -444,6 +431,9 @@ try{
     $keysets = ""
     while(1){
         try{
+            # Grant admin-consent to the PMA app again to avoid race condition
+            az ad app permission admin-consent --id $PermissionClientID --only-show-errors
+            
             #region "Getting the token to be used in the HTML REQUESTS"
             # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
 
