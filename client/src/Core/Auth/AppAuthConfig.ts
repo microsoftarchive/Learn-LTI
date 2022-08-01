@@ -13,14 +13,20 @@ export let request;
 let authority;
 // Swap out needed B2C vs AD options
 if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NA') {
-  console.log(process.env.REACT_APP_EDNA_B2C_TENANT!); // TODO, remove
-  console.log('in B2C mode');
+  console.log('In B2C mode'); // TODO remove in final version
   request = {
-    scopes: ['openid', 'profile', 'https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read']
+    scopes: [
+      'openid',
+      'profile',
+      'https://' +
+        process.env.REACT_APP_EDNA_B2C_TENANT! +
+        '.onmicrosoft.com/' +
+        process.env.REACT_APP_EDNA_B2C_CLIENT_ID +
+        'api/b2c.read'
+    ]
   };
   authority = b2cPolicies.authorities.signIn.authority;
 } else {
-  console.log('in AD mode'); // TODO, remove
   request = {
     scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!]
   };

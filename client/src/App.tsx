@@ -13,7 +13,7 @@ import { MainLayout } from './Core/Components/MainLayout';
 import { GlobalRouter } from './Router/GlobalRouter';
 import { registerIcons, loadTheme } from '@uifabric/styling';
 import { fabricIconsData } from './Assets/Fonts/FabricIconsData';
-import { AppAuthConfig, request } from './Core/Auth/AppAuthConfig';
+import { AppAuthConfig } from './Core/Auth/AppAuthConfig';
 import { initializeIcons } from '@fluentui/react';
 import { appTheme } from './Core/Themes/MainTheme';
 import { PlatformPage } from './Features/Platform/PlatformPage';
@@ -22,12 +22,26 @@ import { MsalAuthenticationTemplate, MsalProvider } from '@azure/msal-react';
 import { AxiosBasicAuthInitializer } from './Core/Auth/AxiosBasicAuthInitializer';
 
 const rootStore: RootStore = new RootStore();
-AppAuthConfig;
 
 function App() {
   registerIcons(fabricIconsData);
   initializeIcons();
   loadTheme(appTheme);
+
+  let request;
+  if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NA') {
+    request = {
+      scopes: [
+        'openid',
+        'profile',
+        'https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read'
+      ]
+    };
+  } else {
+    request = {
+      scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!]
+    };
+  }
 
   return (
     <BrowserRouter>
