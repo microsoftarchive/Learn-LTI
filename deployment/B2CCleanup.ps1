@@ -10,7 +10,7 @@ function Write-Title([string]$Title) {
 
 #region "B2C STEP 1: Getting the token to be used in the HTML REQUESTS"
 # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
-Write-Title "B2C B2C STEP 1: Getting the token to be used in the HTML REQUESTS"
+Write-Title "B2C STEP 1: Getting the token to be used in the HTML REQUESTS"
 
 $B2cTenantName = Read-Host "Please enter your B2C tenant name"
 $PermissionClientID = Read-Host "Please enter the client ID of the permission management application"

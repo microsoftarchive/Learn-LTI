@@ -7,8 +7,8 @@
 
 ## Prerequisites
 To begin, you will need:
-- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
-    * We currently recommend using Microsoft CLI version 2.27. The most recent version is of Azure CLI has deprecated commands in use which will be addressed later. 
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa) versions 2.37+
+    * Requires minimum version of 2.37 due to the script using commands which do not exist in previous versions.
 - [DotNet Core SDK .NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)
 - [Node.js](https://nodejs.org/en/download/)
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
@@ -39,13 +39,30 @@ You have now cloned the repo
 * In the cloned repo, inside the deployment directory **Learn-Lti**, execute the file **run.bat**.
 * run.bat bypasses signing requirements and runs Deploy.ps1 automatically.
 * You should now see the Microsoft Learn LTI Tool script popup.
-![run.start.png](/images/run.start.png)
+![startofdeploy.png](/images/startofdeploy.png)
+
+# Choosing the AD or B2C mode
+
+The script will ask you to choose 'Active Directory',i.e. AD mode or 'Business to Consumer',i.e. B2C mode for authentication between your LTI and LMS.
+
+B2C Mode is recommended due to it being possible to set it up for either single-tenant and multi-tenant access; whilst AD mode is less extensible and only supports single-tenant access.
+
+Type in 'ad' for AD mode of authentication which will direct you towards 'Deploy to Azure Subscription using the script'.
+![admode.png](/images/admode.png)
+
+Type in 'b2c' for B2C mode of authentication.
+![b2cmode.png](/images/b2cmode.png)
+Go to the [B2C setup](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/deployment/B2C_Docs/B2C_Deployment.md) for B2C deployment.
+
 
 # Deploy to Azure Subscription using the script
+
+**NOTE:** if B2C mode is chosen, the B2C setup must be completed before reaching this step.
 
 ## Login to Azure
 
 The script will ask you to login to Azure by navigating to the Azure Login Page on your browser.
+
 
 ## Choose Subscription
 

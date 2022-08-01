@@ -338,14 +338,21 @@ try{
         
         foreach ($wlTenantID in $tenantIDs)
         {
-            #region "HTTP request to get the issuer claim we want to add to the whitelist"
-            $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+            try{
+                # HTTP request to get the issuer claim we want to add to the whitelist
+                $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+                $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
+                $issuer = $response.issuer
             
-            $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
-            $issuer = $response.issuer
-            #endregion
 
             $whitelist += $issuer #adding the issuer for this tenant to the whitelist
+                Write-Host "Tenant with ID $wlTenantID added to the whitelist"
+            }
+            catch{
+                $Message = "$($Error[0].Exception.Message)`nTenant with ID $wlTenantID is not valid; please verify with the tenant Admin the tenants ID then manually add it to the whitelist through the portal."
+                Write-Error $Message
+                Write-Log -Message $Message -ErrorRecord $Error[0]
+            }
         }
     }
 
@@ -353,11 +360,11 @@ try{
     else
     {
         $wlTenantID = "" 
-        while ($wlTenantID -ne "no")
+        while ($wlTenantID -ne "n")
         {
-            $wlTenantID = Read-Host "Please enter the tenant ID you wish to add to the whitelist (or 'no' to stop): "
+            $wlTenantID = Read-Host "Please enter the tenant ID you wish to add to the whitelist (or 'n' to stop)"
 
-            if($wlTenantID -eq "no"){break}
+            if($wlTenantID -eq "n"){break}
             
             try{
                 #region "HTTP request to get the issuer claim we want to add to the whitelist"

@@ -76,7 +76,7 @@ process {
     
     if($b2ccleanup -eq "y")
     {
-        Write-Title "Step #5 - Running B2C Cleanup Script"
+        Write-Title "B2C Step #0 - Running B2C Cleanup Script"
         & ".\B2CCleanup.ps1"
     }
     #endregion
