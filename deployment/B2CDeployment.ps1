@@ -765,7 +765,7 @@ try{
     CustomPolicyUpdateOrUpload "B2C_1A_PasswordReset" $customPolicies $access_token
     #endregionWebClientID
 
-    Write-Title "Important values for the created applications SAVE these"
+    Write-Title "B2C Step 13: Important values for the created applications SAVE these"
     Write-Color "green" "Please take a moment to make a note of the following ID's and protect the following client secret's; as you will not be able to access it again."
     Write-Color "green" "AD Tenant name is $ADTenantName" 
     Write-Color "green" "B2C Tenant name is $B2cTenantName" 

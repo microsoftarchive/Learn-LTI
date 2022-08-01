@@ -51,8 +51,11 @@ This document will explain the steps that contain user interaction and what is r
 | ![Login to B2C Tenant](Images/Deployment/01a_LoginTenant1.png) |
 |---|
 | The launched tab should look similar to the above; please login using it and then switch back to the powershell |
-* After logging in, the script will automatically create and configure the B2C Web App, Permission Management App, Identity Experience Framework App, and Proxy Identify Experience Framework App (steps 3-6 inclusive)
 
+
+## Steps 3-6 automatic setup (app creations on the b2c tenant):
+
+* The script will automatically create and configure the B2C Web App, Permission Management App, Identity Experience Framework App, and Proxy Identify Experience Framework App (steps 3-6 inclusive)
 
 ## Step 7: Creating a whitelist for the tenants we wish to give access to
 * You have 2 choices for how to create the whitelist of tenant id's you wish to give access to:
@@ -90,7 +93,9 @@ This document will explain the steps that contain user interaction and what is r
 
 
 
+## Steps 9 & 10 automatic setup (creating and formatting the custom policies)
 
+* The creation and formatting of the custom policies will now be done automatically without requiring any further input
 
 ## Step 11: Adding Signing and Encryption keys and AADAppSecret for the IEF Applications
 
@@ -100,9 +105,12 @@ This document will explain the steps that contain user interaction and what is r
 * If your console returns a 403 bad request error, please click [here](#403-forbidden-error)
 
 
+## Step 12 automatic setup (uploading the custom policies)
+
+* The custom policies will now be uploaded automatically without requiring further input
 
 
-## IMPORTANT: Secret Values
+## Step 13: IMPORTANT - Store Secret Values
 
 ![Secret Values](Images/Deployment/13_secrets.png)
 * After the script finishes running it will output some important values in green and then pause the script (ID and secret values for the created AD app, Permission Management App, and Web App).
