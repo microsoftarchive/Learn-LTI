@@ -170,6 +170,30 @@ try{
     $WebClientPermissionGrantingInfo = az ad app permission grant --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
     Write-Log -Message "WebClientPermissionGrantingInfo value:`n$WebClientPermissionGrantingInfo"
     az ad app permission add --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
+    
+    # expose the b2c.read api
+    Write-Host "Exposing the b2c.read API"
+    Write-Log -Message "Exposing the b2c.read API"
+    az ad app update --id $WebClientID --identifier-uris "https://$B2cTenantName.onmicrosoft.com/$WebClientID" --only-show-errors
+    $WebAppInfo = (az ad app show --id $WebClientID --only-show-errors | ConvertFrom-Json)
+    $WebAppApiInfo = $WebAppInfo.api
+    $WebScopeGUID = [guid]::NewGuid()
+    $B2CReadScope = "{
+            `"adminConsentDescription`": `"Read B2C Data.`",
+            `"adminConsentDisplayName`": `"Read B2C Data.`",
+            `"id`": `"$WebScopeGUID`",
+            `"isEnabled`": true,
+            `"type`": `"Admin`",
+            `"userConsentDescription`": null,
+            `"userConsentDisplayName`": null,
+            `"value`": `"b2c.read`"
+    }" | ConvertFrom-Json
+    $WebAppApiInfo.oauth2PermissionScopes += $B2CReadScope
+    ConvertTo-Json -InputObject $WebAppApiInfo | Out-File -FilePath "b2cReadScope.json"
+    az ad app update --id $WebClientID --set api=@b2cReadScope.json --only-show-errors
+    az ad app permission grant --id $WebClientID --api $WebClientID --scope "b2c.read" --only-show-errors > $null
+    az ad app permission add --id $WebClientID --api $WebClientID --api-permissions "$WebScopeGUID=Scope" --only-show-errors
+    Remove-Item b2cReadScope.json
     #endregion
 
 
