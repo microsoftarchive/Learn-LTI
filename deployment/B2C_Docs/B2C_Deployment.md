@@ -51,27 +51,7 @@ This document will explain the steps that contain user interaction and what is r
 | ![Login to B2C Tenant](Images/Deployment/01a_LoginTenant1.png) |
 |---|
 | The launched tab should look similar to the above; please login using it and then switch back to the powershell |
-
-
-## Step 2: Logging into the B2C tenant via your browser
-
-* Your powershell will now prompt you that a pop-up window has launched in your browser and directing you to login to your B2C tenant through it
-    * ![login prompt](Images/Deployment/02a_LoginPrompt.png)
-
-| ![Login to AD Tenant](Images/Deployment/01a_LoginTenant1.png) |
-|---|
-| The launched tab should look similar to the above; please login using it and then switch back to the powershell |
-
 * After logging in, the script will automatically create and configure the B2C Web App, Permission Management App, Identity Experience Framework App, and Proxy Identify Experience Framework App (steps 3-6 inclusive)
-
-
-
-
-
-
-
-
-
 
 
 ## Step 7: Creating a whitelist for the tenants we wish to give access to
