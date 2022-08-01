@@ -1,9 +1,6 @@
 # B2C Deployment User Docs
 
-## Terminal screenshots key:
-* Red background = hidden B2C value
-* Orange background = hidden AD value
-* Pink background = user inputted value
+This document will explain the steps that contain user interaction and what is required in those steps.
 
 ## Prerequisites
 
@@ -12,26 +9,19 @@
   * 1x B2C tenant
       * If not already set up information is available [here](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant) at step 1: "Create an Azure AD B2C Tenant"
 * You should have ready a **list of the tenant id's for the tenants you wish to give access**
+    1. Could either keep it in a list such that you can insert them 1 by 1 into the terminal.
+    2. Or optionally you could format it as shown below such that the script can automatically import them itself.
+        * Create a .txt file that has all the tenant ID's for the tenants you wish to add to the whitelist, with each ID separated onto a newline; an example file with 4 tenant ID's to be added to the whitelist is below
+            * ![whitelist text file](Images/Deployment/07_1_fileFormat.png)
 
-## Starting The Script
- 
-There are 2 ways to deploy B2C:
 
-### 1. Running the B2C deploy script from LTI deploy (Recommended)
+## Customising names of created resources:
 
-Follow the steps in [LTI deployment guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consolidated_deploy_branch/docs/CONSOLIDATED_DEPLOY.md) and it will automatically direct you to the following steps.
+* To ease and speed up the automated the script the names have been hard coded with default values; if you wish to customise these values you will find their definition at the top of the B2CDeployment.ps1 file.
 
-### 2. Running the B2C deploy script manually (if you want to run only B2C deploy)
+## IMPORTANT: AppInfo.csv
 
-* Load Learn-LTI/Deployment into Windows File Explorer
-* **Hold shift** and right click in the file explorer to launch the Expanded Context Menu
-
-| ![Expanded Context Menu](Images/01_ExpandedContextMenu.png) |
-|---|
-|  Click "Open Powershell Window Here" to launch powershell with cd already set to Learn-Lti/Deployment  |
-
-* Type ".\B2CCleanup.ps1" into the newly launched Powershell then press enter 
-  * ![start script](Images/Deployment/00a_startScript.png)
+* It is important to not lose this file, as it contains the ID's of the created applications and the tenant they were created in; required by the cleanup script to automatically remove them. After each run of the script we would recommend creating and storing a copy of this file in case in the future you wish to cleanup again.
 
 ## Step 0: Enter tenant names
 
@@ -50,97 +40,140 @@ Follow the steps in [LTI deployment guide](https://github.com/UCL-MSc-Learn-LTI/
 |---|
 | The launched tab should look similar to the above; please login using it and then switch back to the powershell |
 
-### Creating the app and its secret
+* After finishing logging in the script will continue to create and configure the AD app required for b2c access, within your AD tenant.
 
-* Return to your powershell Window, and you will now be prompted to give names for:<br>1. The AD Application to be created<br>2. The AD Applications Secret to be created<br>We suggest using a sensible name, such as "b2c_AD_app" and "b2c_AD_app_secret"
-    * ![Input app and secret name](Images/Deployment/01c_appName.png)
+### Step 2: Logging into the B2C Tenant 
 
-### Recording the secret value (important)
-* Upon successfully creating the app and its secret; the script will now output some important values in green and then pause until you next press Enter. <br>It is strongly recommended now that you take a moment to **store somewhere safe the ID of the app and the value for the secret** that has just been created for it; as this **secret value will no longer be accessible again**.<br>After recording these values press enter to continue with the script.
-    * ![record the secret](Images/Deployment/01d_secret.png)
+* After the apps finished creating, the AD has finished being configured and the script will now move on to configure your B2C Tenant.
+* As before, your powershell will now prompt you that a pop-up window has launched in your browser and directing you to log in to your B2C tenant through it
+  * ![Login to B2C Prompt](Images/Deployment/02a_LoginPrompt.png)
 
-
-## Step 2: Logging into the B2C tenant via your browser
-
-* Your powershell will now prompt you that a pop-up window has launched in your browser and directing you to login to your B2C tenant through it
-    * ![login prompt](Images/Deployment/02a_LoginPrompt.png)
-
-| ![Login to AD Tenant](Images/Deployment/01a_LoginTenant1.png) |
+| ![Login to B2C Tenant](Images/Deployment/01a_LoginTenant1.png) |
 |---|
 | The launched tab should look similar to the above; please login using it and then switch back to the powershell |
 
-## Step 3: Creating the B2C Web Application
 
-### Creating the webapp and its secret
+## Steps 3-6 automatic setup (app creations on the b2c tenant):
 
-* Return to your powershell Window, and you will now be prompted to give names for:<br>1. The B2C Web Application to be created<br>2. The B2C Web Applications Secret to be created<br>We suggest using a sensible name, such as "b2c_AD_webapp" and "b2c_AD_webapp_secret"
-    * ![name web app](Images/Deployment/03a_nameWebApp.png)
-
-
-### Recording the secret value (important)
-
-* Upon successfully creating the webapp and its secret; the script will now output some important values in green and then pause until you next press Enter. <br>It is strongly recommended now that you take a moment to **store somewhere safe the ID of the app and the value for the secret** that has just been created for it; as this **secret value will no longer be accessible again**.<br>After recording these values press enter to continue with the script.
-    * ![record webapp secret](Images/Deployment/03b_secret.png)
-
-
-## Steps 4 & 5: Creating the Identity Experience Framework & Proxy Identity Experience Framework Applications
-
-* No user input is required in these steps; simply wait for them to finish
-
-
-## Step 6: Creating Permission Management Application
-
-### Creating the Permission Management Application and its secret
-
-* Return to your powershell Window, and you will now be prompted to give names for:<br>1. The B2C Permission Management Application to be created<br>2. The 2C Permission Management Applications Secret to be created<br>We suggest using a sensible name, such as "b2c_AD_PMA" and "b2c_AD_PMA_secret"
-    * ![name the PMA](Images/Deployment/06a_namePMA.png)
-
-
-### Recording the secret value (important)
-
-* Upon successfully creating the permission management app and its secret; the script will now output some important values in green and then pause until you next press Enter. <br>It is strongly recommended now that you take a moment to **store somewhere safe the ID of the app and the value for the secret** that has just been created for it; as this **secret value will no longer be accessible again**.<br>After recording these values press enter to continue with the script.
-    * ![secret PMA value](Images/Deployment/06b_secret.png)
-
+* The script will automatically create and configure the B2C Web App, Permission Management App, Identity Experience Framework App, and Proxy Identify Experience Framework App (steps 3-6 inclusive)
 
 ## Step 7: Creating a whitelist for the tenants we wish to give access to
 * You have 2 choices for how to create the whitelist of tenant id's you wish to give access to:
-    * Input '1' to import via a file where the id of each tenant is separated with a newline or a comma. You will then need to input the path to that file, e.g. "C:/documents/myTenantIDs.txt"
-    * Input '2' to input 1 by 1; in this case you copy/paste the tenant ID's 1 by 1 into the console until you have no more then input "no" to terminate the script.
-        * ![inputting ID's](Images/Deployment/07_successfulWhitelist.png)
-        * if at any point you see an error as shown below, you have input an ID that doesn't exist. Verify you typed it correctly and if so, verify with the tenant owner that they sent you the correct value.
-            * ![failure to get issuer claim](Images/Deployment/07_failWhitelist.png)
+    * Input '1' to import via a file containing the id's of each tenant
+    * Input '2' to input 1 by 1
+* The tenant ID's you are using should be in the format 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' where each x is an alphanumeric character.
+* Important note: this includes the tenant ID of your own AD tenant that you are setting this up on; your own AD tenant is not added by default.
+* If you receive any 400 bad request errors please click [here](#400-bad-request-error)
+
+### Choice 1: Inputting via text file (recommended for larger whitelists)
+
+* After inputting '1' as your choice, you will now be prompted to input the path to the .txt file you created which contains the tenants you wish to add to your whitelist. The script will now automatically add these tenants to the whitelist.
+    * ![successful run of importing whitelist via txt file](Images/Deployment/07_1_successful.png)
+
+### Choice 2: Inputting 1 by 1 to terminal (recommended for smaller whitelists)
+
+* ![inputting ID's](Images/Deployment/07_2_successful.png)
+    * After inputting '2' as your choice, you will now be prompted to input 1 tenant ID you wish to add to the whitelist
+    * After doing so, you will now be prompted to input another.
+    * This will continue untill you input 'n' which will end this loop.
+
+
 ## Step 8: (Optional) linking facebook app
 
 ### Don't link Facebook App
 
 * If you do not have a facebook application to link, simply input 'n' when prompted to skip this step
-    * ![Don't link FB](Images/Deployment/07_noFB.png)
+    * ![Don't link FB](Images/Deployment/08_noFB.png)
 
 
 ### Link Facebook App
 
-* If you do have a facebook application to link, input 'y' when prompted then input the ID of the Facebook application you would like to lin
-    * ![Do link FB](Images/Deployment/07_yesFB.png)
+* If you do have a facebook application to link, input 'y' when prompted then input the ID of the Facebook application followed by the secret value for the Facebook application you would like to link
+    * ![Do link FB](Images/Deployment/08_yesFB.png)
 
 
 
+## Steps 9 & 10 automatic setup (creating and formatting the custom policies)
 
-
-## Step 9 & 10: Creating and Generating Custom Policies from templates
-
-* No user input is required in these steps; simply wait for them to finish
+* The creation and formatting of the custom policies will now be done automatically without requiring any further input
 
 ## Step 11: Adding Signing and Encryption keys and AADAppSecret for the IEF Applications
 
 ### Input key duration
 * You will first be prompted to input how long you wish the created keys to be valid for before they expire
-    * ![key duration](Images/Deployment/10a_time.png)
-* The script should then continue without requiring any further user inputs
+    * ![key duration](Images/Deployment/11_time.png)
+* If your console returns a 403 bad request error, please click [here](#403-forbidden-error)
 
-#### <span style="color:red">Troubleshoot PMA Admin Consent</span>
+
+## Step 12 automatic setup (uploading the custom policies)
+
+* The custom policies will now be uploaded automatically without requiring further input
+
+
+## Step 13: IMPORTANT - Store Secret Values
+
+![Secret Values](Images/Deployment/13_secrets.png)
+* After the script finishes running it will output some important values in green and then pause the script (ID and secret values for the created AD app, Permission Management App, and Web App).
+* Take this moment to copy/paste those values into a file and store it **somewhere securely** as you may require those secret values again in the future and they will NOT be accessible again.
+    * Also, the Permission Management Applications ID and Secret Value are required for the cleanup script
+* After taking a note of those values, press enter to finsih the b2c deployment script, and return to the LTI deployment main script.
+
+
+
+
+
+
+
+# <span style="color:red">Troubleshooting</span>
+
+## Early terminations from unexpected exceptions
+
+* If the script terminates at any point due to an unexpected exception, please make an issue request on the github.
+* Then, run cleanup.bat
+* If the script got far enough it will have output in green the permission management applications ID and secret values which are required by the cleanup script to cleanup certain resources created in the b2c setup
+    * If these values are not output, the script did not get far enough to where it will require cleaning up those resources so when prompted simply input any value for the PMA secret value and id as they do not matter.
+
+## Step 7:
+
+### 400 bad request error
+* If at any point you receive a 400 bad request error, a tenant with the given ID could not be found. Please check with the admin who gave you that ID that it is correct.
+    * ![400 bad request error for tenant ID](Images/Deployment/07_1_fail.png)
+* You must then manually add that ID to the deployment on the portal, instructions for doing so can be found [here](#update-the-whitelist-after-deployment)
+
+### Update the whitelist after deployment
+
+1. Load the Azure Portal
+2. Login to your B2C Tenant
+3. Search for "Azure AD B2C", and click on it
+4. Click on "Identity Experience Framework" under "Policies"
+5. Click on "Custom Policies" if it is not already loaded
+6. Search your custom policies for "B2C_1A_TrustFrameworkExtensions" then click on it
+7. Click "download" to download the custom policy
+8. After it has finished downloading, load the file in your preferred text editor
+9. Search within the file for "ValidTokenIssuerPrefixes" and find its first apperance (the uncommented one), should be on line 35.
+10. The whitelist is held within this field, with each login URL separated by a comma.
+    1.  If you wish to remove a tenant, simply find the URL for that tenant and remove it from the field (and its trailing comma)
+    2.  If you wish to add a new tenant, copy and run the below command into your console to get the login URL, then add a comma after the last element in the whitelist then paste that url into it.
+        1.  <code>\$wlTenantID = "NEW_WL_TENANT_ID"
+                \$headers = New-Object "System.Collections.Generic.Dictionary\[[String],[String]]"
+                \$response = Invoke-RestMethod "https://login.microsoftonline.com/\$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers \$headers
+                \$issuer = \$response.issuer
+                Write-Host \$issuer</code>
+11. After making your changes, save the file.
+12. Now return to the Azure Portal and click "Upload Custom Policy"
+13. Select the B2C_1A_TrustFrameworkExtensions.xml file you have just updated
+14. And click the checkbox saying "overwrite the custom policy if it already exists"
+15. Then click upload.
+
+
+
+## Step 11:
+
+### 403 forbidden error
+
 
 * This step may fail due to a race condition between the granting of admin-consent vs the requirement of its usage in this step; you will know this has occured if you see the error message shown below
-    * ![error admin-consent race](Images/Deployment/10b_error.png)
+    * ![error admin-consent race](Images/Deployment/11_error.png)
 * To solve this issue:
     * First you must login to your b2c tenant on the Azure Portal. If the b2c tenant is already your active directory in the portal you can skip this step.
         * ![Switch directory on portal](Images/Deployment/10taa_switchDirectory.png)
@@ -151,22 +184,4 @@ Follow the steps in [LTI deployment guide](https://github.com/UCL-MSc-Learn-LTI/
     * ![Application permissions page](Images/Deployment/10tb_ManuallyGrantAdminConsent.png)
 * After clicking on "Grant Admin Consent" the page should now say all permissions are granted
     * ![Application permissions page](Images/Deployment/10tc_FullyGranted.png)
-* Now simply return to the script and press enter
-    * The script should then continue without requiring any further user inputs
-
-
-## Step 12: Creating the AADAppSecret Key
-
-* No user input is required in this step; simply wait for it to finish
-* Upon this steps completion the B2C setup is now complete and can be configured with Learn-LTI
-
-
-# Important note: Keep the generated AppInfo.csv safe
-* This contains the ID's of the created applications as well as the tenants they belong to; this is required by B2CCleanup.ps1 if you wish to automatically clean up the script at a later date you will need this file (or else you must manually delete those applications)
-
-
-
-
-
-# <span style="color:red">Trouble shooting</span>
-* [STEP 10: Error when getting the list of all custom policies in the tenant ](#troubleshoot-pma-admin-consent)
+* Now simply return to the powershell, wait 10 seconds, and press enter to continue the script
