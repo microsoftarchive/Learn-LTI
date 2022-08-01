@@ -34,7 +34,11 @@ function App() {
       scopes: [
         'openid',
         'profile',
-        'https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read'
+        'https://' +
+          process.env.REACT_APP_EDNA_B2C_TENANT! +
+          '.onmicrosoft.com/' +
+          process.env.REACT_APP_EDNA_B2C_CLIENT_ID +
+          '/b2c.read'
       ]
     };
   } else {
@@ -43,10 +47,12 @@ function App() {
     };
   }
 
+  console.log('in app.tsx');
+  console.log(request);
   return (
     <BrowserRouter>
       <MsalProvider instance={AppAuthConfig}>
-        <MsalAuthenticationTemplate interactionType={InteractionType.Popup} authenticationRequest={request}>
+        <MsalAuthenticationTemplate interactionType={InteractionType.Redirect} authenticationRequest={request}>
           <AxiosBasicAuthInitializer>
             <StoreProvider rootStore={rootStore}>
               <GlobalRouter
