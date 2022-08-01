@@ -20,7 +20,7 @@ import { PlatformPage } from './Features/Platform/PlatformPage';
 import { PublicClientApplication, InteractionType, InteractionRequiredAuthError } from '@azure/msal-browser';
 import { MsalAuthenticationTemplate, MsalProvider } from '@azure/msal-react';
 import { AxiosBasicAuthInitializer } from './Core/Auth/AxiosBasicAuthInitializer';
-
+import { PopupCheck } from './Router/PopupCheck';
 const rootStore: RootStore = new RootStore();
 AppAuthConfig;
 
@@ -30,20 +30,22 @@ function App() {
   loadTheme(appTheme);
 
   return (
-    <BrowserRouter>
-      <MsalProvider instance={AppAuthConfig}>
-        <MsalAuthenticationTemplate interactionType={InteractionType.Popup} authenticationRequest={request}>
-          <AxiosBasicAuthInitializer>
-            <StoreProvider rootStore={rootStore}>
-              <GlobalRouter
-                AssignmentRouteComponent={<MainLayout />}
-                PlatformRegistrationComponent={<PlatformPage />}
-              />
-            </StoreProvider>
-          </AxiosBasicAuthInitializer>
-        </MsalAuthenticationTemplate>
-      </MsalProvider>
-    </BrowserRouter>
+    <PopupCheck>
+      <BrowserRouter>
+        <MsalProvider instance={AppAuthConfig}>
+          <MsalAuthenticationTemplate interactionType={InteractionType.Popup} authenticationRequest={request}>
+            <AxiosBasicAuthInitializer>
+              <StoreProvider rootStore={rootStore}>
+                <GlobalRouter
+                  AssignmentRouteComponent={<MainLayout />}
+                  PlatformRegistrationComponent={<PlatformPage />}
+                />
+              </StoreProvider>
+            </AxiosBasicAuthInitializer>
+          </MsalAuthenticationTemplate>
+        </MsalProvider>
+      </BrowserRouter>
+    </PopupCheck>
   );
 }
 
