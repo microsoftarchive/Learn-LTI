@@ -13,8 +13,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "TZ_policy_validation1",
-    [string]$AppName = "TZ_policy_val1_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "MSLearnLti",
+    [string]$AppName = "MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -32,10 +32,6 @@ process {
         $uniqueIdentifier = "1" # Using lat value instead as Limited deploy is just to get a faster deploy useful for testing only; so we want to replace in place
         ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
         #endregion
-
-        #application ID and uri
-        $clientId = "cb508fc8-6a5f-49b1-b688-dac065ba59e4"
-        $apiURI = "api://cb508fc8-6a5f-49b1-b688-dac065ba59e4"
 
         #region Show Learn LTI Banner
         Write-Host ''

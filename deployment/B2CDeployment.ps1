@@ -1,12 +1,12 @@
 $ErrorActionPreference = "Stop"
 
 #region "values determining the names of the resources"
-$MultiTenantAppName = "DM2_b2c_AD_app"
-$MultiTenantClientSecretName = "DM2_b2c_AD_app_secret"
-$B2cAppName = "DM2_b2c_AD_webapp"
-$WebClientSecretName = "DM2_b2c_AD_webapp_secret"
-$PermissionAppName = "DM2_b2c_AD_PMA"
-$PermissionClientSecretName = "DM2_b2c_AD_PMA_secret"
+$MultiTenantAppName = "b2c_AD_app"
+$MultiTenantClientSecretName = "b2c_AD_app_secret"
+$B2cAppName = "b2c_AD_webapp"
+$WebClientSecretName = "b2c_AD_webapp_secret"
+$PermissionAppName = "b2c_AD_PMA"
+$PermissionClientSecretName = "b2c_AD_PMA_secret"
 #endregion
 
 #region "Helper Functions"
