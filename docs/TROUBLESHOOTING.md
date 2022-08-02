@@ -39,7 +39,6 @@ By running [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deploy
 
 After this step, you can follow this [guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consolidated_deploy_branch/deployment/B2C_Docs/B2C_Cleanup.md) to remove B2C tenant from your app.
 
-
 To Manually remove resources simply remove the Microsoft Learn LTI resource group and Microsoft Learn LTI Application Registration
  
 - ResourceGroupName = "MSLearnLTI"
