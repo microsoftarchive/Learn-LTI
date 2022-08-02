@@ -47,8 +47,6 @@ function App() {
     };
   }
 
-  console.log('in app.tsx');
-  console.log(request);
   return (
     <BrowserRouter>
       <MsalProvider instance={AppAuthConfig}>

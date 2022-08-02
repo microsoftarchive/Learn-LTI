@@ -13,7 +13,6 @@ export let request;
 let authority;
 // Swap out needed B2C vs AD options
 if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NA') {
-  console.log('In B2C mode'); // TODO remove in final version
   request = {
     scopes: [
       'openid',

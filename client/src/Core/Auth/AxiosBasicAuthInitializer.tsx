@@ -15,14 +15,12 @@ export const AxiosBasicAuthInitializer = ({ children }: PropsWithChildren<{}>): 
   const [accessToken, setAccessToken] = useState<null | string>(null);
 
   // Called everytime time the LTI app is accessed to authenticate the user before allowing access.
-  request.account = accounts[0]; // TODO is this the right thing to do?
+  request.account = accounts[0];
   useEffect(() => {
-    console.log(request);
     if (!isTokenLoaded && inProgress === InteractionStatus.None) {
       instance
         .acquireTokenSilent(request)
         .then(tokenObj => {
-          console.log(tokenObj);
           axios.defaults.headers.common = { Authorization: `bearer ${tokenObj.accessToken}` };
           setAccessToken(tokenObj.accessToken);
           setIsTokenLoaded(true);

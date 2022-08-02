@@ -62,7 +62,7 @@ process {
         Write-Host '|______|______/_/    \_\_|  \_\_| \_|          |______|_|  |_____|'
         Write-Host ''
         Write-Host ''
-        #endregion |  Set-Content -path (".\test_text.txt")
+        #endregion
 
         #region Setup Logging
         . .\Write-Log.ps1
@@ -101,14 +101,12 @@ process {
         $b2c_tenant_name = "'NA'"
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #0: Running the B2C Setup Script"
-            # TODO - verify these values are correct e.g. are we returning the correct values or should we return something else?
-            $results = (& ".\B2CDeployment.ps1" $ExecutionStartTime) # TODO - verify that this can run this multiplatform as it only works on windows; may put mac and windows commands in a try catch
+            $results = (& ".\B2CDeployment.ps1" $ExecutionStartTime)
             if($results[-1] -eq -1){
                 throw "B2CDeployment.ps1 failed"
             }
             Write-Log -Message "Returned from the B2C setup script, continuing with LTI deployment"
 
-            # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
             $AD_Tenant_Name = $results[-6] # tenant name of the AD server
             $b2c_tenant_name = $results[-5] #b2c tenant name
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
@@ -123,8 +121,6 @@ process {
             
             #Updating function apps's settings
            
-            #$B2C_APP_CLIENT_ID_IDENTIFIER = "0cd1d1d6-a7aa-41e2-b569-1ca211147973" # TODO remove hardcode 
-            #$AD_APP_CLIENT_ID_IDENTIFIER = "cb508fc8-6a5f-49b1-b688-dac065ba59e4" # TODO remove hardcode
             $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://${b2c_tenant_name}.b2clogin.com/${b2c_tenant_name}.onmicrosoft.com/${policy_name}/v2.0/.well-known/openid-configuration"
             $OPENID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/${AD_Tenant_Name}.onmicrosoft.com/v2.0/.well-known/openid-configuration"
             

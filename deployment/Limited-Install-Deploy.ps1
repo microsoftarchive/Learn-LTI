@@ -216,13 +216,6 @@ process {
         }
         #endregion
     
-        
-
-        
-
-
-
-
         #region Provision Resources inside Resource Group on Azure using ARM template
         Write-Title 'STEP #5 - Creating Resources in Azure'
     

@@ -346,7 +346,6 @@ try{
     Write-Title "B2C STEP 7: Creating a whitelist for the tenants we wish to give access to"
     Write-Host "Important - if no tenants are whitelisted; nobody will be able to access the AD"
 
-    #TODO - make it a file
     $fileOrInputs=""
     while($fileOrInputs -ne "1" -and $fileOrInputs -ne "2")
     {
@@ -813,7 +812,7 @@ try{
     return $ADTenantName, $B2cTenantName, $WebClientID, $WebClientSecret, $B2cTenantName, $ObjectId
 }
 catch{
-    if($PermissionClientSecret){ #TODO - verify this works
+    if($PermissionClientSecret){
         Write-Title "The script crashed, please make a note of the following values then run cleanup.bat; inserting these values when prompted for the b2c cleanup"
         Write-Color "green" "B2C Tenant name is $B2cTenantName" 
         Write-Color "green" "Client ID for $PermissionAppName`: $PermissionClientID"
