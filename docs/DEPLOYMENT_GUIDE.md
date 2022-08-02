@@ -47,8 +47,12 @@ The script will ask you to choose 'Active Directory',i.e. AD mode or 'Business t
 
 B2C Mode is recommended due to it being possible to set it up for either single-tenant and multi-tenant access; whilst AD mode is less extensible and only supports single-tenant access.
 
+## AD Mode setup
+
 Type in 'ad' for AD mode of authentication which will direct you towards 'Deploy to Azure Subscription using the script'.
 ![admode.png](/images/admode.png)
+
+## B2C Mode setup
 
 Type in 'b2c' for B2C mode of authentication.
 ![b2cmode.png](/images/b2cmode.png)

@@ -32,12 +32,18 @@ To begin, you will need:
 
 To remove the services simply run the [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat) script located in the Deployment folder. This will run the [Cleanup.ps1](https://github.com/microsoft/Learn-LTI/blob/main/deployment/Cleanup.ps1) script which will remove all the deployed resources for the Learn LTI Application from your Azure Subscription.
 
-### Optional : For B2C Users
 
-By running [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat), if you have B2C authentication, the script will ask for this to remove the B2C tenant as well as shown below:
+### (Optional) Cleaning up B2C setup:
+
+
+When running [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat), you will be prompted to answer whether or not you have a b2c tenant to cleanup. 
 ![b2cclean.png](/images/b2cclean.png)
+* If you chose 'b2c' mode during the deployment, then; when prompted if you have a b2c tenant to cleanup, select 'y'
+    * After selecting 'y' the script will now run the b2c cleanup, please follow this [guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consolidated_deploy_branch/deployment/B2C_Docs/B2C_Cleanup.md) for more information on how to cleanup the B2C tenant.
+* If you chose 'ad' mode during the deployment, then; when prompted if you have a b2c tenant to cleanup, select 'n' to skip this step
 
-After this step, you can follow this [guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consolidated_deploy_branch/deployment/B2C_Docs/B2C_Cleanup.md) to remove B2C tenant from your app.
+
+### Important Cleanup Notes
 
 To Manually remove resources simply remove the Microsoft Learn LTI resource group and Microsoft Learn LTI Application Registration
  
