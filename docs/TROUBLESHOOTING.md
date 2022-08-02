@@ -32,6 +32,14 @@ To begin, you will need:
 
 To remove the services simply run the [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat) script located in the Deployment folder. This will run the [Cleanup.ps1](https://github.com/microsoft/Learn-LTI/blob/main/deployment/Cleanup.ps1) script which will remove all the deployed resources for the Learn LTI Application from your Azure Subscription.
 
+### Optional : For B2C Users
+
+By running [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat), if you have B2C authentication, the script will ask for this to remove the B2C tenant as well as shown below:
+![b2cclean.png](/images/b2cclean.png)
+
+After this step, you can follow this [guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consolidated_deploy_branch/deployment/B2C_Docs/B2C_Cleanup.md) to remove B2C tenant from your app.
+
+
 To Manually remove resources simply remove the Microsoft Learn LTI resource group and Microsoft Learn LTI Application Registration
  
 - ResourceGroupName = "MSLearnLTI"
@@ -41,10 +49,6 @@ If you have changed the name of the Resource Group or AppName simply replace the
 
 Ensure you [purge your keyvault]( https://github.com/microsoft/Learn-LTI/blob/main/docs/TROUBLESHOOTING.md#purging-key-vaults) before running the setup script again 
 
-**Note:** By running [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat), if you have B2C authentication, the script will ask for this to remove the B2C tenant as well as shown below:
-![b2cclean.png](/images/b2cclean.png)
-
-After this step, you can follow this [guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/consolidated_deploy_branch/deployment/B2C_Docs/B2C_Cleanup.md) to remove B2C tenant from your app.
 
 ## Check the Failed Deployment status and output
 
