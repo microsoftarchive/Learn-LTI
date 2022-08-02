@@ -238,7 +238,7 @@
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
             "WEBSITE_RUN_FROM_PACKAGE": "1",
-            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>' , parameters('appRegistrationClientId')))]",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
             "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
             "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }
@@ -266,7 +266,7 @@
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
             "WEBSITE_RUN_FROM_PACKAGE": "1",
-            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>' , parameters('appRegistrationClientId')))]",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
             "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
             "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }
@@ -294,7 +294,7 @@
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('platforms' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
             "WEBSITE_RUN_FROM_PACKAGE": "1",
-            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>' , parameters('appRegistrationClientId')))]",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
             "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
             "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }
@@ -320,7 +320,7 @@
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
             "WEBSITE_RUN_FROM_PACKAGE": "1",
-            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>' , parameters('appRegistrationClientId')))]",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
             "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
             "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }
@@ -346,7 +346,7 @@
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
             "WEBSITE_RUN_FROM_PACKAGE": "1",
-            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>' , parameters('appRegistrationClientId')))]",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
             "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
             "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }

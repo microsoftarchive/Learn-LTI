@@ -22,7 +22,7 @@ if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NA') {
         process.env.REACT_APP_EDNA_B2C_TENANT! +
         '.onmicrosoft.com/' +
         process.env.REACT_APP_EDNA_B2C_CLIENT_ID +
-        'api/b2c.read'
+        '/b2c.read'
     ]
   };
   authority = b2cPolicies.authorities.signIn.authority;
