@@ -1,12 +1,12 @@
 $ErrorActionPreference = "Stop"
 
 #region "values determining the names of the resources"
-$MultiTenantAppName = "TZ_b2c_AD_app"
-$MultiTenantClientSecretName = "TZ_b2c_AD_app_secret"
-$B2cAppName = "TZ_b2c_AD_webapp"
-$WebClientSecretName = "TZ_b2c_AD_webapp_secret"
-$PermissionAppName = "TZ_b2c_AD_PMA"
-$PermissionClientSecretName = "TZ_b2c_AD_PMA_secret"
+$MultiTenantAppName = "DM2_b2c_AD_app"
+$MultiTenantClientSecretName = "DM2_b2c_AD_app_secret"
+$B2cAppName = "DM2_b2c_AD_webapp"
+$WebClientSecretName = "DM2_b2c_AD_webapp_secret"
+$PermissionAppName = "DM2_b2c_AD_PMA"
+$PermissionClientSecretName = "DM2_b2c_AD_PMA_secret"
 #endregion
 
 #region "Helper Functions"
@@ -27,6 +27,17 @@ function Write-Error([string]$Text) {
     Write-Host "`n`n=============================================================`n" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
 	Write-Host "Error!`n$Text" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
     Write-Host "`n=============================================================" -ForegroundColor "red" -BackgroundColor "black"
+}
+
+#function for defensive programming, checking if the az cli command failed and returned nothing, then throwing an exception if this occurs
+function checkAzCommandSuccess([string]$retVal, [string]$description){
+    if(!$description){
+        throw "No description specified";
+    }
+    #if the returned value from the azure cli is empty, then the command failed so throw an exception to terminate the script
+    if(!$retVal){
+        throw "Error occurred whilst trying to $description"
+    }
 }
 #endregion
 
@@ -89,6 +100,7 @@ try{
     $MultiTenantAppID = (az ad app create --display-name $MultiTenantAppName --sign-in-audience AzureADandPersonalMicrosoftAccount --web-redirect-uris https://$B2cTenantName.b2clogin.com/$B2cTenantName.onmicrosoft.com/oauth2/authresp --optional-claims "@manifest.json" --query appId --output tsv --only-show-errors)
     "$MultiTenantAppID,$ADTenantName" | Out-File -FilePath $AppInfoCSVPath -Append
     Write-Log -Message "Created MultiTenant app with id $MultiTenantAppID in $ADTenantName"
+    checkAzCommandSuccess $MultiTenantAppID "create the MultiTenant AD application $MultiTenantAppName"
 
     # Create client secret
     Write-Host "Creating the client secret for $MultiTenantAppName"
@@ -114,11 +126,13 @@ try{
 
     $MultiTenantAppServicePrincipal = az ad sp create --id $MultiTenantAppID --only-show-errors
     Write-Log -Message "MultiTenantAppServicePrincipal value:`n$MultiTenantAppServicePrincipal"
+    checkAzCommandSuccess $MultiTenantAppServicePrincipal "create the service principal for the MultiTenant AD application $MultiTenantAppName"
 
     Write-Host "Granting permissions to the service principal for $MultiTenantAppName"
     Write-Log -Message "Granting permissions to the service principal for $MultiTenantAppName"
     $MultiTenantAppPermissionGrantInfo = az ad app permission grant --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors
     Write-Log -Message "MultiTenantAppPermissionGrantInfo value:`n$MultiTenantAppPermissionGrantInfo"
+    checkAzCommandSuccess $MultiTenantAppPermissionGrantInfo "grant permissions to the Multitenant AD app $MultiTenantAppName's service principal"
     az ad app permission add --id $MultiTenantAppID --api 00000003-0000-0000-c000-000000000000 --api-permissions $emailPermission $profilePermission --only-show-errors
 
     Remove-Item manifest.json
@@ -151,6 +165,7 @@ try{
     $WebClientInfo = (az ad app credential reset --id $WebClientID --append --display-name $WebClientSecretName --years $WebClientSecretDuration --only-show-errors) | ConvertFrom-Json
     $WebClientSecret = $WebClientInfo.password
     Write-Log -Message "WebClientInfo value:`n$WebClientInfo"
+    checkAzCommandSuccess $WebClientInfo "create a secret for the b2c web app $b2cAppName"
 
     Write-Log -Message "Created secret $WebClientSecretName ($WebClientSecret) for $B2cAppName ($WebClientID)"
     
@@ -164,11 +179,13 @@ try{
 
     $B2cAppServicePrincipalInfo = az ad sp create --id $WebClientID --only-show-errors
     Write-Log -Message "B2cAppServicePrincipalInfo value:`n$B2cAppServicePrincipalInfo"
+    checkAzCommandSuccess $B2cAppServicePrincipalInfo "create a service principal for the b2c web app $b2cAppName"
 
     Write-Log -Message "Granting permissions to the service principal for $B2cAppName"
     Write-Host "Granting permissions to the service principal for $B2cAppName"
     $WebClientPermissionGrantingInfo = az ad app permission grant --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
     Write-Log -Message "WebClientPermissionGrantingInfo value:`n$WebClientPermissionGrantingInfo"
+    checkAzCommandSuccess $WebClientPermissionGrantingInfo "grant permissions to the b2c web app $b2cAppName's service principal"
     az ad app permission add --id $WebClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
     
     # expose the b2c.read api
@@ -211,11 +228,13 @@ try{
 
     $IEFServicePrincipalInfo = az ad sp create --id $IEFClientID --only-show-errors
     Write-Log -Message "IEFServicePrincipalInfo value:`n$IEFServicePrincipalInfo"
+    checkAzCommandSuccess $IEFServicePrincipalInfo "create a service principal for the IEF app $IEFAppName"
             
     Write-Log -Message "Granting permissions to the service principal for $IEFAppName"
     Write-Host "Granting permissions to the service principal for $IEFAppName"
     $IEFPermissionGrantInfo = az ad app permission grant --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
     Write-Log -Message "IEFPermissionGrantInfo value:`n$IEFPermissionGrantInfo"
+    checkAzCommandSuccess $IEFPermissionGrantInfo "grant permissions for the IEF app $IEFAppName's service principal"
 
     az ad app permission add --id $IEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
     
@@ -261,12 +280,14 @@ try{
 
     $PIEFServicePrincipalInfo = az ad sp create --id $ProxyIEFClientID --only-show-errors 2>&1
     Write-Log -Message "PIEFServicePrincipalInfo value:`n$PIEFServicePrincipalInfo"
+    checkAzCommandSuccess $PIEFServicePrincipalInfo "create a service principal for the Proxy IEF app $ProxyIEFAppName"
 
     Write-Host "Granting permissions to the service principal for $ProxyIEFAppName"
     Write-Log -Message "Granting permissions to the service principal for $ProxyIEFAppName"
 
     $PIEFPermissionGrantInfo = az ad app permission grant --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
     Write-Log -Message "PIEFPermissionGrantInfo value:`n$PIEFPermissionGrantInfo"
+    checkAzCommandSuccess $PIEFPermissionGrantInfo "grant permissions for the Proxy IEF app $ProxyIEFAppName's service principal"
 
     az ad app permission add --id $ProxyIEFClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
     az ad app permission grant --id $ProxyIEFClientID --api $IEFClientID --scope "user_impersonation" --only-show-errors > $null
@@ -289,6 +310,7 @@ try{
     $PermissionClientSecretInfo = (az ad app credential reset --id $PermissionClientID --append --display-name $PermissionClientSecretName --years $PermissionClientSecretDuration --only-show-errors) | ConvertFrom-Json
     $PermissionClientSecret = $PermissionClientSecretInfo.password
     Write-Log -Message "PermissionClientSecretInfo value:`n$PermissionClientSecretInfo"
+    checkAzCommandSuccess $PermissionClientSecretInfo "create a secret for the permission management app $PermissionAppName"
 
     Write-Log -Message "Created secret $PermissionClientSecretName ($PermissionClientSecret) for $PermissionAppName ($PermissionClientID)"
 
@@ -304,11 +326,13 @@ try{
     
     $PermissionClientServicePrincipalInfo = az ad sp create --id $PermissionClientID --only-show-errors 2>&1
     Write-Log -Message "PermissionClientServicePrincipalInfo value:`n$PermissionClientServicePrincipalInfo"
+    checkAzCommandSuccess $PermissionClientServicePrincipalInfo "create the service principal for the permission management app $PermissionAppName"
     
     Write-Host "Granting permissions to the service principal for $PermissionAppName"
     Write-Log -Message "Granting permissions to the service principal for $PermissionAppName"
     $PermissionClientPermissionGrantInfo = az ad app permission grant --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --scope "openid offline_access" --only-show-errors
     Write-Log -Message "PermissionClientPermissionGrantInfo value:`n$PermissionClientPermissionGrantInfo"
+    checkAzCommandSuccess $PermissionClientPermissionGrantInfo "grant permissions for the permission management app $PermissionAppName's service principal"
             
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $openidPermission $offlineAccessPermission --only-show-errors
     az ad app permission add --id $PermissionClientID --api 00000003-0000-0000-c000-000000000000 --api-permissions $keysetRWPermission $policyRWPermission --only-show-errors
@@ -333,8 +357,11 @@ try{
     # Input via a file
     if ($fileOrInputs -eq "1")
     {
-        $filePath = Read-Host "Please enter the path to the file containing the tenant ID's"
-        $tenantIDs = Get-Content $filePath 
+        $filePath = "./NonExistantPath.txt"
+        while((Test-Path -Path $filePath) -eq $false){
+            $filePath = Read-Host "Please enter the path to the file containing the tenant ID's"
+        }
+        $tenantIDs = Get-Content $filePath
         
         foreach ($wlTenantID in $tenantIDs)
         {
@@ -788,7 +815,7 @@ try{
 catch{
     if($PermissionClientSecret){ #TODO - verify this works
         Write-Title "The script crashed, please make a note of the following values then run cleanup.bat; inserting these values when prompted for the b2c cleanup"
-        Write-Color "green" "AD Tenant name is $ADTenantName" 
+        Write-Color "green" "B2C Tenant name is $B2cTenantName" 
         Write-Color "green" "Client ID for $PermissionAppName`: $PermissionClientID"
         Write-Color "green" "Client secret for $PermissionAppName`: $PermissionClientSecret"
         Read-Host "Press enter when ready to continue after recording the client secret"

@@ -100,6 +100,6 @@ Write-Host 'STEP #12 - Installing the client'
 
 $ClientInstallParams = @{
     SourceRoot="../client";
-    StaticWebsiteStorageAccount="learnclientccwwld5ib"
+    StaticWebsiteStorageAccount="learnclient75ykpx5cf"
 }
 Install-Client @ClientInstallParams

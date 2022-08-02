@@ -13,9 +13,10 @@ export const AxiosBasicAuthInitializer = ({ children }: PropsWithChildren<{}>): 
   const { instance, accounts } = useMsal();
   const [isTokenLoaded, setIsTokenLoaded] = useState(false);
   const [accessToken, setAccessToken] = useState<null | string>(null);
+  console.log(accounts);
 
   // Called everytime time the LTI app is accessed to authenticate the user before allowing access.
-
+  request.account = accounts[0]; // TODO is this the right thing to do?
   useEffect(() => {
     instance
       .acquireTokenSilent(request)
