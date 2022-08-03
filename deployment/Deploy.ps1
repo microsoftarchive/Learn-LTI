@@ -228,11 +228,8 @@ process {
            
             #$B2C_APP_CLIENT_ID_IDENTIFIER = "0cd1d1d6-a7aa-41e2-b569-1ca211147973" # TODO remove hardcode 
             #$AD_APP_CLIENT_ID_IDENTIFIER = "cb508fc8-6a5f-49b1-b688-dac065ba59e4" # TODO remove hardcode
-            $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://${b2c_tenant_name}.b2clogin.com/${b2c_tenant_name_full}/${policy_name}/v2.0/.well-known/openid-configuration"
+            $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://${REACT_APP_EDNA_B2C_TENANT}.b2clogin.com/${b2c_tenant_name_full}/${policy_name}/v2.0/.well-known/openid-configuration"
             $OPENID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/${AD_Tenant_Name_full}/v2.0/.well-known/openid-configuration"
-            
-            Write-Title $OPENID_B2C_CONFIG_URL_IDENTIFIER
-            Write-Title  $OPENID_AD_CONFIG_URL_IDENTIFIER
 
             ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
             
@@ -243,11 +240,20 @@ process {
             -replace '<OPENID_B2C_CONFIG_URL_IDENTIFIER>', ($OPENID_B2C_CONFIG_URL_IDENTIFIER) `
             -replace '<AZURE_B2C_SECRET_STRING>', ($b2c_secret) `
             -replace '<OPENID_AD_CONFIG_URL_IDENTIFIER>', ($OPENID_AD_CONFIG_URL_IDENTIFIER) | Set-Content -path (".\azuredeploy.json")
+        
+        
+            # log back in to the azure account now we've returned from B2C Script
+            Write-Log -Message "Logging back in to Azure Account after returning frmo B2C Script"
+            az login --tenant $AD_Tenant_Name_full #logging back into the azure account for the AD tenant
+            az account set --subscription $NameOrId #setting the active subscription back to the stored value
         }
         #else its AD load the AD azuredeploy template
         else{
             ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
         }
+
+        
+
         #endregion
 
 
