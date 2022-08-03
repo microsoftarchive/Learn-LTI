@@ -85,7 +85,7 @@ process {
         #region "getting the setup mode for b2c vs ad"
         $b2cOrAD = "none"
         while($b2cOrAD -ne "b2c" -and $b2cOrAD -ne "ad") {
-            $b2cOrAD = Read-Host "Would you like to set this up with b2c or AD? (b2c/ad) (b2c recommended as it can be single tenant or multitenant, ad only single tenant [less scalable])"
+            $b2cOrAD = Read-Host "Would you like to set this up with Azure Business to Consumer or Azure Active Directory? B2C is reccomended as it can support multi-tenant authentication. (b2c/ad) "
         }
         #endregion
 
