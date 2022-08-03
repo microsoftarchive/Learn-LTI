@@ -1,6 +1,6 @@
-<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="<<B2CTenantName>>.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkExtensions" PublicPolicyUri="http://<<B2CTenantName>>.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions">
+<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="<<B2CTenantNameFull>>" PolicyId="B2C_1A_TrustFrameworkExtensions" PublicPolicyUri="http://<<B2CTenantNameFull>>/B2C_1A_TrustFrameworkExtensions">
   <BasePolicy>
-    <TenantId><<B2CTenantName>>.onmicrosoft.com</TenantId>
+    <TenantId><<B2CTenantNameFull>></TenantId>
     <PolicyId>B2C_1A_TrustFrameworkLocalization</PolicyId>
   </BasePolicy>
   <BuildingBlocks>

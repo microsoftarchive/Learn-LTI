@@ -8,6 +8,7 @@ This document will explain the steps that contain user interaction and what is r
   * 1x AD tenant
   * 1x B2C tenant
       * If not already set up information is available [here](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant) at step 1: "Create an Azure AD B2C Tenant"
+      * IMPORTANT: In the current version custom domains are NOT supported, i.e. your tenant domain must be in the format <code>b2cTenantName.onmicrosoft.com</code>
 * You should have ready a **list of the tenant id's for the tenants you wish to give access**
     1. Could either keep it in a list such that you can insert them 1 by 1 into the terminal.
     2. Or optionally you could format it as shown below such that the script can automatically import them itself.

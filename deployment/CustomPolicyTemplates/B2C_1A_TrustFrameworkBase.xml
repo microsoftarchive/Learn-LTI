@@ -4,9 +4,9 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06"
   PolicySchemaVersion="0.3.0.0"
-  TenantId="<<B2CTenantName>>.onmicrosoft.com" 
+  TenantId="<<B2CTenantNameFull>>" 
   PolicyId="B2C_1A_TrustFrameworkBase" 
-  PublicPolicyUri="http://<<B2CTenantName>>.onmicrosoft.com/B2C_1A_TrustFrameworkBase">
+  PublicPolicyUri="http://<<B2CTenantNameFull>>/B2C_1A_TrustFrameworkBase">
 
   <BuildingBlocks>
     <ClaimsSchema>
