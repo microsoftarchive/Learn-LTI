@@ -351,3 +351,7 @@ MigrationBackup/
 
 # Jetbrains working folder
 **/.idea
+
+
+#ignoring mac os generated .DS_Store
+**/.DS_Store
