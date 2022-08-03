@@ -9,6 +9,29 @@ import { PublicClientApplication, Configuration, Logger, LogLevel } from '@azure
 
 import { b2cPolicies } from './policies';
 
+export let request;
+let authority;
+// Swap out needed B2C vs AD options
+if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NA') {
+  request = {
+    scopes: [
+      'openid',
+      'profile',
+      'https://' +
+        process.env.REACT_APP_EDNA_B2C_TENANT! +
+        '.onmicrosoft.com/' +
+        process.env.REACT_APP_EDNA_B2C_CLIENT_ID +
+        '/b2c.read'
+    ]
+  };
+  authority = b2cPolicies.authorities.signIn.authority;
+} else {
+  request = {
+    scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!]
+  };
+  authority = `https://login.microsoftonline.com/${process.env.REACT_APP_EDNA_TENANT_ID}`;
+}
+
 const authLogCallback = (level: LogLevel, message: string, _containsPii: boolean): void => {
   // Not setting the log at all, will cause the an exception in the UserAgentApplication.
   // Originally, the NODE_ENV check was in the setting of the logger.
@@ -19,10 +42,9 @@ const authLogCallback = (level: LogLevel, message: string, _containsPii: boolean
 
 const config: Configuration = {
   auth: {
-    // clientId: process.env.REACT_APP_EDNA_AUTH_CLIENT_ID!, //process.env.REACT_APP_EDNA_AAD_CLIENT_ID!
-    clientId: '0cd1d1d6-a7aa-41e2-b569-1ca211147973', // TODO: don't hardcode
+    clientId: process.env.REACT_APP_EDNA_AUTH_CLIENT_ID!, //process.env.REACT_APP_EDNA_AAD_CLIENT_ID!
     redirectUri: process.env.REACT_APP_EDNA_MAIN_URL!,
-    authority: b2cPolicies.authorities.signIn.authority,
+    authority: authority,
     navigateToLoginRequestUrl: true,
     knownAuthorities: [b2cPolicies.authorityDomain]
   },
@@ -56,25 +78,5 @@ const config: Configuration = {
     allowRedirectInIframe: true
   }
 };
-
-// Todo, may no longer be neccessary
-// const authParams: AuthenticationParameters = {
-//   //scopes: ['https://' + process.env.REACT_APP_EDNA_B2C_TENANT! + '.onmicrosoft.com/api/b2c.read'] // RB: 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read'
-//   scopes: [
-//     // TODO: unclear what is needed for custom policies
-//     //'https://ltimoodleb2c.onmicrosoft.com/api/user_impersonation',
-//     'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read',
-//     'openid',
-//     'profile'
-//   ]
-// };
-
-// Todo, may no longer be neccessary
-// const options: IMsalAuthProviderConfig = {
-//   loginType: LoginType.Redirect,
-
-// };
-
-//export const AppAuthConfig = new MsalAuthProvider(configuration, authParams, options);
 
 export const AppAuthConfig = new PublicClientApplication(config);

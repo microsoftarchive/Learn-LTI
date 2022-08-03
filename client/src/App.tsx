@@ -22,20 +22,35 @@ import { MsalAuthenticationTemplate, MsalProvider } from '@azure/msal-react';
 import { AxiosBasicAuthInitializer } from './Core/Auth/AxiosBasicAuthInitializer';
 
 const rootStore: RootStore = new RootStore();
-AppAuthConfig;
 
 function App() {
   registerIcons(fabricIconsData);
   initializeIcons();
   loadTheme(appTheme);
-  const request = {
-    scopes: ['openid', 'profile', 'https://ltimoodleb2c.onmicrosoft.com/api/b2c.read']
-  };
+
+  let request;
+  if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NA') {
+    request = {
+      scopes: [
+        'openid',
+        'profile',
+        'https://' +
+          process.env.REACT_APP_EDNA_B2C_TENANT! +
+          '.onmicrosoft.com/' +
+          process.env.REACT_APP_EDNA_B2C_CLIENT_ID +
+          '/b2c.read'
+      ]
+    };
+  } else {
+    request = {
+      scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!]
+    };
+  }
 
   return (
     <BrowserRouter>
       <MsalProvider instance={AppAuthConfig}>
-        <MsalAuthenticationTemplate interactionType={InteractionType.Popup} authenticationRequest={request}>
+        <MsalAuthenticationTemplate interactionType={InteractionType.Redirect} authenticationRequest={request}>
           <AxiosBasicAuthInitializer>
             <StoreProvider rootStore={rootStore}>
               <GlobalRouter

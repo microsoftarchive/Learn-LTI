@@ -1,4 +1,6 @@
-_Temp*
+Temp*
 CustomPolicy/*
 manifest.json
 AppInfo.csv
+b2cSavedParams.csv
+azuredeploy.json

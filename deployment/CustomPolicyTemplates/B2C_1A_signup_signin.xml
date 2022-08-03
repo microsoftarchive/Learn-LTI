@@ -1,6 +1,6 @@
-<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="<<B2CTenantName>>.onmicrosoft.com" PolicyId="B2C_1A_signup_signin" PublicPolicyUri="http://<<B2CTenantName>>.onmicrosoft.com/B2C_1A_signup_signin">
+<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="<<B2CTenantNameFull>>" PolicyId="B2C_1A_signup_signin" PublicPolicyUri="http://<<B2cTenantNameFull>>/B2C_1A_signup_signin">
   <BasePolicy>
-    <TenantId><<B2CTenantName>>.onmicrosoft.com</TenantId>
+    <TenantId><<B2cTenantNameFull>></TenantId>
     <PolicyId>B2C_1A_TrustFrameworkExtensions</PolicyId>
   </BasePolicy>
   <RelyingParty>
@@ -16,6 +16,7 @@
         <OutputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="sub" />
         <OutputClaim ClaimTypeReferenceId="identityProvider" />
         <OutputClaim ClaimTypeReferenceId="tenantId" AlwaysUseDefaultValue="true" DefaultValue="{Policy:TenantObjectId}" />
+        <OutputClaim ClaimTypeReferenceId="_isB2CToken" AlwaysUseDefaultValue="true" DefaultValue="true"/>
       </OutputClaims>
       <SubjectNamingInfo ClaimType="sub" />
     </TechnicalProfile>

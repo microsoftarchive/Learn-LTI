@@ -13,8 +13,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "RB_policy2_MSLearnLTI",
-    [string]$AppName = "RB_policy2_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "MSLearnLti",
+    [string]$AppName = "MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -26,16 +26,12 @@ process {
         Write-Host $Title
         Write-Host "=============================================================`n`n"
     }
-    
     try {
         #region "formatting a unique identifier to ensure we create a new keyvault for each run"
-        #$uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
-        #((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+        # $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
+        $uniqueIdentifier = "1" # Using lat value instead as Limited deploy is just to get a faster deploy useful for testing only; so we want to replace in place
+        ((Get-Content -path ".\azuredeployTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
         #endregion
-
-        #application ID and uri
-        $clientId = "1ea637ca-5c43-4742-b590-f3c084af99d2"
-        $apiURI = "api://1ea637ca-5c43-4742-b590-f3c084af99d2"
 
         #region Show Learn LTI Banner
         Write-Host ''
@@ -137,8 +133,7 @@ process {
         else {
             $SubscriptionListOutput = $SubscriptionList | Select-Object @{ l="Subscription Name"; e={ $_.name } }, "id", "isDefault"
             Write-Host ($SubscriptionListOutput | Out-String)
-            # $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List' #TODO - UNCOMMENT
-            $SubscriptionNameOrId = "COMP0111 2021-22 Project_Warren_Buhler" #TODO - REMOVE
+            $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List' 
 
             #trimming the input for empty spaces, if any
             $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
@@ -152,11 +147,10 @@ process {
 
         #region Choosing AAD app to update
         Write-Title ' Choose an Azure Active Directory App to update'
-        # $AppName = Read-Host 'Enter the Name for Application' #TODO - UNCOMMENT
+        $AppName = Read-Host 'Enter the Name for Application'
         $AppName = $AppName.Trim()
 
-        # $clientId = Read-Host 'Enter the Client ID of your registered application' #TODO - UNCOMMENT
-        #$clientId = "3d440bc7-87f5-4600-8814-698b895d14d7" #TODO - REMOVE
+        $clientId = Read-Host 'Enter the Client ID of your registered application' 
         $clientId = $clientId.Trim()
 
         Write-Host "Checking if Application exists...."
@@ -182,8 +176,7 @@ process {
         #region Choose Resource Group of above application
         Write-Title ' Choose a Resource Group to update'
         
-        # $ResourceGroupName = Read-Host 'Enter the Name of Resource Group' # TODO - UNCOMMENT
-        #$ResourceGroupName = "RB_policy1_MSLearnLTI" #TODO - REMOVE
+        $ResourceGroupName = Read-Host 'Enter the Name of Resource Group' 
         $ResourceGroupName = $ResourceGroupName.Trim()
         Write-Host "Checking If entered Resource Group exists...."
         $checkResourceGroupExist = (az group exists --resource-group $ResourceGroupName)
@@ -207,8 +200,7 @@ process {
 
         if(!$LocationName) {
             Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
-            # $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning' #TODO - UNCOMMENT
-            $LocationName = "uksouth" #TODO - REMOVE
+            $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning' 
             #trimming the input for empty spaces, if any
             $LocationName = $LocationName.Trim()
         }
@@ -220,14 +212,8 @@ process {
         }
         #endregion
     
-        
-
-       
-
-    
-
         #region Provision Resources inside Resource Group on Azure using ARM template
-        Write-Title 'STEP #6 - Creating Resources in Azure'
+        Write-Title 'STEP #5 - Creating Resources in Azure'
     
         [int]$azver0= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[0]
         [int]$azver1= (az version | ConvertFrom-Json | Select -ExpandProperty "azure-cli").Split(".")[1]
@@ -238,9 +224,6 @@ process {
         $userObjectId = az ad signed-in-user show --query objectId
         }
 
-        $templateFileName = "azuredeploy.json"
-        $deploymentName = "Deployment-$ExecutionStartTime"
-
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $clientId, IdentifiedURI: $apiURI"
         $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$clientId appRegistrationApiURI=$apiURI userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
         if(!$deploymentOutput) {
@@ -249,7 +232,7 @@ process {
 
         Write-Host 'Resource Creation in Azure Completed Successfully'
         
-        Write-Title 'Step #7 - Updating KeyVault with LTI 1.3 Key'
+        Write-Title 'Step #6 - Updating KeyVault with LTI 1.3 Key'
 
         
 
@@ -283,7 +266,7 @@ process {
 
         #region Build and Publish Function Apps
         . .\Limited-Install-Backend.ps1
-        Write-Title "STEP #10 - Installing the backend"
+        Write-Title "STEP #7 - Installing the backend"
     
 
         # Comment out any you don't want to deploy
