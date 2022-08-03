@@ -5,7 +5,7 @@
 
 ![inputting values for getting token](Images/Cleanup/01_tokenInputs.png)
 * Firstly, you must input the required values of:
-    1. The name of your b2c tenant you are cleaning up
+    1. The name of your b2c tenant you are cleaning up (INCLUDING its extension e.g. the default .onmicrosoft.com)
     2. the ID of the permission management application created
        * (if this was not outputted by the deploy script then it terminated before its creation and thus you can leave this empty)
     3. the secret value of the permission management application created

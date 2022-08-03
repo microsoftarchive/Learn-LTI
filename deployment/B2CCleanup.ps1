@@ -12,7 +12,7 @@ function Write-Title([string]$Title) {
 # relevant docs: https://docs.microsoft.com/en-us/graph/auth-v2-service#4-get-an-access-token
 Write-Title "B2C STEP 1: Getting the token to be used in the HTML REQUESTS"
 
-$B2cTenantName = Read-Host "Please enter your B2C tenant name"
+$B2cTenantNameFull = Read-Host "Please enter your B2C tenant name (including its extension)"
 $PermissionClientID = Read-Host "Please enter the client ID of the permission management application"
 $PermissionClientSecret = Read-Host "Please enter the client secret of the permission management application" -AsSecureString
 #Converting from secure string to normal string
@@ -24,7 +24,7 @@ $headers.Add("Content-Type", "application/x-www-form-urlencoded")
 
 $body = "client_id=$PermissionClientID&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&client_secret=$PermissionClientSecret&grant_type=client_credentials"
 
-$response = Invoke-RestMethod "https://login.microsoftonline.com/$B2cTenantName.onmicrosoft.com/oauth2/v2.0/token" -Method 'POST' -Headers $headers -Body $body
+$response = Invoke-RestMethod "https://login.microsoftonline.com/$B2cTenantNameFull/oauth2/v2.0/token" -Method 'POST' -Headers $headers -Body $body
 $access_token = $response.access_token
 $access_token = "Bearer " + $access_token
 #endregion
@@ -82,7 +82,7 @@ foreach ($info in $AppInfo) {
     if ($tid -ne $LastTenantID) {
         $LastTenantID = $tid
         Write-Host "Please login to $tid via the pop-up window that has launched in your browser"
-        az login --tenant "$tid.onmicrosoft.com" --allow-no-subscriptions --only-show-errors > $null
+        az login --tenant "$tid" --allow-no-subscriptions --only-show-errors > $null
     }
     Write-Host "Deleting $id from $tid"
     az ad app delete --id $id --only-show-errors
