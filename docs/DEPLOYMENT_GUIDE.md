@@ -41,23 +41,6 @@ You have now cloned the repo
 * You should now see the Microsoft Learn LTI Tool script popup.
 ![startofdeploy.png](/images/startofdeploy.png)
 
-# Choosing the AD or B2C mode
-
-The script will ask you to choose 'Active Directory',i.e. AD mode or 'Business to Consumer',i.e. B2C mode for authentication between your LTI and LMS.
-
-B2C Mode is recommended due to it being possible to set it up for either single-tenant and multi-tenant access; whilst AD mode is less extensible and only supports single-tenant access.
-
-## AD Mode setup
-
-Type in 'ad' for AD mode of authentication which will direct you towards 'Deploy to Azure Subscription using the script'.
-![admode.png](/images/admode.png)
-
-## B2C Mode setup
-
-Type in 'b2c' for B2C mode of authentication.
-![b2cmode.png](/images/b2cmode.png)
-**IMPORTANT: If you choose B2C, go to the [B2C setup documentation guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/all-test1/deployment/B2C_Docs/B2C_Deployment.md) for instructions on how to complete B2C deployment.**
-
 
 # Deploy to Azure Subscription using the script
 
@@ -73,6 +56,25 @@ The script will ask you to login to Azure by navigating to the Azure Login Page 
 Type in the name of the Azure subscription that you hold (this is a prerequisite necessary for deployment).
 
 If you're unsure about whether your account has a subscription, check [here.](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade??WT.mc_id=learnlti-github-cxa)
+
+
+## Choosing the AD or B2C mode
+
+The script will ask you to choose 'Active Directory',i.e. AD mode or 'Business to Consumer',i.e. B2C mode for authentication between your LTI and LMS.
+
+B2C Mode is recommended due to it being possible to set it up for either single-tenant and multi-tenant access; whilst AD mode is less extensible and only supports single-tenant access.
+
+### AD Mode setup
+
+Type in 'ad' for AD mode of authentication which will direct you towards 'Deploy to Azure Subscription using the script'.
+![admode.png](/images/admode.png)
+
+### B2C Mode setup
+
+Type in 'b2c' for B2C mode of authentication.
+![b2cmode.png](/images/b2cmode.png)
+**IMPORTANT: If you choose B2C, go to the [B2C setup documentation guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/all-test1/deployment/B2C_Docs/B2C_Deployment.md) for instructions on how to complete B2C deployment.**
+
 
 ## Choose Location
 
