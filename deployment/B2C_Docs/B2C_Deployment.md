@@ -10,10 +10,13 @@ This document will explain the steps that contain user interaction and what is r
       * If not already set up information is available [here](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant) at step 1: "Create an Azure AD B2C Tenant"
       * **IMPORTANT: In the current version custom domains are NOT supported, i.e. your tenant domain must be in the DEFAULT format of <code>b2cTenantName.onmicrosoft.com</code>**
 * You should have ready a **list of the tenant id's for the tenants you wish to give access**
-    1. Could either keep it in a list such that you can insert them 1 by 1 into the terminal.
-    2. Or optionally you could format it as shown below such that the script can automatically import them itself.
-        * Create a .txt file that has all the tenant ID's for the tenants you wish to add to the whitelist, with each ID separated onto a newline; an example file with 4 tenant ID's to be added to the whitelist is below
-            * ![whitelist text file](Images/Deployment/07_1_fileFormat.png)
+    *  Note: the AD tenant you are creating these resources on is **NOT** included in the whitelist by default. By Default this whitelist is empty and no tenants will be able to login/access the resources.
+    *  There are 2 ways to add the tenants you wish to whitelist during the deployment
+       1. You can insert them 1 by 1 into the terminal (recommended for a small number of tenants).
+       2. You can save them in a file formatted as shown below then give that path to the script so it can import them automatically (recommended for a small number of tenants).
+           * Create a .txt file that has all the tenant ID's for the tenants you wish to add to the whitelist, with each ID separated onto a newline; an example file with 4 tenant ID's to be added to the whitelist is below
+              * ![whitelist text file](Images/Deployment/07_1_fileFormat.png)
+    * If you wish to add or remove tenants from this whitelist after deployment click [here](#update-the-whitelist-after-deployment) for a guide on how to do so.
 
 
 ## Customising names of created resources:
