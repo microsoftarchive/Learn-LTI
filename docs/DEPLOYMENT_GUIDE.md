@@ -73,7 +73,7 @@ Type in 'ad' for AD mode of authentication which will direct you towards 'Deploy
 
 Type in 'b2c' for B2C mode of authentication.
 ![b2cmode.png](/images/b2cmode.png)
-**IMPORTANT: If you choose B2C, go to the [B2C setup documentation guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/all-test1/deployment/B2C_Docs/B2C_Deployment.md) for instructions on how to complete B2C deployment.**
+**IMPORTANT: If you choose B2C, go to the [B2C setup documentation guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/B2C_Deployment.md) for instructions on how to complete B2C deployment.**
 
 
 ## Choose Location

@@ -15,7 +15,7 @@ This document will explain the steps that contain user interaction and what is r
        1. You can insert them 1 by 1 into the terminal (recommended for a small number of tenants).
        2. You can save them in a file formatted as shown below then give that path to the script so it can import them automatically (recommended for a small number of tenants).
            * Create a .txt file that has all the tenant ID's for the tenants you wish to add to the whitelist, with each ID separated onto a newline; an example file with 4 tenant ID's to be added to the whitelist is below
-              * ![whitelist text file](Images/Deployment/07_1_fileFormat.png)
+              * ![whitelist text file](../images/B2C_Deployment/07_1_fileFormat.png)
     * If you wish to add or remove tenants from this whitelist after deployment click [here](#update-the-whitelist-after-deployment) for a guide on how to do so.
 
 
@@ -30,7 +30,7 @@ This document will explain the steps that contain user interaction and what is r
 ## Step 0: Enter tenant names
 
 * You will immediately be prompted to input the name of the B2C and AD tenants you have created: <br> 1. First, input the name of the B2C Tenant you have created (INCLUDING its extension e.g. the default .onmicrosoft.com)
-  * ![input tenant names](Images/Deployment/00b_tenantNames.png)
+  * ![input tenant names](../images/B2C_Deployment/00b_tenantNames.png)
 
 
 ## Step 1: Create AD application
@@ -38,9 +38,9 @@ This document will explain the steps that contain user interaction and what is r
 ### Login to AD Tenant via your browser
 
 * Your powershell will now prompt you that a pop-up window has launched in your browser and directing you to log in to your AD tenant through it
-    * ![Login to AD Prompt](Images/Deployment/01b_LoginPrompt.png)
+    * ![Login to AD Prompt](../images/B2C_Deployment/01b_LoginPrompt.png)
 
-| ![Login to AD Tenant](Images/Deployment/01a_LoginTenant1.png) |
+| ![Login to AD Tenant](../images/B2C_Deployment/01a_LoginTenant1.png) |
 |---|
 | The launched tab should look similar to the above; please login using it and then switch back to the powershell |
 
@@ -50,9 +50,9 @@ This document will explain the steps that contain user interaction and what is r
 
 * After the apps finished creating, the AD has finished being configured and the script will now move on to configure your B2C Tenant.
 * As before, your powershell will now prompt you that a pop-up window has launched in your browser and directing you to log in to your B2C tenant through it
-  * ![Login to B2C Prompt](Images/Deployment/02a_LoginPrompt.png)
+  * ![Login to B2C Prompt](../images/B2C_Deployment/02a_LoginPrompt.png)
 
-| ![Login to B2C Tenant](Images/Deployment/01a_LoginTenant1.png) |
+| ![Login to B2C Tenant](../images/B2C_Deployment/01a_LoginTenant1.png) |
 |---|
 | The launched tab should look similar to the above; please login using it and then switch back to the powershell |
 
@@ -72,11 +72,11 @@ This document will explain the steps that contain user interaction and what is r
 ### Choice 1: Inputting via text file (recommended for larger whitelists)
 
 * After inputting '1' as your choice, you will now be prompted to input the path to the .txt file you created which contains the tenants you wish to add to your whitelist. The script will now automatically add these tenants to the whitelist.
-    * ![successful run of importing whitelist via txt file](Images/Deployment/07_1_successful.png)
+    * ![successful run of importing whitelist via txt file](../images/B2C_Deployment/07_1_successful.png)
 
 ### Choice 2: Inputting 1 by 1 to terminal (recommended for smaller whitelists)
 
-* ![inputting ID's](Images/Deployment/07_2_successful.png)
+* ![inputting ID's](../images/B2C_Deployment/07_2_successful.png)
     * After inputting '2' as your choice, you will now be prompted to input 1 tenant ID you wish to add to the whitelist
     * After doing so, you will now be prompted to input another.
     * This will continue untill you input 'n' which will end this loop.
@@ -87,13 +87,13 @@ This document will explain the steps that contain user interaction and what is r
 ### Don't link Facebook App
 
 * If you do not have a facebook application to link, simply input 'n' when prompted to skip this step
-    * ![Don't link FB](Images/Deployment/08_noFB.png)
+    * ![Don't link FB](../images/B2C_Deployment/08_noFB.png)
 
 
 ### Link Facebook App
 
 * If you do have a facebook application to link, input 'y' when prompted then input the ID of the Facebook application followed by the secret value for the Facebook application you would like to link
-    * ![Do link FB](Images/Deployment/08_yesFB.png)
+    * ![Do link FB](../images/B2C_Deployment/08_yesFB.png)
 
 
 
@@ -105,7 +105,7 @@ This document will explain the steps that contain user interaction and what is r
 
 ### Input key duration
 * You will first be prompted to input how long you wish the created keys to be valid for before they expire
-    * ![key duration](Images/Deployment/11_time.png)
+    * ![key duration](../images/B2C_Deployment/11_time.png)
 * If your console returns a 403 bad request error, please click [here](#403-forbidden-error)
 
 
@@ -116,7 +116,7 @@ This document will explain the steps that contain user interaction and what is r
 
 ## Step 13: IMPORTANT - Store Secret Values
 
-![Secret Values](Images/Deployment/13_secrets.png)
+![Secret Values](../images/B2C_Deployment/13_secrets.png)
 * After the script finishes running it will output some important values in green and then pause the script (ID and secret values for the created AD app, Permission Management App, and Web App).
 * Take this moment to copy/paste those values into a file and store it **somewhere securely** as you may require those secret values again in the future and they will NOT be accessible again.
     * Also, the Permission Management Applications ID and Secret Value are required for the cleanup script
@@ -141,7 +141,7 @@ This document will explain the steps that contain user interaction and what is r
 
 ### 400 bad request error
 * If at any point you receive a 400 bad request error, a tenant with the given ID could not be found. Please check with the admin who gave you that ID that it is correct.
-    * ![400 bad request error for tenant ID](Images/Deployment/07_1_fail.png)
+    * ![400 bad request error for tenant ID](../images/B2C_Deployment/07_1_fail.png)
 * You must then manually add that ID to the deployment on the portal, instructions for doing so can be found [here](#update-the-whitelist-after-deployment)
 
 ### Update the whitelist after deployment
@@ -177,15 +177,15 @@ This document will explain the steps that contain user interaction and what is r
 
 
 * This step may fail due to a race condition between the granting of admin-consent vs the requirement of its usage in this step; you will know this has occured if you see the error message shown below
-    * ![error admin-consent race](Images/Deployment/11_error.png)
+    * ![error admin-consent race](../images/B2C_Deployment/11_error.png)
 * To solve this issue:
     * First you must login to your b2c tenant on the Azure Portal. If the b2c tenant is already your active directory in the portal you can skip this step.
-        * ![Switch directory on portal](Images/Deployment/10taa_switchDirectory.png)
+        * ![Switch directory on portal](../images/B2C_Deployment/10taa_switchDirectory.png)
             *  Load up the Azure portal; then click on your icon in the top right of the screen, then click "Switch Directory"
-       *  ![ACtive directory](Images/Deployment/10tab_current.png)
+       *  ![ACtive directory](../images/B2C_Deployment/10tab_current.png)
              *  Now click "Switch" for your b2c tenant so it now displays "active"
     * Next, follow the link highlighted yellow in your console which will take you to the below page. On this page you should see a button called "Grant admin consent for {B2C Tenant Name} circled in red.
-    * ![Application permissions page](Images/Deployment/10tb_ManuallyGrantAdminConsent.png)
+    * ![Application permissions page](../images/B2C_Deployment/10tb_ManuallyGrantAdminConsent.png)
 * After clicking on "Grant Admin Consent" the page should now say all permissions are granted
-    * ![Application permissions page](Images/Deployment/10tc_FullyGranted.png)
+    * ![Application permissions page](../images/B2C_Deployment/10tc_FullyGranted.png)
 * Now simply return to the powershell, wait 10 seconds, and press enter to continue the script
