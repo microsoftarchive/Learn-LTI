@@ -234,7 +234,21 @@ process {
                 Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
             }
         }
-        $UserEmailAddress = $ActiveSubscription.user.name
+        $UserEmailAddress = @($ActiveSubscription.user.name)
+        Write-Host "Email that will be allowed to access platforms page:" $UserEmailAddress
+        $choice = Read-Host "Want to add more users/email(y/n):"
+        $choice = $choice.Trim()
+        if($choice -eq "y"){
+            $extramail = Read-Host "Enter user's email or 'n' to exit:"
+            While($extramail -ne 'n'){
+                $UserEmailAddress = $UserEmailAddress + $extramail
+                $extramail = Read-Host "Enter user's email or 'n' to exit:"
+            }
+            Write-Host "Updated list of emails that will be allowed to access platforms page:" $UserEmailAddress
+        }
+
+
+
         #endregion
 
         #region Choose Region for Deployment
