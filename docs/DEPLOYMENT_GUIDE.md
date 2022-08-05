@@ -66,12 +66,12 @@ B2C Mode is recommended due to it being possible to set it up for either single-
 
 ### AD Mode setup
 
-Type in 'ad' for AD mode of authentication which will direct you towards 'Deploy to Azure Subscription using the script'.
+Type in 'ad' for AD mode of authentication (which only allows single-tenant).
 ![admode.png](/images/admode.png)
 
-### B2C Mode setup
+### B2C Mode setup (recommended due to extensibility)
 
-Type in 'b2c' for B2C mode of authentication.
+Type in 'b2c' for B2C mode of authentication (which allows single-tenant or multi-tenant and can be changed after deployment).
 ![b2cmode.png](/images/b2cmode.png)
 **IMPORTANT: If you choose B2C, go to the [B2C setup documentation guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/B2C_Deployment.md) for instructions on how to complete B2C deployment.**
 
