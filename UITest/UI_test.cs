@@ -13,7 +13,7 @@ namespace SeleniumBingTests
     /// Summary description for MySeleniumTests
     /// </summary>
     [TestClass]
-    public class MySeleniumTests
+    public class UI_test
     {
         private IWebDriver driver;
         private string moodleURL = "https://bitnami-moodle-b65b-ip.uksouth.cloudapp.azure.com/my/";
@@ -27,7 +27,7 @@ namespace SeleniumBingTests
             // Access the moodle login page
             driver.Navigate().GoToUrl(moodleURL);
             var ADD_B2C_btn = driver.FindElements(By.ClassName("login-identityprovider-btn"));
-            
+
             // Choose ADD B2C sign in
             ADD_B2C_btn[1].Click();
             Thread.Sleep(6000);
@@ -51,7 +51,7 @@ namespace SeleniumBingTests
             driver.FindElement(By.Id("idSIButton9")).Click();
             Thread.Sleep(4000);
         }
-        
+
 
         [TestInitialize()]
         public void SetupTest()
