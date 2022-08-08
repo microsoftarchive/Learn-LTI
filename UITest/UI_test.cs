@@ -7,7 +7,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.IE;
 using System.Threading;
 
-namespace SeleniumBingTests
+namespace SeleniumTests
 {
     /// <summary>
     /// Summary description for MySeleniumTests
@@ -25,10 +25,12 @@ namespace SeleniumBingTests
         public void LoginTest()
         {
             // Access the moodle login page
+            
             driver.Navigate().GoToUrl(moodleURL);
             var ADD_B2C_btn = driver.FindElements(By.ClassName("login-identityprovider-btn"));
 
             // Choose ADD B2C sign in
+            
             ADD_B2C_btn[1].Click();
             Thread.Sleep(6000);
 
@@ -37,17 +39,24 @@ namespace SeleniumBingTests
             Thread.Sleep(6000);
 
             // Enter mock account email address
+            
             string username = "ucabdhn@w3jnk.onmicrosoft.com";
             string password = "Chilai30101999!";
+            
             // Username
+
             driver.FindElement(By.TagName("input")).SendKeys(username);
             driver.FindElement(By.Id("idSIButton9")).Click();
             Thread.Sleep(3000);
+
             // Password
+            
             driver.FindElement(By.Id("i0118")).SendKeys(password);
             driver.FindElement(By.Id("idSIButton9")).Click();
             Thread.Sleep(4000);
 
+            // Click "Yes" on "Stay sign in ?"
+            
             driver.FindElement(By.Id("idSIButton9")).Click();
             Thread.Sleep(4000);
         }
