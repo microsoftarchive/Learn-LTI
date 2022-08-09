@@ -217,9 +217,18 @@ process {
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
             $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-4] #webclient ID
             $b2c_secret = $results[-3] #webclient secret
-            $b2c_secret =  $b2c_secret # turning the secret into a form we can store 
             $REACT_APP_EDNA_B2C_TENANT = $results[-2] #b2c tenant name
             $B2C_ObjectID = $results[-1] # b2c webapp id that needs the SPA uri
+
+            Write-Log -Message "Returned the follow values from the b2c setup script-
+            `nAD_Tenant_Name_full: $AD_Tenant_Name_full
+            `nb2c_tenant_name_full: $b2c_tenant_name_full
+            `nREACT_APP_EDNA_B2C_CLIENT_ID: $REACT_APP_EDNA_B2C_CLIENT_ID
+            `nREACT_APP_EDNA_AUTH_CLIENT_ID: $REACT_APP_EDNA_AUTH_CLIENT_ID
+            `nb2c_secret: $b2c_secret
+            `nREACT_APP_EDNA_B2C_TENANT: $REACT_APP_EDNA_B2C_TENANT
+            `nB2C_ObjectID: $B2C_ObjectID"
+
 
             #update b2c deploy template 
             $policy_name = "b2c_1a_signin" 
@@ -243,9 +252,9 @@ process {
         
         
             # log back in to the azure account now we've returned from B2C Script
-            Write-Log -Message "Logging back in to Azure Account after returning frmo B2C Script"
+            Write-Log -Message "Logging back in to Azure Account for tenant $AD_Tenant_Name_full and subscription $SubscriptionNameOrId after returning frmo B2C Script"
             az login --tenant $AD_Tenant_Name_full #logging back into the azure account for the AD tenant
-            az account set --subscription $NameOrId #setting the active subscription back to the stored value
+            az account set --subscription $SubscriptionNameOrId #setting the active subscription back to the stored value
         }
         #else its AD load the AD azuredeploy template
         else{
