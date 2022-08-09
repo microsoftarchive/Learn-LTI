@@ -514,7 +514,7 @@ try{
         catch{
             if(($Error[0].Exception.Message).contains("403")){
                 Write-Color "Red" "403 forbidden error likely due to admin-consent having not yet been granted; please switch your directory to the b2c tenant ($B2cTenantNameFull) in the Azure portal then copy and paste the yellow link into your browser to manually grant admin-consent then press enter."
-                Write-Color "Red" "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this."
+                Write-Color "Red" "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/docs/B2C_Deployment.md if you require assistance on how to do this."
                 $PMA_Page = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$PermissionClientID/isMSAApp~/false"
                 Write-Color "Yellow" "$PMA_Page"
                 Read-Host "Press enter after manually granting the admin consent permission and waiting 10 seconds"
