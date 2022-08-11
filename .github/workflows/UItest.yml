@@ -3,9 +3,9 @@
 name: UI Automated Testing
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "Selenium_UI_test" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "Selenium_UI_test" ]
 
   workflow_dispatch:
 
