@@ -21,4 +21,4 @@ jobs:
         uses: darenm/Setup-VSTest@v1
 
       - name: Run functional tests
-        run: vstest.console.exe "Selenium_Nunit_UI_Test\bin\Debug\net6.0\Selenium_Nunit_UI_Test.dll"
+        run: vstest.console.exe ${{ github.workspace }}\Selenium_Nunit_UI_Test\bin\Debug\net6.0\Selenium_Nunit_UI_Test.dll
