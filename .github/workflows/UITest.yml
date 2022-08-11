@@ -1,0 +1,24 @@
+# This action runs the Selenium automated tests
+
+name: UI Automated Testing
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      - name: Add VSTest.console.exe to the PATH
+        uses: darenm/Setup-VSTest@v1
+
+      - name: Run functional tests
+        run: vstest.console.exe "Selenium_Nunit_UI_Test\bin\Debug\net6.0\Selenium_Nunit_UI_Test.dll"
