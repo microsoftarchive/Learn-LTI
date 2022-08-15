@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "AdOnly3-MSLearnLti",
-    [string]$AppName = "AdOnly3-MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "AdOnly4-MSLearnLti",
+    [string]$AppName = "AdOnly4-MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = "550c8aca-87a0-4da2-8e2e-10aca7b2e187",
     [string]$LocationName = "uksouth"
@@ -258,7 +258,10 @@ process {
         }
         #else its AD load the AD azuredeploy template
         else{
-            ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+            $AD_Tenant_Name_full = az rest --method get --url https://graph.microsoft.com/v1.0/domains --query 'value[?isDefault].id' -o tsv
+            $OPENID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/${AD_Tenant_Name_full}/v2.0/.well-known/openid-configuration"
+            ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) `
+            -replace '<OPENID_AD_CONFIG_URL_IDENTIFIER>', ($OPENID_AD_CONFIG_URL_IDENTIFIER) |  Set-Content -path (".\azuredeploy.json")
         }
 
         
@@ -404,30 +407,30 @@ process {
         az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
 
-        if($b2cOrAD -eq "ad"){
-            # adding the user_impersonation scope to the app, required for client side auth
-            $appApiInfo = $appinfo.api
-            $appScopeGUID = [guid]::NewGuid()
-            $UserImpersonationScope = "{
-                    `"adminConsentDescription`": `"Allow the application to access $AppName on behalf of the signed-in user.`",
-                    `"adminConsentDisplayName`": `"Access $AppName`",
-                    `"id`": `"$appScopeGUID`",
-                    `"isEnabled`": true,
-                    `"type`": `"User`",
-                    `"userConsentDescription`": null,
-                    `"userConsentDisplayName`": null,
-                    `"value`": `"user_impersonation`"
-            }" | ConvertFrom-Json
-            $appApiInfo.oauth2PermissionScopes += $UserImpersonationScope
-            ConvertTo-Json -InputObject $appApiInfo | Out-File -FilePath "userImpersonationScope.json"
-            az ad app update --id $appinfo.appId --set api=@userImpersonationScope.json --only-show-errors
 
-            # granting user_impersonation to the web app
-            # az ad app permission grant --id $WebClientID --api $appinfo.appId --scope "user_impersonation" --only-show-errors > $null
-            # az ad app permission add --id $WebClientID --api $appinfo.appId --api-permissions "$appScopeGUID=Scope" --only-show-errors
+        # adding the user_impersonation scope to the app, required for client side auth
+        $appApiInfo = $appinfo.api
+        $appScopeGUID = [guid]::NewGuid()
+        $UserImpersonationScope = "{
+                `"adminConsentDescription`": `"Allow the application to access $AppName on behalf of the signed-in user.`",
+                `"adminConsentDisplayName`": `"Access $AppName`",
+                `"id`": `"$appScopeGUID`",
+                `"isEnabled`": true,
+                `"type`": `"User`",
+                `"userConsentDescription`": null,
+                `"userConsentDisplayName`": null,
+                `"value`": `"user_impersonation`"
+        }" | ConvertFrom-Json
+        $appApiInfo.oauth2PermissionScopes += $UserImpersonationScope
+        ConvertTo-Json -InputObject $appApiInfo | Out-File -FilePath "userImpersonationScope.json"
+        az ad app update --id $appinfo.appId --set api=@userImpersonationScope.json --only-show-errors
 
-            Remove-Item userImpersonationScope.json
-        }
+        # granting user_impersonation to the web app
+        # az ad app permission grant --id $WebClientID --api $appinfo.appId --scope "user_impersonation" --only-show-errors > $null
+        # az ad app permission add --id $WebClientID --api $appinfo.appId --api-permissions "$appScopeGUID=Scope" --only-show-errors
+
+        Remove-Item userImpersonationScope.json
+        
 
 
         #endregion
