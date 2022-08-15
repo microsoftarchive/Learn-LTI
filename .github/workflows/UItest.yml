@@ -13,7 +13,7 @@ jobs:
     
     env:
       SOURCE_DIR: ${{ github.workspace }}\Selenium_Nunit_UI_Test
-      DOTNET_VERSION: "3.1"
+      DOTNET_VERSION: "3.1.101"
     
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -28,7 +28,7 @@ jobs:
         run: dotnet restore ${{ env.SOURCE_DIR }}
         
       - name: Build
-        run: dotnet build ${{ env.SOURCE_DIR }}
+        run: dotnet build ${{ env.SOURCE_DIR }} --configuration Release --no-restore
         
       - name: Test
-        run: dotnet test ${{ env.SOURCE_DIR }}
+        run: dotnet test ${{ env.SOURCE_DIR }} --no-restore --verbosity normal
