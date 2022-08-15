@@ -5,11 +5,11 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "MSLearnLti",
-    [string]$AppName = "MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "AdOnly2-MSLearnLti",
+    [string]$AppName = "AdOnly2-MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
-    [string]$SubscriptionNameOrId = $null,
-    [string]$LocationName = $null
+    [string]$SubscriptionNameOrId = "550c8aca-87a0-4da2-8e2e-10aca7b2e187",
+    [string]$LocationName = "uksouth"
 )
 
 process {
@@ -194,12 +194,12 @@ process {
 
 
         #region "B2C STEP 0: Calling B2CDeployment to set up the b2c script and retrieving the returned values to be used later on"
-        $REACT_APP_EDNA_B2C_CLIENT_ID = "'NA'"
-        $REACT_APP_EDNA_AUTH_CLIENT_ID = "'Placeholder'" # either replaced below by returned value of b2c script if b2cOrAD = "b2c", or just before step 11.a to AAD_Client_ID's ($appinfo.appId) value if b2cOrAD = "ad"
-        $b2c_secret = "'NA'"
-        $REACT_APP_EDNA_B2C_TENANT = "'NA'"
-        $B2C_ObjectID = "'NA'"
-        $b2c_tenant_name_full = "'NA'"
+        $REACT_APP_EDNA_B2C_CLIENT_ID = 'NA'
+        $REACT_APP_EDNA_AUTH_CLIENT_ID = 'Placeholder' # either replaced below by returned value of b2c script if b2cOrAD = "b2c", or at end of step 4 to AAD_Client_ID's ($appinfo.appId) value if b2cOrAD = "ad" so it is ready for its usage when updating .env.development and .env.deploy
+        $b2c_secret = 'NA'
+        $REACT_APP_EDNA_B2C_TENANT = 'NA'
+        $B2C_ObjectID = 'NA'
+        $b2c_tenant_name_full = 'NA'
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #0: Running the B2C Setup Script"
             
@@ -277,7 +277,8 @@ process {
         while(1){
             try{
                 if(!$LocationName) {
-                    Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
+                    $LocationNames = az account list-locations --output table --query "[].{Name:name}"
+                    Write-Host "$($LocationNames[2..$LocationNames.Length] | Sort-Object | Out-String)`n"
                     $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
                     #trimming the input for empty spaces, if any
                     $LocationName = $LocationName.Trim()
@@ -337,6 +338,12 @@ process {
         }
     
         Write-Host 'Resource Group Created Successfully'
+
+
+        # if this is being run in AD mode then update the placeholder for REACT_APP_EDNA_AUTH_CLIENT_ID to the ADD_CLIENT_ID
+        if($b2cOrAD -eq "ad"){
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $appinfo.appId # if 'ad' then set to AAD_CLIENT_ID's vaue
+        }
         #endregion
 
         #region Provision Resources inside Resource Group on Azure using ARM template
@@ -422,7 +429,7 @@ process {
 
         . .\Install-Client.ps1
         Write-Title "STEP #11.A - Updating client's .env.production file"
-        
+
         $ClientUpdateConfigParams = @{
             ConfigPath="../client/.env.production";
             AppId=$appinfo.appId;
