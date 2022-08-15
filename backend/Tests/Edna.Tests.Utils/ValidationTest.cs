@@ -38,6 +38,7 @@ namespace Edna.Tests.Utils
             _adManager = new MockConfigurationManager<OpenIdConnectConfiguration>(_adConfig);
         }
 
+        // Test the token validation process by creating, signing and validating a token
         [Test]
         public async Task TestTokenValidation()
         {
@@ -51,6 +52,7 @@ namespace Edna.Tests.Utils
             Assert.IsTrue(await headers.ValidateToken(_b2CManager, _adManager, _audience));
         }
 
+        // Test TryGetUserEmails method when passing a B2C token. Emails should be retrieved from the token.
         [Test]
         public void TestB2CValidatePermission()
         {
@@ -66,6 +68,7 @@ namespace Edna.Tests.Utils
             Assert.GreaterOrEqual(userEmails.Count, 1);
         }
 
+        // Test TryGetUserEmails method when passing an AD token from user function calls. Emails should be retrieved from the token.
         [Test]
         public void TestAdUserValidatePermission()
         {
@@ -81,6 +84,7 @@ namespace Edna.Tests.Utils
             Assert.GreaterOrEqual(userEmails.Count, 1);
         }
         
+        // Test TryGetUserEmails method when passing an AD token from system function calls. No email should be retrieved from the token.
         [Test]
         public void TestAdSystemValidatePermission()
         {
