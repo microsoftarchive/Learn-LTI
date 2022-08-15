@@ -2,9 +2,9 @@ name: unit test
 
 on:
   push:
-    branches: [ TZ_Unit_Test ]
+    branches: [ all_test-2 ]
   pull_request:
-    branches: [ TZ_Unit_Test ]
+    branches: [ all_test-2 ]
 
 jobs:
   build:
