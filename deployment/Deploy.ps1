@@ -277,7 +277,8 @@ process {
         while(1){
             try{
                 if(!$LocationName) {
-                    Write-Host "$(az account list-locations --output table --query "[].{Name:name}" | Out-String)`n"
+                    $LocationNames = az account list-locations --output table --query "[].{Name:name}"
+                    Write-Host "$($LocationNames[2..$LocationNames.Length] | Sort-Object | Out-String)`n"
                     $LocationName = Read-Host 'Enter Location From Above List for Resource Provisioning'
                     #trimming the input for empty spaces, if any
                     $LocationName = $LocationName.Trim()
