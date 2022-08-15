@@ -27,7 +27,7 @@ namespace Edna.Tests.Utils
         {
             _issuer = Guid.NewGuid().ToString();
             _audience = "https://testb2ctenant.b2clogin.com/" + Guid.NewGuid() + "/v2.0/";
-            _key = new RsaSecurityKey(RSA.Create(4096));
+            _key = new RsaSecurityKey(RSA.Create(2048));
             _nbf = DateTime.Now;
             _exp = _nbf.Add(new TimeSpan(0, 1, 0, 0));
             _b2CConfig = new OpenIdConnectConfiguration { Issuer = _issuer };
