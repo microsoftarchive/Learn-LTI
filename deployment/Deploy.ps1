@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "AdOnly2-MSLearnLti",
-    [string]$AppName = "AdOnly2-MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "AdOnly3-MSLearnLti",
+    [string]$AppName = "AdOnly3-MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = "550c8aca-87a0-4da2-8e2e-10aca7b2e187",
     [string]$LocationName = "uksouth"
@@ -349,7 +349,7 @@ process {
         #region Provision Resources inside Resource Group on Azure using ARM template
         Write-Title 'STEP #6 - Creating Resources in Azure'
     
-        $userObjectId = az ad signed-in-user show --query id # requires 2.37 or igher
+        $userObjectId = az ad signed-in-user show --query id # requires 2.37 or higher
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $($appinfo.appId), IdentifiedURI: $($appinfo.identifierUris)"
@@ -402,8 +402,38 @@ process {
         $body = '{\"spa\":{\"redirectUris\":[\"' + $AppRedirectUrl + '\"]}}'
         Write-Log -Message "Pointing to  $graphUrl and using body $body"
         az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
-
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
+
+        if($b2cOrAD -eq "ad"){
+            # adding the user_impersonation scope to the app, required for client side auth
+            $appApiInfo = $appinfo.api
+            $appScopeGUID = [guid]::NewGuid()
+            $UserImpersonationScope = "{
+                    `"adminConsentDescription`": `"Allow the application to access $AppName on behalf of the signed-in user.`",
+                    `"adminConsentDisplayName`": `"Access $AppName`",
+                    `"id`": `"$appScopeGUID`",
+                    `"isEnabled`": true,
+                    `"type`": `"User`",
+                    `"userConsentDescription`": null,
+                    `"userConsentDisplayName`": null,
+                    `"value`": `"user_impersonation`"
+            }" | ConvertFrom-Json
+            $appApiInfo.oauth2PermissionScopes += $UserImpersonationScope
+            ConvertTo-Json -InputObject $appApiInfo | Out-File -FilePath "userImpersonationScope.json"
+            az ad app update --id $appinfo.appId --set api=@userImpersonationScope.json --only-show-errors
+
+            # granting user_impersonation to the web app
+            # az ad app permission grant --id $WebClientID --api $appinfo.appId --scope "user_impersonation" --only-show-errors > $null
+            # az ad app permission add --id $WebClientID --api $appinfo.appId --api-permissions "$appScopeGUID=Scope" --only-show-errors
+
+            Remove-Item userImpersonationScope.json
+        }
+
+
+        #endregion
+
+
+
     
         Write-Host 'App Update Completed Successfully'
         #endregion
