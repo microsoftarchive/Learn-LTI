@@ -27,7 +27,7 @@ if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NA') {
   authority = b2cPolicies.authorities.signIn.authority;
 } else {
   request = {
-    scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!]
+    scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!, 'email', 'profile', 'openid', 'User.Read']
   };
   authority = `https://login.microsoftonline.com/${process.env.REACT_APP_EDNA_TENANT_ID}`;
 }

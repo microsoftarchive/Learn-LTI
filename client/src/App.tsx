@@ -4,8 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import React from 'react';
-import { useState } from 'react';
-import axios from 'axios';
 import { BrowserRouter } from 'react-router-dom';
 import { RootStore } from './Stores/Root.store';
 import { StoreProvider } from './Stores/Core';
@@ -17,7 +15,7 @@ import { AppAuthConfig } from './Core/Auth/AppAuthConfig';
 import { initializeIcons } from '@fluentui/react';
 import { appTheme } from './Core/Themes/MainTheme';
 import { PlatformPage } from './Features/Platform/PlatformPage';
-import { PublicClientApplication, InteractionType, InteractionRequiredAuthError } from '@azure/msal-browser';
+import { InteractionType } from '@azure/msal-browser';
 import { MsalAuthenticationTemplate, MsalProvider } from '@azure/msal-react';
 import { AxiosBasicAuthInitializer } from './Core/Auth/AxiosBasicAuthInitializer';
 

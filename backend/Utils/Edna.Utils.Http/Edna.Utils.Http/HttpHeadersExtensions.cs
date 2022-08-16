@@ -37,12 +37,15 @@ namespace Edna.Utils.Http
             var token = authorizationContent?.Split(' ')[1];
             try
             {
-                var b2CConfig = await b2CConfigurationManager.GetConfigurationAsync(default);
                 var adConfig = await adConfigurationManager.GetConfigurationAsync(default);
-                var signingKeys = b2CConfig.SigningKeys;
-                foreach (var key in adConfig.SigningKeys)
+                var signingKeys = adConfig.SigningKeys;
+                var validIssuers = new List<string> { adConfig.Issuer };
+                if (b2CConfigurationManager != null)
                 {
-                    signingKeys.Add(key);
+                    var b2CConfig = await b2CConfigurationManager.GetConfigurationAsync(default);
+                    foreach (var key in b2CConfig.SigningKeys)
+                        signingKeys.Add(key);
+                    validIssuers.Add(b2CConfig.Issuer);
                 }
                 var validationParameters = new TokenValidationParameters
                 {
@@ -52,7 +55,7 @@ namespace Edna.Utils.Http
                     ValidateLifetime = true,
                     RequireSignedTokens = true,
                     IssuerSigningKeys = signingKeys,
-                    ValidIssuers = new List<string>{b2CConfig.Issuer, adConfig.Issuer},
+                    ValidIssuers = validIssuers,
                     ValidAudiences = validAudience.Split(',')
                 };
                 var principal = JwtSecurityTokenHandler.ValidateToken(token, validationParameters, out _);

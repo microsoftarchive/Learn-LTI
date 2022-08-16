@@ -3,6 +3,11 @@
 # Licensed under the MIT license.
 # --------------------------------------------------------------------------------------------
 
+# Needs exchange online management in order to add the aliases for the users specified email addresses
+#Requires -Module ExchangeOnlineManagement
+
+
+
 [CmdletBinding()]
 param (
     [string]$ResourceGroupName = "MSLearnLti",
@@ -91,7 +96,7 @@ process {
 
         #formatting a unique identifier to ensure we create a new keyvault for each run
         $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
-
+        $activeDirectoryTenant = ""
         
 
         #region Login to Azure CLI        
@@ -175,10 +180,12 @@ process {
             Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
         }
 
+        $subscriptionId = ""
         #defensive programming so script doesn't halt and require a cleanup if subscription is mistyped
         while(1){
             try{
                 $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+                $subscriptionId = $ActiveSubscription.id
                 break
             }
             catch [InvalidAzureSubscriptionException]{
@@ -189,23 +196,77 @@ process {
                 Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
             }
         }
+
+        #region "Getting all the alias and primary emails to be added to the list of allowed users for the platform page"
+
+        #function for getting all the alias emails for a given email address
+        function getAllAliasEmails(){
+            param(
+                [string]$email
+            )
+            $emailsData = Get-Mailbox -Identity $email | Select-Object -expand emailaddresses alias
+            #for each email in emails get everything after the colon and add it to the list
+            $emails = $emailsData | ForEach-Object { $_.Split(':')[1] }
+            return $emails -join ";"
+        }
+
+        #getting the users email address and domain for the currently logged in suscription
         $UserEmailAddress = $ActiveSubscription.user.name
+        $Domain = $UserEmailAddress.Substring($UserEmailAddress.IndexOf("@"),$UserEmailAddress.Length-$UserEmailAddress.IndexOf("@"))
+
+        Write-Title "Creating list of users to be allowed to access the platforms page"
+        Write-Host "Please login to $UserEmailAddress via the popup window"
+        Connect-ExchangeOnline #logging in to exchange onine
+
+        #creating the string of all emails separated by ; with the alias of the current email address
+        $UserEmailAddresses = getAllAliasEmails $UserEmailAddress
+        
+        Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserEmailAddresses
+        $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n):"
+        $choice = $choice.Trim()
+
+        #iteratively add more users from the same domain to the list of allowed users
+        if($choice -eq "y"){
+            $extramail = Read-Host "Enter user's email or 'n' to exit:"
+            While($extramail -ne 'n'){
+                #checking these are from the same domain as otherwise we cannot get alias'
+                $NewDomain = $extramail.Substring($extramail.IndexOf("@"),$extramail.Length-$extramail.IndexOf("@"))
+                if($NewDomain -ne $Domain){
+                    Write-Host "Emails must be from the same domain ($Domain)"
+                }
+                else{
+                    $UserEmailAddresses += ";" + (getAllAliasEmails $extramail)
+                }
+
+                Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserEmailAddresses
+                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit:"
+            }
+            Write-Host "Updated list of emails that will be allowed to access platforms page:" $UserEmailAddresses
+        }
+
+        Write-Host "`r`n"
+
+        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary Active Directory tenant. This tenant should contain the LMS resource groups and will contain your LTI resource groups'
+        #endregion
+        #endregion
+
+
         #endregion
 
 
         #region "B2C STEP 0: Calling B2CDeployment to set up the b2c script and retrieving the returned values to be used later on"
-        $REACT_APP_EDNA_B2C_CLIENT_ID = "'NA'"
-        $REACT_APP_EDNA_AUTH_CLIENT_ID = "'Placeholder'" # either replaced below by returned value of b2c script if b2cOrAD = "b2c", or just before step 11.a to AAD_Client_ID's ($appinfo.appId) value if b2cOrAD = "ad"
-        $b2c_secret = "'NA'"
-        $REACT_APP_EDNA_B2C_TENANT = "'NA'"
-        $B2C_ObjectID = "'NA'"
-        $b2c_tenant_name_full = "'NA'"
+        $REACT_APP_EDNA_B2C_CLIENT_ID = 'NA'
+        $REACT_APP_EDNA_AUTH_CLIENT_ID = 'Placeholder' # either replaced below by returned value of b2c script if b2cOrAD = "b2c", or at end of step 4 to AAD_Client_ID's ($appinfo.appId) value if b2cOrAD = "ad" so it is ready for its usage when updating .env.development and .env.deploy
+        $b2c_secret = 'NA'
+        $REACT_APP_EDNA_B2C_TENANT = 'NA'
+        $B2C_ObjectID = 'NA'
+        $b2c_tenant_name_full = 'NA'
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #0: Running the B2C Setup Script"
             
             # passing in the ExecutionStartTime to continue the log file
             # passing in the tenantId of the AD tenant as the b2c setup must be linked with the AD tenant for the chosen subscription
-            $results = (& ".\B2CDeployment.ps1" $ExecutionStartTime $ActiveSubscription.tenantId) 
+            $results = (& ".\B2CDeployment.ps1" $ExecutionStartTime $activeDirectoryTenant) 
             if($results[-1] -eq -1){
                 throw "B2CDeployment.ps1 failed"
             }
@@ -240,9 +301,6 @@ process {
             $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://${REACT_APP_EDNA_B2C_TENANT}.b2clogin.com/${b2c_tenant_name_full}/${policy_name}/v2.0/.well-known/openid-configuration"
             $OPENID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/${AD_Tenant_Name_full}/v2.0/.well-known/openid-configuration"
 
-            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
-            
-
             (Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) `
             -replace '<B2C_APP_CLIENT_ID_IDENTIFIER>', ($REACT_APP_EDNA_B2C_CLIENT_ID) `
             -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'") `
@@ -258,7 +316,10 @@ process {
         }
         #else its AD load the AD azuredeploy template
         else{
-            ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) |  Set-Content -path (".\azuredeploy.json")
+            $AD_Tenant_Name_full = az rest --method get --url https://graph.microsoft.com/v1.0/domains --query 'value[?isDefault].id' -o tsv
+            $OPENID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/${AD_Tenant_Name_full}/v2.0/.well-known/openid-configuration"
+            ((Get-Content -path ".\azuredeployADTemplate.json" -Raw) -replace '<IDENTIFIER_DATETIME>', ("'"+$uniqueIdentifier+"'")) `
+            -replace '<OPENID_AD_CONFIG_URL_IDENTIFIER>', ($OPENID_AD_CONFIG_URL_IDENTIFIER) |  Set-Content -path (".\azuredeploy.json")
         }
 
         
@@ -338,16 +399,75 @@ process {
         }
     
         Write-Host 'Resource Group Created Successfully'
+
+
+        # if this is being run in AD mode then update the placeholder for REACT_APP_EDNA_AUTH_CLIENT_ID to the ADD_CLIENT_ID
+        if($b2cOrAD -eq "ad"){
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $appinfo.appId # if 'ad' then set to AAD_CLIENT_ID's vaue
+        }
         #endregion
 
         #region Provision Resources inside Resource Group on Azure using ARM template
         Write-Title 'STEP #6 - Creating Resources in Azure'
+
+        #region "Getting all the alias and primary emails to be added to the list of allowed users for the platform page"
+
+        #function for getting all the alias emails for a given email address
+        function getAllAliasEmails(){
+            param(
+                [string]$email
+            )
+            $emailsData = Get-Recipient -Identity $email | Select-Object -expand EmailAddresses alias
+            #for each email in emails get everything after the colon and add it to the list
+            $emails = $emailsData | ForEach-Object { $_.Split(':')[1] }
+            return $emails -join ";"
+        }
+
+        #getting the users email address and domain for the currently logged in suscription
+        $CurrentUseremailaddress = $ActiveSubscription.user.name
+        $Domain = $CurrentUseremailaddress.Substring($CurrentUseremailaddress.IndexOf("@"),$CurrentUseremailaddress.Length-$CurrentUseremailaddress.IndexOf("@"))
+
+        $UserDisplayEmails = $CurrentUseremailaddress #variable to print only the inputted emails not all alias for ease of understanding for the user
+
+        Write-Host "Creating list of users to be allowed to access the platforms page"
+        Write-Host "Please login to $CurrentUseremailaddress via the popup window"
+        Connect-ExchangeOnline -ShowBanner:$false #logging in to exchange onine
+
+        #creating the string of all emails separated by ; with the alias of the current email address
+        $UserEmailAddresses = getAllAliasEmails $CurrentUseremailaddress
+        
+        Write-Host "Users that will be allowed to access platforms page:" $UserDisplayEmails
+        $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n)"
+        $choice = $choice.Trim()
+
+        #iteratively add more users from the same domain to the list of allowed users
+        if($choice -eq "y"){
+            $extramail = Read-Host "Enter user's email or 'n' to exit:"
+            While($extramail -ne 'n'){
+                #checking these are from the same domain as otherwise we cannot get alias'
+                $NewDomain = $extramail.Substring($extramail.IndexOf("@"),$extramail.Length-$extramail.IndexOf("@"))
+                if($NewDomain -ne $Domain){
+                    Write-Host "Emails must be from the same domain ($Domain)"
+                }
+                else{
+                    Write-Log -Message "Adding $extramail and its Alias' to the list of allowed users for the platform page"
+                    $UserEmailAddresses += ";" + (getAllAliasEmails $extramail)
+                    $UserDisplayEmails += ", $extramail"
+                }
+
+                Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserDisplayEmails
+                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit:"
+            }
+            
+            Write-Log -Message "List of primary emails + all their alias's that will be allowed to access platforms page: $UserEmailAddresses"
+        }
+        #endregion
     
-        $userObjectId = az ad signed-in-user show --query id # requires 2.37 or igher
+        $userObjectId = az ad signed-in-user show --query id # requires 2.37 or higher
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $($appinfo.appId), IdentifiedURI: $($appinfo.identifierUris)"
-        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
+        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) userEmailAddress=$($UserEmailAddresses) userObjectId=$($userObjectId)) | ConvertFrom-Json;
         if(!$deploymentOutput) {
             throw "Encountered an Error while deploying to Azure"
         }
@@ -396,8 +516,38 @@ process {
         $body = '{\"spa\":{\"redirectUris\":[\"' + $AppRedirectUrl + '\"]}}'
         Write-Log -Message "Pointing to  $graphUrl and using body $body"
         az rest --method PATCH --uri $graphUrl --headers 'Content-Type=application/json' --body $body
-
         #Intentionally not catching an exception here since the app update commands behavior (output) is different from others
+
+
+        # adding the user_impersonation scope to the app, required for client side auth
+        $appApiInfo = $appinfo.api
+        $appScopeGUID = [guid]::NewGuid()
+        $UserImpersonationScope = "{
+                `"adminConsentDescription`": `"Allow the application to access $AppName on behalf of the signed-in user.`",
+                `"adminConsentDisplayName`": `"Access $AppName`",
+                `"id`": `"$appScopeGUID`",
+                `"isEnabled`": true,
+                `"type`": `"User`",
+                `"userConsentDescription`": null,
+                `"userConsentDisplayName`": null,
+                `"value`": `"user_impersonation`"
+        }" | ConvertFrom-Json
+        $appApiInfo.oauth2PermissionScopes += $UserImpersonationScope
+        ConvertTo-Json -InputObject $appApiInfo | Out-File -FilePath "userImpersonationScope.json"
+        az ad app update --id $appinfo.appId --set api=@userImpersonationScope.json --only-show-errors
+
+        # granting user_impersonation to the web app
+        # az ad app permission grant --id $WebClientID --api $appinfo.appId --scope "user_impersonation" --only-show-errors > $null
+        # az ad app permission add --id $WebClientID --api $appinfo.appId --api-permissions "$appScopeGUID=Scope" --only-show-errors
+
+        Remove-Item userImpersonationScope.json
+        
+
+
+        #endregion
+
+
+
     
         Write-Host 'App Update Completed Successfully'
         #endregion
@@ -423,7 +573,7 @@ process {
 
         . .\Install-Client.ps1
         Write-Title "STEP #11.A - Updating client's .env.production file"
-        
+
         $ClientUpdateConfigParams = @{
             ConfigPath="../client/.env.production";
             AppId=$appinfo.appId;
@@ -466,6 +616,19 @@ process {
 
 
         Write-Title "TOOL REGISTRATION URL (Please Copy, Required for Next Steps) -> $($deploymentOutput.properties.outputs.webClientURL.value)platform"
+
+        #region "Creating URL so users can more easily investigate their logs for the platform page if issues arise"
+        $ConfigPath = "../client/.env.production"
+        $text = Get-Content $ConfigPath
+        $configValues = $text | ConvertFrom-StringData
+
+        $platformUniqueValue = $configValues.REACT_APP_EDNA_PLATFORM_SERVICE_URL #getting the platform service url
+        $platformUniqueValue = $platformUniqueValue.Substring(($platformUniqueValue.IndexOf("platforms-")),$platformUniqueValue.Length-$platformUniqueValue.IndexOf("platforms-")) # trimming to the start of the uniqueIdentifier for the platform page
+        $platformUniqueValue = $platformUniqueValue.Substring(0,$platformUniqueValue.IndexOf(".")) # trimming to the end of the uniqueIdentifier for the platform page
+
+        Write-Title "PLATFORM PAGE AZURE URL (Please Copy, useful for debugging logs if something goes wrong) -> https://portal.azure.com/#@$AD_Tenant_Name_full/resource/subscriptions/$subscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Insights/components/$platformUniqueValue/overview"
+        #endregion
+
 
         Write-Title '======== Successfully Deployed Resources to Azure ==========='
 

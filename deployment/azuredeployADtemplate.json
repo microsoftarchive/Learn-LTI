@@ -219,7 +219,9 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('users' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "ValidAudience": "[toLower(parameters('appRegistrationClientId'))]"
           }
         },
         {
@@ -242,7 +244,9 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('assignments' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "ValidAudience": "[toLower(parameters('appRegistrationClientId'))]"
           }
         },
         {
@@ -265,7 +269,9 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('platforms' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('platforms' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "ValidAudience": "[toLower(parameters('appRegistrationClientId'))]"
           }
         },
         {
@@ -287,7 +293,9 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('links' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "ValidAudience": "[toLower(parameters('appRegistrationClientId'))]"
           }
         },
         {
@@ -309,7 +317,9 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('learncontent' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "ValidAudience": "[toLower(parameters('appRegistrationClientId'))]"
           }
         },
         {

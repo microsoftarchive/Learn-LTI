@@ -34,8 +34,9 @@ namespace Edna.AssignmentLearnContent
             builder.Services.AddSingleton((s) => new ConfigurationManager<OpenIdConnectConfiguration>(
                 Environment.GetEnvironmentVariable("ADConfigurationUrl"), new OpenIdConnectConfigurationRetriever()));
             
-            builder.Services.AddSingleton((s) => new ConfigurationManager<OpenIdConnectConfiguration>(
-                Environment.GetEnvironmentVariable("B2CConfigurationUrl"), new OpenIdConnectConfigurationRetriever()));
+            if (Environment.GetEnvironmentVariable("B2CConfigurationUrl") != null)
+                builder.Services.AddSingleton((s) => new ConfigurationManager<OpenIdConnectConfiguration>(
+                    Environment.GetEnvironmentVariable("B2CConfigurationUrl"), new OpenIdConnectConfigurationRetriever()));
         }
     }
 }
