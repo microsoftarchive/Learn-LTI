@@ -10,8 +10,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "v-MSLearnLti",
-    [string]$AppName = "RB_testb2cfail-MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "MSLearnLti",
+    [string]$AppName = "MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = "550c8aca-87a0-4da2-8e2e-10aca7b2e187",
     [string]$LocationName = "uksouth"
@@ -243,9 +243,11 @@ process {
                 $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit:"
             }
             Write-Host "Updated list of emails that will be allowed to access platforms page:" $UserEmailAddresses
+        }
 
+        Write-Host "`r`n"
 
-        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary active directory tenant. This tenant should contain the LMS resource groups and will contain your LTI resource groups'
+        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary Active Directory tenant. This tenant should contain the LMS resource groups and will contain your LTI resource groups'
         #endregion
 
 
