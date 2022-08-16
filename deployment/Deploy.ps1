@@ -5,8 +5,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "AdOnly4-MSLearnLti",
-    [string]$AppName = "AdOnly4-MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "v-MSLearnLti",
+    [string]$AppName = "RB_testb2cfail-MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = "550c8aca-87a0-4da2-8e2e-10aca7b2e187",
     [string]$LocationName = "uksouth"
@@ -91,7 +91,7 @@ process {
 
         #formatting a unique identifier to ensure we create a new keyvault for each run
         $uniqueIdentifier = [Int64]((Get-Date).ToString('yyyyMMddhhmmss')) #get the current second as being the unique identifier
-
+        $activeDirectoryTenant = ""
         
 
         #region Login to Azure CLI        
@@ -190,6 +190,8 @@ process {
             }
         }
         $UserEmailAddress = $ActiveSubscription.user.name
+        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary active directory tenant. This tenant should contain the LMS resource groups and will contain your LTI resource groups'
+
         #endregion
 
 
@@ -205,7 +207,7 @@ process {
             
             # passing in the ExecutionStartTime to continue the log file
             # passing in the tenantId of the AD tenant as the b2c setup must be linked with the AD tenant for the chosen subscription
-            $results = (& ".\B2CDeployment.ps1" $ExecutionStartTime $ActiveSubscription.tenantId) 
+            $results = (& ".\B2CDeployment.ps1" $ExecutionStartTime $activeDirectoryTenant) 
             if($results[-1] -eq -1){
                 throw "B2CDeployment.ps1 failed"
             }
