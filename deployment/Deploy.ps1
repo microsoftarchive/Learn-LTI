@@ -175,10 +175,12 @@ process {
             Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
         }
 
+        $subscriptionId = ""
         #defensive programming so script doesn't halt and require a cleanup if subscription is mistyped
         while(1){
             try{
                 $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+                $subscriptionId = $ActiveSubscription.id
                 break
             }
             catch [InvalidAzureSubscriptionException]{
@@ -505,6 +507,22 @@ process {
 
 
         Write-Title "TOOL REGISTRATION URL (Please Copy, Required for Next Steps) -> $($deploymentOutput.properties.outputs.webClientURL.value)platform"
+
+        #region "Creating URL so users can more easily investigate their logs for the platform page if issues arise"
+        $ConfigPath = "../client/.env.production"
+        $text = Get-Content $ConfigPath
+        $configValues = $text | ConvertFrom-StringData
+
+        $platformUniqueValue = $configValues.REACT_APP_EDNA_PLATFORM_SERVICE_URL #getting the platform service url
+        $platformUniqueValue = $platformUniqueValue.Substring(($platformUniqueValue.IndexOf("platforms-")),$platformUniqueValue.Length-$platformUniqueValue.IndexOf("platforms-")) # trimming to the start of the uniqueIdentifier for the platform page
+        $platformUniqueValue = $platformUniqueValue.Substring(0,$platformUniqueValue.IndexOf(".")) # trimming to the end of the uniqueIdentifier for the platform page
+
+        # make sure we have the id of the subscription
+
+        Write-Title "PLATFORM PAGE AZURE URL (Please Copy, useful for debugging logs if something goes wrong)" = "https://portal.azure.com/#@$AD_Tenant_Name_full/resource/subscriptions/$subscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Insights/components/$platformUniqueValue/overview"
+
+        #endregion
+
 
         Write-Title '======== Successfully Deployed Resources to Azure ==========='
 
