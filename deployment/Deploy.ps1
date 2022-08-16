@@ -3,6 +3,11 @@
 # Licensed under the MIT license.
 # --------------------------------------------------------------------------------------------
 
+# Needs exchange online management in order to add the aliases for the users specified email addresses
+#Requires -Module ExchangeOnlineManagement
+
+
+
 [CmdletBinding()]
 param (
     [string]$ResourceGroupName = "v-MSLearnLti",
@@ -175,10 +180,12 @@ process {
             Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
         }
 
+        $subscriptionId = ""
         #defensive programming so script doesn't halt and require a cleanup if subscription is mistyped
         while(1){
             try{
                 $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+                $subscriptionId = $ActiveSubscription.id
                 break
             }
             catch [InvalidAzureSubscriptionException]{
@@ -189,9 +196,56 @@ process {
                 Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
             }
         }
-        $UserEmailAddress = $ActiveSubscription.user.name
-        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary active directory tenant. This tenant should contain the LMS resource groups and will contain your LTI resource groups'
 
+        #region "Getting all the alias and primary emails to be added to the list of allowed users for the platform page"
+
+        #function for getting all the alias emails for a given email address
+        function getAllAliasEmails(){
+            param(
+                [string]$email
+            )
+            $emailsData = Get-Mailbox -Identity $email | Select-Object -expand emailaddresses alias
+            #for each email in emails get everything after the colon and add it to the list
+            $emails = $emailsData | ForEach-Object { $_.Split(':')[1] }
+            return $emails -join ";"
+        }
+
+        #getting the users email address and domain for the currently logged in suscription
+        $UserEmailAddress = $ActiveSubscription.user.name
+        $UserEmailAddress = $ActiveSubscription.user.name
+        $Domain = $UserEmailAddress.Substring($UserEmailAddress.IndexOf("@"),$UserEmailAddress.Length-$UserEmailAddress.IndexOf("@"))
+
+        Write-Title "Creating list of users to be allowed to access the platforms page"
+        Write-Host "Please login to $UserEmailAddress via the popup window"
+        Connect-ExchangeOnline #logging in to exchange onine
+
+        #creating the string of all emails separated by ; with the alias of the current email address
+        $UserEmailAddresses = getAllAliasEmails $UserEmailAddress
+        
+        Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserEmailAddresses
+        $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n):"
+        $choice = $choice.Trim()
+
+        #iteratively add more users from the same domain to the list of allowed users
+        if($choice -eq "y"){
+            $extramail = Read-Host "Enter user's email or 'n' to exit:"
+            While($extramail -ne 'n'){
+                #checking these are from the same domain as otherwise we cannot get alias'
+                $NewDomain = $extramail.Substring($extramail.IndexOf("@"),$extramail.Length-$extramail.IndexOf("@"))
+                if($NewDomain -ne $Domain){
+                    Write-Host "Emails must be from the same domain ($Domain)"
+                }
+                else{
+                    $UserEmailAddresses += ";" + (getAllAliasEmails $extramail)
+                }
+
+                Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserEmailAddresses
+                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit:"
+            }
+            Write-Host "Updated list of emails that will be allowed to access platforms page:" $UserEmailAddresses
+
+
+        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary active directory tenant. This tenant should contain the LMS resource groups and will contain your LTI resource groups'
         #endregion
 
 
@@ -241,9 +295,6 @@ process {
             #$AD_APP_CLIENT_ID_IDENTIFIER = "cb508fc8-6a5f-49b1-b688-dac065ba59e4" # TODO remove hardcode
             $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://${REACT_APP_EDNA_B2C_TENANT}.b2clogin.com/${b2c_tenant_name_full}/${policy_name}/v2.0/.well-known/openid-configuration"
             $OPENID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/${AD_Tenant_Name_full}/v2.0/.well-known/openid-configuration"
-
-            ((Get-Content -path ".\azuredeploy.json" -Raw) -replace '"<AZURE_B2C_SECRET_STRING>"', $b2c_secret) |  Set-Content -path (".\azuredeploy.json")
-            
 
             (Get-Content -path ".\azuredeployB2CTemplate.json" -Raw) `
             -replace '<B2C_APP_CLIENT_ID_IDENTIFIER>', ($REACT_APP_EDNA_B2C_CLIENT_ID) `
@@ -358,7 +409,7 @@ process {
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
         Write-Log -Message "Deploying ARM Template to Azure inside ResourceGroup: $ResourceGroupName with DeploymentName: $deploymentName, TemplateFile: $templateFileName, AppClientId: $($appinfo.appId), IdentifiedURI: $($appinfo.identifierUris)"
-        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) userEmailAddress=$($UserEmailAddress) userObjectId=$($userObjectId)) | ConvertFrom-Json;
+        $deploymentOutput = (az deployment group create --resource-group $ResourceGroupName --name $deploymentName --template-file $templateFileName --parameters appRegistrationClientId=$($appinfo.appId) appRegistrationApiURI=$($identifierURI) userEmailAddress=$($UserEmailAddresses) userObjectId=$($userObjectId)) | ConvertFrom-Json;
         if(!$deploymentOutput) {
             throw "Encountered an Error while deploying to Azure"
         }
@@ -507,6 +558,22 @@ process {
 
 
         Write-Title "TOOL REGISTRATION URL (Please Copy, Required for Next Steps) -> $($deploymentOutput.properties.outputs.webClientURL.value)platform"
+
+        #region "Creating URL so users can more easily investigate their logs for the platform page if issues arise"
+        $ConfigPath = "../client/.env.production"
+        $text = Get-Content $ConfigPath
+        $configValues = $text | ConvertFrom-StringData
+
+        $platformUniqueValue = $configValues.REACT_APP_EDNA_PLATFORM_SERVICE_URL #getting the platform service url
+        $platformUniqueValue = $platformUniqueValue.Substring(($platformUniqueValue.IndexOf("platforms-")),$platformUniqueValue.Length-$platformUniqueValue.IndexOf("platforms-")) # trimming to the start of the uniqueIdentifier for the platform page
+        $platformUniqueValue = $platformUniqueValue.Substring(0,$platformUniqueValue.IndexOf(".")) # trimming to the end of the uniqueIdentifier for the platform page
+
+        # make sure we have the id of the subscription
+
+        Write-Title "PLATFORM PAGE AZURE URL (Please Copy, useful for debugging logs if something goes wrong)" = "https://portal.azure.com/#@$AD_Tenant_Name_full/resource/subscriptions/$subscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Insights/components/$platformUniqueValue/overview"
+
+        #endregion
+
 
         Write-Title '======== Successfully Deployed Resources to Azure ==========='
 
