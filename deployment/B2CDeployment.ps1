@@ -337,18 +337,18 @@ try{
     
     #endregion
 
-    #region "B2C STEP 7: restrict access via whitelisting tenants"
+    #region "B2C STEP 7: restrict access via allowlisting tenants"
     # https://docs.microsoft.com/en-us/azure/active-directory-b2c/identity-provider-azure-ad-multi-tenant?pivots=b2c-custom-policy#restrict-access
-    Write-Title "B2C STEP 7: Creating a whitelist for the tenants we wish to give access to"
-    Write-Host "Important - if no tenants are whitelisted; nobody will be able to access the AD"
+    Write-Title "B2C STEP 7: Creating a allowlist for the tenants we wish to give access to"
+    Write-Host "Important - if no tenants are allowlisted; nobody will be able to access the AD"
 
     $fileOrInputs=""
     while($fileOrInputs -ne "1" -and $fileOrInputs -ne "2")
     {
-        $fileOrInputs = Read-Host "Would you like to either:`n1. import a file with *all* the tenant ID's to be whitelisted`n2. input them 1 by 1 into the console? `n(1/2)"
+        $fileOrInputs = Read-Host "Would you like to either:`n1. import a file with *all* the tenant ID's to be allowlisted`n2. input them 1 by 1 into the console? `n(1/2)"
     }
 
-    $whitelist = @()
+    $allowlist = @()
     # Input via a file
     if ($fileOrInputs -eq "1")
     {
@@ -361,17 +361,17 @@ try{
         foreach ($wlTenantID in $tenantIDs)
         {
             try{
-                # HTTP request to get the issuer claim we want to add to the whitelist
+                # HTTP request to get the issuer claim we want to add to the allowlist
                 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
                 $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
                 $issuer = $response.issuer
             
 
-            $whitelist += $issuer #adding the issuer for this tenant to the whitelist
-                Write-Host "Tenant with ID $wlTenantID added to the whitelist"
+            $allowlist += $issuer #adding the issuer for this tenant to the allowlist
+                Write-Host "Tenant with ID $wlTenantID added to the allowlist"
             }
             catch{
-                $Message = "$($Error[0].Exception.Message)`nTenant with ID $wlTenantID is not valid; please verify with the tenant Admin the tenants ID then manually add it to the whitelist through the portal."
+                $Message = "$($Error[0].Exception.Message)`nTenant with ID $wlTenantID is not valid; please verify with the tenant Admin the tenants ID then manually add it to the allowlist through the portal."
                 Write-Error $Message
                 Write-Log -Message $Message -ErrorRecord $Error[0]
             }
@@ -384,19 +384,19 @@ try{
         $wlTenantID = "" 
         while ($wlTenantID -ne "n")
         {
-            $wlTenantID = Read-Host "Please enter the tenant ID you wish to add to the whitelist (or 'n' to stop)"
+            $wlTenantID = Read-Host "Please enter the tenant ID you wish to add to the allowlist (or 'n' to stop)"
 
             if($wlTenantID -eq "n"){break}
             
             try{
-                #region "HTTP request to get the issuer claim we want to add to the whitelist"
+                #region "HTTP request to get the issuer claim we want to add to the allowlist"
                 $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
                 
                 $response = Invoke-RestMethod "https://login.microsoftonline.com/$wlTenantID/v2.0/.well-known/openid-configuration" -Method 'GET' -Headers $headers
                 $issuer = $response.issuer
                 #endregion
         
-                $whitelist += $issuer #adding the issuer for this tenant to the whitelist
+                $allowlist += $issuer #adding the issuer for this tenant to the allowlist
             }
             catch{
                 Write-Host ""
@@ -406,8 +406,8 @@ try{
         }
     }
 
-    $whitelistString = $whitelist -join ","
-    Write-Log -Message "Added the following tenants to the whitelist for the b2c: $whitelistString"
+    $allowlistString = $allowlist -join ","
+    Write-Log -Message "Added the following tenants to the allowlist for the b2c: $allowlistString"
     #endregion
 
 
@@ -451,7 +451,7 @@ try{
 
             ((Get-Content -path $_.FullName -Raw) -replace '<<MultiTenantAppID>>', $MultitenantAppID) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
             
-            ((Get-Content -path $_.FullName -Raw) -replace '<<WhiteListedTenants>>', $whitelistString) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
+            ((Get-Content -path $_.FullName -Raw) -replace '<<AllowListedTenants>>', $allowlistString) |  Set-Content -path (".\CustomPolicy\"+$_.Name)
         
         }
 
@@ -514,7 +514,7 @@ try{
         catch{
             if(($Error[0].Exception.Message).contains("403")){
                 Write-Color "Red" "403 forbidden error likely due to admin-consent having not yet been granted; please switch your directory to the b2c tenant ($B2cTenantNameFull) in the Azure portal then copy and paste the yellow link into your browser to manually grant admin-consent then press enter."
-                Write-Color "Red" "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/deployment/B2C_Docs/B2C_Deployment.md if you require assistance on how to do this."
+                Write-Color "Red" "Please check the markdown https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/docs/B2C_Deployment.md if you require assistance on how to do this."
                 $PMA_Page = "https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$PermissionClientID/isMSAApp~/false"
                 Write-Color "Yellow" "$PMA_Page"
                 Read-Host "Press enter after manually granting the admin consent permission and waiting 10 seconds"
