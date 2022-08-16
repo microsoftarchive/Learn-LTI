@@ -218,11 +218,21 @@ process {
         Write-Host "Please login to $UserEmailAddress via the popup window"
         Connect-ExchangeOnline #logging in to exchange onine
 
+        #getting the users email address and domain for the currently logged in suscription
+        $CurrentUseremailaddress = $ActiveSubscription.user.name
+        $Domain = $CurrentUseremailaddress.Substring($CurrentUseremailaddress.IndexOf("@"),$CurrentUseremailaddress.Length-$CurrentUseremailaddress.IndexOf("@"))
+
+        $UserDisplayEmails = $CurrentUseremailaddress #variable to print only the inputted emails not all alias for ease of understanding for the user
+
+        Write-Host "Creating list of users to be allowed to access the platforms page"
+        Write-Host "Please login to $CurrentUseremailaddress via the popup window"
+        Connect-ExchangeOnline -ShowBanner:$false #logging in to exchange onine
+
         #creating the string of all emails separated by ; with the alias of the current email address
-        $UserEmailAddresses = getAllAliasEmails $UserEmailAddress
+        $UserEmailAddresses = getAllAliasEmails $CurrentUseremailaddress
         
-        Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserEmailAddresses
-        $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n):"
+        Write-Host "Users that will be allowed to access platforms page:" $UserDisplayEmails
+        $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n)"
         $choice = $choice.Trim()
 
         #iteratively add more users from the same domain to the list of allowed users
@@ -235,15 +245,17 @@ process {
                     Write-Host "Emails must be from the same domain ($Domain)"
                 }
                 else{
+                    Write-Log -Message "Adding $extramail and its Alias' to the list of allowed users for the platform page"
                     $UserEmailAddresses += ";" + (getAllAliasEmails $extramail)
+                    $UserDisplayEmails += ", $extramail"
                 }
 
-                Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserEmailAddresses
+                Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserDisplayEmails
                 $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit:"
             }
-            Write-Host "Updated list of emails that will be allowed to access platforms page:" $UserEmailAddresses
+            
+            Write-Log -Message "List of primary emails + all their alias's that will be allowed to access platforms page: $UserEmailAddresses"
         }
-
         Write-Host "`r`n"
 
         $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary Active Directory tenant. This tenant should contain the LMS resource groups and will contain your LTI resource groups'
@@ -423,46 +435,6 @@ process {
             return $emails -join ";"
         }
 
-        #getting the users email address and domain for the currently logged in suscription
-        $CurrentUseremailaddress = $ActiveSubscription.user.name
-        $Domain = $CurrentUseremailaddress.Substring($CurrentUseremailaddress.IndexOf("@"),$CurrentUseremailaddress.Length-$CurrentUseremailaddress.IndexOf("@"))
-
-        $UserDisplayEmails = $CurrentUseremailaddress #variable to print only the inputted emails not all alias for ease of understanding for the user
-
-        Write-Host "Creating list of users to be allowed to access the platforms page"
-        Write-Host "Please login to $CurrentUseremailaddress via the popup window"
-        Connect-ExchangeOnline -ShowBanner:$false #logging in to exchange onine
-
-        #creating the string of all emails separated by ; with the alias of the current email address
-        $UserEmailAddresses = getAllAliasEmails $CurrentUseremailaddress
-        
-        Write-Host "Users that will be allowed to access platforms page:" $UserDisplayEmails
-        $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n)"
-        $choice = $choice.Trim()
-
-        #iteratively add more users from the same domain to the list of allowed users
-        if($choice -eq "y"){
-            $extramail = Read-Host "Enter user's email or 'n' to exit:"
-            While($extramail -ne 'n'){
-                #checking these are from the same domain as otherwise we cannot get alias'
-                $NewDomain = $extramail.Substring($extramail.IndexOf("@"),$extramail.Length-$extramail.IndexOf("@"))
-                if($NewDomain -ne $Domain){
-                    Write-Host "Emails must be from the same domain ($Domain)"
-                }
-                else{
-                    Write-Log -Message "Adding $extramail and its Alias' to the list of allowed users for the platform page"
-                    $UserEmailAddresses += ";" + (getAllAliasEmails $extramail)
-                    $UserDisplayEmails += ", $extramail"
-                }
-
-                Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserDisplayEmails
-                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit:"
-            }
-            
-            Write-Log -Message "List of primary emails + all their alias's that will be allowed to access platforms page: $UserEmailAddresses"
-        }
-        #endregion
-    
         $userObjectId = az ad signed-in-user show --query id # requires 2.37 or higher
         $templateFileName = "azuredeploy.json"
         $deploymentName = "Deployment-$ExecutionStartTime"
