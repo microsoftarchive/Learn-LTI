@@ -13,8 +13,8 @@ param (
     [string]$ResourceGroupName = "AdOnly4-MSLearnLti",
     [string]$AppName = "AdOnly4-MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
-    [string]$SubscriptionNameOrId = "550c8aca-87a0-4da2-8e2e-10aca7b2e187",
-    [string]$LocationName = "uksouth"
+    [string]$SubscriptionNameOrId = $null,
+    [string]$LocationName = $null
 )
 
 process {
