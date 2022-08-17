@@ -10,8 +10,8 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "MSLearnLti",
-    [string]$AppName = "MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "AdOnly9-MSLearnLti",
+    [string]$AppName = "AdOnly9-MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null,
     [string]$LocationName = $null
@@ -385,7 +385,52 @@ process {
         $GraphAPIPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope'
         $appPermissionAddOp = az ad app permission add --id $appinfo.appId --api $GraphAPIId --api-permissions $GraphAPIPermissionId
         #Intentionally not catching an exception here
-    
+
+
+        # if this is an AD deploy then add and grant optional claims to the tokens for the AD app (not required for b2c as its done on the multitenant app in that script)
+        if($b2cOrAd -eq "ad"){
+
+            # add optional claims for email/family_name/given_name to the access_token
+            $ADAppManifest = "{
+                `"idToken`": [],
+                `"accessToken`": [
+                    {
+                        `"name`": `"email`",
+                        `"essential`": false
+                    },
+                    {
+                        `"name`": `"family_name`",
+                        `"essential`": false
+                    },
+                    {
+                        `"name`": `"given_name`",
+                        `"essential`": false
+                    }
+                ],
+                `"saml2Token`": []
+            }"
+            Out-File -FilePath "manifest.json" -InputObject $ADAppManifest
+            az ad app update --id $appinfo.appId --optional-claims "@manifest.json" --only-show-errors
+            Write-Log -Message "As this is AD mode, added optional claims to AD app ($AppName) with id $($appinfo.appId) in $AD_Tenant_Name_full"
+            Remove-Item manifest.json
+
+            # granting permissions to the service principal for the optional claims
+            Write-Host "Granting permissions to the AD app ($AppName)"
+            $profilePermission = "14dad69e-099b-42c9-810b-d002981feec1=Scope"
+            $emailPermission = "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0=Scope"
+            
+            Write-Host "Creating service principal for $AppName"
+            Write-Log -Message "Creating service principal for $AppName"
+
+            $AppServicePrincipal = az ad sp create --id $appinfo.appId --only-show-errors
+            Write-Log -Message "AppServicePrincipal value:`n$AppServicePrincipal"
+
+            Write-Host "Granting permissions to the service principal for $AppName"
+            Write-Log -Message "Granting permissions to the service principal for $AppName"
+            az ad app permission grant --id $appinfo.appId --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors
+            az ad app permission add --id $appinfo.appId --api 00000003-0000-0000-c000-000000000000 --api-permissions $emailPermission $profilePermission --only-show-errors
+        }
+        
         Write-Host 'App Created Successfully'
         #endregion
         #region Create New Resource Group in above Region
@@ -577,7 +622,7 @@ process {
         $platformUniqueValue = $platformUniqueValue.Substring(($platformUniqueValue.IndexOf("platforms-")),$platformUniqueValue.Length-$platformUniqueValue.IndexOf("platforms-")) # trimming to the start of the uniqueIdentifier for the platform page
         $platformUniqueValue = $platformUniqueValue.Substring(0,$platformUniqueValue.IndexOf(".")) # trimming to the end of the uniqueIdentifier for the platform page
 
-        Write-Title "PLATFORM PAGE AZURE URL (Please Copy, useful for debugging logs if something goes wrong) -> https://portal.azure.com/#@$AD_Tenant_Name_full/resource/subscriptions/$subscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Insights/components/$platformUniqueValue/overview"
+        Write-Title "PLATFORM PAGE AZURE RESOURCE URL (Please Copy, useful for debugging logs if something goes wrong) -> https://portal.azure.com/#@$AD_Tenant_Name_full/resource/subscriptions/$subscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Insights/components/$platformUniqueValue/overview"
         #endregion
 
 
