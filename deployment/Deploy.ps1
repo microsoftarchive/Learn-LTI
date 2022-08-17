@@ -216,7 +216,7 @@ process {
 
         $UserDisplayEmails = $CurrentUseremailaddress #variable to print only the inputted emails not all alias for ease of understanding for the user
 
-        Write-Host "Creating list of users to be allowed to access the platforms page"
+        Write-Title "Creating list of users to be allowed to access the platforms page"
         Write-Host "Please login to $CurrentUseremailaddress via the popup window"
         Connect-ExchangeOnline -ShowBanner:$false #logging in to exchange onine
 
@@ -229,7 +229,7 @@ process {
 
         #iteratively add more users from the same domain to the list of allowed users
         if($choice -eq "y"){
-            $extramail = Read-Host "Enter user's email or 'n' to exit"
+            $extramail = Read-Host "Enter user's email or 'n' if you have no more users you would like to grant access"
             While($extramail -ne 'n'){
                 #checking these are from the same domain as otherwise we cannot get alias'
                 $NewDomain = $extramail.Substring($extramail.IndexOf("@"),$extramail.Length-$extramail.IndexOf("@"))
@@ -243,7 +243,7 @@ process {
                 }
 
                 Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserDisplayEmails
-                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit"
+                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' if you have no more users you would like to grant access"
             }
             
             Write-Log -Message "List of primary emails + all their alias's that will be allowed to access platforms page: $UserEmailAddresses"
