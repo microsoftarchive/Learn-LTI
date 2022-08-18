@@ -632,15 +632,15 @@ process {
         
             Write-Title "These are the values required for configurating the Moodle to work with b2c; please use the values in conjunction with the docs for configuring the moodle`nhttps://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in"
         
-            Write-Color "green" "Azure B2C scope: $AzureB2CScope"
+            Write-Color "green" "Azure B2C scope: '$AzureB2CScope'"
             Write-Color "green" "Provider name: choose a sensible name, for example, 'Azure AD B2C Connect'"
             Write-Color "green" "Client ID: '$REACT_APP_EDNA_B2C_CLIENT_ID' (The client ID of the B2C Web app)"
             Write-Color "green" "Client Secret: '$b2c_secret' (The client secret of the B2C Web app)"
-            Write-Color "green" "Authorization endpoint: $AuthorizationEndpoint"
-            Write-Color "green" "Forgot password endpoint: $ForgotPasswordEndpoint"
-            Write-Color "green" "Edit profile endpoint: $EditProfileEndpoint"
-            Write-Color "green" "Token endpoint: $TokenEndpoint"
-            Write-Color "green" "Resource: https://graph.windows.net"
+            Write-Color "green" "Authorization endpoint: '$AuthorizationEndpoint'"
+            Write-Color "green" "Forgot password endpoint: '$ForgotPasswordEndpoint'"
+            Write-Color "green" "Edit profile endpoint: '$EditProfileEndpoint'"
+            Write-Color "green" "Token endpoint: '$TokenEndpoint'"
+            Write-Color "green" "Resource: 'https://graph.windows.net'"
         }
 
 
