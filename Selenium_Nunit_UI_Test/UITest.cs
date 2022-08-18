@@ -15,9 +15,9 @@ namespace Selenium_Nunit_UI_Test
         private string moodleURL = "https://bitnami-moodle-b65b-ip.uksouth.cloudapp.azure.com/my/";
         private string LTIRegURL = "";
         private string browser = "Chrome";
+        private string[] user_types = { "student", "lecturer" };
 
-        [Test]
-        public void LoginTest()
+        public void Login(string user_type)
         {
             // Access the moodle login page
 
@@ -34,9 +34,24 @@ namespace Selenium_Nunit_UI_Test
             Thread.Sleep(3000);
 
             // Enter mock account email address
+            string username = "";
+            string password = "";
 
-            string username = "ucabdhn@w3jnk.onmicrosoft.com";
-            string password = "Chilai30101999!";
+            switch (user_type)
+            {
+                case "lecturer":
+                    username = "ucabdhn@w3jnk.onmicrosoft.com";
+                    password = "Chilai30101999!";
+                    break;
+                case "student":
+                    username = "ucabdhn@w3jnk.onmicrosoft.com";
+                    password = "Chilai30101999!";
+                    break;
+                default:
+                    username = "ucabdhn@w3jnk.onmicrosoft.com";
+                    password = "Chilai30101999!";
+                    break;
+            }
 
             // Username
 
@@ -54,11 +69,53 @@ namespace Selenium_Nunit_UI_Test
 
             driver.FindElement(By.Id("idSIButton9")).Click();
         }
+        [Test]
+        public void LoginTest()
+        {
+            // Login as admin
+            Login(user_types[0]);
+        }
+
+        [Test]
+        public void CreateAssignmentTest()
+        {
+            Login(user_types[1]);
+            Thread.Sleep(3000);
+
+            // Choose My Course tab
+            var Tabs = driver.FindElements(By.CssSelector("a[role='menuitem']"));
+            Thread.Sleep(3000);
+
+            Tabs[2].Click();
+            Thread.Sleep(3000);
+
+            // Click on course
+            var Courses = driver.FindElements(By.CssSelector("span[class='multiline']"));
+
+            foreach(var course in Courses)
+            {
+                if(course.Text == "Selenium_Test_Course")
+                {
+                    course.Click();
+                    break;
+                }
+            }
+            Thread.Sleep(1000);
+
+            // Toggle Edit mode
+            driver.FindElement(By.CssSelector("input[name='setmode']")).Click();
+            Thread.Sleep(1000);
+
+            // Add new assignment
+            driver.FindElements(By.CssSelector("span[class='activity-add-text']"))[0].Click();
+            Thread.Sleep(3000);
+        }
 
 
         [SetUp]
         public void SetupTest()
         {
+            // Choose browser
             switch (browser)
             {
                 case "Chrome":
@@ -74,6 +131,14 @@ namespace Selenium_Nunit_UI_Test
                     driver = new ChromeDriver();
                     break;
             }
+
+            // Setup mock data using PS 
+
+            // Setup 2 accounts in same tenant
+
+            // Setup 2 accounts in different tenant
+
+            // Signup the 4 accounts on moodle
 
         }
 
