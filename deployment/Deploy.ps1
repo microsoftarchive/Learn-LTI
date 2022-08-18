@@ -265,6 +265,7 @@ process {
         $REACT_APP_EDNA_B2C_TENANT = 'NA'
         $B2C_ObjectID = 'NA'
         $b2c_tenant_name_full = 'NA'
+        $IEFClientID = 'NA'
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #0: Running the B2C Setup Script"
             
@@ -277,13 +278,14 @@ process {
             Write-Log -Message "Returned from the B2C setup script, continuing with LTI deployment"
 
             # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
-            $AD_Tenant_Name_full = $results[-6] # tenant name of the AD server
-            $b2c_tenant_name_full = $results[-5] #b2c tenant name
-            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
-            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-4] #webclient ID
-            $b2c_secret = $results[-3] #webclient secret
-            $REACT_APP_EDNA_B2C_TENANT = $results[-2] #b2c tenant name
-            $B2C_ObjectID = $results[-1] # b2c webapp id that needs the SPA uri
+            $AD_Tenant_Name_full = $results[-7] # tenant name of the AD server
+            $b2c_tenant_name_full = $results[-6] #b2c tenant name
+            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-5] #webclient ID
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-5] #webclient ID
+            $b2c_secret = $results[-4] #webclient secret
+            $REACT_APP_EDNA_B2C_TENANT = $results[-3] #b2c tenant name
+            $B2C_ObjectID = $results[-2] # b2c webapp id that needs the SPA uri
+            $IEFClientID = $results[-1] #ID of the IEF app
 
             Write-Log -Message "Returned the follow values from the b2c setup script-
             `nAD_Tenant_Name_full: $AD_Tenant_Name_full
@@ -613,17 +615,38 @@ process {
 
         Write-Title "TOOL REGISTRATION URL (Please Copy, Required for Next Steps) -> $($deploymentOutput.properties.outputs.webClientURL.value)platform"
 
-        #region "Creating URL so users can more easily investigate their logs for the platform page if issues arise"
+        # Creating URL so users can more easily investigate their logs for the platform page if issues arise
         $ConfigPath = "../client/.env.production"
         $text = Get-Content $ConfigPath
         $configValues = $text | ConvertFrom-StringData
-
         $platformUniqueValue = $configValues.REACT_APP_EDNA_PLATFORM_SERVICE_URL #getting the platform service url
         $platformUniqueValue = $platformUniqueValue.Substring(($platformUniqueValue.IndexOf("platforms-")),$platformUniqueValue.Length-$platformUniqueValue.IndexOf("platforms-")) # trimming to the start of the uniqueIdentifier for the platform page
         $platformUniqueValue = $platformUniqueValue.Substring(0,$platformUniqueValue.IndexOf(".")) # trimming to the end of the uniqueIdentifier for the platform page
-
         Write-Title "PLATFORM PAGE AZURE RESOURCE URL (Please Copy, useful for debugging logs if something goes wrong) -> https://portal.azure.com/#@$AD_Tenant_Name_full/resource/subscriptions/$subscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Insights/components/$platformUniqueValue/overview"
-        #endregion
+
+        #if this is a b2c deploy then also display the URL's 
+        if($b2cOrAd -eq "b2c"){
+            $b2c_tenant_name = $b2c_tenant_name_full.SubString(0,$b2c_tenant_name_full.IndexOf('.'))
+        
+            $AzureB2CScope = "openid https://$b2c_tenant_name_full/$IEFClientID/user_impersonation"
+            $AuthorizationEndpoint = "https://$b2c_tenant_name.b2clogin.com/$b2c_tenant_name_full/oauth2/v2.0/authorize?p=b2c_1a_signin"
+            $ForgotPasswordEndpoint = "https://$b2c_tenant_name.b2clogin.com/$b2c_tenant_name_full/oauth2/v2.0/authorize?p=b2c_1a_passwordreset"
+            $EditProfileEndpoint = "https://$b2c_tenant_name.b2clogin.com/$b2c_tenant_name_full/oauth2/v2.0/authorize?p=b2c_1a_profileedit"
+            $TokenEndpoint = "https://$b2c_tenant_name.b2clogin.com/$b2c_tenant_name_full/oauth2/v2.0/token?p=b2c_1a_signin"
+        
+        
+            Write-Title "These are the values required for configurating the Moodle to work with b2c; please use the values in conjunction with the docs for configuring the moodle`nhttps://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in"
+        
+            Write-Color "green" "Azure B2C scope: $AzureB2CScope"
+            Write-Color "green" "Provider name: choose a sensible name, for example, 'Azure AD B2C Connect'"
+            Write-Color "green" "Client ID: '$REACT_APP_EDNA_B2C_CLIENT_ID' (The client ID of the B2C Web app)"
+            Write-Color "green" "Client Secret: '$b2c_secret' (The client secret of the B2C Web app)"
+            Write-Color "green" "Authorization endpoint: $AuthorizationEndpoint"
+            Write-Color "green" "Forgot password endpoint: $ForgotPasswordEndpoint"
+            Write-Color "green" "Edit profile endpoint: $EditProfileEndpoint"
+            Write-Color "green" "Token endpoint: $TokenEndpoint"
+            Write-Color "green" "Resource: https://graph.windows.net"
+        }
 
 
         Write-Title '======== Successfully Deployed Resources to Azure ==========='

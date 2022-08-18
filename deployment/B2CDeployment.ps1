@@ -805,7 +805,7 @@ try{
 
 
     #returning values required by the Deploy.ps1 script
-    return $ADTenantNameFull, $B2cTenantNameFull, $WebClientID, $WebClientSecret, $B2cTenantName, $ObjectId
+    return $ADTenantNameFull, $B2cTenantNameFull, $WebClientID, $WebClientSecret, $B2cTenantName, $ObjectId, $IEFClientID
 }
 catch{
     if($PermissionClientSecret){
