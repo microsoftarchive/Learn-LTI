@@ -540,13 +540,8 @@ process {
 
         Remove-Item userImpersonationScope.json
         
-
-
         #endregion
 
-
-
-    
         Write-Host 'App Update Completed Successfully'
         #endregion
 
