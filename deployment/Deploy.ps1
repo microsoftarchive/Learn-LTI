@@ -224,9 +224,13 @@ process {
         $UserEmailAddresses = getAllAliasEmails $CurrentUseremailaddress
         
         Write-Host "Users that will be allowed to access platforms page:" $UserDisplayEmails
-        $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n)"
-        $choice = $choice.Trim()
 
+        $choice = ""
+        while($choice -ne "y" -and $choice -ne "n") {
+            $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n)"
+            $choice = $choice.Trim()
+        }
+        
         #iteratively add more users from the same domain to the list of allowed users
         if($choice -eq "y"){
             $extramail = Read-Host "Enter user's email or 'n' if you have no more users you would like to grant access"
@@ -250,7 +254,8 @@ process {
         }
         Write-Host "`r`n"
 
-        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary Active Directory tenant. This tenant should contain the LMS resource groups and will contain your LTI resource groups'
+        Write-Title "Enter the tenant ID of your primary Active Directory Tenant"
+        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary Active Directory tenant. This tenant should: own the subscription you just input, contain the LMS resource groups, and will contain your LTI resource groups'
         #endregion
         #endregion
 
