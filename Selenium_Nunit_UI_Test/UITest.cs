@@ -111,6 +111,54 @@ namespace Selenium_Nunit_UI_Test
             Thread.Sleep(3000);
         }
 
+        [Test]
+        public void InternalStudentAccessAssignmentTest()
+        {
+            Login(user_types[0]);
+            Thread.Sleep(2000);
+
+            // Choose My Course tab
+            var Tabs = driver.FindElements(By.CssSelector("a[role='menuitem']"));
+            Thread.Sleep(2000);
+
+            Tabs[2].Click();
+            Thread.Sleep(2000);
+
+            // Click on course
+            var Courses = driver.FindElements(By.CssSelector("span[class='multiline']"));
+
+            foreach(var course in Courses)
+            {
+                if(course.Text == "Selenium_Test_Course")
+                {
+                    course.Click();
+                    break;
+                }
+            }
+            Thread.Sleep(2000);
+
+            // Click on an assignment
+            var Assignments = driver.FindElements(By.CssSelector("span[class='instancename']"));
+
+            foreach(var assignment in Assignments)
+            {
+                if(assignment.Text.Contains("Test_Assignment"))
+                {
+                    assignment.FindElement(By.XPath("..")).Click();
+                    break;
+                }
+            }
+            Thread.Sleep(10000);
+
+            // Switch to LTI login window
+            driver.SwitchTo().Window(driver.WindowHandles[1]);
+
+            // Click on the AD Signin
+            var LoginButtons = driver.FindElements(By.CssSelector("button[class='accountButton']"));
+            LoginButtons[1].Click();
+            Thread.Sleep(10000);
+        }
+
 
         [SetUp]
         public void SetupTest()
