@@ -6,6 +6,7 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.IE;
 using System.Threading;
+using OpenQA.Selenium.Support.UI;
 
 namespace Selenium_Nunit_UI_Test
 {
@@ -16,7 +17,10 @@ namespace Selenium_Nunit_UI_Test
         private string LTIRegURL = "";
         private string browser = "Chrome";
         private string[] user_types = { "student", "lecturer" };
+        private string assignment_name = "";
 
+
+        // Login wrapper method
         public void Login(string user_type)
         {
             // Access the moodle login page
@@ -30,10 +34,12 @@ namespace Selenium_Nunit_UI_Test
             Thread.Sleep(3000);
 
             // Sign in using a valid tenant account * Mock account required *
+
             driver.FindElement(By.Id("AD_Signin")).Click();
             Thread.Sleep(3000);
 
             // Enter mock account email address
+
             string username = "";
             string password = "";
 
@@ -53,13 +59,13 @@ namespace Selenium_Nunit_UI_Test
                     break;
             }
 
-            // Username
+            // Input Username
 
             driver.FindElement(By.TagName("input")).SendKeys(username);
             driver.FindElement(By.Id("idSIButton9")).Click();
             Thread.Sleep(3000);
 
-            // Password
+            // Input Password
 
             driver.FindElement(By.Id("i0118")).SendKeys(password);
             driver.FindElement(By.Id("idSIButton9")).Click();
@@ -69,27 +75,50 @@ namespace Selenium_Nunit_UI_Test
 
             driver.FindElement(By.Id("idSIButton9")).Click();
         }
+
+
+        // Student/Teacher Authentication test
+
         [Test]
-        public void LoginTest()
+        public void LogintAuthenticationTest()
         {
-            // Login as admin
+            // Login as student
+    
             Login(user_types[0]);
+            bool successful_signin = false;
+            var titles = driver.FindElements(By.TagName("h2"));
+            foreach (var title in titles)
+            {
+                if (title.Text.Contains("Welcome back,"))
+                {
+                    successful_signin = true;
+                    break;
+                }
+            }
+            Assert.IsTrue(successful_signin);
         }
+
+
+        // Create assingment test
 
         [Test]
         public void CreateAssignmentTest()
         {
+            // Login as teacher
+            
             Login(user_types[1]);
-            Thread.Sleep(3000);
+            Thread.Sleep(1500);
 
             // Choose My Course tab
+            
             var Tabs = driver.FindElements(By.CssSelector("a[role='menuitem']"));
-            Thread.Sleep(3000);
+            Thread.Sleep(1500);
 
             Tabs[2].Click();
-            Thread.Sleep(3000);
+            Thread.Sleep(1500);
 
             // Click on course
+
             var Courses = driver.FindElements(By.CssSelector("span[class='multiline']"));
 
             foreach(var course in Courses)
@@ -103,13 +132,78 @@ namespace Selenium_Nunit_UI_Test
             Thread.Sleep(1000);
 
             // Toggle Edit mode
+            
             driver.FindElement(By.CssSelector("input[name='setmode']")).Click();
             Thread.Sleep(1000);
 
             // Add new assignment
+
             driver.FindElements(By.CssSelector("span[class='activity-add-text']"))[0].Click();
-            Thread.Sleep(3000);
+            Thread.Sleep(1000);
+            driver.FindElement(By.CssSelector("a[title='Add a new External tool']")).Click();
+            Thread.Sleep(1000);
+
+            // Fill in tools
+
+            assignment_name = "Test_assignment_" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            driver.FindElement(By.Id("id_name")).SendKeys(assignment_name);
+            var selectElement = new SelectElement(driver.FindElement(By.Id("id_typeid")));
+            selectElement.SelectByText("DM_LTI_1.3");
+
+            Thread.Sleep(2000);
+            driver.FindElement(By.Id("id_submitbutton2")).Click();
+
+            // Check if assingment is created
+
+            Thread.Sleep(2000);
+            var All_Assignment = driver.FindElements(By.CssSelector("span[class='instancename']"));
+            bool assignment_created = false;
+            foreach (var assignment in All_Assignment)
+            {
+                if (assignment.Text.Contains(assignment_name))
+                {
+                    assignment_created = true;
+                    break;
+                }
+            }
+
+            Assert.IsTrue(assignment_created);
+
+            // Removing all test assignements if created successfully
+
+            if (assignment_created)
+            {
+
+                // Step 1: Find assignment to delete
+
+                var test_assignment_to_delete = driver.FindElements(By.CssSelector("div[class='activity-item ']"));
+                var assignment_position = 2;
+                for (int i = 0; i < test_assignment_to_delete.Count; i++)
+                {
+                    if (test_assignment_to_delete[i].GetAttribute("data-activityname") == assignment_name)
+                    {
+                        assignment_position += i;
+                        break;
+                    }
+                }
+                Thread.Sleep(2000);
+
+                // Step 2: Choose delete option
+
+                driver.FindElement(By.Id($"action-menu-toggle-{assignment_position}")).Click();
+                var options = driver.FindElement(By.Id($"action-menu-{assignment_position}")).FindElements(By.TagName("a"));
+                options[options.Count - 1].Click();
+
+                // Step 3: Focus on Confirm box and click Yes
+
+                driver.SwitchTo().ActiveElement();
+                Thread.Sleep(1500);
+                driver.FindElement(By.XPath("//button[contains(text(),'Yes')]")).Click();
+                Thread.Sleep(1500);
+            }
         }
+
+        //  Access assingment test
 
         [Test]
         public void InternalStudentAccessAssignmentTest()
@@ -160,6 +254,8 @@ namespace Selenium_Nunit_UI_Test
         }
 
 
+        // Test setup
+
         [SetUp]
         public void SetupTest()
         {
@@ -190,9 +286,13 @@ namespace Selenium_Nunit_UI_Test
 
         }
 
+
+        // Test cleanup
+
         [TearDown]
         public void MyTestCleanup()
         {
+            // Quit test
             driver.Quit();
         }
 
