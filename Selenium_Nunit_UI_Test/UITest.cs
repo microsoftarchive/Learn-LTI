@@ -125,6 +125,7 @@ namespace Selenium_Nunit_UI_Test
             Login(user_type);
             bool successful_signin = false;
             var titles = driver.FindElements(By.TagName("h2"));
+            Thread.Sleep(3000);
             foreach (var title in titles)
             {
                 if (title.Text.Contains("Welcome back,"))
@@ -133,7 +134,7 @@ namespace Selenium_Nunit_UI_Test
                     break;
                 }
             }
-            Thread.Sleep(2000);
+            Thread.Sleep(3000);
             Assert.IsTrue(successful_signin);
         }
 
