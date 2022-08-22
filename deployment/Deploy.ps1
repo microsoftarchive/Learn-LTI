@@ -204,19 +204,11 @@ process {
             param(
                 [string]$email
             )
-            $emailsData = Get-Mailbox -Identity $email | Select-Object -expand emailaddresses alias
+            $emailsData = Get-Recipient -Identity $email | Select-Object -expand EmailAddresses alias
             #for each email in emails get everything after the colon and add it to the list
             $emails = $emailsData | ForEach-Object { $_.Split(':')[1] }
             return $emails -join ";"
         }
-
-        #getting the users email address and domain for the currently logged in suscription
-        $UserEmailAddress = $ActiveSubscription.user.name
-        $Domain = $UserEmailAddress.Substring($UserEmailAddress.IndexOf("@"),$UserEmailAddress.Length-$UserEmailAddress.IndexOf("@"))
-
-        Write-Title "Creating list of users to be allowed to access the platforms page"
-        Write-Host "Please login to $UserEmailAddress via the popup window"
-        Connect-ExchangeOnline #logging in to exchange onine
 
         #getting the users email address and domain for the currently logged in suscription
         $CurrentUseremailaddress = $ActiveSubscription.user.name
@@ -237,7 +229,7 @@ process {
 
         #iteratively add more users from the same domain to the list of allowed users
         if($choice -eq "y"){
-            $extramail = Read-Host "Enter user's email or 'n' to exit:"
+            $extramail = Read-Host "Enter user's email or 'n' to exit"
             While($extramail -ne 'n'){
                 #checking these are from the same domain as otherwise we cannot get alias'
                 $NewDomain = $extramail.Substring($extramail.IndexOf("@"),$extramail.Length-$extramail.IndexOf("@"))
@@ -251,7 +243,7 @@ process {
                 }
 
                 Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserDisplayEmails
-                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit:"
+                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit"
             }
             
             Write-Log -Message "List of primary emails + all their alias's that will be allowed to access platforms page: $UserEmailAddresses"
@@ -421,19 +413,6 @@ process {
 
         #region Provision Resources inside Resource Group on Azure using ARM template
         Write-Title 'STEP #6 - Creating Resources in Azure'
-
-        #region "Getting all the alias and primary emails to be added to the list of allowed users for the platform page"
-
-        #function for getting all the alias emails for a given email address
-        function getAllAliasEmails(){
-            param(
-                [string]$email
-            )
-            $emailsData = Get-Recipient -Identity $email | Select-Object -expand EmailAddresses alias
-            #for each email in emails get everything after the colon and add it to the list
-            $emails = $emailsData | ForEach-Object { $_.Split(':')[1] }
-            return $emails -join ";"
-        }
 
         $userObjectId = az ad signed-in-user show --query id # requires 2.37 or higher
         $templateFileName = "azuredeploy.json"
