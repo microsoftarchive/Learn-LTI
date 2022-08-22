@@ -95,9 +95,9 @@ namespace Selenium_Nunit_UI_Test
                     if (link.Text.Contains("Skip setup"))
                     {
                         link.Click();
-                        Thread.Sleep(3000);
+                        Thread.Sleep(5000);
                         driver.FindElement(By.Id("idSIButton9")).Click();
-                        Thread.Sleep(3000);
+                        Thread.Sleep(5000);
                         break;
                     }
                 }
