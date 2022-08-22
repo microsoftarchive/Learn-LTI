@@ -50,7 +50,7 @@ const config: Configuration = {
   },
   cache: {
     cacheLocation: 'localStorage',
-    storeAuthStateInCookie: true
+    storeAuthStateInCookie: false
   },
   system: {
     loggerOptions: {
