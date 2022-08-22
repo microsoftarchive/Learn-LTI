@@ -77,7 +77,7 @@ namespace Selenium_Nunit_UI_Test
 
             driver.FindElement(By.Id("i0118")).SendKeys(password);
             driver.FindElement(By.Id("idSIButton9")).Click();
-            Thread.Sleep(3000);
+            Thread.Sleep(6000);
 
             // Click "Yes" on "Stay sign in ?"
 
@@ -247,55 +247,72 @@ namespace Selenium_Nunit_UI_Test
 
         ////  Access assingment test
 
-        //[Test]
-        //[TestCase("student")]
-        //[TestCase("external_student")]
-        //public void AccessAssignmentTest(string usertype)
-        //{
-        //    Login(usertype);
-        //    Thread.Sleep(2000);
+        [Test]
+        [TestCase("student")]
+        [TestCase("external_student")]
+        public void AccessAssignmentTest(string usertype)
+        {
+            Login(usertype);
+            Thread.Sleep(2000);
 
-        //    // Choose My Course tab
-        //    var Tabs = driver.FindElements(By.CssSelector("a[role='menuitem']"));
-        //    Thread.Sleep(2000);
+            // Choose My Course tab
+            var Tabs = driver.FindElements(By.CssSelector("a[role='menuitem']"));
+            Thread.Sleep(2000);
 
-        //    Tabs[2].Click();
-        //    Thread.Sleep(2000);
+            Tabs[2].Click();
+            Thread.Sleep(2000);
 
-        //    // Click on course
-        //    var Courses = driver.FindElements(By.CssSelector("span[class='multiline']"));
+            // Click on course
+            var Courses = driver.FindElements(By.CssSelector("span[class='multiline']"));
 
-        //    foreach(var course in Courses)
-        //    {
-        //        if(course.Text == "Selenium_Test_Course")
-        //        {
-        //            course.Click();
-        //            break;
-        //        }
-        //    }
-        //    Thread.Sleep(2000);
+            foreach (var course in Courses)
+            {
+                if (course.Text == "Selenium_Test_Course")
+                {
+                    course.Click();
+                    break;
+                }
+            }
+            Thread.Sleep(2000);
 
-        //    // Click on an assignment
-        //    var Assignments = driver.FindElements(By.CssSelector("span[class='instancename']"));
+            // Click on an assignment
+            var Assignments = driver.FindElements(By.CssSelector("span[class='instancename']"));
 
-        //    foreach(var assignment in Assignments)
-        //    {
-        //        if(assignment.Text.Contains("Test_Assignment"))
-        //        {
-        //            assignment.FindElement(By.XPath("..")).Click();
-        //            break;
-        //        }
-        //    }
-        //    Thread.Sleep(20000);
+            foreach (var assignment in Assignments)
+            {
+                if (assignment.Text.Contains("Test_Assignment"))
+                {
+                    assignment.FindElement(By.XPath("..")).Click();
+                    break;
+                }
+            }
+            Thread.Sleep(10000);
 
-        //    // Switch to LTI login window
-        //    driver.SwitchTo().Window(driver.WindowHandles[1]);
+            // Switch to LTI login window
+            driver.SwitchTo().Window(driver.WindowHandles[1]);
 
-        //    // Click on the AD Signin
-        //    var LoginButtons = driver.FindElements(By.CssSelector("button[class='accountButton']"));
-        //    LoginButtons[1].Click();
-        //    Thread.Sleep(10000);
-        //}
+            if (usertype.Contains("external_"))
+            {
+                // More info required dialog box
+                driver.FindElement(By.Id("idSubmit_ProofUp_Redirect")).Click();
+                Thread.Sleep(7000);
+
+                // Find skip button 
+
+                var skip_button = driver.FindElements(By.TagName("a"));
+                foreach (var link in skip_button)
+                {
+                    if (link.Text.Contains("Skip setup"))
+                    {
+                        link.Click();
+                        Thread.Sleep(3000);
+                        driver.FindElement(By.Id("idSIButton9")).Click();
+                        Thread.Sleep(3000);
+                        break;
+                    }
+                }
+            }
+        }
 
 
         // Test setup
