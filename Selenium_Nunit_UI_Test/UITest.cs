@@ -85,7 +85,7 @@ namespace Selenium_Nunit_UI_Test
             {
                 // More info required dialog box
                 driver.FindElement(By.Id("idSubmit_ProofUp_Redirect")).Click();
-                Thread.Sleep(7000);
+                Thread.Sleep(15000);
 
                 // Find skip button 
 
@@ -95,9 +95,9 @@ namespace Selenium_Nunit_UI_Test
                     if (link.Text.Contains("Skip setup"))
                     {
                         link.Click();
-                        Thread.Sleep(5000);
+                        Thread.Sleep(15000);
                         driver.FindElement(By.Id("idSIButton9")).Click();
-                        Thread.Sleep(5000);
+                        Thread.Sleep(15000);
                         break;
                     }
                 }
@@ -245,6 +245,19 @@ namespace Selenium_Nunit_UI_Test
             }
         }
 
+        //
+
+        //[Test]
+        //[TestCase("external_student")]
+        //public void CreateAssignmentTest2(string usertype)
+        //{
+        //     Login as teacher
+
+        //    Login(usertype);
+        //    Thread.Sleep(1500);
+
+            
+        //}
         //  Access assingment test
 
         [Test]
@@ -252,8 +265,10 @@ namespace Selenium_Nunit_UI_Test
         [TestCase("external_student")]
         public void AccessAssignmentTest(string usertype)
         {
+            // Login as teacher
+
             Login(usertype);
-            Thread.Sleep(2000);
+            Thread.Sleep(10000);
 
             // Choose My Course tab
             var Tabs = driver.FindElements(By.CssSelector("a[role='menuitem']"));
