@@ -29,7 +29,7 @@ This document will explain the steps that contain user interaction and what is r
 
 ## Step 0: Enter tenant names
 
-* You will immediately be prompted to input the name of the B2C and AD tenants you have created: <br> 1. First, input the name of the B2C Tenant you have created (INCLUDING its extension e.g. the default .onmicrosoft.com)
+* You will immediately be prompted to input the name of the B2C Tenant you have created (INCLUDING its extension e.g. the default .onmicrosoft.com)
   * ![input tenant names](../images/B2C_Deployment/00b_tenantNames.png)
 
 
