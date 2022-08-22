@@ -245,7 +245,7 @@ namespace Selenium_Nunit_UI_Test
             }
         }
 
-        ////  Access assingment test
+        //  Access assingment test
 
         [Test]
         [TestCase("student")]
