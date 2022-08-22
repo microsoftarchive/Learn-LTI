@@ -245,88 +245,75 @@ namespace Selenium_Nunit_UI_Test
             }
         }
 
-        //
-
-        //[Test]
-        //[TestCase("external_student")]
-        //public void CreateAssignmentTest2(string usertype)
-        //{
-        //     Login as teacher
-
-        //    Login(usertype);
-        //    Thread.Sleep(1500);
-
-            
-        //}
         //  Access assingment test
 
-        [Test]
-        [TestCase("student")]
-        [TestCase("external_student")]
-        public void AccessAssignmentTest(string usertype)
-        {
-            // Login as teacher
+        //[Test]
+        //[TestCase("student")]
+        //[TestCase("external_student")]
+        //public void AccessAssignmentTest(string usertype)
+        //{
+        //    // Login as teacher
 
-            Login(usertype);
-            Thread.Sleep(10000);
+        //    Login(usertype);
+        //    Thread.Sleep(10000);
 
-            // Choose My Course tab
-            var Tabs = driver.FindElements(By.CssSelector("a[role='menuitem']"));
-            Thread.Sleep(2000);
+        //    // Choose My Course tab
+        //    var Tabs = driver.FindElements(By.CssSelector("a[role='menuitem']"));
+        //    Thread.Sleep(2000);
 
-            Tabs[2].Click();
-            Thread.Sleep(2000);
+        //    Tabs[2].Click();
+        //    Thread.Sleep(2000);
 
-            // Click on course
-            var Courses = driver.FindElements(By.CssSelector("span[class='multiline']"));
+        //    // Click on course
+        //    var Courses = driver.FindElements(By.CssSelector("span[class='multiline']"));
 
-            foreach (var course in Courses)
-            {
-                if (course.Text == "Selenium_Test_Course")
-                {
-                    course.Click();
-                    break;
-                }
-            }
-            Thread.Sleep(2000);
+        //    foreach (var course in Courses)
+        //    {
+        //        if (course.Text == "Selenium_Test_Course")
+        //        {
+        //            course.Click();
+        //            break;
+        //        }
+        //    }
+        //    Thread.Sleep(2000);
 
-            // Click on an assignment
-            var Assignments = driver.FindElements(By.CssSelector("span[class='instancename']"));
+        //    // Click on an assignment
+        //    var Assignments = driver.FindElements(By.CssSelector("span[class='instancename']"));
 
-            foreach (var assignment in Assignments)
-            {
-                if (assignment.Text.Contains("Test_Assignment"))
-                {
-                    assignment.FindElement(By.XPath("..")).Click();
-                    break;
-                }
-            }
-            Thread.Sleep(10000);
+        //    foreach (var assignment in Assignments)
+        //    {
+        //        if (assignment.Text.Contains("Test_Assignment"))
+        //        {
+        //            assignment.FindElement(By.XPath("..")).Click();
+        //            break;
+        //        }
+        //    }
+        //    Thread.Sleep(10000);
 
-            // Switch to LTI login window
-            driver.SwitchTo().Window(driver.WindowHandles[1]);
+        //    // Switch to LTI login window
+        //    driver.SwitchTo().Window(driver.WindowHandles[1]);
 
-            if (usertype.Contains("external_"))
-            {
-                // More info required dialog box
-                driver.FindElement(By.Id("idSubmit_ProofUp_Redirect")).Click();
-                Thread.Sleep(7000);
+        //    if (usertype.Contains("external_"))
+        //    {
+        //        // More info required dialog box
+        //        driver.FindElement(By.Id("idSubmit_ProofUp_Redirect")).Click();
+        //        Thread.Sleep(7000);
 
-                // Find skip button 
+        //        // Find skip button 
 
-                var skip_button = driver.FindElements(By.TagName("a"));
-                foreach (var link in skip_button)
-                {
-                    if (link.Text.Contains("Skip setup"))
-                    {
-                        link.Click();
-                        Thread.Sleep(3000);
-                        break;
-                    }
-                }
-            }
-            Thread.Sleep(7000);
-        }
+        //        var skip_button = driver.FindElements(By.TagName("a"));
+        //        foreach (var link in skip_button)
+        //        {
+        //            if (link.Text.Contains("Skip setup"))
+        //            {
+        //                link.Click();
+        //                Thread.Sleep(3000);
+        //                break;
+        //            }
+        //        }
+        //    }
+        //    Thread.Sleep(7000);
+        //}
 
 
         // Test setup
