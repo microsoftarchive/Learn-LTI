@@ -306,12 +306,11 @@ namespace Selenium_Nunit_UI_Test
                     {
                         link.Click();
                         Thread.Sleep(3000);
-                        driver.FindElement(By.Id("idSIButton9")).Click();
-                        Thread.Sleep(3000);
                         break;
                     }
                 }
             }
+            Thread.Sleep(7000);
         }
 
 
