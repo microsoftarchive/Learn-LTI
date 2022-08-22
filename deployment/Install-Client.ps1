@@ -196,7 +196,8 @@ function Install-Client {
         }
         
         Write-ClientDebugLog -Message 'Running npm ci'
-        $SetupLogs = npm ci
+        # add --legacy-peer-deps to resolve dependency conflicts
+        $SetupLogs = npm ci --legacy-peer-deps
         if($LASTEXITCODE -ne 0) {
             if ($SetupLogs) {
                 Write-ClientDebugLog -Message ($SetupLogs -join "`n")
