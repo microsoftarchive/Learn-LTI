@@ -216,7 +216,7 @@ process {
 
         $UserDisplayEmails = $CurrentUseremailaddress #variable to print only the inputted emails not all alias for ease of understanding for the user
 
-        Write-Host "Creating list of users to be allowed to access the platforms page"
+        Write-Title "Creating list of users to be allowed to access the platforms page"
         Write-Host "Please login to $CurrentUseremailaddress via the popup window"
         Connect-ExchangeOnline -ShowBanner:$false #logging in to exchange onine
 
@@ -224,12 +224,16 @@ process {
         $UserEmailAddresses = getAllAliasEmails $CurrentUseremailaddress
         
         Write-Host "Users that will be allowed to access platforms page:" $UserDisplayEmails
-        $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n)"
-        $choice = $choice.Trim()
 
+        $choice = ""
+        while($choice -ne "y" -and $choice -ne "n") {
+            $choice = Read-Host "Want to add more users from this same domain ($Domain)? (y/n)"
+            $choice = $choice.Trim()
+        }
+        
         #iteratively add more users from the same domain to the list of allowed users
         if($choice -eq "y"){
-            $extramail = Read-Host "Enter user's email or 'n' to exit"
+            $extramail = Read-Host "Enter user's email or 'n' if you have no more users you would like to grant access"
             While($extramail -ne 'n'){
                 #checking these are from the same domain as otherwise we cannot get alias'
                 $NewDomain = $extramail.Substring($extramail.IndexOf("@"),$extramail.Length-$extramail.IndexOf("@"))
@@ -243,14 +247,15 @@ process {
                 }
 
                 Write-Host "Primary + Alias emails that will be allowed to access platforms page:" $UserDisplayEmails
-                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' to exit"
+                $extramail = Read-Host "Enter another user's email from ($Domain) that you'd like to add, or 'n' if you have no more users you would like to grant access"
             }
             
             Write-Log -Message "List of primary emails + all their alias's that will be allowed to access platforms page: $UserEmailAddresses"
         }
         Write-Host "`r`n"
 
-        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary Active Directory tenant. This tenant should contain the LMS resource groups and will contain your LTI resource groups'
+        Write-Title "Enter the tenant ID of your primary Active Directory Tenant"
+        $activeDirectoryTenant = Read-Host 'Enter the tenant id of your primary Active Directory tenant. This tenant should: own the subscription you just input, contain the LMS resource groups, and will contain your LTI resource groups'
         #endregion
         #endregion
 
@@ -265,6 +270,7 @@ process {
         $REACT_APP_EDNA_B2C_TENANT = 'NA'
         $B2C_ObjectID = 'NA'
         $b2c_tenant_name_full = 'NA'
+        $IEFClientID = 'NA'
         if($b2cOrAD -eq "b2c"){
             Write-Title "B2C Step #0: Running the B2C Setup Script"
             
@@ -277,13 +283,14 @@ process {
             Write-Log -Message "Returned from the B2C setup script, continuing with LTI deployment"
 
             # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
-            $AD_Tenant_Name_full = $results[-6] # tenant name of the AD server
-            $b2c_tenant_name_full = $results[-5] #b2c tenant name
-            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-4] #webclient ID
-            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-4] #webclient ID
-            $b2c_secret = $results[-3] #webclient secret
-            $REACT_APP_EDNA_B2C_TENANT = $results[-2] #b2c tenant name
-            $B2C_ObjectID = $results[-1] # b2c webapp id that needs the SPA uri
+            $AD_Tenant_Name_full = $results[-7] # tenant name of the AD server
+            $b2c_tenant_name_full = $results[-6] #b2c tenant name
+            $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-5] #webclient ID
+            $REACT_APP_EDNA_AUTH_CLIENT_ID = $results[-5] #webclient ID
+            $b2c_secret = $results[-4] #webclient secret
+            $REACT_APP_EDNA_B2C_TENANT = $results[-3] #b2c tenant name
+            $B2C_ObjectID = $results[-2] # b2c webapp id that needs the SPA uri
+            $IEFClientID = $results[-1] #ID of the IEF app
 
             Write-Log -Message "Returned the follow values from the b2c setup script-
             `nAD_Tenant_Name_full: $AD_Tenant_Name_full
@@ -385,7 +392,52 @@ process {
         $GraphAPIPermissionId = 'e1fe6dd8-ba31-4d61-89e7-88639da4683d=Scope'
         $appPermissionAddOp = az ad app permission add --id $appinfo.appId --api $GraphAPIId --api-permissions $GraphAPIPermissionId
         #Intentionally not catching an exception here
-    
+
+
+        # if this is an AD deploy then add and grant optional claims to the tokens for the AD app (not required for b2c as its done on the multitenant app in that script)
+        if($b2cOrAd -eq "ad"){
+
+            # add optional claims for email/family_name/given_name to the access_token
+            $ADAppManifest = "{
+                `"idToken`": [],
+                `"accessToken`": [
+                    {
+                        `"name`": `"email`",
+                        `"essential`": false
+                    },
+                    {
+                        `"name`": `"family_name`",
+                        `"essential`": false
+                    },
+                    {
+                        `"name`": `"given_name`",
+                        `"essential`": false
+                    }
+                ],
+                `"saml2Token`": []
+            }"
+            Out-File -FilePath "manifest.json" -InputObject $ADAppManifest
+            az ad app update --id $appinfo.appId --optional-claims "@manifest.json" --only-show-errors
+            Write-Log -Message "As this is AD mode, added optional claims to AD app ($AppName) with id $($appinfo.appId) in $AD_Tenant_Name_full"
+            Remove-Item manifest.json
+
+            # granting permissions to the service principal for the optional claims
+            Write-Host "Granting permissions to the AD app ($AppName)"
+            $profilePermission = "14dad69e-099b-42c9-810b-d002981feec1=Scope"
+            $emailPermission = "64a6cdd6-aab1-4aaf-94b8-3cc8405e90d0=Scope"
+            
+            Write-Host "Creating service principal for $AppName"
+            Write-Log -Message "Creating service principal for $AppName"
+
+            $AppServicePrincipal = az ad sp create --id $appinfo.appId --only-show-errors
+            Write-Log -Message "AppServicePrincipal value:`n$AppServicePrincipal"
+
+            Write-Host "Granting permissions to the service principal for $AppName"
+            Write-Log -Message "Granting permissions to the service principal for $AppName"
+            az ad app permission grant --id $appinfo.appId --api 00000003-0000-0000-c000-000000000000 --scope "email profile" --only-show-errors
+            az ad app permission add --id $appinfo.appId --api 00000003-0000-0000-c000-000000000000 --api-permissions $emailPermission $profilePermission --only-show-errors
+        }
+        
         Write-Host 'App Created Successfully'
         #endregion
         #region Create New Resource Group in above Region
@@ -493,13 +545,8 @@ process {
 
         Remove-Item userImpersonationScope.json
         
-
-
         #endregion
 
-
-
-    
         Write-Host 'App Update Completed Successfully'
         #endregion
 
@@ -568,17 +615,38 @@ process {
 
         Write-Title "TOOL REGISTRATION URL (Please Copy, Required for Next Steps) -> $($deploymentOutput.properties.outputs.webClientURL.value)platform"
 
-        #region "Creating URL so users can more easily investigate their logs for the platform page if issues arise"
+        # Creating URL so users can more easily investigate their logs for the platform page if issues arise
         $ConfigPath = "../client/.env.production"
         $text = Get-Content $ConfigPath
         $configValues = $text | ConvertFrom-StringData
-
         $platformUniqueValue = $configValues.REACT_APP_EDNA_PLATFORM_SERVICE_URL #getting the platform service url
         $platformUniqueValue = $platformUniqueValue.Substring(($platformUniqueValue.IndexOf("platforms-")),$platformUniqueValue.Length-$platformUniqueValue.IndexOf("platforms-")) # trimming to the start of the uniqueIdentifier for the platform page
         $platformUniqueValue = $platformUniqueValue.Substring(0,$platformUniqueValue.IndexOf(".")) # trimming to the end of the uniqueIdentifier for the platform page
+        Write-Title "PLATFORM PAGE AZURE RESOURCE URL (Please Copy, useful for debugging logs if something goes wrong) -> https://portal.azure.com/#@$AD_Tenant_Name_full/resource/subscriptions/$subscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Insights/components/$platformUniqueValue/overview"
 
-        Write-Title "PLATFORM PAGE AZURE URL (Please Copy, useful for debugging logs if something goes wrong) -> https://portal.azure.com/#@$AD_Tenant_Name_full/resource/subscriptions/$subscriptionId/resourceGroups/$ResourceGroupName/providers/Microsoft.Insights/components/$platformUniqueValue/overview"
-        #endregion
+        #if this is a b2c deploy then also display the URL's 
+        if($b2cOrAd -eq "b2c"){
+            $b2c_tenant_name = $b2c_tenant_name_full.SubString(0,$b2c_tenant_name_full.IndexOf('.'))
+        
+            $AzureB2CScope = "openid https://$b2c_tenant_name_full/$IEFClientID/user_impersonation"
+            $AuthorizationEndpoint = "https://$b2c_tenant_name.b2clogin.com/$b2c_tenant_name_full/oauth2/v2.0/authorize?p=b2c_1a_signin"
+            $ForgotPasswordEndpoint = "https://$b2c_tenant_name.b2clogin.com/$b2c_tenant_name_full/oauth2/v2.0/authorize?p=b2c_1a_passwordreset"
+            $EditProfileEndpoint = "https://$b2c_tenant_name.b2clogin.com/$b2c_tenant_name_full/oauth2/v2.0/authorize?p=b2c_1a_profileedit"
+            $TokenEndpoint = "https://$b2c_tenant_name.b2clogin.com/$b2c_tenant_name_full/oauth2/v2.0/token?p=b2c_1a_signin"
+        
+        
+            Write-Title "These are the values required for configurating the Moodle to work with b2c; please use the values in conjunction with the docs for configuring the moodle`nhttps://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in"
+        
+            Write-Color "green" "Azure B2C scope: '$AzureB2CScope'"
+            Write-Color "green" "Provider name: choose a sensible name, for example, 'Azure AD B2C Connect'"
+            Write-Color "green" "Client ID: '$REACT_APP_EDNA_B2C_CLIENT_ID' (The client ID of the B2C Web app)"
+            Write-Color "green" "Client Secret: '$b2c_secret' (The client secret of the B2C Web app)"
+            Write-Color "green" "Authorization endpoint: '$AuthorizationEndpoint'"
+            Write-Color "green" "Forgot password endpoint: '$ForgotPasswordEndpoint'"
+            Write-Color "green" "Edit profile endpoint: '$EditProfileEndpoint'"
+            Write-Color "green" "Token endpoint: '$TokenEndpoint'"
+            Write-Color "green" "Resource: 'https://graph.windows.net'"
+        }
 
 
         Write-Title '======== Successfully Deployed Resources to Azure ==========='

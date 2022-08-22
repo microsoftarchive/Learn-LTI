@@ -71,7 +71,7 @@ This document will explain the steps that contain user interaction and what is r
 
 ### Choice 1: Inputting via text file (recommended for larger whitelists)
 
-* After inputting '1' as your choice, you will now be prompted to input the path to the .txt file you created which contains the tenants you wish to add to your whitelist. The script will now automatically add these tenants to the whitelist.
+* After inputting '1' as your choice, you will now be prompted to input the path to the .txt file you created which contains the tenants you wish to add to your whitelist (for the structure of the file click [here](#prerequisites)). The script will now automatically add these tenants to the whitelist.
     * ![successful run of importing whitelist via txt file](../images/B2C_Deployment/07_1_successful.png)
 
 ### Choice 2: Inputting 1 by 1 to terminal (recommended for smaller whitelists)
@@ -106,7 +106,8 @@ This document will explain the steps that contain user interaction and what is r
 ### Input key duration
 * You will first be prompted to input how long you wish the created keys to be valid for before they expire
     * ![key duration](../images/B2C_Deployment/11_time.png)
-* If your console returns a 403 bad request error, please click [here](#403-forbidden-error)
+* If your console returns a 403 bad request error (such as the one shown below), please click [here](#403-forbidden-error)
+    * ![error admin-consent race](../images/B2C_Deployment/11_error.png)
 
 
 ## Step 12 automatic setup (uploading the custom policies)
@@ -114,7 +115,7 @@ This document will explain the steps that contain user interaction and what is r
 * The custom policies will now be uploaded automatically without requiring further input
 
 
-## Step 13: IMPORTANT - Store Secret Values
+## ⚠️  Step 13: IMPORTANT - Store Secret Values
 
 ![Secret Values](../images/B2C_Deployment/13_secrets.png)
 * After the script finishes running it will output some important values in green and then pause the script (ID and secret values for the created AD app, Permission Management App, and Web App).
