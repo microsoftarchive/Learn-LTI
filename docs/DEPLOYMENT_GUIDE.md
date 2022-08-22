@@ -137,9 +137,12 @@ The **Deploy.ps1** script will automatically provision and configure the require
 
 ## ⚠️ Important Values after completing
 
-The Script will display the following important values after completion, please make a note of all.
+**Congratulations!** Your instance of the tool should now be deployed on Azure! 
+
+The Script will now display the following important values after completion ([Tool Registration URL](#️-tool-registration-url), [Platform Page Azure Resource URL](#️-platform-page-azure-resource-url) & [B2C Configuration Values](#⚠️-b2c-only-configuration-values)), please make a note of all.
 
 ### ⚠️ Tool Registration URL 
+
 
 The Script will display the Tool Registration URL after completion. Please **copy the URL and keep it handy** since it will be required while configuring the tool in the LMS.
 
@@ -156,7 +159,7 @@ Open the tool registration page from your browser and take note of the following
 
 ![Deployment.5](/images/Deployment.5.png)
 
-**Congratulations!** Your instance of the tool should now be deployed on Azure! 
+
 
 
 
