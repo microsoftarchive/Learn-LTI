@@ -19,7 +19,7 @@ If your looking at deploying the service for a DevTest Environment please follow
 
 “Errors while building Function App [ AssignmentLearnContent ]"
 
-see https://github.com/microsoft/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md
+see [here](./DEPLOYMENT_GUIDE.md)
 
 To begin, you will need to install the Prerequisites and reboot your machine
 
@@ -34,13 +34,13 @@ To begin, you will need:
 
 ## Failed deployment or removing the services
 
-To remove the services simply run the [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat) script located in the Deployment folder. This will run the [Cleanup.ps1](https://github.com/microsoft/Learn-LTI/blob/main/deployment/Cleanup.ps1) script which will remove all the deployed resources for the Learn LTI Application from your Azure Subscription.
+To remove the services simply run the [cleanup.bat](../deployment/cleanup.bat) script located in the Deployment folder. This will run the [Cleanup.ps1](../deployment/Cleanup.ps1) script which will remove all the deployed resources for the Learn LTI Application from your Azure Subscription.
 
 
 ### Cleaning up B2C vs AD:
 
 
-When running [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat), you will be prompted to answer whether or not you have a b2c tenant to cleanup. 
+When running [cleanup.bat](../deployment/cleanup.bat), you will be prompted to answer whether or not you have a b2c tenant to cleanup. 
 ![b2cclean.png](/images/b2cclean.png)
 * If you chose 'b2c' mode during the deployment, then; when prompted if you have a b2c tenant to cleanup, select 'y'
     * After selecting 'y' the script will now run the b2c cleanup, please follow this [guide](./B2C_Cleanup.md) for more information on how to cleanup the B2C tenant.
@@ -56,7 +56,7 @@ To Manually remove resources simply remove the Microsoft Learn LTI resource grou
 
 If you have changed the name of the Resource Group or AppName simply replace the actual names with the placeholder in the script.
 
-Ensure you [purge your keyvault]( https://github.com/microsoft/Learn-LTI/blob/main/docs/TROUBLESHOOTING.md#purging-key-vaults) before running the setup script again 
+Ensure you [purge your keyvault](./TROUBLESHOOTING.md#purging-key-vaults) before running the setup script again 
 
 
 ## Check the Failed Deployment status and output
@@ -85,7 +85,7 @@ The personas/responsibilities for setup are:
 
 Exception.Message [ The term "az" is not recognized as a command applet name, function, script file, or executable program. Check the spelling of the name, or if a path exists, check that the path is correct and try again. ]
 
-To run the install you need the Azure Command Line Extension tool installed see Instructions at: https://docs.microsoft.com/cli/azure/install-azure-cli-windows?tabs=azure-cli for instructions. Please ensure you have all the prerequisites installed https://github.com/microsoft/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md#prerequisites
+To run the install you need the Azure Command Line Extension tool installed see Instructions at: https://docs.microsoft.com/cli/azure/install-azure-cli-windows?tabs=azure-cli for instructions. Please ensure you have all the prerequisites installed [check here](./DEPLOYMENT_GUIDE.md#prerequisites)
 
 ## Wrong version of Azure CLI 
 
@@ -216,8 +216,8 @@ We have seen this is an intermittent issue, it usually happens if the user is tr
 This issue is typically related to one of the following:
 
 - Check if you have a valid 3rd Party Signed SSL. This services requires a valid 3rd party SSL certificate, self signed SSL certificates are not valid. Please ensure your service is using https:// with a valid SSL certification.
-- Check the Launch URL, please make sure that all the fields are correctly filled while registering the tool and filling tool's platform registration page. See https://github.com/microsoft/Learn-LTI/blob/main/docs/CONFIGURATION_GUIDE.md
-- Check the Azure Function/Azure Logs see https://github.com/microsoft/Learn-LTI/blob/main/docs/TROUBLESHOOTING.md#azure-functions-tracing
+- Check the Launch URL, please make sure that all the fields are correctly filled while registering the tool and filling tool's platform registration page. See [here](./CONFIGURATION_GUIDE.md)
+- Check the Azure Function/Azure Logs see [here](./TROUBLESHOOTING.md#azure-functions-tracing)
 
 ## LTI Application does not load error: No sufficient permissions to view this page
 
@@ -273,7 +273,7 @@ When you go back to the course participants they will show as active and users w
 
 ## Canvas: LMS Issuer
 
-If your using on premise, hosted or cloud implementations of Canvas. Ensure you register the parameters back in the Learn LTI application's registration page. Please ensure you always state the  Issuer as https://canvas.instructure.com see the final steps in the Canvas instructions https://github.com/microsoft/Learn-LTI/blob/main/docs/CONFIGURATION_GUIDE.md
+If your using on premise, hosted or cloud implementations of Canvas. Ensure you register the parameters back in the Learn LTI application's registration page. Please ensure you always state the  Issuer as https://canvas.instructure.com see the final steps in the Canvas instructions [here](./CONFIGURATION_GUIDE.md)
 
 ## Canvas: Error - {Message}:{"Could not validate request."}? 
 
@@ -398,7 +398,7 @@ This results in you being unable to open the Assignments page in Learn-LTI. User
 Please see browser logs if indicate that the membership call being sent to the LMS (Moodle) is returning a 401 Unauthorized and the Learn LTI tool in unable to get the course members from the LMS and hence the it is giving a 500 response. 
 
 Please make sure that while configuring the tool in Moodle, Under Services, IMS LTI Names and Role Provisioning: `Use this service to retrieve members’ information as per privacy settings.` is selected as mentioned in the [Configuration Guide Learn](CONFIGURATION_GUIDE.md)
-![UseServicetoretrievemembers](https://github.com/microsoft/Learn-LTI/blob/main/images/Config.8.png)
+![UseServicetoretrievemembers](../images/Config.8.png)
 
 # Troubleshooting Errors 
 
