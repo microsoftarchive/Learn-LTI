@@ -43,7 +43,7 @@ To remove the services simply run the [cleanup.bat](https://github.com/microsoft
 When running [cleanup.bat](https://github.com/microsoft/Learn-LTI/blob/main/deployment/cleanup.bat), you will be prompted to answer whether or not you have a b2c tenant to cleanup. 
 ![b2cclean.png](/images/b2cclean.png)
 * If you chose 'b2c' mode during the deployment, then; when prompted if you have a b2c tenant to cleanup, select 'y'
-    * After selecting 'y' the script will now run the b2c cleanup, please follow this [guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/B2C_Cleanup.md) for more information on how to cleanup the B2C tenant.
+    * After selecting 'y' the script will now run the b2c cleanup, please follow this [guide](./B2C_Cleanup.md) for more information on how to cleanup the B2C tenant.
 * If you chose 'ad' mode during the deployment, then; when prompted if you have a b2c tenant to cleanup, select 'n' to skip this step
 
 
