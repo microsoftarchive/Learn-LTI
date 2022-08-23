@@ -24,3 +24,5 @@ jobs:
       run: dotnet restore ${{ env.SOURCE_DIR }}
     - name: Build
       run: dotnet build ${{ env.SOURCE_DIR }} --configuration Release --no-restore
+    - name: Test
+      run: dotnet test ${{ env.SOURCE_DIR }} --no-restore --verbosity normal

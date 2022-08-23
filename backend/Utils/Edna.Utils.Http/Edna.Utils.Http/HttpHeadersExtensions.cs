@@ -22,11 +22,10 @@ namespace Edna.Utils.Http
         private static readonly JwtSecurityTokenHandler JwtSecurityTokenHandler = new JwtSecurityTokenHandler();
 
         public static async Task<bool> ValidateToken(this IHeaderDictionary headers, 
-            ConfigurationManager<OpenIdConnectConfiguration> adConfigurationManager, 
-            ConfigurationManager<OpenIdConnectConfiguration> b2CConfigurationManager, 
+            IConfigurationManager<OpenIdConnectConfiguration> adConfigurationManager, 
+            IConfigurationManager<OpenIdConnectConfiguration> b2CConfigurationManager, 
             string validAudience, Action<string> logAction = null)
         {
-            IdentityModelEventSource.ShowPII = true;
             if (!headers.ContainsKey("Authorization"))
             {
                 logAction?.Invoke("No Authorization header was found in the request.");

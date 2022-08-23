@@ -41,6 +41,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Edna.Bindings.Lti1", "Bindi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edna.Bindings.User", "Bindings\Edna.Bindings.User\Edna.Bindings.User.csproj", "{6C829E23-9827-48CA-BC5D-9EC166F79475}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{26D2F024-6ED4-4673-958E-100BF2361AA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edna.Tests.Utils", "Tests\Edna.Tests.Utils\Edna.Tests.Utils.csproj", "{DA77D908-9088-4CA6-9120-139D8DA9EA96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +111,10 @@ Global
 		{6C829E23-9827-48CA-BC5D-9EC166F79475}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C829E23-9827-48CA-BC5D-9EC166F79475}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C829E23-9827-48CA-BC5D-9EC166F79475}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA77D908-9088-4CA6-9120-139D8DA9EA96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA77D908-9088-4CA6-9120-139D8DA9EA96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA77D908-9088-4CA6-9120-139D8DA9EA96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA77D908-9088-4CA6-9120-139D8DA9EA96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +135,7 @@ Global
 		{AAF190CC-6BE7-474A-8215-AEE4FC982B4C} = {84D0D444-A012-4A2C-8E28-C98D901D96B0}
 		{6E98F8FB-019A-4DE3-BAB8-24B7C8A10580} = {65999A96-B776-46AD-A419-40D4CE1A3941}
 		{6C829E23-9827-48CA-BC5D-9EC166F79475} = {65999A96-B776-46AD-A419-40D4CE1A3941}
+		{DA77D908-9088-4CA6-9120-139D8DA9EA96} = {26D2F024-6ED4-4673-958E-100BF2361AA9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0794D86D-4281-4111-B1D5-DBCCE16A5973}
