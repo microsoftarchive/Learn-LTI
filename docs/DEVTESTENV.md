@@ -91,19 +91,20 @@ The DevTest Environment of Moodle can support both [AAD Single Sign in](#Setting
         ![enable-b2c-plugin](../images/enableB2CPlugin.png)
         - Click on the Settings blade of the Azure AD B2C Connect plugin
     - Configure the Azure AD B2C Connect plugin:
-        - **Azure B2C scope**: openid <user_impersonation_url>
-          - To get the user_impersonation_url, switch to the B2C tenant in Azure Portal, go to Azure AD B2C - App registrations and find the B2C Web app. 
-          The user_impersonation_url can be found at API Permissions - user_impersonation.
-          ![user-impersonation](../images/user_impersonation.png)
-        - **Provider name**: Choose a good name, e.g., Azure AD B2C Connect
-        - **Client ID**: The client ID of the B2C Web app
-        - **Client secret**: The client secret of the B2C Web app
-        - **Authorization endpoint**: https://<b2c_tenant_name>.b2clogin.com/<b2c_tenant_name>.onmicrosoft.com/oauth2/v2.0/authorize?p=b2c_1a_signin
-          - The b2c_tenant_name is the name of the B2C tenant that is used to setup the login process. For example, if the domain of the B2C tenant is testb2c.onmicrosoft.com, then b2c_tenant_name should be **testb2c**
-        - **Forgot Password endpoint**: https://<b2c_tenant_name>.b2clogin.com/<b2c_tenant_name>.onmicrosoft.com/oauth2/v2.0/authorize?p=b2c_1a_passwordreset
-        - **Edit Profile endpoint**: https://<b2c_tenant_name>.b2clogin.com/<b2c_tenant_name>.onmicrosoft.com/oauth2/v2.0/authorize?p=b2c_1a_profileedit
-        - **Token endpoint**: https://<b2c_tenant_name>.b2clogin.com/<b2c_tenant_name>.onmicrosoft.com/oauth2/v2.0/token?p=b2c_1a_signin
-        - **Resource**: graph.windows.net
+        - The following values should be returned by the deployment script, as explained [here](./DEPLOYMENT_GUIDE.md#️-b2c-only-configuration-values); so you can simply copy/paste those values. If you have lost these values you can manually reconstruct those values using the explanations below:
+            - **Azure B2C scope**: openid <user_impersonation_url>
+              - To get the user_impersonation_url, switch to the B2C tenant in Azure Portal, go to Azure AD B2C - App registrations and find the B2C Web app. 
+              The user_impersonation_url can be found at API Permissions - user_impersonation.
+              ![user-impersonation](../images/user_impersonation.png)
+            - **Provider name**: Choose a good name, e.g., Azure AD B2C Connect
+            - **Client ID**: The client ID of the B2C Web app
+            - **Client secret**: The client secret of the B2C Web app
+            - **Authorization endpoint**: https://<b2c_tenant_name>.b2clogin.com/<b2c_tenant_name>.onmicrosoft.com/oauth2/v2.0/authorize?p=b2c_1a_signin
+              - The b2c_tenant_name is the name of the B2C tenant that is used to setup the login process. For example, if the domain of the B2C tenant is testb2c.onmicrosoft.com, then b2c_tenant_name should be **testb2c**
+            - **Forgot Password endpoint**: https://<b2c_tenant_name>.b2clogin.com/<b2c_tenant_name>.onmicrosoft.com/oauth2/v2.0/authorize?p=b2c_1a_passwordreset
+            - **Edit Profile endpoint**: https://<b2c_tenant_name>.b2clogin.com/<b2c_tenant_name>.onmicrosoft.com/oauth2/v2.0/authorize?p=b2c_1a_profileedit
+            - **Token endpoint**: https://<b2c_tenant_name>.b2clogin.com/<b2c_tenant_name>.onmicrosoft.com/oauth2/v2.0/token?p=b2c_1a_signin
+            - **Resource**: graph.windows.net
         - **Redirect URI**: Record this value since it will be used in the next step
         - Click "Save Changes"
     - Register the Redirect URI to the B2C web app

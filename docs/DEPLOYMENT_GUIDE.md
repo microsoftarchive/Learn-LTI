@@ -21,7 +21,7 @@ Follow these steps to deploy the Microsoft Learn LTI tool:
 
 # Clone the repo
 1. Go to the [repo](http://github.com/microsoft/learn-lti) Click code button on the [repo](http://github.com/microsoft/learn-lti)
-![Clone Repo](https://github.com/microsoft/Learn-LTI/blob/main/images/clone.png)
+![Clone Repo](../images/clone.png)
 3. Simply click the code button and select Open with GitHub Desktop or Download Zip to clone contents of the repo.
 
 If you are using Git
@@ -92,7 +92,7 @@ If you're unsure about whether your account has a subscription, check [here.](ht
 
 ## OPTIONAL B2C SETUP
 
-* **IMPORTANT: If you chose B2C at the start of the script, go to the [B2C setup documentation guide](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/B2C_Deployment.md) for instructions on how to complete B2C deployment before looking at the next step.**
+* **IMPORTANT: If you chose B2C at the start of the script, go to the [B2C setup documentation guide](./B2C_Deployment.md) for instructions on how to complete B2C deployment before looking at the next step.**
 * If you chose AD at the start of the script, skip to the next step
 
 
@@ -171,7 +171,7 @@ The Script will display the Platform Page Azure Resource URL after completion. P
 
 ### ⚠️ B2C ONLY: Configuration Values
 
-If you ran a b2c setup, the Script will display the Configuration values required for setting up Moodle to work with b2c after completion. Please **copy these values** since, they are needed in setting up the B2C Configuration as seen [here](https://github.com/UCL-MSc-Learn-LTI/Learn-LTI/blob/main/docs/DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in).
+If you ran a b2c setup, the Script will display the Configuration values required for setting up Moodle to work with b2c after completion. Please **copy these values** since, they are needed in setting up the B2C Configuration as seen [here](./DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in).
 
 ![B2C Configuration Values](../images/B2C_Deployment/b2cConfigurationValues.png)
 
@@ -180,4 +180,9 @@ If you ran a b2c setup, the Script will display the Configuration values require
 
 If your **deployment failed**, click [here](./TROUBLESHOOTING.md) for help.
 
+
+# Next steps
+
 Once the tool has been successfully deployed, the next step is to [configure the tool](./CONFIGURATION_GUIDE.md) on your institution's LMS.
+
+And, if you chose B2C, set up the B2C Tool on your LMS as explained in [here](./DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in).
