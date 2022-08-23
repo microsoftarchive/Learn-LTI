@@ -174,7 +174,7 @@ The Script will display the Platform Page Azure Resource URL after completion. P
 
 ### ⚠️ B2C ONLY: Configuration Values
 
-If you ran a b2c setup, the Script will display the Configuration values required for setting up Moodle to work with b2c after completion. Please **copy these values** since, they are needed in setting up the B2C Configuration as seen [here](./DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in).
+If you ran a b2c setup, the Script will display the Configuration values required for setting up Moodle to work with b2c after completion. Please **copy these values** since, they are needed in setting up the B2C Configuration as seen in step 2 of [here](./DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in).
 
 ![B2C Configuration Values](../images/B2C_Deployment/b2cConfigurationValues.png)
 
