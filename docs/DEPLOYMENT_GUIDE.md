@@ -62,7 +62,6 @@ Type in 'b2c' for B2C mode of authentication (which allows single-tenant or mult
 
 
 ## Login to Azure
-**NOTE:** if B2C mode is chosen, the B2C setup must be completed before reaching this step.
 
 The script will ask you to login to Azure by navigating to the Azure Login Page on your browser.
 
@@ -95,9 +94,13 @@ If you're unsure about whether your account has a subscription, check [here.](ht
 * **IMPORTANT: If you chose B2C at the start of the script, go to the [B2C setup documentation guide](./B2C_Deployment.md) for instructions on how to complete B2C deployment before looking at the next step.**
 * If you chose AD at the start of the script, skip to the next step
 
+After the scripts termination you will now be prompted to log back into the AD tenant.
+
 
 
 ## Choose Location
+
+**NOTE:** if B2C mode is chosen, the B2C setup must be completed before reaching this step.
 
 The following regions are supported:
 
