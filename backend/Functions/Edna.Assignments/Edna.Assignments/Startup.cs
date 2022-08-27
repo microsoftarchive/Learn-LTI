@@ -29,11 +29,17 @@ namespace Edna.Assignments
             builder.Services.AddAutoMapper(GetType().Assembly);
             
             builder.Services.AddSingleton((s) => new ConfigurationManager<OpenIdConnectConfiguration>(
-                Environment.GetEnvironmentVariable("ADConfigurationUrl"), new OpenIdConnectConfigurationRetriever()));
+                Environment.GetEnvironmentVariable("ADConfigurationUrl"), new OpenIdConnectConfigurationRetriever())
+            {
+                AutomaticRefreshInterval = TimeSpan.MaxValue
+            });
             
             if (Environment.GetEnvironmentVariable("B2CConfigurationUrl") != null) 
                 builder.Services.AddSingleton((s) => new ConfigurationManager<OpenIdConnectConfiguration>(
-                    Environment.GetEnvironmentVariable("B2CConfigurationUrl"), new OpenIdConnectConfigurationRetriever()));
+                    Environment.GetEnvironmentVariable("B2CConfigurationUrl"), new OpenIdConnectConfigurationRetriever())
+                {
+                    AutomaticRefreshInterval = TimeSpan.MaxValue
+                });
         }
     }
 }
