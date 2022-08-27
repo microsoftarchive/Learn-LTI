@@ -22,8 +22,8 @@ namespace Edna.Utils.Http
         private static readonly JwtSecurityTokenHandler JwtSecurityTokenHandler = new JwtSecurityTokenHandler();
 
         public static async Task<bool> ValidateToken(this IHeaderDictionary headers, 
-            ConfigurationManager<OpenIdConnectConfiguration> adConfigurationManager, 
-            ConfigurationManager<OpenIdConnectConfiguration> b2CConfigurationManager, 
+            IConfigurationManager<OpenIdConnectConfiguration> adConfigurationManager, 
+            IConfigurationManager<OpenIdConnectConfiguration> b2CConfigurationManager, 
             string validAudience, Action<string> logAction = null)
         {
             if (!headers.ContainsKey("Authorization"))
@@ -36,13 +36,11 @@ namespace Edna.Utils.Http
             var token = authorizationContent?.Split(' ')[1];
             try
             {
-                adConfigurationManager.AutomaticRefreshInterval = TimeSpan.MaxValue;
                 var adConfig = await adConfigurationManager.GetConfigurationAsync(default);
                 var signingKeys = adConfig.SigningKeys;
                 var validIssuers = new List<string> { adConfig.Issuer };
                 if (b2CConfigurationManager != null)
                 {
-                    b2CConfigurationManager.AutomaticRefreshInterval = TimeSpan.MaxValue;
                     var b2CConfig = await b2CConfigurationManager.GetConfigurationAsync(default);
                     foreach (var key in b2CConfig.SigningKeys)
                         signingKeys.Add(key);
