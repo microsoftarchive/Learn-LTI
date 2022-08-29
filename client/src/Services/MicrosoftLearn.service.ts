@@ -10,15 +10,17 @@ import { AssignmentLearnContentDto } from '../Dtos/Learn/AssignmentLearnContent.
 
 class MicrosoftLearnServiceClass {
   public async getCatalog(): Promise<WithError<CatalogDto>> {
+    // Get catalog
+
     const catalogApiResponse = await axios.get<CatalogDto>(`${process.env.REACT_APP_EDNA_LEARN_CONTENT}/learn-catalog`);
     return safeData(catalogApiResponse);
   }
 
   public async getAssignmentLearnContent(assignmentId: string): Promise<WithError<AssignmentLearnContentDto[]>> {
+    // Get assingment via learnContent
     const assignmentLearnContentResponse = await axios.get<AssignmentLearnContentDto[]>(
       `${process.env.REACT_APP_EDNA_LEARN_CONTENT}/assignments/${assignmentId}/learn-content`
     );
-
     return safeData(assignmentLearnContentResponse);
   }
 

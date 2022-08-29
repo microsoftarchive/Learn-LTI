@@ -18,9 +18,11 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 
 namespace Edna.Platforms
@@ -29,17 +31,26 @@ namespace Edna.Platforms
     {
         private const string PlatformsTableName = "Platforms";
 
-        private static readonly string[] PossibleEmailClaimTypes = { "email", "upn", "unique_name" };
-        private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl").TrimEnd('/');
+        private static readonly string[] PossibleEmailClaimTypes = { "email", "emails", "upn", "unique_name" };
+        private static readonly string ConnectApiBaseUrl = Environment.GetEnvironmentVariable("ConnectApiBaseUrl")?.TrimEnd('/');
         private static readonly string[] AllowedUsers = Environment.GetEnvironmentVariable("AllowedUsers")?.Split(";") ?? new string[0];
+
+        private readonly ConfigurationManager<OpenIdConnectConfiguration> _adManager, _b2CManager;
+        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
 
         private readonly IMapper _mapper;
         private readonly ILogger<PlatformsApi> _logger;
 
-        public PlatformsApi(IMapper mapper, ILogger<PlatformsApi> logger)
+        public PlatformsApi(IMapper mapper, ILogger<PlatformsApi> logger, IEnumerable<ConfigurationManager<OpenIdConnectConfiguration>> managers)
         {
             _mapper = mapper;
             _logger = logger;
+            
+            var configurationManagers = managers.ToList();
+            _adManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("ADConfigurationUrl"));
+            _b2CManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("B2CConfigurationUrl"));
         }
 
         [FunctionName(nameof(GetAllRegisteredPlatforms))]
@@ -48,7 +59,7 @@ namespace Edna.Platforms
             [LtiAdvantage] LtiToolPublicKey publicKey,
             [Table(PlatformsTableName)] CloudTable table)
         {
-            if (!ValidatePermission(req))
+            if (!await ValidatePermission(req))
                 return new UnauthorizedResult();
 
             _logger.LogInformation("Getting all the registered platforms.");
@@ -77,12 +88,12 @@ namespace Edna.Platforms
         }
 
         [FunctionName(nameof(GetPlatform))]
-        public IActionResult GetPlatform(
+        public async Task<IActionResult> GetPlatform(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "platforms/{platformId}")] HttpRequest req,
             [LtiAdvantage] LtiToolPublicKey publicKey,
             [Table(PlatformsTableName, "{platformId}", "{platformId}")] PlatformEntity platformEntity)
         {
-            if (!ValidatePermission(req))
+            if (!await ValidatePermission(req))
                 return new UnauthorizedResult();
 
             PlatformDto platformDto = _mapper.Map<PlatformDto>(platformEntity);
@@ -93,11 +104,11 @@ namespace Edna.Platforms
         }
 
         [FunctionName(nameof(GetNewPlatform))]
-        public IActionResult GetNewPlatform(
+        public async Task<IActionResult> GetNewPlatform(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "new-platform")] HttpRequest req,
             [LtiAdvantage] LtiToolPublicKey publicKey)
         {
-            if (!ValidatePermission(req))
+            if (!await ValidatePermission(req))
                 return new UnauthorizedResult();
 
             string platformId = GeneratePlatformID();
@@ -122,7 +133,7 @@ namespace Edna.Platforms
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "platforms")] HttpRequest req,
             [Table(PlatformsTableName)] IAsyncCollector<PlatformEntity> entityCollector)
         {
-            if (!ValidatePermission(req))
+            if (!await ValidatePermission(req))
                 return new UnauthorizedResult();
 
             string platformDtoJson = await req.ReadAsStringAsync();
@@ -140,52 +151,21 @@ namespace Edna.Platforms
             return new CreatedResult(platformGetUrl, updatedPlatformDto);
         }
 
-        private bool ValidatePermission(HttpRequest req)
+        private async Task<bool> ValidatePermission(HttpRequest req)
         {
             #if DEBUG
             // For debug purposes, there is no authentication.
             return true;
             #endif
 
-            if (!req.Headers.TryGetTokenClaims(out Claim[] claims, message => _logger.LogError(message)))
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
                 return false;
-
-            // By checking appidacr claim, we can know if the call was made by a user or by the system.
-            // https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens
-            string appidacr = claims.FirstOrDefault(claim => claim.Type == "appidacr")?.Value;
-            if (appidacr == "2")
-                return true;
-
-            if (appidacr == "0")
-            {
-                if (!TryGetUserEmails(claims, out List<string> userEmails))
-                {
-                    _logger.LogError("Could not get any user email / uid for the current user.");
-                    return false;
-                }
-
-                return AllowedUsers.Intersect(userEmails).Any();
-            }
-
+            
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            if (isSystemCallOrUserWithValidEmail)
+                return userEmails.Count <= 0 || AllowedUsers.Intersect(userEmails).Any();
+            _logger.LogError("Could not get user email.");
             return false;
-        }
-
-        private bool TryGetUserEmails(IEnumerable<Claim> claims, out List<string> userEmails)
-        {
-            userEmails = new List<string>();
-            if (claims == null)
-                return false;
-
-            Claim[] claimsArray = claims.ToArray();
-
-            userEmails = PossibleEmailClaimTypes
-                .Select(claimType => claimsArray.FirstOrDefault(claim => claim.Type == claimType))
-                .Where(claim => claim != null)
-                .Select(claim => claim.Value)
-                .Distinct()
-                .ToList();
-
-            return userEmails.Any();
         }
 
         private string GeneratePlatformID()

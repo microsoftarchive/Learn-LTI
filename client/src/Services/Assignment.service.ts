@@ -9,10 +9,10 @@ import { safeData, WithError } from '../Core/Utils/Axios/safeData';
 
 class AssignmentServiceClass {
   public async getAssignment(assignmentId: string): Promise<WithError<AssignmentDto>> {
+    // Retrieve an assignment
     const response = await axios.get<AssignmentDto>(
       `${process.env.REACT_APP_EDNA_ASSIGNMENT_SERVICE_URL}/assignments/${assignmentId}`
     );
-
     return safeData(response);
   }
 

@@ -3,6 +3,8 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
+// TODO - very important fiel seems to be responsible for the actual valid of the JWK Token
+
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;

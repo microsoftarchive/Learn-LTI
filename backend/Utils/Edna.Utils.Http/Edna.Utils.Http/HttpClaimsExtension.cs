@@ -23,7 +23,6 @@ namespace Edna.Utils.Http
                 logAction?.Invoke("Error in sent JWT");
                 return false;
             }
-
             return GetClientAuthenticationType(claims, out userEmails, logAction);
         }
 
@@ -31,22 +30,21 @@ namespace Edna.Utils.Http
         {
             userEmails = new List<string>();
 
-            // By checking appidacr claim, we can know if the call was made by a user or by the system.
+            // By checking appidacr and azpacr claims, we can know if the call was made by a user or by the system.
             // https://docs.microsoft.com/en-us/azure/active-directory/develop/access-tokens
-            string appidacr = claims.FirstOrDefault(claim => claim.Type == "appidacr")?.Value;
+            var azpacr = claims.FirstOrDefault(claim => claim.Type == "azpacr")?.Value;
+            var appidacr = claims.FirstOrDefault(claim => claim.Type == "appidacr")?.Value;
+            var isB2CToken = claims.FirstOrDefault(claim => claim.Type == "_isB2CToken")?.Value;
 
-            switch (appidacr)
-            {
-                case "0":
-                    return ParseUserEmailsFromClaims(claims, out userEmails);
+            if (isB2CToken == "true")
+                return ParseUserEmailsFromClaims(claims, out userEmails);
 
-                case "2":
-                    return true;
-
-                default:
-                    logAction?.Invoke("this is neither a valid call from user nor a valid server to server call");
-                    return false;
-            }
+            if (azpacr == "2" || appidacr == "2")
+                return true;
+            if (azpacr == "0" || appidacr == "0")
+                return ParseUserEmailsFromClaims(claims, out userEmails);
+            logAction?.Invoke("this is neither a valid call from user nor a valid server to server call");
+            return false;
         }
 
         private static bool ParseUserEmailsFromClaims(Claim[] claims, out List<String> userEmails)

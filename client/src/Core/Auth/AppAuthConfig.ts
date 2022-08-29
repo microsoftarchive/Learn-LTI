@@ -3,8 +3,34 @@
  *  Licensed under the MIT License.
  *--------------------------------------------------------------------------------------------*/
 
-import { MsalAuthProvider, LoginType, IMsalAuthProviderConfig } from 'react-aad-msal';
-import { Configuration, Logger, LogLevel, AuthenticationParameters } from 'msal';
+// import { MsalAuthProvider, LoginType, IMsalAuthProviderConfig } from 'react-aad-msal';
+// import { AuthenticationParameters } from 'msal';
+import { PublicClientApplication, Configuration, Logger, LogLevel } from '@azure/msal-browser';
+
+import { b2cPolicies } from './policies';
+
+export let request;
+let authority;
+// Swap out needed B2C vs AD options
+if (process.env.REACT_APP_EDNA_B2C_TENANT! != 'NA') {
+  request = {
+    scopes: [
+      'openid',
+      'profile',
+      'https://' +
+        process.env.REACT_APP_EDNA_B2C_TENANT! +
+        '.onmicrosoft.com/' +
+        process.env.REACT_APP_EDNA_B2C_CLIENT_ID +
+        '/b2c.read'
+    ]
+  };
+  authority = b2cPolicies.authorities.signIn.authority;
+} else {
+  request = {
+    scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!, 'email', 'profile', 'openid', 'User.Read']
+  };
+  authority = `https://login.microsoftonline.com/${process.env.REACT_APP_EDNA_TENANT_ID}`;
+}
 
 const authLogCallback = (level: LogLevel, message: string, _containsPii: boolean): void => {
   // Not setting the log at all, will cause the an exception in the UserAgentApplication.
@@ -14,28 +40,43 @@ const authLogCallback = (level: LogLevel, message: string, _containsPii: boolean
   }
 };
 
-const configuration: Configuration = {
+const config: Configuration = {
   auth: {
-    clientId: process.env.REACT_APP_EDNA_AAD_CLIENT_ID!,
+    clientId: process.env.REACT_APP_EDNA_AUTH_CLIENT_ID!, //process.env.REACT_APP_EDNA_AAD_CLIENT_ID!
     redirectUri: process.env.REACT_APP_EDNA_MAIN_URL!,
-    authority: `https://login.microsoftonline.com/${process.env.REACT_APP_EDNA_TENANT_ID}`,
-    navigateToLoginRequestUrl: true
+    authority: authority,
+    navigateToLoginRequestUrl: true,
+    knownAuthorities: [b2cPolicies.authorityDomain]
   },
   cache: {
     cacheLocation: 'localStorage',
-    storeAuthStateInCookie: true
+    storeAuthStateInCookie: false
   },
   system: {
-    logger: new Logger(authLogCallback)
+    loggerOptions: {
+      loggerCallback: (level: LogLevel, message: string, containsPii: boolean): void => {
+        if (containsPii) {
+          return;
+        }
+        switch (level) {
+          case LogLevel.Error:
+            console.error(message);
+            return;
+          case LogLevel.Info:
+            console.info(message);
+            return;
+          case LogLevel.Verbose:
+            console.debug(message);
+            return;
+          case LogLevel.Warning:
+            console.warn(message);
+            return;
+        }
+      },
+      piiLoggingEnabled: false
+    },
+    allowRedirectInIframe: true
   }
 };
 
-const authParams: AuthenticationParameters = {
-  scopes: [process.env.REACT_APP_EDNA_DEFAULT_SCOPE!]
-};
-
-const options: IMsalAuthProviderConfig = {
-  loginType: LoginType.Redirect
-};
-
-export const AppAuthConfig = new MsalAuthProvider(configuration, authParams, options);
+export const AppAuthConfig = new PublicClientApplication(config);

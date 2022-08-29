@@ -14,7 +14,7 @@ import { UserRole } from '../Models/UserRole.model';
 import { UserDto } from '../Dtos/User.dto';
 import _ from 'lodash';
 import { AppAuthConfig } from '../Core/Auth/AppAuthConfig';
-import { Account } from 'msal';
+import { AccountInfo } from '@azure/msal-browser';
 import { WithError } from '../Core/Utils/Axios/safeData';
 import { ErrorPageContent } from '../Core/Components/ErrorPageContent';
 
@@ -28,7 +28,7 @@ export class UsersStore extends ChildStore {
   @observable userDetails: User | null = null;
   @observable userImageUrl = '';
   @observable participants: User[] | null = null;
-  @observable account: Account | null = null;
+  @observable account: AccountInfo | null = null;
   @observable errorContent: ErrorPageContent | undefined = undefined;
 
   initialize(): void {
@@ -36,7 +36,7 @@ export class UsersStore extends ChildStore {
       () => this.root.platformStore.platform || this.root.platformStore.errorContent !== undefined
     ).pipe(
       filter(platformObservable => !!platformObservable),
-      map(() => AppAuthConfig.getAccountInfo()?.account),
+      map(() => AppAuthConfig.getAllAccounts()?.[0]),
       filter(account => !!account),
       filter(account => !!account?.name),
       map(account => account!),
@@ -99,11 +99,11 @@ export class UsersStore extends ChildStore {
       ...userDto
     };
   }
-  private accountToUserModel(account: Account): User {
+  private accountToUserModel(account: AccountInfo): User {
     return {
       roleDisplayName: '',
       displayName: account?.name || '',
-      email: account?.userName || ''
+      email: account?.username || ''
     };
   }
 }
