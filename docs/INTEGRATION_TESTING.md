@@ -21,7 +21,7 @@ Integration testing requires:
 ### Learning Management System
 1. A running Moodle LMS instance. Recommended tool: [Bitnami](https://bitnami.com/stack/moodle) 
 2. Sign in or Sign up the 4 accounts we created in the **Active Directory section** using B2C AAD
-**[Insert image of the B2C AAD button here]**
+![Signin_Signup](../images/Selenium_Test/Signin_Signup.png)
 
 ## Setup
 
@@ -49,7 +49,6 @@ Integration testing requires:
         ![Create_Step_5](../images/Selenium_Test/Create_step_5.png)
         * Step 6: Save and you will see your newly created assignment
         ![Create_Step_6](../images/Selenium_Test/Create_step_6.png)
-
     * Skip all the tutorial popup if there is one( **important** )
 6. For each of the **2 Student accounts**, sign in, choose the course you created, and click on one of the assignment you have just created with the teacher accounts:
     * You will be redirect to the LTI tool page and asked to sign in again
