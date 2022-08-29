@@ -9,7 +9,7 @@ Integration testing requires:
 ### Active directory 
 
 1. 2 Active Directories and 1 B2C Active Directory
-2. Deploy a **B2C** LTI Tool using one of the AD and the B2C a: [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)
+2. Deploy a **B2C** LTI Tool using one of the AD and the B2C AAD: [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)
 3. For each AD tenant, create 2 members:
     * In our primary AD that you used for delpoyment, create the 2 following members:
         * Test Student.
