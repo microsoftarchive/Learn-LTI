@@ -8,7 +8,7 @@ If you only intended to use the program and not edit its internal code, you are 
 
 ### Legacy AD Architecture
 
-| AD Architecture | B2C Architecture |
+| AD Architecture (Legacy) | B2C Architecture (Recommended)|
 | - | - |
 | <img src="../images/Developer/AD_Architecture.png" width="100%"/> | <img src="../images/Developer/B2C_Architecture.png" width="100%" /> |
 
@@ -37,7 +37,15 @@ If you only intended to use the program and not edit its internal code, you are 
 
 ### Deploy scripts'
 
-* The Deploy script creates and configures all the resources required for an organisation to user Learn-LTI on the Universities existing AD and B2C tenants.
+* The Deploy script creates and configures all the resources required for an organisation to use Learn-LTI on the Universities existing AD and B2C tenants.
+
+#### Main Deploy Script
+* At the start of the script there is a READ-HOST asking the user to select 'ad' or 'b2c' mode; this value is stored and used to house AD and B2C specific code inside conditional if blocks.
+* Azure CLI is used for this purpose, prompting the user to first login with an account with sufficient permissions then using the Azure CLI to create and configure those resources on the Moodle.
+
+#### B2C SubDeploy Script
+* The B2C Deploy script works similarly using the Azure CLI to pprompt the user to login when switching Tenants (from AD or B2C) then sets up the additional components required solely for B2C deploy
+* The B2C Deploy script, however, uses HTTP requests predominantly for the creation and configuration of the apps due to the ease of making these work for multiple OS' 
 
 
 
