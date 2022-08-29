@@ -14,6 +14,7 @@ To begin, you will need:
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
 - [Git](https://git-scm.com/downloads)
 - An Azure subscription
+- If you are running this on MacOS you also require an additional dependency of [WSMan]([)](https://www.oasys.net/fragments/powershell-on-macos-wsman/)
 
 **Note:** Please ensure you **reboot your machine** after the installation of the Prerequisities
 
