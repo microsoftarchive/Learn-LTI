@@ -9,15 +9,8 @@ If you only intended to use the program and not edit its internal code, you are 
 ### Legacy AD Architecture
 
 | AD Architecture | B2C Architecture |
-
-![AD Architecture](../images/Developer/AD_Architecture.png =250x250)
-
-
-
-<img src="../images/Developer/AD_Architecture.png" width="200" height="400" />
-
-
-![B2C Architecture](../images/Developer/B2C_Architecture.png | width=10)
+| - | - |
+| <img src="../images/Developer/AD_Architecture.png" width="100%"/> | <img src="../images/Developer/B2C_Architecture.png" width="100%" /> |
 
 
 
