@@ -34,10 +34,6 @@ Integration testing requires:
     * External Test Student: student
     * External Test Teacher: lecturer
 5. For each of the **2 Teacher accounts**, sign in, choose the course you have just been added to:
-    * Skip the tutorial popup
-    * Choose add a new external tool (Don't need add the tool, only need to click on the add assignment button)
-    * Skip all the tutorial popup if there is one
-6. For each of the **2 Teacher accounts**, sign in, choose the course you have just been added to:
     * Skip the tutorial popup ( **important** )
     * Turn on **Edit Mode** on the top right corner
     * Add a new external tool ( **important** )
@@ -55,7 +51,7 @@ Integration testing requires:
         ![Create_Step_6](../images/Selenium_Test/Create_step_6.png)
 
     * Skip all the tutorial popup if there is one( **important** )
-7. For each of the **2 Student accounts**, sign in, choose the course you created, and click on one of the assignment you have just created with the teacher accounts:
+6. For each of the **2 Student accounts**, sign in, choose the course you created, and click on one of the assignment you have just created with the teacher accounts:
     * You will be redirect to the LTI tool page and asked to sign in again
     * After that you will be presented with the assignment page
 
