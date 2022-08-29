@@ -75,7 +75,7 @@ namespace Edna.AssignmentLearnContent
             [Table(AssignmentLearnContentTableName)] CloudTable assignmentLearnContentTable,
             string assignmentId)
         {
-            _logger.LogError($"Fetching all selected learn content for assignment {assignmentId}."); // TODO return to loginfo
+            _logger.LogInformation($"Fetching all selected learn content for assignment {assignmentId}.");
 
             List<AssignmentLearnContentEntity> assignmentSelectedLearnContent = await GetAllAssignmentLearnContentEntities(assignmentLearnContentTable, assignmentId);
 
@@ -83,8 +83,6 @@ namespace Edna.AssignmentLearnContent
                 .OrderBy(entity => entity.Timestamp.Ticks)
                 .Select(_mapper.Map<AssignmentLearnContentDto>);
 
-            // TODO remove
-            _logger.LogError("My dtos are " + assignmentSelectedLearnContentDtos.Count().ToString());
             if (assignmentSelectedLearnContentDtos.Count() > 0)
             {
                 _logger.LogError(assignmentSelectedLearnContentDtos.FirstOrDefault().ContentUid);

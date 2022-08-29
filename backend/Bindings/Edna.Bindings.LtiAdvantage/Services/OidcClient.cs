@@ -3,8 +3,6 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
-// TODO - File seems to define the open id client interface (this may need to be updated?)
-
 using System.Collections.Specialized;
 using System.Web;
 using Edna.Bindings.LtiAdvantage.Models;

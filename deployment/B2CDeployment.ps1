@@ -681,7 +681,6 @@ try{
     #endregion 
 
     #region "B2C STEP 11.D: Create the Facebook keyset"
-    #TODO - eventually only run this B2C STEP if we are using Facebook (and then use different contract templates for linking facebook vs without)
     Write-Title "B2C STEP 11.D: Creating the Facebook Key"
 
     if($keysets -contains "B2C_1A_FacebookSecret"){

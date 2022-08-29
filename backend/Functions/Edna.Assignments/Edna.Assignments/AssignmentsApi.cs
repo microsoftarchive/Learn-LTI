@@ -107,7 +107,7 @@ namespace Edna.Assignments
                 return new InternalServerErrorResult();
             }
 
-            _logger.LogError($"Saved assignment {assignmentEntity.ToAssignmentId()}."); // TODO: switch back to loginfo
+            _logger.LogInformation($"Saved assignment {assignmentEntity.ToAssignmentId()}.");
             
             string assignmentUrl = $"{req.Scheme}://{req.Host}/api/{AssignmentsRoutePath}/{assignmentEntity.ToAssignmentId()}";
             AssignmentDto savedAssignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
