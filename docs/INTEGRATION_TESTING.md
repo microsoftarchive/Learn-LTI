@@ -40,8 +40,7 @@ Integration testing requires:
 6. For each of the **2 Teacher accounts**, sign in, choose the course you have just been added to:
     * Skip the tutorial popup ( **important** )
     * Turn on **Edit Mode** on the top right corner
-    * Add a new external tool (Don't need add the tool, only need to click on the add assignment button)
-    [Insert images add tool button]
+    * Add a new external tool ( **important** )
         * Step 1: Toggle on edit mode
         ![Create_Step_1](../images/Selenium_Test/Create_step_1.png)
         * Step 2: Add a resource
