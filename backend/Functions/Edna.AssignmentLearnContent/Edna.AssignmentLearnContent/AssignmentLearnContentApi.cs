@@ -83,10 +83,6 @@ namespace Edna.AssignmentLearnContent
                 .OrderBy(entity => entity.Timestamp.Ticks)
                 .Select(_mapper.Map<AssignmentLearnContentDto>);
 
-            if (assignmentSelectedLearnContentDtos.Count() > 0)
-            {
-                _logger.LogError(assignmentSelectedLearnContentDtos.FirstOrDefault().ContentUid);
-            }
             return new OkObjectResult(assignmentSelectedLearnContentDtos);
         }
 
