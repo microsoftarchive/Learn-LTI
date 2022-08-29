@@ -42,6 +42,19 @@ Integration testing requires:
     * Turn on **Edit Mode** on the top right corner
     * Add a new external tool (Don't need add the tool, only need to click on the add assignment button)
     [Insert images add tool button]
+        * Step 1: Toggle on edit mode
+        ![Create_Step_1](../images/Selenium_Test/Create_step_1.png)
+        * Step 2: Add a resource
+        ![Create_Step_2](../images/Selenium_Test/Create_step_2.png)
+        * Step 3: Choose External Tool
+        ![Create_Step_3](../images/Selenium_Test/Create_step_3.png)
+        * Step 4: Give your assignment a name
+        ![Create_Step_4](../images/Selenium_Test/Create_step_4.png)
+        * Step 5: Preconfigured tool is the LTI tool that you have deployed in the ** Active directory section **
+        ![Create_Step_5](../images/Selenium_Test/Create_step_5.png)
+        * Step 6: Save and you will see your newly created assignment
+        ![Create_Step_6](../images/Selenium_Test/Create_step_6.png)
+
     * Skip all the tutorial popup if there is one( **important** )
 7. For each of the **2 Student accounts**, sign in, choose the course you created, and click on one of the assignment you have just created with the teacher accounts:
     * You will be redirect to the LTI tool page and asked to sign in again
