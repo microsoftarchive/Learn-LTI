@@ -63,13 +63,10 @@ const config: Configuration = {
             console.error(message);
             return;
           case LogLevel.Info:
-            console.info(message);
             return;
           case LogLevel.Verbose:
-            console.debug(message);
             return;
           case LogLevel.Warning:
-            console.warn(message);
             return;
         }
       },

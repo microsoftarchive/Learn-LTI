@@ -17,7 +17,6 @@ export const AxiosBasicAuthInitializer = ({ children }: PropsWithChildren<{}>): 
   // Called everytime time the LTI app is accessed to authenticate the user before allowing access.
   request.account = accounts[0];
   request.loginHint = request.account.username;
-  // request.loginHint = request.account.
   useEffect(() => {
     if (!isTokenLoaded && inProgress === InteractionStatus.None) {
       instance
@@ -29,8 +28,6 @@ export const AxiosBasicAuthInitializer = ({ children }: PropsWithChildren<{}>): 
           setIsTokenLoaded(true);
         })
         .catch(error => {
-          console.log('silent failed');
-          console.log(error);
           // acquireTokenSilent can fail for a number of reasons, fallback to interaction
           if (error instanceof InteractionRequiredAuthError || error instanceof BrowserAuthError) {
             instance.acquireTokenRedirect(request);

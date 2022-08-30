@@ -3,8 +3,6 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
-// TODO - file handled names and roles provisioning services client; maybe needs updating for b2c??
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
