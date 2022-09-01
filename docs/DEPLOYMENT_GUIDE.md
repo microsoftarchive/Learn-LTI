@@ -15,6 +15,7 @@ To begin, you will need:
 - [Git](https://git-scm.com/downloads)
 - An Azure subscription
 - If you are running this on MacOS you also require an additional dependency of [WSMan]([)](https://www.oasys.net/fragments/powershell-on-macos-wsman/)
+- If you are running this with your choice as 'B2C' you will need to create a B2C Tenant to hold the auth resources with its name in **all lower case**
 
 **Note:** Please ensure you **reboot your machine** after the installation of the Prerequisities
 
@@ -187,6 +188,6 @@ If your **deployment failed**, click [here](./TROUBLESHOOTING.md) for help.
 
 # Next steps
 
-Once the tool has been successfully deployed, the next step is to [configure the tool](./CONFIGURATION_GUIDE.md) on your institution's LMS.
+First, if you chose B2C: set up the B2C Tool on your LMS as explained in [here](./DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in).
 
-And, if you chose B2C, set up the B2C Tool on your LMS as explained in [here](./DEVTESTENV.md#setting-up-your-test-lms-environment-with-azure-ad-b2c-multitenant-sign-in).
+Then, if you chose AD or B2C: once the tool has been successfully deployed, the next step is to [configure the tool](./CONFIGURATION_GUIDE.md) on your institution's LMS.
