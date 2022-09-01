@@ -190,3 +190,39 @@ This document will explain the steps that contain user interaction and what is r
 * After clicking on "Grant Admin Consent" the page should now say all permissions are granted
     * ![Application permissions page](../images/B2C_Deployment/10tc_FullyGranted.png)
 * Now simply return to the powershell, wait 10 seconds, and press enter to continue the script
+
+
+## Secret Expiration
+
+There are three apps created during the deployment process that have client secrets, namely `b2c_AD_app`, `b2c_AD_webapp` and `b2c_AD_PMA`.
+When the client secrets expire, new secrets should be created in time and several operations should be taken to ensure the availability of the service.
+The detailed steps are as follows:
+
+### `b2c_AD_app`
+1. Switch to the AD tenant in the Azure Portal.
+2. Choose All services in the top-left corner of the Azure portal, and then search for and select App registrations.
+3. Select `b2c_AD_app`, then select Certificates & secrets, and then select New client secret.
+4. Create a new client secret and record its secret value. Notice that one app cannot have more than three secrets, so when necessary the old secrets should be deleted.
+5. Switch to the B2C tenant in the Azure Portal.
+6. Choose All services in the top-left corner of the Azure portal, and then search for and select Azure AD B2C. 
+7. Under Policies, select Identity Experience Framework.
+8. Select Policy keys and then select `B2C_1A_AADAppSecret`.
+9. Select "Add key to container". For "Options", select `Manual`, and insert the value recorded in step 4 for "Secret". Click "Create".
+
+### `b2c_AD_webapp`
+1. Switch to the B2C tenant in the Azure Portal.
+2. Choose All services in the top-left corner of the Azure portal, and then search for and select Azure AD B2C.
+3. Under "App registrations", select `b2c_AD_webapp`, then select Certificates & secrets, and then select New client secret.
+4. Create a new client secret and record its secret value. Notice that one app cannot have more than three secrets, so when necessary the old secrets should be deleted.
+5. Switch to the AD tenant in the Azure Portal.
+6. Choose All services in the top-left corner of the Azure portal, and then search for and select Function App.
+7. Apply the following changes to these function apps: assignments, connect, learncontent, links, platforms and users. 
+   1. Go to the function app and select "Configuration".
+   2. Replace the value for the key `AzureB2C_AUTHENTICATION_SECRET` to the value recorded in setp 4.
+   3. Click OK, and then click Save.
+
+### `b2c_AD_PMA`
+1. Switch to the B2C tenant in the Azure Portal.
+2. Choose All services in the top-left corner of the Azure portal, and then search for and select Azure AD B2C.
+3. Under "App registrations", select `b2c_AD_PMA`, then select Certificates & secrets, and then select New client secret.
+4. Create a new client secret and record its secret value. Notice that one app cannot have more than three secrets, so when necessary the old secrets should be deleted.
