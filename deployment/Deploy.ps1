@@ -282,7 +282,6 @@ process {
             }
             Write-Log -Message "Returned from the B2C setup script, continuing with LTI deployment"
 
-            # TODO - indexing from -1 etc. because it seems to return meaningless values before the final 3 which we actually want; need to work out why and perhaps fix if it is deemed an issue
             $AD_Tenant_Name_full = $results[-7] # tenant name of the AD server
             $b2c_tenant_name_full = $results[-6] #b2c tenant name
             $REACT_APP_EDNA_B2C_CLIENT_ID = $results[-5] #webclient ID
@@ -306,9 +305,6 @@ process {
             $policy_name = "b2c_1a_signin" 
             
             #Updating function apps's settings
-           
-            #$B2C_APP_CLIENT_ID_IDENTIFIER = "0cd1d1d6-a7aa-41e2-b569-1ca211147973" # TODO remove hardcode 
-            #$AD_APP_CLIENT_ID_IDENTIFIER = "cb508fc8-6a5f-49b1-b688-dac065ba59e4" # TODO remove hardcode
             $OPENID_B2C_CONFIG_URL_IDENTIFIER = "https://${REACT_APP_EDNA_B2C_TENANT}.b2clogin.com/${b2c_tenant_name_full}/${policy_name}/v2.0/.well-known/openid-configuration"
             $OPENID_AD_CONFIG_URL_IDENTIFIER = "https://login.microsoft.com/${AD_Tenant_Name_full}/v2.0/.well-known/openid-configuration"
 

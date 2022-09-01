@@ -429,7 +429,8 @@
                 "enabledForDeployment": "[variables('enabledForDeployment')]",
                 "enabledForDiskEncryption": "[variables('enabledForDiskEncryption')]",
                 "enabledForTemplateDeployment": "[variables('enabledForTemplateDeployment')]",
-                "enableSoftDelete": false,
+                "enableSoftDelete": true,
+                "enablePurgeProtection": true,
                 "tenantId": "[variables('tenantId')]",
                 "accessPolicies": [
                     {
