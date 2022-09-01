@@ -70,7 +70,7 @@ try{
     }
     #endregion
 
-    $B2cTenantNameFull = Read-Host "Please enter your B2C tenant name (including its extension, e.g. 'tenantname.onmicrosoft.com')"
+    $B2cTenantNameFull = Read-Host "Please enter your B2C tenant name (including its extension, e.g. 'tenantname.onmicrosoft.com')" 
 
     #forcing the user to use an all lowercase name due to case sensitivity issues (the Redirect URL for Moodle must be all lower case)
     while($B2cTenantNameFull -cne $B2cTenantNameFull.ToLower()){
