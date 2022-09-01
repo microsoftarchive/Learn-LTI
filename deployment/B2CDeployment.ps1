@@ -72,7 +72,7 @@ try{
 
     $B2cTenantNameFull = Read-Host "Please enter your B2C tenant name (including its extension, e.g. 'tenantname.onmicrosoft.com')"
 
-    #forcing the user to use an all lowercase name due to case sensitivity issues in the redirect URL
+    #forcing the user to use an all lowercase name due to case sensitivity issues (the Redirect URL for Moodle must be all lower case)
     while($B2cTenantNameFull -cne $B2cTenantNameFull.ToLower()){
         # ... so ask user to input a new b2cTenantName
         $B2cTenantNameFull = READ-HOST "The B2C tenant you are using must be named in all lowercase; please create a new b2c tenant in ALL LOWER CASE (e.g. 'tenantname.onmicrosoft.com')"

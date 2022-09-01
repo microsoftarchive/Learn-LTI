@@ -14,8 +14,8 @@ To begin, you will need:
 - [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
 - [Git](https://git-scm.com/downloads)
 - An Azure subscription
-- If you are running this on MacOS you also require an additional dependency of [WSMan]([)](https://www.oasys.net/fragments/powershell-on-macos-wsman/)
-- If you are running this with your choice as 'B2C' you will need to create a B2C Tenant to hold the auth resources with its name in **all lower case**
+- If you are running this with your choice as 'B2C' you will need to create a [B2C Tenant](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant) to hold the auth resources with its name in **all lower case**. This is because the redirect URL for Moodle that is manually inputted later must be in all lower case, and it includes the b2c tenant name.
+- If you are running this on MacOS you also require an additional dependency of [WSMan](https://www.oasys.net/fragments/powershell-on-macos-wsman/)
 
 **Note:** Please ensure you **reboot your machine** after the installation of the Prerequisities
 

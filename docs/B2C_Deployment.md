@@ -6,7 +6,7 @@ This document will explain the steps that contain user interaction and what is r
 
 * You should have already created on Azure:
   * 1x AD tenant
-  * 1x B2C tenant (when creating it on Azure portal, the name given MUST be in **all lower case**)
+  * 1x B2C tenant (when creating it on Azure portal, the name given MUST be in **all lower case**. This is because the redirect URL for Moodle that is manually inputted later must be in all lower case, and it includes the b2c tenant name.)
       * If not already set up information is available [here](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant) at step 1: "Create an Azure AD B2C Tenant"
       * **IMPORTANT: In the current version custom domains are NOT supported, i.e. your tenant domain must be in the DEFAULT format of <code>b2cTenantName.onmicrosoft.com</code>**
 * You should have ready a **list of the tenant id's for the tenants you wish to give access**
