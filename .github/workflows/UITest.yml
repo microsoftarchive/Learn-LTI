@@ -1,0 +1,30 @@
+# This action runs the Selenium automated tests
+
+name: UI Automated Testing
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      SOURCE_DIR: ${{ github.workspace }}\Selenium_Nunit_UI_Test
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+            dotnet-version: 3.1
+
+      - name: Install dependencies
+        run: dotnet restore ${{ env.SOURCE_DIR }}
+
+      - name: Build
+        run: dotnet build ${{ env.SOURCE_DIR }} --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test ${{ env.SOURCE_DIR }} --no-restore --verbosity normal

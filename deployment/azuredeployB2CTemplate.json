@@ -165,12 +165,12 @@
 					"customOpenIdConnectProviders": {
 						"AzureB2C": {
 							"registration": {
-								"clientId": "0cd1d1d6-a7aa-41e2-b569-1ca211147973",
+								"clientId": "<B2C_APP_CLIENT_ID_IDENTIFIER>",
 								"clientCredential": {
 									"clientSecretSettingName": "AzureB2C_AUTHENTICATION_SECRET"
 								},
 								"openIdConnectConfiguration": {
-									"wellKnownOpenIdConfiguration": "https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/B2C_1_signup_signin_LTI/v2.0/.well-known/openid-configuration"
+									"wellKnownOpenIdConfiguration": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
 								}
 							}
 						}
@@ -237,7 +237,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('users' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('users' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }
         },
         {
@@ -262,7 +265,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('assignments' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('assignments' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }
         },
         {
@@ -287,7 +293,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('platforms' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('platforms' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }
         },
         {
@@ -310,7 +319,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('links' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('links' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }
         },
         {
@@ -333,7 +345,10 @@
             "WEBSITE_CONTENTSHARE": "[toLower(concat('learncontent' , variables('ProjectNameSuffix')))]",
             "APPLICATIONINSIGHTS_CONNECTION_STRING": "[concat('InstrumentationKey=',reference(resourceId('microsoft.insights/components', concat('learncontent' , variables('ProjectNameSuffix'))), '2018-05-01-preview').InstrumentationKey)]",
             "WEBSITE_ENABLE_SYNC_UPDATE_SITE": "true",
-            "WEBSITE_RUN_FROM_PACKAGE": "1"
+            "WEBSITE_RUN_FROM_PACKAGE": "1",
+            "ValidAudience": "[toLower(concat('<B2C_APP_CLIENT_ID_IDENTIFIER>,' , parameters('appRegistrationClientId')))]",
+            "ADConfigurationUrl": "<OPENID_AD_CONFIG_URL_IDENTIFIER>",
+            "B2CConfigurationUrl": "<OPENID_B2C_CONFIG_URL_IDENTIFIER>"
           }
         },
         {
@@ -414,7 +429,8 @@
                 "enabledForDeployment": "[variables('enabledForDeployment')]",
                 "enabledForDiskEncryption": "[variables('enabledForDiskEncryption')]",
                 "enabledForTemplateDeployment": "[variables('enabledForTemplateDeployment')]",
-                "enableSoftDelete": false,
+                "enableSoftDelete": true,
+                "enablePurgeProtection": true,
                 "tenantId": "[variables('tenantId')]",
                 "accessPolicies": [
                     {

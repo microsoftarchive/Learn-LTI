@@ -6,18 +6,17 @@
 
 export const b2cPolicies = {
   names: {
-    signIn: 'B2C_1A_SIGNUP_SIGNIN'
+    signIn: 'B2C_1A_SIGNIN' // custom policy
   },
   authorities: {
     signIn: {
-      authority: `https://ltimoodleb2c.b2clogin.com/ltimoodleb2c.onmicrosoft.com/b2c_1a_signup_signin`
-      // `https://` +
-      // process.env.REACT_APP_EDNA_B2C_TENANT! +
-      // `.b2clogin.com/` +
-      // process.env.REACT_APP_EDNA_B2C_TENANT! +
-      // '.onmicrosoft.com/b2c_1a_signup_signin'
+      authority:
+        `https://` +
+        process.env.REACT_APP_EDNA_B2C_TENANT! +
+        `.b2clogin.com/` +
+        process.env.REACT_APP_EDNA_B2C_TENANT! +
+        '.onmicrosoft.com/b2c_1a_signin'
     }
   },
-  authorityDomain: `ltimoodleb2c.b2clogin.com`
-  //authorityDomain: process.env.REACT_APP_EDNA_B2C_TENANT! + `.b2clogin.com` // RB: don't hardcode
+  authorityDomain: process.env.REACT_APP_EDNA_B2C_TENANT! + `.b2clogin.com`
 };

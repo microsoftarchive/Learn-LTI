@@ -17,13 +17,15 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Edna.Utils.Http;
 using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Edna.AssignmentLearnContent
 {
@@ -33,15 +35,24 @@ namespace Edna.AssignmentLearnContent
         private const string LearnContentUrlIdentifierKey = "WT.mc_id";
         private const string LearnContentUrlIdentifierValue = "Edna";
 
+        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
+        private readonly ConfigurationManager<OpenIdConnectConfiguration> _adManager, _b2CManager;
         private readonly ILogger<AssignmentLearnContentApi> _logger;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public AssignmentLearnContentApi(ILogger<AssignmentLearnContentApi> logger, IMapper mapper, IHttpClientFactory httpClientFactory)
+        public AssignmentLearnContentApi(ILogger<AssignmentLearnContentApi> logger, IMapper mapper, 
+            IHttpClientFactory httpClientFactory, IEnumerable<ConfigurationManager<OpenIdConnectConfiguration>> managers)
         {
             _logger = logger;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+
+            var configurationManagers = managers.ToList();
+            _adManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("ADConfigurationUrl"));
+            _b2CManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("B2CConfigurationUrl"));
         }
 
         [FunctionName(nameof(GetLearnCatalog))]
@@ -83,8 +94,8 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
-            // TODO -  VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
-            // validating user email exists in the request header
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -94,7 +105,6 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
-                // TODO - "DM: getting list of for the assignment from AD and checking they are authorized (teacher status)"
                 _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'."); // Creating logger for logging user (email owner) information
 
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId); // Getting all users for the assignment
@@ -126,8 +136,8 @@ namespace Edna.AssignmentLearnContent
             string contentUid,
             [User] UsersClient usersClient)
         {
-            // TODO - "DM: VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
-            // validating user email exists in the request header
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -137,7 +147,6 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
-                // TODO - "DM: [SAME AS LINE 98] getting list of for the assignment from AD and checking they are authorized (teacher status)"
                 _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
@@ -167,8 +176,8 @@ namespace Edna.AssignmentLearnContent
             string assignmentId,
             [User] UsersClient usersClient)
         {
-            // TODO - "DM: VALIDATION OF USER EMAIL EXISTING, DOUBT THE CHANGE OF AD TO B2C WILL CHANGE THIS API BUT FLAGGED TO CHECK FURTHER"
-            // validating user email exists in the request header
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {
@@ -178,7 +187,6 @@ namespace Edna.AssignmentLearnContent
 
             if (userEmails.Count > 0)
             {
-                //TODO - "DM: [SAME AS LINE98] getting list of for the assignment from AD and checking they are authorized (teacher status)"
                 _logger.LogInformation($"Getting user information for '{string.Join(';', userEmails)}'.");
 
                 User[] allUsers = await usersClient.GetAllUsers(assignmentId);
@@ -207,9 +215,6 @@ namespace Edna.AssignmentLearnContent
                 : new OkResult();
         }
 
-
-        //TODO -  "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES TOKENS"
-        // function for getting all the assignmentLearnContent entities in the tenant (?)
         private async Task<List<AssignmentLearnContentEntity>> GetAllAssignmentLearnContentEntities(CloudTable assignmentLearnContentTable, string assignmentId)
         {
             TableQuery<AssignmentLearnContentEntity> assignmentSelectedLearnContentQuery = new TableQuery<AssignmentLearnContentEntity>()
@@ -232,8 +237,6 @@ namespace Edna.AssignmentLearnContent
             return assignmentSelectedLearnContent;
         }
 
-       //TODO - "DM: (POSSIBLY) IMPORTANT FUNCTION FOR OUR MODIFIED AUTHORIZATION, UTILISES JSON TOKENS"
-        // takes in a JSON token for the content
         private void ChangeUrlQueryToEdnaIdentifier(JToken contentJToken)
         {
             string url = contentJToken["url"]?.ToString(); // get the url from the decoded JSON token

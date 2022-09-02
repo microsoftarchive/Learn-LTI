@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 using Newtonsoft.Json;
 using Edna.Utils.Http;
 using System.Collections.Generic;
@@ -24,6 +24,8 @@ using Edna.Bindings.User.Attributes;
 using Edna.Bindings.User;
 using Edna.Bindings.User.Models;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace Edna.Assignments
@@ -33,13 +35,22 @@ namespace Edna.Assignments
         private const string AssignmentsTableName = "Assignments";
         private const string AssignmentsRoutePath = "assignments";
 
+        private readonly ConfigurationManager<OpenIdConnectConfiguration> _adManager, _b2CManager;
+        private static readonly string ValidAudience = Environment.GetEnvironmentVariable("ValidAudience");
+        
         private readonly ILogger<AssignmentsApi> _logger;
         private readonly IMapper _mapper;
 
-        public AssignmentsApi(IMapper mapper, ILogger<AssignmentsApi> logger)
+        public AssignmentsApi(IMapper mapper, ILogger<AssignmentsApi> logger, IEnumerable<ConfigurationManager<OpenIdConnectConfiguration>> managers)
         {
             _logger = logger;
             _mapper = mapper;
+            
+            var configurationManagers = managers.ToList();
+            _adManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("ADConfigurationUrl"));
+            _b2CManager = configurationManagers.FirstOrDefault(m =>
+                m.MetadataAddress == Environment.GetEnvironmentVariable("B2CConfigurationUrl"));
         }
 
         [FunctionName(nameof(CreateOrUpdateAssignment))]
@@ -58,8 +69,11 @@ namespace Edna.Assignments
             
             //While debugging, authorization header is empty when this API gets called from either Lti1 API or LtiAdvantage API
             // So to enable seamless debugging, putting this code in #if !DEBUG block
+
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             
-            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
+            bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails, message => _logger.LogError(message));
             if (!isSystemCallOrUserWithValidEmail)
             {
                 _logger.LogError("Could not get user email.");
@@ -94,10 +108,9 @@ namespace Edna.Assignments
             }
 
             _logger.LogInformation($"Saved assignment {assignmentEntity.ToAssignmentId()}.");
-
+            
             string assignmentUrl = $"{req.Scheme}://{req.Host}/api/{AssignmentsRoutePath}/{assignmentEntity.ToAssignmentId()}";
             AssignmentDto savedAssignmentDto = _mapper.Map<AssignmentDto>(assignmentEntity);
-
             return new CreatedResult(assignmentUrl, savedAssignmentDto);
         }
 
@@ -107,7 +120,7 @@ namespace Edna.Assignments
             [Table(AssignmentsTableName)] CloudTable table,
             [Platform] PlatformsClient platformsClient,
             string assignmentId)
-        {
+        {                
             AssignmentEntity assignmentEntity = await FetchAssignment(table, assignmentId);
             if (assignmentEntity == null)
                 return new NotFoundResult();
@@ -119,7 +132,6 @@ namespace Edna.Assignments
                 Platform platform = await platformsClient.GetPlatform(assignmentEntity.PlatformId);
                 assignmentDto.PlatformPersonalization = _mapper.Map<PlatformPersonalizationDto>(platform);
             }
-
             return new OkObjectResult(assignmentDto);
         }
 
@@ -161,6 +173,8 @@ namespace Edna.Assignments
 
         private async Task<IActionResult> ChangePublishStatus(HttpRequest req, CloudTable table, IAsyncCollector<AssignmentEntity> assignmentEntityCollector, string assignmentId, UsersClient usersClient, PublishStatus newPublishStatus)
         {
+            if (!await req.Headers.ValidateToken(_adManager, _b2CManager, ValidAudience, message => _logger.LogError(message)))
+                return new UnauthorizedResult();
             bool isSystemCallOrUserWithValidEmail = req.Headers.TryGetUserEmails(out List<string> userEmails);
             if (!isSystemCallOrUserWithValidEmail)
             {

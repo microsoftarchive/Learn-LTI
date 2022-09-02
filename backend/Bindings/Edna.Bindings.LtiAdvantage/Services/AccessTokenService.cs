@@ -3,8 +3,6 @@
 // Licensed under the MIT license.
 // --------------------------------------------------------------------------------------------
 
-// TODO - File appears to contain the important functions for receiving and validating tokens and credentials
-
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;

@@ -21,6 +21,7 @@ import { useConstCallback } from '@uifabric/react-hooks';
 import { UserMenuProfile } from './UserMenuProfile';
 import AzureAD, { IAzureADFunctionProps } from 'react-aad-msal';
 import { AppAuthConfig } from '../Auth/AppAuthConfig';
+import { MsalProvider } from '@azure/msal-react';
 
 type UserMenuStyles = SimpleComponentStyles<'logoutMenuItem' | 'logoutIcon'>;
 
@@ -67,13 +68,13 @@ const UserMenuInner = ({ styles, children }: PropsWithChildren<{}> & IStylesOnly
   });
 
   return (
-    <AzureAD provider={AppAuthConfig}>
+    <MsalProvider instance={AppAuthConfig}>
       {({ logout }: IAzureADFunctionProps) => (
         <ActionButton menuProps={getMenuProps(logout)} styles={themedClassNames(buttonStyles)}>
           {children}
         </ActionButton>
       )}
-    </AzureAD>
+    </MsalProvider>
   );
 };
 

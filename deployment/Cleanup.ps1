@@ -5,18 +5,42 @@
 
 [CmdletBinding()]
 param (
-    [string]$ResourceGroupName = "DM_ad10_MSLearnLTI",
-    [string]$AppName = "DM_ad10_MS-Learn-Lti-Tool-App",
+    [string]$ResourceGroupName = "MSLearnLti",
+    [string]$AppName = "MS-Learn-Lti-Tool-App",
     [switch]$UseActiveAzureAccount,
     [string]$SubscriptionNameOrId = $null
 )
 
 process {
+    #region "Helper Functions"
+    #function for making clear and distinct titles
     function Write-Title([string]$Title) {
         Write-Host "`n`n============================================================="
         Write-Host $Title
         Write-Host "=============================================================`n`n"
     }
+
+    #function for making coloured outputs
+    function Write-Color($Color, [string]$Text) {
+        Write-Host $Text -ForegroundColor $Color
+    }
+
+    #function for writing errors
+    function Write-Error([string]$Text) {
+        Write-Host "`n`n=============================================================`n" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "Error!`n$Text" -ForegroundColor "red" -BackgroundColor "black" -NoNewline
+        Write-Host "`n=============================================================" -ForegroundColor "red" -BackgroundColor "black"
+    }
+    #endregion
+
+    #region "exception handling classes"
+    class InvalidAzureSubscriptionException: System.Exception{
+        $Emessage
+        InvalidAzureSubscriptionException([string]$msg){
+            $this.Emessage=$msg
+        }
+    }
+    #endregion
 
     #region Show Learn LTI Banner
     Write-Host ''
@@ -43,12 +67,19 @@ process {
     Start-Transcript -Path $TranscriptFile;
     #endregion
     
-    $choice = Read-Host "Do you have a b2c tenant to cleanup in addition to your ad tenant? (y/n)"
-    if ($choice -eq "y") {
-        Write-Title "Step #0 - Running B2C Cleanup Script"
-        & ".\B2CCleanup.ps1"
-    } 
+    #region B2c if needed
+    Write-Title "Optional B2C cleanup"
+    $b2ccleanup = "none"
+    while($b2ccleanup -ne "y" -and $b2ccleanup -ne "n") {
+        $b2ccleanup = Read-Host "Would you like to to cleanup a B2C tenant? (y/n)"
+    }
     
+    if($b2ccleanup -eq "y")
+    {
+        Write-Title "B2C Step #0 - Running B2C Cleanup Script"
+        & ".\B2CCleanup.ps1"
+    }
+    #endregion
     
 
     #region Login to Azure CLI
@@ -99,7 +130,7 @@ process {
         
         $subscription = ($List | Where-Object { ($_.name -ieq $NameOrId) -or ($_.id -ieq $NameOrId) })
         if(!$subscription) {
-            throw "Invalid Subscription Name/ID Entered."
+            throw [InvalidAzureSubscriptionException] "Invalid Subscription Name/ID Entered."
         }
         az account set --subscription $NameOrId
         #Intentionally not catching an exception here since the set subscription commands behavior (output) is different from others
@@ -132,7 +163,21 @@ process {
         Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
     }
 
-    $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+    #defensive programming so script doesn't halt and require a cleanup if subscription is mistyped
+    while(1){
+        try{
+            $ActiveSubscription = Set-LtiActiveSubscription -NameOrId $SubscriptionNameOrId -List $SubscriptionList
+            break
+        }
+        catch [InvalidAzureSubscriptionException]{
+            Write-Error $Error[0]
+            $SubscriptionNameOrId = Read-Host 'Enter the Name or ID of the Subscription from Above List'
+            #trimming the input for empty spaces, if any
+            $SubscriptionNameOrId = $SubscriptionNameOrId.Trim()
+            Write-Log -Message "User Entered Subscription Name/ID: $SubscriptionNameOrId"
+        }
+    }
+    
     #endregion
     
     #region Delete Resource Group, if Exists
