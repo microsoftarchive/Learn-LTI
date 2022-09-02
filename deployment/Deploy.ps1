@@ -85,8 +85,7 @@ process {
         # Checking Azure CLI is installed
         $azureVersion = (az version 2>&1 | ConvertFrom-Json)."azure-cli"
         if ($azureVersion -eq $null){
-           Write-Host "Azure CLI is not installed and please go to this link to install. (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest%3FWT.mc_id%3Dlearnlti-github-cxa)"        
-           exit
+           throw "Azure CLI is not installed and please go to this link to install. (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest%3FWT.mc_id%3Dlearnlti-github-cxa)"
         }
         if ($azureVersion -lt 2.37){
             throw "Please upgrade to the minimum supported version of cli (2.37)"
@@ -95,25 +94,22 @@ process {
         # Checking .Net core 3.1 Framework is installed
         $NetFrCheck= (dotnet --version)
         if( $NetFrCheck -eq $null){
-          Write-Host ".Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
-          exit
+          throw ".Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
         }
         else {
           [int]$NetFrCheck1= (dotnet --version).Split(".")[0]
           [int]$NetFrCheck2= (dotnet --version).Split(".")[1]
-          if( $NetFrCheck1 -eq 3 && $NetFrCheck2 -eq 1){
+          if( $NetFrCheck1 -eq 3 -and $NetFrCheck2 -eq 1){
               Write-Host ".Net Framework $NetFrCheck is installed."
           }
           else {
-              Write-Host "Correct .Net Framework is not installed and your version is $NetFrCheck. Please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
-              exit
+              throw "Correct .Net Framework is not installed and your version is $NetFrCheck. Please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
           }
         }
         # Checking Node.js is installed
         $NodejsCheck= (node -v)
         if( $NodejsCheck -eq $null){
-           Write-Host "Node.js is not installed and please go to this link to install. (https://nodejs.org/en/download/)"        
-           exit
+           throw "Node.js is not installed and please go to this link to install. (https://nodejs.org/en/download/)"        
         }
         else {
            Write-Host "Node.js $NodejsCheck is installed."
@@ -121,8 +117,7 @@ process {
         # Checking Git is installed
         $GitCheck= (git --version)
         if( $GitCheck -eq $null){
-           Write-Host "Git is not installed and please go to this link to install. (https://git-scm.com/downloads)"        
-           exit
+           throw "Git is not installed and please go to this link to install. (https://git-scm.com/downloads)"        
         }
         else {
            Write-Host "$GitCheck is installed."
