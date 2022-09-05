@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Artifacts">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/backend/Artifacts/Connect.zip!/" />
+      <root url="jar://$PROJECT_DIR$/backend/Artifacts/AssignmentLearnContent.zip!/" />
+      <root url="jar://$PROJECT_DIR$/backend/Artifacts/Assignments.zip!/" />
+      <root url="jar://$PROJECT_DIR$/backend/Artifacts/AssignmentLinks.zip!/" />
+      <root url="jar://$PROJECT_DIR$/backend/Artifacts/Users.zip!/" />
+      <root url="jar://$PROJECT_DIR$/backend/Artifacts/Platforms.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
