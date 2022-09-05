@@ -92,19 +92,9 @@ process {
         }
         
         # Checking .Net core 3.1 Framework is installed
-        $NetFrCheck= (dotnet --version)
+        $NetFrCheck= (dotnet --list-sdks | Select-String "3.1")
         if( $NetFrCheck -eq $null){
-          throw ".Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
-        }
-        else {
-          [int]$NetFrCheck1= (dotnet --version).Split(".")[0]
-          [int]$NetFrCheck2= (dotnet --version).Split(".")[1]
-          if( $NetFrCheck1 -eq 3 -and $NetFrCheck2 -eq 1){
-              Write-Host ".Net Framework $NetFrCheck is installed."
-          }
-          else {
-              throw "Correct .Net Framework is not installed and your version is $NetFrCheck. Please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
-          }
+          throw "Needed .Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
         }
         # Checking Node.js is installed
         $NodejsCheck= (node -v)
