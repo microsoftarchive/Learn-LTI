@@ -71,6 +71,9 @@ To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will ne
 - [VPAT Guide](./docs/VPAT.MD)
 - [Using ZTest Tooling](./docs/ZTEST.md)
 
+## Testing
+- [Integration Testing](./docs/INTEGRATION_TESTING.md)
+
 # Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
