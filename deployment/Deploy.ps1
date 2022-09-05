@@ -51,8 +51,8 @@ process {
         if ($azureVersion -eq $null){
            throw "Azure CLI is not installed and please go to this link to install. (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest%3FWT.mc_id%3Dlearnlti-github-cxa)"
         }
-        if ($azureVersion -lt 2.37){
-            throw "Please upgrade to the minimum supported version of cli (2.37)"
+        if ($azureVersion -contains '2.27'){
+            throw "Please use the supported version of cli (2.27)"
         }
         # Checking .Net core 3.1 Framework is installed
         $NetFrCheck= (dotnet --list-sdks | Select-String "3.1")
