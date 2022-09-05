@@ -81,11 +81,50 @@ process {
         $TranscriptFile = Join-Path $LogRoot "Transcript-$ExecutionStartTime.log"
         Start-Transcript -Path $TranscriptFile;
         #endregion
-    
+        
+        # Checking Azure CLI is installed
         $azureVersion = (az version 2>&1 | ConvertFrom-Json)."azure-cli"
+        if ($azureVersion -eq $null){
+           throw "Azure CLI is not installed and please go to this link to install. (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest%3FWT.mc_id%3Dlearnlti-github-cxa)"
+        }
         if ($azureVersion -lt 2.37){
             throw "Please upgrade to the minimum supported version of cli (2.37)"
         }
+        
+        # Checking .Net core 3.1 Framework is installed
+        $NetFrCheck= (dotnet --version)
+        if( $NetFrCheck -eq $null){
+          throw ".Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
+        }
+        else {
+          [int]$NetFrCheck1= (dotnet --version).Split(".")[0]
+          [int]$NetFrCheck2= (dotnet --version).Split(".")[1]
+          if( $NetFrCheck1 -eq 3 -and $NetFrCheck2 -eq 1){
+              Write-Host ".Net Framework $NetFrCheck is installed."
+          }
+          else {
+              throw "Correct .Net Framework is not installed and your version is $NetFrCheck. Please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
+          }
+        }
+        # Checking Node.js is installed
+        $NodejsCheck= (node -v)
+        if( $NodejsCheck -eq $null){
+           throw "Node.js is not installed and please go to this link to install. (https://nodejs.org/en/download/)"        
+        }
+        else {
+           Write-Host "Node.js $NodejsCheck is installed."
+        }
+        # Checking Git is installed
+        $GitCheck= (git --version)
+        if( $GitCheck -eq $null){
+           throw "Git is not installed and please go to this link to install. (https://git-scm.com/downloads)"        
+        }
+        else {
+           Write-Host "$GitCheck is installed."
+        }
+
+        Write-Title "Confirming all pre-requisites are installed."
+
         
         #region "getting the setup mode for b2c vs ad"
         $b2cOrAD = "none"
@@ -261,7 +300,6 @@ process {
 
 
         #endregion
-
 
         #region "B2C STEP 0: Calling B2CDeployment to set up the b2c script and retrieving the returned values to be used later on"
         $REACT_APP_EDNA_B2C_CLIENT_ID = 'NA'
