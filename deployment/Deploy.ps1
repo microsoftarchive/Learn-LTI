@@ -46,6 +46,38 @@ process {
         Start-Transcript -Path $TranscriptFile;
         #endregion
 
+        # Checking Azure CLI is installed
+        $azureVersion = (az version 2>&1 | ConvertFrom-Json)."azure-cli"
+        if ($azureVersion -eq $null){
+           throw "Azure CLI is not installed and please go to this link to install. (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest%3FWT.mc_id%3Dlearnlti-github-cxa)"
+        }
+        if ($azureVersion -contains '2.27'){
+            throw "Please use the supported version of cli (2.27)"
+        }
+        # Checking .Net core 3.1 Framework is installed
+        $NetFrCheck= (dotnet --list-sdks | Select-String "3.1")
+        if( $NetFrCheck -eq $null){
+          throw "Needed .Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
+        }
+        # Checking Node.js is installed
+        $NodejsCheck= (node -v)
+        if( $NodejsCheck -eq $null){
+           throw "Node.js is not installed and please go to this link to install. (https://nodejs.org/en/download/)"        
+        }
+        else {
+           Write-Host "Node.js $NodejsCheck is installed."
+        }
+        # Checking Git is installed
+        $GitCheck= (git --version)
+        if( $GitCheck -eq $null){
+           throw "Git is not installed and please go to this link to install. (https://git-scm.com/downloads)"        
+        }
+        else {
+           Write-Host "$GitCheck is installed."
+        }
+
+        Write-Title "Confirming all pre-requisites are installed."
+        
         #region Login to Azure CLI        
         Write-Title 'STEP #1 - Logging into Azure'
 
