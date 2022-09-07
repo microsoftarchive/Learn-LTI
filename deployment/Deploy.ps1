@@ -49,7 +49,7 @@ process {
         # Checking Azure CLI is installed
         $azureVersion = (az version 2>&1 | ConvertFrom-Json)."azure-cli"
         if ($azureVersion -eq $null){
-           throw "Azure CLI is not installed and please go to this link to install. (https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest%3FWT.mc_id%3Dlearnlti-github-cxa)"
+           throw "Azure CLI is not installed and please go to this link to install. (https://docs.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest%3FWT.mc_id%3Dlearnlti-github-cxa)"
         }
         if ($azureVersion -contains '2.27'){
             throw "Please use the supported version of cli (2.27)"
@@ -57,7 +57,7 @@ process {
         # Checking .Net core 3.1 Framework is installed
         $NetFrCheck= (dotnet --list-sdks | Select-String "3.1")
         if( $NetFrCheck -eq $null){
-          throw "Needed .Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/en-us/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
+          throw "Needed .Net Framework is not installed and please go to this link to install '.Net core 3.1 version'. (https://dotnet.microsoft.com/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)"        
         }
         # Checking Node.js is installed
         $NodejsCheck= (node -v)
