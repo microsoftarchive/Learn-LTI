@@ -65,6 +65,8 @@ To deploy the Microsoft Learn LTI application, the Central IT / IT Admin will ne
 - [Frequently Asked Questions](./docs/FAQ.md)
 - [Using ZTest Tooling](./docs/ZTEST.md)
 
+## Reporting on Learn usage
+- [Microsoft Learn Organisational Reporting Tool](https://learn.microsoft.com/training/support/org-reporting?WT.mc_id=academic-80547-leestott)
 ## Security and Privacy
 - [Security Guide](./docs/SECURITY.md)
 - [Privacy Guide](./docs/PRIVACY.md)
