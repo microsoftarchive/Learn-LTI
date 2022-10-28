@@ -13,7 +13,7 @@ The steps for creating an assignment are slightly different depending on the LMS
 - [Blackboard](#Create-an-assignment-in-Blackboard-leveraging-Microsoft-Learn-LTI-application)
 
 ### If you have issues with this guide or with our tool please:
-- Raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa)
+- Raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=academic-80547-leestott)
 
 > The teams at Microsoft hope you love using the LTI tool! Thank you for teaching our future!
 

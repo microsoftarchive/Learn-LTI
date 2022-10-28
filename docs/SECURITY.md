@@ -2,19 +2,19 @@
 
 ## Security
 
-Microsoft takes the security of our software products and services seriously, which includes all source code repositories managed through our GitHub organizations, which include [Microsoft](https://github.com/Microsoft?WT.mc_id=edna), [Azure](https://github.com/Azure?WT.mc_id=edna), [DotNet](https://github.com/dotnet?WT.mc_id=edna), [AspNet](https://github.com/aspnet?WT.mc_id=edna), [Xamarin](https://github.com/xamarin?WT.mc_id=edna), and [our GitHub organizations](https://opensource.microsoft.com/?WT.mc_id=edna).
+Microsoft takes the security of our software products and services seriously, which includes all source code repositories managed through our GitHub organizations, which include [Microsoft](https://github.com/Microsoft?WT.mc_id=academic-80547-leestott), [Azure](https://github.com/Azure?WT.mc_id=academic-80547-leestott), [DotNet](https://github.com/dotnet?WT.mc_id=academic-80547-leestott), [AspNet](https://github.com/aspnet?WT.mc_id=academic-80547-leestott), [Xamarin](https://github.com/xamarin?WT.mc_id=academic-80547-leestott), and [our GitHub organizations](https://opensource.microsoft.com/?WT.mc_id=academic-80547-leestott).
 
-If you believe you have found a security vulnerability in any Microsoft-owned repository that meets [Microsoft's definition of a security vulnerability](https://docs.microsoft.com/en-us/previous-versions/tn-archive/cc751383(v=technet.10)?WT.mc_id=edna), please report it to us as described below.
+If you believe you have found a security vulnerability in any Microsoft-owned repository that meets [Microsoft's definition of a security vulnerability](https://docs.microsoft.com/en-us/previous-versions/tn-archive/cc751383(v=technet.10)?WT.mc_id=academic-80547-leestott), please report it to us as described below.
 
 ## Reporting Security Issues
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them to the Microsoft Security Response Center (MSRC) at [https://msrc.microsoft.com/create-report](https://msrc.microsoft.com/create-report?WT.mc_id=edna).
+Instead, please report them to the Microsoft Security Response Center (MSRC) at [https://msrc.microsoft.com/create-report](https://msrc.microsoft.com/create-report?WT.mc_id=academic-80547-leestott).
 
-If you prefer to submit without logging in, send email to [secure@microsoft.com](mailto:secure@microsoft.com).  If possible, encrypt your message with our PGP key; please download it from the [Microsoft Security Response Center PGP Key page](https://www.microsoft.com/en-us/msrc/pgp-key-msrc?WT.mc_id=edna).
+If you prefer to submit without logging in, send email to [secure@microsoft.com](mailto:secure@microsoft.com).  If possible, encrypt your message with our PGP key; please download it from the [Microsoft Security Response Center PGP Key page](https://www.microsoft.com/en-us/msrc/pgp-key-msrc?WT.mc_id=academic-80547-leestott).
 
-You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Additional information can be found at [microsoft.com/msrc](https://www.microsoft.com/msrc?WT.mc_id=edna). 
+You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Additional information can be found at [microsoft.com/msrc](https://www.microsoft.com/msrc?WT.mc_id=academic-80547-leestott). 
 
 Please include the requested information listed below (as much as you can provide) to help us better understand the nature and scope of the possible issue:
 
@@ -36,6 +36,6 @@ We prefer all communications to be in English.
 
 ## Policy
 
-Microsoft follows the principle of [Coordinated Vulnerability Disclosure](https://www.microsoft.com/en-us/msrc/cvd?WT.mc_id=edna).
+Microsoft follows the principle of [Coordinated Vulnerability Disclosure](https://www.microsoft.com/en-us/msrc/cvd?WT.mc_id=academic-80547-leestott).
 
 <!-- END MICROSOFT SECURITY.MD BLOCK -->

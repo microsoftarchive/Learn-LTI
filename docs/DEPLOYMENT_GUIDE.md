@@ -7,12 +7,12 @@
 
 ## Prerequisites
 To begin, you will need:
-- [Azure CLI](https://azcliprod.blob.core.windows.net/msi/azure-cli-2.27.0.msi) readme about [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
+- [Azure CLI](https://azcliprod.blob.core.windows.net/msi/azure-cli-2.27.0.msi) readme about [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=academic-80547-leestott)
     * We currently recommend using Microsoft [Azure CLI version 2.27.0](https://azcliprod.blob.core.windows.net/msi/azure-cli-2.27.0.msi)
-    * To download the MSI installer for specific version, change the version segment in URL https://azcliprod.blob.core.windows.net/msi/**version**.msi and download it. Available versions can be found at [Azure CLI release notes](https://docs.microsoft.com/en-us/cli/azure/release-notes-azure-cli?WT.mc_id=learnlti-github-cxa). 
-- [DotNet Core SDK .NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa)
+    * To download the MSI installer for specific version, change the version segment in URL https://azcliprod.blob.core.windows.net/msi/**version**.msi and download it. Available versions can be found at [Azure CLI release notes](https://docs.microsoft.com/en-us/cli/azure/release-notes-azure-cli?WT.mc_id=academic-80547-leestott). 
+- [DotNet Core SDK .NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1?WT.mc_id=academic-80547-leestott)
 - [Node.js](https://nodejs.org/en/download/)
-- [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
+- [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=academic-80547-leestott)
 - [Git](https://git-scm.com/downloads)
 - An Azure subscription
 
@@ -52,7 +52,7 @@ The script will ask you to login to Azure by navigating to the Azure Login Page 
 
 Type in the name of the Azure subscription that you hold (this is a prerequisite necessary for deployment).
 
-If you're unsure about whether your account has a subscription, check [here.](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade??WT.mc_id=learnlti-github-cxa)
+If you're unsure about whether your account has a subscription, check [here.](https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade??WT.mc_id=academic-80547-leestott)
 
 ## Choose Location
 
@@ -86,7 +86,7 @@ Your region determines three things:
 * Service Availability
 * Pricing
 
-For information regarding your region, check [here.](https://azure.microsoft.com/global-infrastructure/geographies/?WT.mc_id=learnlti-github-cxa)
+For information regarding your region, check [here.](https://azure.microsoft.com/global-infrastructure/geographies/?WT.mc_id=academic-80547-leestott)
 
 ## Azure Autoconfigure
 

@@ -1,12 +1,12 @@
 # For issues with the guides and tool
 
-For any and all issues, please raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa) so we can help you.
+For any and all issues, please raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=academic-80547-leestott) so we can help you.
 
 ## General Deployment Issues
 
 If your **deployment fails and the resource group has been created**; an IT admin needs to delete the resource group in their subscription and re-run the script again.
 
-If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=learnlti-github-cxa) for common errors.
+If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=academic-80547-leestott) for common errors.
 
 ## Setting up a DevTest Moodle LMS Environment 
 If your looking at deploying the service for a DevTest Environment please follow the [DevTest Environment setup guide](DEVTESTENV.md)
@@ -20,10 +20,10 @@ see https://github.com/microsoft/Learn-LTI/blob/main/docs/DEPLOYMENT_GUIDE.md
 To begin, you will need to install the Prerequisites and reboot your machine
 
 To begin, you will need:
-- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=learnlti-github-cxa)
-- [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=learnlti-github-cxa)
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest?WT.mc_id=academic-80547-leestott)
+- [DotNet Core SDK](https://dotnet.microsoft.com/download?WT.mc_id=academic-80547-leestott)
 - [Node.js](https://nodejs.org/en/download/)
-- [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=learnlti-github-cxa)
+- [Powershell](https://docs.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-7?WT.mc_id=academic-80547-leestott)
 - [Git](https://git-scm.com/downloads)
 - An Azure subscription
 
@@ -90,7 +90,7 @@ The problem was in the Azure CLI version, although we require a version > 2.0.21
 When Deploying if you get stuck on Step 10. Please ensure you have at least version 3.1.100 of the .Net Core SDK x86 version installed
 ![NetCoreSDKError](https://user-images.githubusercontent.com/3959829/166324637-d357169b-ee0d-4a50-bcfa-08fef04a3906.png)
 
-Please ensure you have the [DotNet Core SDK .NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1?WT.mc_id=learnlti-github-cxa) installed
+Please ensure you have the [DotNet Core SDK .NET Core 3.1](https://dotnet.microsoft.com/download/dotnet/3.1?WT.mc_id=academic-80547-leestott) installed
 
 Note: Please ensure you reboot your machine after the installation of the Prerequisites as environmental variable need to be set after the installation.
 
@@ -371,7 +371,7 @@ You could consider trying to re-deploy the same RG/Identity/AppName combination 
 ## Using Hosted services on Cloudfront
 
 We have seen a issue where the "Authorization" header was not being forwarded to the backend by AWS CloudFront. See the following documentation 
-[Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization?WT.mc_id=edna)
+[Configure CloudFront to Forward Authorization Headers](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html#add-origin-custom-headers-forward-authorization?WT.mc_id=academic-80547-leestott)
 
 ## Debugging Errors related to http500 indicated in Browser with Oops! Something went wrong.. We suggest you go to our help page
 
@@ -421,4 +421,4 @@ The Deployment utilizes an ARM Azure Resource Manager Template this deploys the 
 ![LearnltiARM](../images/AzureDeployVizualize.png)
 ## Raising a Issue
 
-If you are still having trouble, please raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=learnlti-github-cxa).
+If you are still having trouble, please raise a [GitHub issue](https://github.com/microsoft/Learn-LTI/issues/new?WT.mc_id=academic-80547-leestott).

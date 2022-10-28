@@ -41,7 +41,8 @@ To resolve this see [Configure CloudFront to Forward Authorization Headers](http
 ## Reporting
 
 Microsoft Learn organizational Reporting is a service available to organizations to view Microsoft Learn training progress and achievements of the individuals within their tenant. This service is available to both enterprise customers and educational organizations.The system uses a service called Azure Data Share to extract, transform, and load (ETL) user progress data into data sets, which can then be processed further or displayed in visualization tools such as Power BI. Data sets can be stored to either Azure Data Lake, Azure Blob storage, Azure SQL database, or Azure Synapse SQL Pool. Organizations can create and manage their data share using Azure Data Share’s no-code UI.
-[Learn Organizational Reporting setup](https://docs.microsoft.com/en-us/learn/support/org-reporting)
+[Learn Organizational Reporting setup](https://docs.microsoft.com/en-us/learn/support/org-reporting?WT.mc_id=academic-80547-leestott)
+[Getting started with the Learn Organisational Reporting](https://learn.microsoft.com/training/support/org-reporting?WT.mc_id=academic-80547-leestott)
 
 ## Active Directory
 
@@ -57,17 +58,17 @@ How to integrate Canvas with Azure Active Directory (Azure AD). Integrating Canv
 You can control in Azure AD who has access to Canvas.
 You can enable your users to be automatically signed-in to Canvas (Single Sign-On) with their Azure AD accounts.
 You can manage your accounts in one central location - the Azure portal.
-[Tutorial: Azure Active Directory integration with Canvas](https://docs.microsoft.com/en-us/azure/active-directory/saas-apps/canvas-lms-tutorial)
+[Tutorial: Azure Active Directory integration with Canvas](https://docs.microsoft.com/azure/active-directory/saas-apps/canvas-lms-tutorial?WT.mc_id=academic-80547-leestott)
 
 ### Blackboard 
 How to integrate Blackboard Learn with Azure Active Directory (Azure AD). When you integrate Blackboard Learn with Azure AD, you can:
 Control in Azure AD who has access to Blackboard Learn.
 Enable your users to be automatically signed-in to Blackboard Learn with their Azure AD accounts.
 Manage your accounts in one central location - the Azure portal.
-[Tutorial: Azure Active Directory single sign-on integration with Blackboard Learn](https://docs.microsoft.com/en-us/azure/active-directory/saas-apps/blackboard-learn-tutorial)
+[Tutorial: Azure Active Directory single sign-on integration with Blackboard Learn](https://docs.microsoft.com/azure/active-directory/saas-apps/blackboard-learn-tutorial?WT.mc_id=academic-80547-leestott)
 
 ## Cost Management
-The cost of the service implementation is approximately $20 per month for the Azure infrastructure which is required for the Microsoft Learn LTI Application. Costs can be assessed by using the [Azure Pricing Calculator]( https://azure.microsoft.com/pricing/calculator)
+The cost of the service implementation is approximately $20 per month for the Azure infrastructure which is required for the Microsoft Learn LTI Application. Costs can be assessed by using the [Azure Pricing Calculator]( https://azure.microsoft.com/pricing/calculator?WT.mc_id=academic-80547-leestott)
 
 ## What do you need to deploy the Microsoft Learn LTI Application
 Your Instititution will need to have 

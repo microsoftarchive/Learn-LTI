@@ -18,9 +18,9 @@ All data in relation to this application is hosted on the institutions or organi
 
 Microsoft does not have access to of the data or store any data in relation to this application. 
 
-Microsoft Learn http://docs.microsoft.com/learn is the only service Microsoft host and operates and is governed by the following Microsoft Privacy Policy which also covered under Institutional Campus Licensing agreements privacy agreements. https://privacy.microsoft.com/privacystatement
+[Microsoft Learn](http://docs.microsoft.com/learn?WT.mc_id=academic-80547-leestott) is the only service Microsoft host and operates and is governed by the following Microsoft Privacy Policy which also covered under Institutional Campus Licensing agreements privacy agreements. https://privacy.microsoft.com/privacystatement
 
-To identify institutional or organizational users of the Microsoft Learn resources, Modules or Learning paths the **Provider** will be required to use the Learn Organisational Reporting tool https://docs.microsoft.com/learn/support/org-reporting as the application does not to transfer data. Upon using this data sharing service, you are acknowledging and accepting the Microsoft Learn Data Access and Sharing Agreement to enable Microsoft to share Learn data with your Institution or organization for Learn users signing in with the **Providers** organization’s tenant ID.
+To identify institutional or organizational users of the Microsoft Learn resources, Modules or Learning paths the **Provider** will be required to use the Learn Organisational [Reporting tool](https://docs.microsoft.com/learn/support/org-reporting?WT.mc_id=academic-80547-leestott) as the application does not to transfer data. Upon using this data sharing service, you are acknowledging and accepting the Microsoft Learn Data Access and Sharing Agreement to enable Microsoft to share Learn data with your Institution or organization for Learn users signing in with the **Providers** organization’s tenant ID.
 
 The Open Source application does not advertise or market to the institution or organisation educators, trainers, students or their parents. 
 
