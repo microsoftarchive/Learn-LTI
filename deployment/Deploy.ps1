@@ -226,7 +226,7 @@ process {
         #region Provision Resources inside Resource Group on Azure using ARM template
         Write-Title 'STEP #6 - Creating Resources in Azure'
     
-        $userObjectId = az ad signed-in-user show --query objectId
+        $userObjectId = az ad signed-in-user show --query id
         #$userObjectId
     
         $templateFileName = "azuredeploy.json"
