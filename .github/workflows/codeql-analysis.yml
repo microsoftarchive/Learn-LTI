@@ -14,11 +14,12 @@ jobs:
     name: Analyze
     runs-on: ubuntu-latest
     
-    permissions: 
+  permissions: 
     #required for all workflows 
     security-events: write
+    actions: read
 
-    steps:
+  steps:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
