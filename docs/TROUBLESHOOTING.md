@@ -27,6 +27,15 @@ To begin, you will need:
 - [Git](https://git-scm.com/downloads)
 - An Azure subscription
 
+## Using the correct CLI Version 
+
+There are a few ways to run different versions of the Azure CLI:
+
+Using the az command with the --version flag: You can specify the version of the Azure CLI that you want to use by running the command az --version . For example, az --version 2.17.0 will run version 2.17.0 of the Azure CLI.
+
+Using the az command with the --cluster-version flag: This flag allows you to run different versions of Azure CLI in different contexts. For example, you can run version 2.17.0 of the Azure CLI in one shell and version 2.16.0 in another.
+
+Using the az command with the --use-local-cli flag: This flag allows you to use a local installation of the Azure CLI, rather than the one that is available in the PATH environment variable.
 
 ## Failed deployment or removing the services
 
