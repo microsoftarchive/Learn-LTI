@@ -284,6 +284,15 @@ production:
         jwk-present.json: "{\"p\": \"12345MySecret67890\",\"kty\": \"RSA\",\"q\": \"12345MySecret67890\",\"d\": \"12345MySecret67890\",\"e\": \"AQAB\",\"use\": \"sig\",\"kid\": \"sig-16mysig48\",\"qi\": \"12345MySecret67890\",\"dp\": \"12345MySecret67890\",\"alg\": \"RS256\",\"dq\": \"12345MySecret67890\",\"n\": \"12345MySecret67890\"}"
         jwk-future.json: "{\"p\": \"12345MySecret67890\",\"kty\": \"RSA\",\"q\": \"12345MySecret67890\",\"d\": \"12345MySecret67890\",\"e\": \"AQAB\",\"use\": \"sig\",\"kid\": \"sig-16mysig48\",\"qi\": \"12345MySecret67890\",\"dp\": \"12345MySecret67890\",\"alg\": \"RS256\",\"dq\": \"12345MySecret67890\",\"n\": \"12345MySecret67890\"}"
 ```
+## Blackboard - You are not enrolled in this course
+
+You recieve a You a not enrolled in this course error on Blackboard. 
+Ensure the account which is being used is a Module Leader which gives me the ability to create content on a course.
+
+**Ensure the account is NOT a system admin as it will result in the LTI Error.**
+
+ 
+![ErrorNoValidUsers](https://user-images.githubusercontent.com/31847926/94229941-2b726e00-ff44-11ea-8343-30ad6bab348e.png)
 
 ## Missing Name Role Provisioning Service in LTI1.1
 
