@@ -56,7 +56,37 @@ From the Azure Portal, simply select deployments. See the following screenshot.
 
 ![FailedDeployments](../images/FailedDeployment.png)
 
-## Errors deploying install scripts
+## Errors deploying install scripts Deploy.ps1
+
+## Deployment script failure Deploy.ps1
+
+When you try to access the tool registration page:
+Your recieve error "Selected user account does not exist in tenant 'Microsoft' and cannot access the application '****-****-****-**-******' in that tenant. The account needs to be added as an external user in the tenant first. Please use a different account.
+
+This issue is caused by different versions of Powershell and Azure CLI.
+
+You may also get the following error after running Deploy.ps1
+```
+ParentResourceNotFound {
+"status": "Failed",
+"error": {
+"code": "BadRequest",
+"message": "Invalid value found at accessPolicies[0].ObjectId: "
+}
+}
+```
+
+The source of this issue is in the Deploy.ps1 file:
+
+```
+$userObjectId = az ad signed-in-user show --query id
+```
+
+Make the following change to Deploy.ps1 and rerun the script
+
+```
+$userObjectId = az ad signed-in-user show --query objectId
+```
 
 Insufficient permissions if you try deploying the installation scripts from an account which is not your tenant AAD Admin or Azure Subscription Admin/Owner you will recieve an error
 
@@ -104,6 +134,7 @@ Please ensure you have the [DotNet Core SDK .NET Core 3.1](https://dotnet.micros
 Note: Please ensure you reboot your machine after the installation of the Prerequisites as environmental variable need to be set after the installation.
 
 If you have done this please uninstall your .NET Core SDK and reinstall the x86 version 3.1.100 and try again. 
+
 
 ## Debugging Errors from the deployment of Azure Functions 
 
