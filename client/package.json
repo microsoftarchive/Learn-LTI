@@ -17,7 +17,7 @@
     "mobx": "^5.15.4",
     "mobx-react-lite": "^2.0.6",
     "mobx-utils": "^5.5.7",
-    "moment": "^2.25.3",
+    "moment": "^2.29.4",
     "msal": "^1.3.0",
     "prettier": "^2.0.5",
     "react": "^17.0.1",
