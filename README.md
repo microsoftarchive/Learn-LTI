@@ -10,6 +10,10 @@
 
 # Microsoft Learn LTI Application 
 
+| :warning: attention        |
+|:---------------------------|
+| In May 2023, this repository will be [archived](https://docs.github.com/en/repositories/archiving-a-github-repository/archiving-repositories). This will make it read-only for all users and indicate that it's no longer actively maintained. Please email [learnlti@microsoft.com](mailto:learnlti@microsoft.com) with any feedback. Thank you. |
+
 ![Learn LTI Application](/images/Learn-lti.png)
 ### About ###
 [Microsoft Learn](https://docs.microsoft.com/learn/?WT.mc_id=academic-80547-leestott) is a free, online training platform that provides interactive learning resources for Microsoft products and cutting edge technologies. Our goal is to empower students and educators to learn about technology through fun, guided, hands-on content aimed at specific learning goals. 
