@@ -8,6 +8,10 @@ If your **deployment fails and the resource group has been created**; an IT admi
 
 If your deployment has an error look [here](https://docs.microsoft.com/azure/azure-resource-manager/templates/common-deployment-errors?WT.mc_id=academic-80547-leestott) for common errors.
 
+## Using Azure B2C or have multiple AAD Environments for educators and Students 
+
+Our recommendation is you install the Multi Tenant version of the Learn LTI which is available at https://github.com/UCL-MSc-Learn-LTI/Learn-LTI 
+
 ## Setting up a DevTest Moodle LMS Environment 
 If your looking at deploying the service for a DevTest Environment please follow the [DevTest Environment setup guide](DEVTESTENV.md)
 
